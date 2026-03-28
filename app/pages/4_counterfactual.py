@@ -17,7 +17,7 @@ st.header("Counterfactual Analysis")
 st.caption("Compare alternative scenarios and interventions against the baseline.")
 
 if "population" not in st.session_state:
-    st.info("No data loaded. Click Generate to create a population.")
+    st.warning("Load or generate a population from the home page first.")
     st.stop()
 
 if "cf_history" not in st.session_state:

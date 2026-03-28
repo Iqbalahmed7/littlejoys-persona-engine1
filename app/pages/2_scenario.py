@@ -15,7 +15,7 @@ st.header("Scenario Configurator")
 st.caption("Adjust scenario variables and run simulations manually.")
 
 if "population" not in st.session_state:
-    st.info("No data loaded. Click Generate to create a population.")
+    st.warning("Load or generate a population from the home page first.")
     st.stop()
 
 if "scenario_results" not in st.session_state:
