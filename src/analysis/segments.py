@@ -10,11 +10,15 @@ from collections import defaultdict
 from typing import Any
 
 import structlog
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+
+from src.constants import ANALYSIS_SEGMENT_TOP_BARRIER_REASONS
 
 
 class SegmentAnalysis(BaseModel):
     """Analysis results for a single segment."""
+
+    model_config = ConfigDict(extra="forbid")
 
     segment_key: str
     segment_value: str
@@ -22,6 +26,21 @@ class SegmentAnalysis(BaseModel):
     adoption_rate: float
     avg_funnel_scores: dict[str, float]
     top_barriers: list[str]
+
+
+class CrossScenarioSegment(BaseModel):
+    """Cross-scenario comparison for one segment bucket (same ``group_by`` value)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    segment_key: str
+    segment_value: str
+    best_scenario_id: str
+    worst_scenario_id: str
+    best_adoption_rate: float
+    worst_adoption_rate: float
+    adoption_rate_spread: float
+    scenario_adoption_rates: dict[str, float]
 
 
 def analyze_segments(
@@ -106,7 +125,9 @@ def analyze_segments(
             rejection_reason_counts.items(),
             key=lambda kv: (-kv[1], kv[0]),
         )
-        top_barriers = [reason for reason, _ in sorted_reasons[:3]]
+        top_barriers = [
+            reason for reason, _ in sorted_reasons[:ANALYSIS_SEGMENT_TOP_BARRIER_REASONS]
+        ]
 
         segments.append(
             SegmentAnalysis(
@@ -126,3 +147,72 @@ def analyze_segments(
         segments=len(segments),
     )
     return segments
+
+
+def compare_segments_across_scenarios(
+    scenarios_results: dict[str, dict[str, dict[str, Any]]],
+    group_by: str,
+) -> list[CrossScenarioSegment]:
+    """
+    Compare the same segment slice across multiple scenario result sets.
+
+    For each segment value observed in any scenario, collects per-scenario adoption
+    rates (via :func:`analyze_segments`), then ranks scenarios best/worst and
+    computes spread ``max_rate - min_rate``.
+
+    Args:
+        scenarios_results: ``scenario_id`` → ``persona_id`` → result row (same shape
+            as :func:`analyze_segments` expects).
+        group_by: Attribute name passed through to :func:`analyze_segments`.
+
+    Returns:
+        :class:`CrossScenarioSegment` rows sorted by ``adoption_rate_spread`` descending
+        (most divergent segments first), then ``segment_value``.
+    """
+
+    log = structlog.get_logger(__name__)
+
+    if not scenarios_results:
+        return []
+
+    per_scenario: dict[str, list[SegmentAnalysis]] = {}
+    for scenario_id, persona_results in scenarios_results.items():
+        if not isinstance(persona_results, dict):
+            continue
+        per_scenario[scenario_id] = analyze_segments(persona_results, group_by=group_by)
+
+    by_value: dict[str, dict[str, float]] = defaultdict(dict)
+    for scenario_id, analyses in per_scenario.items():
+        for seg in analyses:
+            by_value[seg.segment_value][scenario_id] = seg.adoption_rate
+
+    if not by_value:
+        return []
+
+    rows: list[CrossScenarioSegment] = []
+    for segment_value, scenario_rates in sorted(by_value.items(), key=lambda kv: kv[0]):
+        if not scenario_rates:
+            continue
+        best_id, best_rate = max(scenario_rates.items(), key=lambda x: (x[1], x[0]))
+        worst_id, worst_rate = min(scenario_rates.items(), key=lambda x: (x[1], x[0]))
+        spread = best_rate - worst_rate
+        rows.append(
+            CrossScenarioSegment(
+                segment_key=str(group_by),
+                segment_value=segment_value,
+                best_scenario_id=best_id,
+                worst_scenario_id=worst_id,
+                best_adoption_rate=best_rate,
+                worst_adoption_rate=worst_rate,
+                adoption_rate_spread=spread,
+                scenario_adoption_rates=dict(sorted(scenario_rates.items())),
+            )
+        )
+
+    rows.sort(key=lambda r: (-r.adoption_rate_spread, r.segment_value))
+    log.debug(
+        "cross_scenario_segments_compared",
+        group_by=group_by,
+        segment_values=len(rows),
+    )
+    return rows
