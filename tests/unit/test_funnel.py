@@ -126,7 +126,11 @@ def test_dietary_incompatible_reduces_consideration(sample_persona: Persona) -> 
             key_benefits=["chicken protein"],
             form_factor="powder",
         ),
-        marketing=MarketingConfig(awareness_budget=0.9, pediatrician_endorsement=False, channel_mix={"instagram": 1.0, "youtube": 0.0, "whatsapp": 0.0}),
+        marketing=MarketingConfig(
+            awareness_budget=0.9,
+            pediatrician_endorsement=False,
+            channel_mix={"instagram": 1.0, "youtube": 0.0, "whatsapp": 0.0},
+        ),
         target_age_range=(4, 10),
     )
     thresholds = {"need": 0.01, "awareness": 0.01, "consideration": 0.5, "purchase": 0.01}
@@ -136,7 +140,9 @@ def test_dietary_incompatible_reduces_consideration(sample_persona: Persona) -> 
     assert result.rejection_reason == "dietary_incompatible"
 
 
-def test_age_outside_range_reduces_need(sample_persona: Persona, sample_scenario: ScenarioConfig) -> None:
+def test_age_outside_range_reduces_need(
+    sample_persona: Persona, sample_scenario: ScenarioConfig
+) -> None:
     """Targeting only teens while the child is a toddler should damp need via age relevance."""
 
     scenario = ScenarioConfig(
@@ -151,7 +157,9 @@ def test_age_outside_range_reduces_need(sample_persona: Persona, sample_scenario
             key_benefits=["teen growth"],
             form_factor="powder",
         ),
-        marketing=MarketingConfig(awareness_budget=0.5, channel_mix={"instagram": 1.0, "youtube": 0.0, "whatsapp": 0.0}),
+        marketing=MarketingConfig(
+            awareness_budget=0.5, channel_mix={"instagram": 1.0, "youtube": 0.0, "whatsapp": 0.0}
+        ),
         target_age_range=(13, 17),
     )
     need = compute_need_recognition(sample_persona, scenario)
@@ -175,7 +183,11 @@ def test_rejection_reason_always_populated_for_rejections(sample_persona: Person
             key_benefits=["nutrition"],
             form_factor="powder",
         ),
-        marketing=MarketingConfig(awareness_budget=0.0, pediatrician_endorsement=False, channel_mix={"instagram": 1.0, "youtube": 0.0, "whatsapp": 0.0}),
+        marketing=MarketingConfig(
+            awareness_budget=0.0,
+            pediatrician_endorsement=False,
+            channel_mix={"instagram": 1.0, "youtube": 0.0, "whatsapp": 0.0},
+        ),
         target_age_range=(3, 8),
     )
     result = run_funnel(sample_persona, scenario, {"need": 0.99})

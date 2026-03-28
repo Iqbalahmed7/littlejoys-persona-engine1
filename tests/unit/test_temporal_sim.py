@@ -55,9 +55,9 @@ def test_lj_pass_holders_have_lower_churn(sample_persona) -> None:  # type: igno
     """Temporal model relies on churn dampening for pass holders (unit check)."""
 
     hist = [0.4, 0.38, 0.39]
-    assert compute_churn_probability(sample_persona, hist, has_lj_pass=True) < compute_churn_probability(
-        sample_persona, hist, has_lj_pass=False
-    )
+    assert compute_churn_probability(
+        sample_persona, hist, has_lj_pass=True
+    ) < compute_churn_probability(sample_persona, hist, has_lj_pass=False)
 
 
 def test_temporal_lj_pass_scenario_assigns_holders() -> None:

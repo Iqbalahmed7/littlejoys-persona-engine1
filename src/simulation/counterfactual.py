@@ -235,7 +235,9 @@ def run_predefined_counterfactual(
 
     catalog = get_predefined_counterfactuals(scenario_id)
     if counterfactual_name not in catalog:
-        raise KeyError(f"Unknown counterfactual '{counterfactual_name}' for scenario '{scenario_id}'")
+        raise KeyError(
+            f"Unknown counterfactual '{counterfactual_name}' for scenario '{scenario_id}'"
+        )
     return run_counterfactual(
         population=population,
         baseline_scenario=get_scenario(scenario_id),
