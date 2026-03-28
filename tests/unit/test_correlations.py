@@ -38,7 +38,9 @@ def _minimal_demographics(n: int, seed: int = 0) -> pd.DataFrame:
                 size=n,
                 p=[0.40, 0.10, 0.35, 0.08, 0.07],
             ),
-            "family_structure": rng.choice(["nuclear", "joint", "single_parent"], size=n, p=[0.6, 0.3, 0.1]),
+            "family_structure": rng.choice(
+                ["nuclear", "joint", "single_parent"], size=n, p=[0.6, 0.3, 0.1]
+            ),
             "dietary_culture": rng.choice(
                 ["vegetarian", "eggetarian", "non_vegetarian", "vegan"],
                 size=n,
@@ -169,5 +171,7 @@ def test_demographic_conditioning_changes_income_budget_relationship() -> None:
     u = scipy_stats.norm.cdf(z)
     psych = pd.DataFrame(u, columns=list(PSYCHOGRAPHIC_CONTINUOUS_COLUMNS))
     adjusted = _apply_demographic_conditioning(psych, demo)
-    rho_after = adjusted["budget_consciousness"].corr(pd.Series(demo["household_income_lpa"].values))
+    rho_after = adjusted["budget_consciousness"].corr(
+        pd.Series(demo["household_income_lpa"].values)
+    )
     assert rho_after < -0.08
