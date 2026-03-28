@@ -26,6 +26,7 @@ from src.constants import (
     DEFAULT_CHANNEL_MIX_YOUTUBE,
     FUNNEL_AGE_RELEVANCE_IN_RANGE,
     FUNNEL_AGE_RELEVANCE_OUTSIDE_RANGE,
+    FUNNEL_AWARENESS_BASE_FLOOR,
     FUNNEL_BOOST_INFLUENCER_CAMPAIGN,
     FUNNEL_BOOST_PEDIATRICIAN_ENDORSEMENT,
     FUNNEL_BOOST_SCHOOL_PARTNERSHIP,
@@ -38,6 +39,11 @@ from src.constants import (
     FUNNEL_PURCHASE_COMBO_CLIP_MAX,
     FUNNEL_PURCHASE_COMBO_CLIP_MIN,
     FUNNEL_PURCHASE_PRICE_RATIO_CAP,
+    FUNNEL_CONSIDERATION_WEIGHT_BRAND,
+    FUNNEL_CONSIDERATION_WEIGHT_CULTURAL,
+    FUNNEL_CONSIDERATION_WEIGHT_RESEARCH,
+    FUNNEL_CONSIDERATION_WEIGHT_RISK,
+    FUNNEL_CONSIDERATION_WEIGHT_TRUST,
     FUNNEL_RISK_UNFAMILIAR_BRAND_WEIGHT,
     FUNNEL_SCHOOL_COMMUNITY_ENGAGEMENT_THRESHOLD,
     FUNNEL_THRESHOLD_AWARENESS,
@@ -276,8 +282,10 @@ def compute_awareness(
     """
 
     marketing = scenario.marketing
-    base = marketing.awareness_budget * _channel_persona_match(persona, marketing)
-    score = base
+    channel_match = _channel_persona_match(persona, marketing)
+    base = marketing.awareness_budget * channel_match
+    # Floor only applies when there is actual marketing spend
+    score = max(base, FUNNEL_AWARENESS_BASE_FLOOR) if marketing.awareness_budget > 0 else base
 
     if marketing.pediatrician_endorsement and (
         persona.health.medical_authority_trust > FUNNEL_TRUST_SIGNAL_PEDIATRICIAN_TRUST
@@ -339,10 +347,16 @@ def compute_consideration(
     else:
         risk_factor = 1.0
 
-    multiplier = _clip_unit(
-        trust_factor * research_factor * cultural_fit * brand_factor * risk_factor
+    # Weighted average of consideration factors — awareness already gates entry
+    # via threshold check, so consideration is an independent assessment.
+    score = _clip_unit(
+        FUNNEL_CONSIDERATION_WEIGHT_TRUST * trust_factor
+        + FUNNEL_CONSIDERATION_WEIGHT_RESEARCH * research_factor
+        + FUNNEL_CONSIDERATION_WEIGHT_CULTURAL * cultural_fit
+        + FUNNEL_CONSIDERATION_WEIGHT_BRAND * brand_factor
+        + FUNNEL_CONSIDERATION_WEIGHT_RISK * risk_factor
     )
-    return _clip_unit(awareness * multiplier)
+    return score
 
 
 def compute_purchase(
@@ -381,14 +395,14 @@ def compute_purchase(
     value = _clip_unit(value_core * benefit_mix)
 
     emotional = _clip_unit(
-        persona.emotional.emotional_persuasion_susceptibility
-        * persona.values.guilt_driven_spending
-        * persona.values.best_for_my_child_intensity
+        persona.emotional.emotional_persuasion_susceptibility * 0.3
+        + persona.values.guilt_driven_spending * 0.3
+        + persona.values.best_for_my_child_intensity * 0.4
     )
 
     combo = value + emotional - price_barrier - effort_barrier
     combo = max(FUNNEL_PURCHASE_COMBO_CLIP_MIN, min(FUNNEL_PURCHASE_COMBO_CLIP_MAX, combo))
-    purchase_score = _clip_unit(consideration * combo)
+    purchase_score = _clip_unit(combo)
 
     hint: str | None = None
     if purchase_score < FUNNEL_THRESHOLD_PURCHASE:
