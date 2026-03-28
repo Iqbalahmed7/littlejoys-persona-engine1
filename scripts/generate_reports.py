@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 
 import structlog
@@ -13,7 +12,7 @@ from src.simulation.static import run_static_simulation
 log = structlog.get_logger(__name__)
 
 
-async def generate_all_reports(
+def generate_all_reports(
     population_path: str = "data/population",
     output_dir: str = "data/results/reports",
     mock_llm: bool = True,
@@ -64,4 +63,4 @@ async def generate_all_reports(
 
 
 if __name__ == "__main__":
-    asyncio.run(generate_all_reports())
+    generate_all_reports()

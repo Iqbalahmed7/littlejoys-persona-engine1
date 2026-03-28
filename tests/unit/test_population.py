@@ -16,7 +16,9 @@ def test_generate_returns_correct_count() -> None:
     gen = PopulationGenerator()
     pop = gen.generate(size=50, seed=7, deep_persona_count=5)
     assert len(pop.tier1_personas) == 50
-    assert len(pop.tier2_personas) == 5
+    assert len(pop.tier2_personas) == 0
+    assert all(persona.tier == "deep" for persona in pop.tier1_personas)
+    assert all(persona.narrative for persona in pop.tier1_personas)
 
 
 def test_generate_deterministic_with_seed() -> None:
@@ -25,8 +27,8 @@ def test_generate_deterministic_with_seed() -> None:
     b = gen.generate(size=20, seed=12345, deep_persona_count=4)
     assert a.tier1_personas[0].to_flat_dict() == b.tier1_personas[0].to_flat_dict()
     assert a.tier1_personas[0].generation_seed == b.tier1_personas[0].generation_seed
-    sig_a = sorted(json.dumps(p.to_flat_dict(), sort_keys=True) for p in a.tier2_personas)
-    sig_b = sorted(json.dumps(p.to_flat_dict(), sort_keys=True) for p in b.tier2_personas)
+    sig_a = sorted(json.dumps(p.semantic_memory, sort_keys=True) for p in a.tier1_personas)
+    sig_b = sorted(json.dumps(p.semantic_memory, sort_keys=True) for p in b.tier1_personas)
     assert sig_a == sig_b
 
 
@@ -49,14 +51,14 @@ def test_population_save_and_load_roundtrip(tmp_path) -> None:
     assert len(loaded.tier1_personas) == len(pop.tier1_personas)
     assert len(loaded.tier2_personas) == len(pop.tier2_personas)
     assert loaded.tier1_personas[0].model_dump_json() == pop.tier1_personas[0].model_dump_json()
-    assert loaded.tier2_personas[0].tier == "deep"
+    assert loaded.tier1_personas[0].tier == "deep"
+    assert loaded.tier1_personas[0].narrative is not None
 
 
-def test_tier2_selection_maximizes_diversity() -> None:
+def test_all_generated_personas_have_display_names() -> None:
     gen = PopulationGenerator()
     pop = gen.generate(size=100, seed=42, deep_persona_count=15)
-    tiers = {p.demographics.city_tier for p in pop.tier2_personas}
-    assert len(tiers) >= 2
+    assert all(persona.display_name for persona in pop.tier1_personas)
 
 
 def test_filter_by_attribute_works() -> None:
@@ -75,8 +77,7 @@ def test_get_persona_by_id() -> None:
     pop = gen.generate(size=10, seed=5, deep_persona_count=2)
     pid = pop.tier1_personas[3].id
     assert pop.get_persona(pid).id == pid
-    tid = pop.tier2_personas[0].id
-    assert pop.get_persona(tid).tier == "deep"
+    assert pop.get_persona(pid).tier == "deep"
 
 
 def test_get_persona_missing_raises() -> None:
@@ -91,7 +92,7 @@ def test_invalid_personas_are_regenerated() -> None:
     call_state = {"first": True}
 
     def _patched(self: PersonaValidator, persona_id: str, flat: dict) -> ValidationResult:
-        if call_state["first"] and persona_id.endswith("-t1-00000"):
+        if call_state["first"]:
             call_state["first"] = False
             return ValidationResult(
                 persona_id=persona_id,

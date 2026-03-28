@@ -33,17 +33,17 @@ from src.constants import (
     FUNNEL_CONSIDERATION_DIETARY_MATCH,
     FUNNEL_CONSIDERATION_DIETARY_MISMATCH,
     FUNNEL_CONSIDERATION_TRUST_THRESHOLD,
+    FUNNEL_CONSIDERATION_WEIGHT_BRAND,
+    FUNNEL_CONSIDERATION_WEIGHT_CULTURAL,
+    FUNNEL_CONSIDERATION_WEIGHT_RESEARCH,
+    FUNNEL_CONSIDERATION_WEIGHT_RISK,
+    FUNNEL_CONSIDERATION_WEIGHT_TRUST,
     FUNNEL_INFLUENCER_TRUST_THRESHOLD,
     FUNNEL_NON_PRIMARY_SOCIAL_PLATFORM_MATCH,
     FUNNEL_PURCHASE_BARRIER_THRESHOLD,
     FUNNEL_PURCHASE_COMBO_CLIP_MAX,
     FUNNEL_PURCHASE_COMBO_CLIP_MIN,
     FUNNEL_PURCHASE_PRICE_RATIO_CAP,
-    FUNNEL_CONSIDERATION_WEIGHT_BRAND,
-    FUNNEL_CONSIDERATION_WEIGHT_CULTURAL,
-    FUNNEL_CONSIDERATION_WEIGHT_RESEARCH,
-    FUNNEL_CONSIDERATION_WEIGHT_RISK,
-    FUNNEL_CONSIDERATION_WEIGHT_TRUST,
     FUNNEL_RISK_UNFAMILIAR_BRAND_WEIGHT,
     FUNNEL_SCHOOL_COMMUNITY_ENGAGEMENT_THRESHOLD,
     FUNNEL_THRESHOLD_AWARENESS,
@@ -282,9 +282,7 @@ def compute_awareness(
     """
 
     marketing = scenario.marketing
-    channel_match = _channel_persona_match(persona, marketing)
-    base = marketing.awareness_budget * channel_match
-    # Floor only applies when there is actual marketing spend
+    base = marketing.awareness_budget * _channel_persona_match(persona, marketing)
     score = max(base, FUNNEL_AWARENESS_BASE_FLOOR) if marketing.awareness_budget > 0 else base
 
     if marketing.pediatrician_endorsement and (
@@ -347,16 +345,14 @@ def compute_consideration(
     else:
         risk_factor = 1.0
 
-    # Weighted average of consideration factors — awareness already gates entry
-    # via threshold check, so consideration is an independent assessment.
-    score = _clip_unit(
+    weighted = (
         FUNNEL_CONSIDERATION_WEIGHT_TRUST * trust_factor
         + FUNNEL_CONSIDERATION_WEIGHT_RESEARCH * research_factor
         + FUNNEL_CONSIDERATION_WEIGHT_CULTURAL * cultural_fit
         + FUNNEL_CONSIDERATION_WEIGHT_BRAND * brand_factor
         + FUNNEL_CONSIDERATION_WEIGHT_RISK * risk_factor
     )
-    return score
+    return _clip_unit(weighted)
 
 
 def compute_purchase(

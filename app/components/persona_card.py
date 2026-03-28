@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any
 
 import streamlit as st
 
+from src.utils.display import display_name, outcome_label, persona_display_name
+
 if TYPE_CHECKING:
     from src.taxonomy.schema import Persona
 
@@ -15,7 +17,7 @@ def render_persona_card(persona: Persona, decision_result: dict[str, Any] | None
 
     city = persona.demographics.city_name
     tier = persona.demographics.city_tier
-    header = f"{persona.id} — {city} ({tier})"
+    header = f"{persona_display_name(persona)} · `{persona.id}` — {city} ({tier})"
 
     with st.container(border=True):
         st.subheader(header)
@@ -23,22 +25,35 @@ def render_persona_card(persona: Persona, decision_result: dict[str, Any] | None
         c1, c2 = st.columns(2)
         with c1:
             st.markdown("**Demographics**")
-            st.write(f"- Income: {persona.demographics.household_income_lpa} LPA")
-            st.write(f"- Parent age: {persona.demographics.parent_age}")
-            st.write(f"- Children: {persona.demographics.num_children}")
-            st.write(f"- Region: {persona.demographics.region}")
+            st.write(
+                f"- {display_name('household_income_lpa')}: {persona.demographics.household_income_lpa}",
+            )
+            st.write(f"- {display_name('parent_age')}: {persona.demographics.parent_age}")
+            st.write(f"- {display_name('num_children')}: {persona.demographics.num_children}")
+            st.write(f"- {display_name('region')}: {persona.demographics.region}")
         with c2:
             st.markdown("**Psychographics**")
-            st.write(f"- Health consciousness: {persona.health.diet_consciousness:.2f}")
-            st.write(f"- Brand loyalty: {persona.values.brand_loyalty_tendency:.2f}")
-            st.write(f"- Social proof: {persona.psychology.social_proof_bias:.2f}")
+            st.write(
+                f"- {display_name('diet_consciousness')}: {persona.health.diet_consciousness:.2f}",
+            )
+            st.write(
+                f"- {display_name('brand_loyalty_tendency')}: "
+                f"{persona.values.brand_loyalty_tendency:.2f}",
+            )
+            st.write(
+                f"- {display_name('social_proof_bias')}: {persona.psychology.social_proof_bias:.2f}",
+            )
 
         if decision_result is not None:
             st.divider()
             outcome = decision_result.get("outcome")
             if outcome == "adopt":
-                st.success("Outcome: Adopted")
+                st.success(f"{display_name('outcome')}: {outcome_label('adopt')}")
             else:
                 stage = decision_result.get("rejection_stage") or "unknown"
                 reason = decision_result.get("rejection_reason") or "unknown"
-                st.error(f"Outcome: Rejected at {stage} ({reason})")
+                st.error(
+                    f"{display_name('outcome')}: {outcome_label(str(outcome))} — "
+                    f"{display_name('rejection_stage')}: {display_name(str(stage))}; "
+                    f"{display_name('rejection_reason')}: {display_name(str(reason))}",
+                )

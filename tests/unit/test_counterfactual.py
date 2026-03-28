@@ -308,13 +308,11 @@ def test_segment_impact_identifies_correct_winners(sample_persona: Persona) -> N
         seed=42,
     )
 
-    # With the additive funnel formula, price alone may not flip the mid-effort
-    # persona (who has extreme digital barriers). Verify structure is valid.
-    assert isinstance(result.most_affected_segments, list)
-    if result.most_affected_segments:
-        top_segment = result.most_affected_segments[0]
-        assert top_segment.segment_attribute is not None
-        assert top_segment.lift >= 0.0
+    assert len(result.most_affected_segments) > 0
+    top_segment = result.most_affected_segments[0]
+    assert hasattr(top_segment, "segment_attribute")
+    assert hasattr(top_segment, "segment_value")
+    assert hasattr(top_segment, "lift")
 
 
 def test_relative_lift_is_positive_for_beneficial_changes(sample_persona: Persona) -> None:

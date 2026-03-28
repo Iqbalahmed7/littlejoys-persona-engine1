@@ -463,6 +463,9 @@ class Persona(BaseModel):
 
     narrative: str | None = None
 
+    # Human-readable name generated post-construction for UX purposes.
+    display_name: str | None = None
+
     episodic_memory: list[MemoryEntry] = Field(default_factory=list)
     semantic_memory: dict[str, Any] = Field(default_factory=dict)
     brand_memories: dict[str, BrandMemory] = Field(default_factory=dict)
