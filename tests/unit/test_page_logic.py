@@ -160,6 +160,12 @@ class _FakeStreamlit(ModuleType):
         except Exception:
             return None
 
+    def radio(self, label: str, options: Any = None, **kwargs: object) -> Any:
+        del kwargs
+        if options:
+            return options[0]
+        return None
+
     def toggle(self, label: str, value: bool = False, **kwargs: object) -> bool:
         del kwargs
         return self._toggles.get(label, value)

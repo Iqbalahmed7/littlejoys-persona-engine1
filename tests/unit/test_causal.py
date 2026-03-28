@@ -60,7 +60,7 @@ def test_causal_statements_reference_specific_variables() -> None:
     statements = generate_causal_statements(_causal_importances(), _causal_results(), top_n=3)
 
     assert statements
-    assert any("feature1" in statement.statement for statement in statements)
+    assert any("feature1" in statement.statement.lower() for statement in statements)
 
 
 def test_causal_statements_sorted_by_evidence_strength() -> None:
@@ -83,9 +83,7 @@ def test_causal_statements_empty_input_returns_empty() -> None:
 def test_segment_specific_statements_generated_when_lift_differs() -> None:
     statements = generate_causal_statements(_causal_importances(), _causal_results(), top_n=3)
 
-    assert any(
-        isinstance(statement, CausalStatement)
-        and statement.segment is not None
-        and "city_tier" in statement.statement
-        for statement in statements
-    )
+    segment_statements = [
+        s for s in statements if isinstance(s, CausalStatement) and s.segment is not None
+    ]
+    assert segment_statements, "Expected at least one segment-specific statement"

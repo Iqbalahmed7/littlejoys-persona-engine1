@@ -123,7 +123,35 @@ if not persona_pool:
     st.warning("No personas available. Generate population data first.")
     st.stop()
 
-persona_lookup = {persona.id: persona for persona in persona_pool}
+# Pre-compute outcomes for filtering
+_scenario_obj = get_scenario(scenario_id)
+_outcomes: dict[str, str] = {}
+for _p in persona_pool:
+    _dr = run_funnel(_p, _scenario_obj)
+    _outcomes[_p.id] = _dr.to_dict()["outcome"]
+
+outcome_filter = st.radio(
+    "Show personas who…",
+    options=["All", "Adopted", "Rejected"],
+    horizontal=True,
+    key="interview_outcome_filter",
+)
+if outcome_filter == "Adopted":
+    filtered_pool = [p for p in persona_pool if _outcomes.get(p.id) == "adopt"]
+elif outcome_filter == "Rejected":
+    filtered_pool = [p for p in persona_pool if _outcomes.get(p.id) == "reject"]
+else:
+    filtered_pool = list(persona_pool)
+
+_adopt_count = sum(1 for v in _outcomes.values() if v == "adopt")
+_reject_count = sum(1 for v in _outcomes.values() if v == "reject")
+st.caption(f"{_adopt_count} adopted · {_reject_count} rejected in this scenario")
+
+if not filtered_pool:
+    st.info(f"No personas matched the '{outcome_filter}' filter for this scenario.")
+    st.stop()
+
+persona_lookup = {persona.id: persona for persona in filtered_pool}
 selected_persona_id = st.selectbox(
     "Persona",
     options=list(persona_lookup.keys()),

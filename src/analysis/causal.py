@@ -25,6 +25,7 @@ from src.constants import (
     INCOME_BRACKET_LOW_MAX_LPA,
     INCOME_BRACKET_MID_MAX_LPA,
 )
+from src.utils.display import display_name
 
 logger = structlog.get_logger(__name__)
 
@@ -200,20 +201,21 @@ def _format_lift_text(ratio: float) -> str:
 
 
 def _mechanism_phrase(variable_name: str, direction: str) -> str:
+    label = display_name(variable_name)
     mechanisms = {
-        "budget_consciousness": "higher budget_consciousness makes price friction show up faster at purchase",
-        "health_anxiety": "higher health_anxiety increases need recognition earlier in the funnel",
-        "medical_authority_trust": "higher medical_authority_trust makes expert signals carry more weight",
-        "ad_receptivity": "higher ad_receptivity lifts awareness faster",
-        "price_reference_point": "a higher price_reference_point softens price shock at checkout",
-        "supplement_necessity_belief": "stronger supplement_necessity_belief makes the category feel more necessary",
-        "perceived_time_scarcity": "higher perceived_time_scarcity makes convenience matter more",
+        "budget_consciousness": f"higher {label} makes price friction show up faster at purchase",
+        "health_anxiety": f"higher {label} increases need recognition earlier in the funnel",
+        "medical_authority_trust": f"higher {label} makes expert signals carry more weight",
+        "ad_receptivity": f"higher {label} lifts awareness faster",
+        "price_reference_point": f"a higher {label} softens price shock at checkout",
+        "supplement_necessity_belief": f"stronger {label} makes the category feel more necessary",
+        "perceived_time_scarcity": f"higher {label} makes convenience matter more",
     }
     if variable_name in mechanisms:
         return mechanisms[variable_name]
     if direction == "positive":
-        return f"higher {variable_name} pushes the modeled decision scores upward"
-    return f"higher {variable_name} creates a stronger modeled barrier to adoption"
+        return f"higher {label} pushes the modeled decision scores upward"
+    return f"higher {label} creates a stronger modeled barrier to adoption"
 
 
 def _supporting_variables(
@@ -246,15 +248,18 @@ def _statement_for_split(
     ratio = _lift_ratio(above_rate, below_rate)
     direction_text = _format_lift_text(ratio)
     mechanism = _mechanism_phrase(variable_name, direction_hint)
+    label = display_name(variable_name)
 
     if segment is None:
         statement = (
-            f"Personas with {variable_name} above {threshold:.2f} are {direction_text} to adopt "
+            f"Personas with {label} above {threshold:.2f} are {direction_text} to adopt "
             f"than those below {threshold:.2f}, because {mechanism}."
         )
     else:
+        segment_label = display_name(segment_key) if segment_key else segment_key
+        segment_value = display_name(segment) if segment else segment
         statement = (
-            f"Within {segment_key}={segment}, personas with {variable_name} above {threshold:.2f} are "
+            f"Within {segment_label} = {segment_value}, personas with {label} above {threshold:.2f} are "
             f"{direction_text} to adopt than peers below {threshold:.2f}, because {mechanism}."
         )
 
