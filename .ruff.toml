@@ -22,6 +22,10 @@ ignore = [
 [lint.isort]
 known-first-party = ["src"]
 
+[lint.per-file-ignores]
+"app/pages/5_interviews.py" = ["N999"]
+"app/pages/6_report.py" = ["N999"]
+
 [format]
 quote-style = "double"
 indent-style = "space"
