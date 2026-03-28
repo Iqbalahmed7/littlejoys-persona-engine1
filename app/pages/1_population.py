@@ -82,7 +82,7 @@ if raw_sr:
 df = _tier1_dataframe(pop.id, tier1_ids, scenario_fp)
 
 n1 = len(pop.tier1_personas)
-n2 = len(pop.tier2_personas)
+n2 = sum(1 for p in pop.tier1_personas if p.narrative)
 c1, c2, c3 = (
     DASHBOARD_BRAND_COLORS["primary"],
     DASHBOARD_BRAND_COLORS["secondary"],
@@ -259,7 +259,7 @@ else:
     )
 
 st.subheader("Persona lookup")
-lookup_id = st.text_input("Persona ID", placeholder="e.g. abc-t1-00042", key="pop_lookup_id")
+lookup_id = st.text_input("Persona ID", placeholder="e.g. Priya-Mumbai-Mom-32", key="pop_lookup_id")
 if lookup_id.strip():
     try:
         persona = pop.get_persona(lookup_id.strip())
@@ -277,14 +277,15 @@ if lookup_id.strip():
         st.error("No persona matches that ID.")
 
 st.subheader("Persona stories")
-cap = min(DASHBOARD_MAX_TIER2_DISPLAY, len(pop.tier2_personas))
+_narrative_personas = [p for p in pop.tier1_personas if p.narrative]
+cap = min(DASHBOARD_MAX_TIER2_DISPLAY, len(_narrative_personas))
 if cap == 0:
     st.caption("No personas with narratives in this population.")
 else:
     st.caption(
-        f"Showing up to {cap} of {len(pop.tier2_personas)} personas that include narrative text."
+        f"Showing up to {cap} of {len(_narrative_personas)} personas that include narrative text."
     )
-    for persona in pop.tier2_personas[:cap]:
+    for persona in _narrative_personas[:cap]:
         title = f"{persona_display_name(persona)} · `{persona.id}`"
         with st.expander(title, expanded=False):
             body = persona.narrative or "_No narrative text yet._"

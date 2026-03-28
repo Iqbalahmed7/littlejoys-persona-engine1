@@ -13,7 +13,6 @@ from src.analysis.causal import compute_variable_importance, generate_causal_sta
 from src.analysis.segments import analyze_segments
 from src.analysis.waterfall import compute_funnel_waterfall
 from src.constants import (
-    DASHBOARD_WHATIF_DEEP_COUNT,
     DASHBOARD_WHATIF_POPULATION_SIZE,
     DEFAULT_SIMULATION_MONTHS,
     SCENARIO_IDS,
@@ -189,7 +188,7 @@ if st.button("Run What-If", key="run_whatif"):
     mini = pop.model_copy(
         update={
             "tier1_personas": pop.tier1_personas[:n_what],
-            "tier2_personas": pop.tier2_personas[:DASHBOARD_WHATIF_DEEP_COUNT],
+            "tier2_personas": [],
         },
         deep=True,
     )

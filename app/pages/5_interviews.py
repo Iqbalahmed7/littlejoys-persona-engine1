@@ -72,10 +72,9 @@ def _build_interviewer(mock_llm: bool) -> PersonaInterviewer:
 
 
 def _persona_label(persona: Persona) -> str:
-    return (
-        f"{persona.id} | {persona.demographics.city_name} | "
-        f"{persona.career.employment_status} | {persona.demographics.household_income_lpa:.1f} LPA"
-    )
+    name = persona.display_name or persona.demographics.city_name
+    employment = persona.career.employment_status.replace("_", " ")
+    return f"{persona.id} · {name} · {employment}"
 
 
 def _decision_result_for_persona(persona: Persona, scenario_id: str) -> dict[str, Any]:

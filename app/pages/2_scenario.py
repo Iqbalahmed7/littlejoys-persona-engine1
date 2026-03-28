@@ -65,8 +65,8 @@ with col1:
     custom_scenario.product.health_relevance = st.slider(
         "Health Relevance", 0.0, 1.0, float(custom_scenario.product.health_relevance), step=0.05
     )
-    custom_scenario.product.lj_pass_available = st.toggle(
-        "LJ Pass Available", custom_scenario.product.lj_pass_available
+    custom_scenario.lj_pass_available = st.toggle(
+        "LJ Pass Available", custom_scenario.lj_pass_available
     )
 
 # 3. Marketing parameters
