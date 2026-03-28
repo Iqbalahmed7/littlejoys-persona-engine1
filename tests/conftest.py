@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import pytest
 
+from src.decision.scenarios import MarketingConfig, ProductConfig, ScenarioConfig
 from src.taxonomy.schema import (
     CareerAttributes,
     CulturalAttributes,
@@ -106,4 +107,36 @@ def high_price_sensitivity_persona(sample_demographics: DemographicAttributes) -
         ),
         emotional=EmotionalAttributes(),
         media=MediaAttributes(),
+    )
+
+
+@pytest.fixture
+def sample_scenario() -> ScenarioConfig:
+    """Scenario tuned so a typical sample persona can progress through the funnel."""
+
+    product = ProductConfig(
+        name="LittleJoys Growth Mix",
+        category="child nutrition powder",
+        price_inr=420.0,
+        age_range=(3, 10),
+        key_benefits=["growth support", "immunity", "balanced nutrition"],
+        form_factor="powder",
+        taste_appeal=0.72,
+        effort_to_acquire=0.25,
+    )
+    marketing = MarketingConfig(
+        awareness_budget=0.65,
+        channel_mix={"instagram": 0.4, "youtube": 0.35, "whatsapp": 0.25},
+        pediatrician_endorsement=True,
+        school_partnership=False,
+        influencer_campaign=True,
+    )
+    return ScenarioConfig(
+        id="test-scenario-001",
+        name="Test scenario",
+        description="Unit test scenario for funnel and simulation.",
+        product=product,
+        marketing=marketing,
+        target_age_range=(3, 10),
+        lj_pass_available=False,
     )
