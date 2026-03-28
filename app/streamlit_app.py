@@ -2,7 +2,6 @@
 LittleJoys Persona Simulation Engine — Streamlit Dashboard.
 
 Main entry point for the interactive presentation layer.
-Full implementation in PRD-011 (Sprint 4).
 """
 
 from pathlib import Path
@@ -22,17 +21,27 @@ st.set_page_config(
 )
 
 st.title("LittleJoys Persona Simulation Engine")
-st.caption("Unified interface mapping synthetic baseline configurations and simulation dynamics.")
+st.caption("Synthetic persona engine for kids nutrition D2C in India.")
 st.markdown("---")
 
+pop_path = Path("data/population")
+
 if "population" not in st.session_state:
-    pop_path = Path("data/population")
     if pop_path.exists():
         with st.spinner("Pre-loading cached demographic schemas..."):
             st.session_state.population = Population.load(pop_path)
             st.toast("Population loaded from disk.", icon="💾")
     else:
-        st.info("No data loaded. Click Generate to create a population.")
+        st.info("No population data found. Generate a synthetic baseline population to begin.")
+        if st.button("Generate Population", type="primary"):
+            from src.generation.population import PopulationGenerator
+
+            with st.spinner("Generating population..."):
+                pop = PopulationGenerator().generate(seed=42)
+                pop.save(pop_path)
+                st.session_state.population = pop
+            st.toast("Population explicitly generated successfully!", icon="✅")
+            st.rerun()
 
 if "scenario_results" not in st.session_state:
     st.session_state.scenario_results = {}
@@ -44,12 +53,9 @@ if "scenario_results" not in st.session_state:
                 )
             st.toast("Baseline configurations evaluated successfully.", icon="📈")
 
-st.sidebar.header("Navigation")
-st.sidebar.markdown("""
-- Population Explorer
-- Scenario Configurator
-- Results Dashboard
-- Counterfactual Analysis
-- Persona Interviews
-- Report Generator
-""")
+if "population" in st.session_state:
+    pop = st.session_state.population
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Tier 1 (Statistical) Personas", len(pop.tier1_personas))
+    c2.metric("Tier 2 (Deep) Personas", len(pop.tier2_personas))
+    c3.metric("Scenarios Evaluated", len(st.session_state.get("scenario_results", {})))

@@ -391,6 +391,7 @@ def calibrate_thresholds(
     best_result: ScenarioEvaluationResult | None = None
     best_thresholds = dict(DEFAULT_DECISION_THRESHOLDS)
 
+    iteration = 0
     for iteration in range(1, max_iterations + 1):
         delta = (lower + upper) / 2.0
         thresholds = {
@@ -422,7 +423,10 @@ def calibrate_thresholds(
         else:
             upper = delta
 
-    assert best_result is not None
+    if best_result is None:
+        raise RuntimeError(
+            "Calibration failed to converge after exhausting search space",
+        )
 
     result = CalibrationResult(
         scenario_id=scenario_id,
