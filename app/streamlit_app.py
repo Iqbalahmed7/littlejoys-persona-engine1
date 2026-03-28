@@ -8,7 +8,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from src.constants import SCENARIO_IDS
+from src.constants import DEFAULT_SEED, SCENARIO_IDS
 from src.decision.scenarios import get_scenario
 from src.generation.population import Population
 from src.simulation.static import run_static_simulation
@@ -37,7 +37,7 @@ if "population" not in st.session_state:
             from src.generation.population import PopulationGenerator
 
             with st.spinner("Generating population..."):
-                pop = PopulationGenerator().generate(seed=42)
+                pop = PopulationGenerator().generate(seed=DEFAULT_SEED)
                 pop.save(pop_path)
                 st.session_state.population = pop
             st.toast("Population explicitly generated successfully!", icon="✅")
