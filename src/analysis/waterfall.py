@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
+import structlog
 from pydantic import BaseModel, ConfigDict
+
+log = structlog.get_logger(__name__)
 
 
 class WaterfallStage(BaseModel):
@@ -28,6 +31,8 @@ def compute_funnel_waterfall(
         return []
 
     stages = ["need_recognition", "awareness", "consideration", "purchase"]
+
+    log.debug("computing_funnel_waterfall", total_population=total_population, stages=stages)
 
     # Pre-aggregate dropped numbers for each stage
     drops_per_stage = {stage: 0 for stage in stages}
@@ -64,4 +69,5 @@ def compute_funnel_waterfall(
         )
         current_entered = passed
 
+    log.info("funnel_waterfall_computed", adopted=adopted, total_dropped=total_dropped)
     return waterfall
