@@ -31,16 +31,24 @@ def sample_demographics() -> DemographicAttributes:
     return DemographicAttributes(
         city_tier="Tier1",
         city_name="Mumbai",
+        region="West",
+        urban_vs_periurban="urban",
         household_income_lpa=15.0,
         parent_age=32,
         parent_gender="female",
+        marital_status="married",
+        birth_order="experienced_parent",
         num_children=1,
+        child_ages=[4],
+        child_genders=["female"],
         youngest_child_age=4,
         oldest_child_age=4,
-        education_level="masters",
-        employment_status="full_time",
         family_structure="nuclear",
-        dietary_culture="vegetarian",
+        elder_influence=0.35,
+        spouse_involvement_in_purchases=0.6,
+        income_stability="salaried",
+        socioeconomic_class="B1",
+        dual_income_household=True,
     )
 
 
@@ -55,10 +63,10 @@ def sample_persona(sample_demographics: DemographicAttributes) -> Persona:
         demographics=sample_demographics,
         health=HealthAttributes(),
         psychology=PsychologyAttributes(),
-        cultural=CulturalAttributes(),
+        cultural=CulturalAttributes(dietary_culture="vegetarian"),
         relationships=RelationshipAttributes(),
-        career=CareerAttributes(),
-        education_learning=EducationLearningAttributes(),
+        career=CareerAttributes(employment_status="full_time", work_hours_per_week=42),
+        education_learning=EducationLearningAttributes(education_level="masters"),
         lifestyle=LifestyleAttributes(),
         daily_routine=DailyRoutineAttributes(),
         values=ValueAttributes(),
@@ -69,7 +77,7 @@ def sample_persona(sample_demographics: DemographicAttributes) -> Persona:
 
 @pytest.fixture
 def high_price_sensitivity_persona(sample_demographics: DemographicAttributes) -> Persona:
-    """Persona with high price sensitivity — should reject expensive products."""
+    """Persona with strong budget discipline for value-sensitive tests."""
     return Persona(
         id="test-persona-price-sensitive",
         generation_seed=42,
@@ -78,19 +86,23 @@ def high_price_sensitivity_persona(sample_demographics: DemographicAttributes) -
         demographics=sample_demographics,
         health=HealthAttributes(),
         psychology=PsychologyAttributes(),
-        cultural=CulturalAttributes(),
+        cultural=CulturalAttributes(dietary_culture="vegetarian"),
         relationships=RelationshipAttributes(),
-        career=CareerAttributes(),
-        education_learning=EducationLearningAttributes(),
+        career=CareerAttributes(employment_status="full_time", work_hours_per_week=42),
+        education_learning=EducationLearningAttributes(education_level="masters"),
         lifestyle=LifestyleAttributes(),
-        daily_routine=DailyRoutineAttributes(),
-        values=ValueAttributes(
+        daily_routine=DailyRoutineAttributes(
             budget_consciousness=0.95,
-            price_sensitivity=0.9,
-            value_for_money_orientation=0.85,
-            brand_premium_willingness=0.1,
-            child_investment_priority=0.4,
-            guilt_spending_on_self=0.3,
+            health_spend_priority=0.35,
+            deal_seeking_intensity=0.9,
+            cashback_coupon_sensitivity=0.85,
+            impulse_purchase_tendency=0.1,
+            price_reference_point=350.0,
+        ),
+        values=ValueAttributes(
+            best_for_my_child_intensity=0.45,
+            guilt_driven_spending=0.2,
+            supplement_necessity_belief=0.3,
         ),
         emotional=EmotionalAttributes(),
         media=MediaAttributes(),
