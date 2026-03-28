@@ -82,11 +82,12 @@ class PersonaValidator:
             "freelance",
         },
         "family_structure": {"nuclear", "joint", "single_parent"},
-        "dietary_culture": {"vegetarian", "eggetarian", "non_vegetarian", "vegan"},
+        "dietary_culture": {"vegetarian", "eggetarian", "non_vegetarian", "vegan", "jain"},
         "primary_shopping_platform": {
             "amazon",
             "flipkart",
             "bigbasket",
+            "dmart",
             "local_store",
             "brand_website",
             "quick_commerce",

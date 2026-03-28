@@ -75,7 +75,12 @@ class DemographicAttributes(BaseModel):
         youngest = payload.get("youngest_child_age")
         oldest = payload.get("oldest_child_age")
 
-        if child_ages is None and youngest is not None and oldest is not None and isinstance(num_children, int):
+        if (
+            child_ages is None
+            and youngest is not None
+            and oldest is not None
+            and isinstance(num_children, int)
+        ):
             if num_children == 1:
                 payload["child_ages"] = [youngest]
             else:
@@ -341,16 +346,16 @@ class MediaAttributes(BaseModel):
         "instagram"
     )
     daily_social_media_hours: float = Field(ge=0.0, le=5.0, default=1.0)
-    content_format_preference: Literal["reels", "stories", "long_video", "text_posts", "podcasts"] = (
-        "reels"
-    )
+    content_format_preference: Literal[
+        "reels", "stories", "long_video", "text_posts", "podcasts"
+    ] = "reels"
     ad_receptivity: UnitInterval = 0.5
-    product_discovery_channel: Literal["social_media", "search", "friend", "doctor", "store_shelf", "ad"] = (
-        "search"
-    )
-    review_platform_trust: Literal["amazon_reviews", "google", "instagram", "youtube", "mom_blogs"] = (
-        "amazon_reviews"
-    )
+    product_discovery_channel: Literal[
+        "social_media", "search", "friend", "doctor", "store_shelf", "ad"
+    ] = "search"
+    review_platform_trust: Literal[
+        "amazon_reviews", "google", "instagram", "youtube", "mom_blogs"
+    ] = "amazon_reviews"
     search_behavior: Literal["active_seeker", "passive_absorber", "recommendation_dependent"] = (
         "active_seeker"
     )
@@ -530,3 +535,33 @@ class Persona(BaseModel):
             tier=tier,
             **identity_payload,
         )
+
+
+def _field_is_unit_interval(field_info: Any) -> bool:
+    """True if the field is a float constrained to the closed [0, 1] interval."""
+
+    if field_info.annotation is not float:
+        return False
+    ge_val: float | None = None
+    le_val: float | None = None
+    for meta in field_info.metadata:
+        if type(meta).__name__ == "Ge":
+            ge_val = meta.ge
+        elif type(meta).__name__ == "Le":
+            le_val = meta.le
+    return ge_val == ATTRIBUTE_MIN and le_val == ATTRIBUTE_MAX
+
+
+def list_psychographic_continuous_attributes() -> tuple[str, ...]:
+    """Return flat names of all ``UnitInterval`` identity fields (excludes demographics).
+
+    Used by the Gaussian copula to sample correlated [0, 1] psychographics.
+    """
+    names: list[str] = []
+    for category_name, model_cls in Persona._IDENTITY_CATEGORY_MODELS.items():
+        if category_name == "demographics":
+            continue
+        for field_name, field_info in model_cls.model_fields.items():
+            if _field_is_unit_interval(field_info):
+                names.append(field_name)
+    return tuple(names)
