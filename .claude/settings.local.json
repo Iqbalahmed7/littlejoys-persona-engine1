@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api:*)",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(f''''{item[type]:10s} {item[path]}''''\\) for item in data]\")",
+      "WebFetch(domain:ourlittlejoys.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:deepwiki.com)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(brew install:*)",
+      "Bash(pdftoppm -v)",
+      "Bash(pdftotext \"/Users/admin/Documents/AI Research/Simulatte Research/Foundational Papers/DeepPersona_A Generative Engine for Scaling Deep Synthetic Personas.pdf\" -)",
+      "Bash(chmod +x \"/Users/admin/Documents/Simulatte Projects/1. LittleJoys/scripts/\"*.sh)",
+      "Bash(uv sync:*)",
+      "Bash(curl -LsSf https://astral.sh/uv/install.sh)",
+      "Bash(sh)",
+      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
+      "Bash(uv python:*)",
+      "Bash(uv run:*)"
+    ]
+  }
+}

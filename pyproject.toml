@@ -1,0 +1,61 @@
+[project]
+name = "littlejoys-persona-engine"
+version = "0.1.0"
+description = "Persona Simulation Engine for LittleJoys — synthetic population generation, decision modeling, and causal analysis"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "numpy>=1.26",
+    "scipy>=1.12",
+    "pandas>=2.2",
+    "scikit-learn>=1.4",
+    "shap>=0.44",
+    "anthropic>=0.40",
+    "plotly>=5.18",
+    "streamlit>=1.30",
+    "structlog>=24.1",
+    "httpx>=0.27",
+    "beautifulsoup4>=4.12",
+    "pytrends>=4.9",
+    "pyarrow>=15.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "pytest-asyncio>=0.23",
+    "hypothesis>=6.98",
+    "mypy>=1.8",
+    "ruff>=0.5",
+    "bandit>=1.7",
+    "pre-commit>=3.6",
+    "pip-audit>=2.7",
+    "pandas-stubs>=2.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: marks tests that require external services (LLM API, web scraping)",
+]
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
