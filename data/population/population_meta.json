@@ -1,0 +1,48 @@
+{
+  "population_id": "9d8c8c3e467ee4782a53adf3b61a2ba7",
+  "generation_params": {
+    "size": 200,
+    "seed": 42,
+    "deep_persona_count": 10,
+    "target_filters": {}
+  },
+  "metadata": {
+    "generation_timestamp": "2026-03-28T08:51:28.418439+00:00",
+    "generation_duration_seconds": 0.5943301250226796,
+    "engine_version": "0.1.0",
+    "personas_skipped_after_validation": 0,
+    "validation_retry_attempts": 0
+  },
+  "validation_report": {
+    "timestamp": "2026-03-28T14:21:29.005226",
+    "population_size": 200,
+    "seed": 0,
+    "tier1_count": 200,
+    "tier2_count": 0,
+    "distribution_checks": {},
+    "correlation_checks": {},
+    "invalid_personas_regenerated": 0,
+    "hard_failure_types": {},
+    "soft_warnings": [
+      "homemaker + perceived_time_scarcity > 0.8",
+      "Tier3 + digital_payment_comfort > 0.85",
+      "household_income_lpa < 3 + best_for_my_child_intensity > 0.7",
+      "health_anxiety < 0.2 + supplement_necessity_belief > 0.8"
+    ],
+    "overall_pass": true
+  },
+  "tier1_parquet": "tier1.parquet",
+  "tier2_directory": "tier2",
+  "tier2_ids": [
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0000",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0001",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0002",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0003",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0004",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0005",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0006",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0007",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0008",
+    "9d8c8c3e467ee4782a53adf3b61a2ba7-t2-0009"
+  ]
+}

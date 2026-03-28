@@ -1,4 +1,8 @@
-"""Streamlit page for interactive ReportAgent generation."""
+"""Streamlit page for interactive ReportAgent generation.
+
+Like interviews, this page loads population from the sidebar path for report
+evidence, not from ``st.session_state.population``.
+"""
 
 from __future__ import annotations
 

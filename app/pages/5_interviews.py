@@ -1,4 +1,8 @@
-"""Streamlit page for interactive deep persona interviews."""
+"""Streamlit page for interactive deep persona interviews.
+
+Population is loaded from the sidebar path (or generated there), not from
+``st.session_state.population``; no home-page session guard is required.
+"""
 
 from __future__ import annotations
 
