@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from src.decision.funnel import (
     compute_awareness,
     compute_need_recognition,
@@ -82,7 +80,6 @@ def test_zero_awareness_produces_zero_adoption(sample_persona: Persona) -> None:
     assert result.rejection_reason == "low_awareness"
 
 
-@pytest.mark.skip(reason="OOS")
 def test_high_need_high_awareness_produces_adoption(
     sample_persona: Persona,
     sample_scenario: ScenarioConfig,
@@ -187,7 +184,6 @@ def test_rejection_reason_always_populated_for_rejections(sample_persona: Person
     assert len(result.rejection_reason) > 2
 
 
-@pytest.mark.skip(reason="OOS")
 def test_adoption_never_has_rejection_reason(
     sample_persona: Persona,
     sample_scenario: ScenarioConfig,

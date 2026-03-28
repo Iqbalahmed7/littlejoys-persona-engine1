@@ -31,8 +31,10 @@ from src.constants import (
     FUNNEL_BOOST_SCHOOL_PARTNERSHIP,
     FUNNEL_CONSIDERATION_DIETARY_MATCH,
     FUNNEL_CONSIDERATION_DIETARY_MISMATCH,
+    FUNNEL_CONSIDERATION_TRUST_THRESHOLD,
     FUNNEL_INFLUENCER_TRUST_THRESHOLD,
     FUNNEL_NON_PRIMARY_SOCIAL_PLATFORM_MATCH,
+    FUNNEL_PURCHASE_BARRIER_THRESHOLD,
     FUNNEL_PURCHASE_COMBO_CLIP_MAX,
     FUNNEL_PURCHASE_COMBO_CLIP_MIN,
     FUNNEL_PURCHASE_PRICE_RATIO_CAP,
@@ -390,9 +392,9 @@ def compute_purchase(
 
     hint: str | None = None
     if purchase_score < FUNNEL_THRESHOLD_PURCHASE:
-        if price_barrier >= effort_barrier and price_barrier >= 0.15:
+        if price_barrier >= effort_barrier and price_barrier >= FUNNEL_PURCHASE_BARRIER_THRESHOLD:
             hint = "price_too_high"
-        elif effort_barrier > price_barrier and effort_barrier >= 0.15:
+        elif effort_barrier > price_barrier and effort_barrier >= FUNNEL_PURCHASE_BARRIER_THRESHOLD:
             hint = "effort_too_high"
         else:
             hint = "insufficient_trust"
@@ -464,10 +466,10 @@ def run_funnel(
             reason = "dietary_incompatible"
         elif (
             persona.health.medical_authority_trust + persona.psychology.social_proof_bias
-        ) / 2.0 < 0.25:
+        ) / 2.0 < FUNNEL_CONSIDERATION_TRUST_THRESHOLD:
             reason = "insufficient_trust"
         else:
-            reason = "insufficient_trust"
+            reason = "insufficient_research"
         log.debug("funnel_reject_consideration", persona_id=pid, consideration=consideration)
         return DecisionResult(
             persona_id=pid,

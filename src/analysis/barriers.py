@@ -20,4 +20,31 @@ class BarrierDistribution(BaseModel):
 
 def analyze_barriers(results: dict) -> list[BarrierDistribution]:
     """Analyze where personas drop off and why."""
-    raise NotImplementedError("Full implementation in PRD-008")
+    if not results:
+        return []
+
+    iterable = results.values() if isinstance(results, dict) else results
+    total_personas = len(iterable)
+
+    if total_personas == 0:
+        return []
+
+    counts: dict[tuple[str, str], int] = {}
+    for row in iterable:
+        stage = row.get("rejection_stage")
+        reason = row.get("rejection_reason")
+
+        if stage and reason:
+            key = (str(stage), str(reason))
+            counts[key] = counts.get(key, 0) + 1
+
+    distributions = []
+    for (stage, reason), count in counts.items():
+        distributions.append(
+            BarrierDistribution(
+                stage=stage, barrier=reason, count=count, percentage=float(count) / total_personas
+            )
+        )
+
+    distributions.sort(key=lambda x: (-x.count, x.stage, x.barrier))
+    return distributions
