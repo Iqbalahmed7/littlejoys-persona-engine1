@@ -6,12 +6,14 @@ See ARCHITECTURE.md §6 and PRD-003 for full specification.
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
+import threading
 import time
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -31,6 +33,8 @@ from src.constants import (
     POPULATION_ENGINE_VERSION,
     TIER2_KMEANS_N_INIT,
 )
+from src.generation.names import generate_persona_id, generate_persona_name
+from src.generation.tier2_generator import Tier2NarrativeGenerator
 from src.taxonomy.correlations import (
     ConditionalRuleEngine,
     GaussianCopulaGenerator,
@@ -40,9 +44,49 @@ from src.taxonomy.distributions import DistributionTables
 from src.taxonomy.schema import Persona, list_psychographic_continuous_attributes
 from src.taxonomy.validation import PersonaValidator, PopulationValidationReport
 
+if TYPE_CHECKING:
+    from src.utils.llm import LLMClient
+
 log = structlog.get_logger(__name__)
 
 _CONTINUOUS_ATTR_NAMES: tuple[str, ...] = list_psychographic_continuous_attributes()
+_T = TypeVar("_T")
+
+
+def _run_async(coro: Any) -> _T:
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro)
+
+    result: list[_T] = []
+    errors: list[BaseException] = []
+
+    def _runner() -> None:
+        try:
+            result.append(asyncio.run(coro))
+        except BaseException as exc:  # pragma: no cover - exercised through caller failures
+            errors.append(exc)
+
+    thread = threading.Thread(target=_runner, daemon=True)
+    thread.start()
+    thread.join()
+    if errors:
+        raise errors[0]
+    return result[0]
+
+
+def _default_llm_client() -> LLMClient:
+    from src.config import Config
+    from src.utils.llm import LLMClient
+
+    return LLMClient(
+        Config(
+            llm_mock_enabled=True,
+            llm_cache_enabled=False,
+            anthropic_api_key="",
+        )
+    )
 
 
 class GenerationParams(BaseModel):
@@ -244,19 +288,22 @@ class PopulationGenerator:
 
     def generate(
         self,
+        *,
         size: int = DEFAULT_POPULATION_SIZE,
         seed: int = DEFAULT_SEED,
         deep_persona_count: int = DEFAULT_DEEP_PERSONA_COUNT,
         target_filters: dict[str, Any] | None = None,
+        llm_client: LLMClient | None = None,
     ) -> Population:
         """
-        Generate a validated population with statistical Tier 1 and a diverse Tier 2 subset.
+        Generate a validated population where every persona includes a narrative.
 
         Args:
-            size: Number of Tier 1 personas to produce (best effort if validation skips rows).
+            size: Number of personas to produce (best effort if validation skips rows).
             seed: Master RNG seed for reproducibility.
-            deep_persona_count: Number of Tier 2 (``deep``) personas to select for enrichment.
+            deep_persona_count: Preserved in metadata for backwards compatibility.
             target_filters: Optional demographic filters (equality or ``[low, high]`` ranges).
+            llm_client: Optional LLM client used for narrative generation.
 
         Returns:
             ``Population`` with metadata and optional population validation report.
@@ -266,6 +313,7 @@ class PopulationGenerator:
         """
         t0 = time.perf_counter()
         filters = dict(target_filters or {})
+        llm = llm_client or _default_llm_client()
         # Derive population_id from seed for determinism (same seed → same ID)
         population_id = hashlib.md5(f"{seed}-{size}-{filters}".encode()).hexdigest()
         timestamp = datetime.now(UTC).isoformat()
@@ -287,11 +335,9 @@ class PopulationGenerator:
         retry_events = 0
 
         for i in range(len(merged)):
-            persona_id = f"{population_id}-t1-{i:05d}"
             row = merged.iloc[i]
             persona, ok, retries = self._build_persona_with_retries(
                 row=row,
-                persona_id=persona_id,
                 base_seed=seed,
                 index=i,
                 timestamp=timestamp,
@@ -302,9 +348,7 @@ class PopulationGenerator:
                 tier1_personas.append(persona)
             else:
                 skipped += 1
-                log.warning(
-                    "persona_skipped_after_validation", persona_id=persona_id, retries=retries
-                )
+                log.warning("persona_skipped_after_validation", persona_index=i, retries=retries)
 
         log.info(
             "validation_complete",
@@ -313,20 +357,30 @@ class PopulationGenerator:
             retry_attempts=retry_events,
         )
 
-        k_deep = min(deep_persona_count, len(tier1_personas))
-        tier2_source = self._select_for_tier2(tier1_personas, k_deep, seed)
-        tier2_personas = [
-            p.model_copy(
-                update={
-                    "tier": "deep",
-                    "id": f"{population_id}-t2-{j:04d}",
-                    "narrative": None,
-                }
+        narrative_generator = Tier2NarrativeGenerator(llm)
+        tier1_personas = _run_async(
+            narrative_generator.generate_batch(
+                tier1_personas,
+                max_concurrency=llm.config.llm_max_concurrency,
             )
-            for j, p in enumerate(tier2_source)
-        ]
+        )
+        log.info("persona_narratives_generated", count=len(tier1_personas))
 
-        log.info("tier2_selected", count=len(tier2_personas), kmeans_clusters=k_deep)
+        # Resolve any duplicate human-readable persona IDs by appending a
+        # deterministic suffix to later occurrences.
+        seen: dict[str, int] = {}
+        resolved_tier1: list[Persona] = []
+        for persona in tier1_personas:
+            base_id = persona.id
+            next_n = seen.get(base_id, 0) + 1
+            seen[base_id] = next_n
+            if next_n == 1:
+                resolved_tier1.append(persona)
+            else:
+                resolved_tier1.append(persona.model_copy(update={"id": f"{base_id}-{next_n}"}))
+        tier1_personas = resolved_tier1
+
+        tier2_personas: list[Persona] = []
 
         flat_pop = [p.to_flat_dict() | {"id": p.id, "tier": p.tier} for p in tier1_personas]
         validation_report = validator.validate_population(flat_pop, {}, {})
@@ -366,7 +420,6 @@ class PopulationGenerator:
     def _build_persona_with_retries(
         self,
         row: pd.Series,
-        persona_id: str,
         base_seed: int,
         index: int,
         timestamp: str,
@@ -386,6 +439,18 @@ class PopulationGenerator:
                 resample_seed = base_seed + index * 10_007 + attempt * 1_009
                 current_row = _resample_merged_row(resample_seed, self._correlation_rules)
             flat = _series_to_flat_dict(current_row)
+            gender = str(flat.get("parent_gender"))
+            city_name = str(flat.get("city_name"))
+            parent_age = int(flat.get("parent_age"))
+
+            name = generate_persona_name(gender=gender, index=index, seed=base_seed)
+            persona_id = generate_persona_id(
+                name=name,
+                city_name=city_name,
+                gender=gender,
+                parent_age=parent_age,
+                index=index,
+            )
             try:
                 persona = Persona.from_flat_dict(
                     flat,
@@ -397,6 +462,8 @@ class PopulationGenerator:
             except Exception as exc:
                 log.warning("persona_construct_failed", persona_id=persona_id, error=str(exc))
                 continue
+
+            persona.display_name = name
 
             result = validator.validate_persona(persona_id, persona.to_flat_dict())
             if result.is_valid:

@@ -51,7 +51,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("Product Parameters")
     custom_scenario.product.price_inr = st.slider(
-        "Price (INR)", 100, 1500, custom_scenario.product.price_inr, step=50
+        "Price (INR)", 100.0, 1500.0, float(custom_scenario.product.price_inr), step=50.0
     )
     custom_scenario.product.taste_appeal = st.slider(
         "Taste Appeal", 0.0, 1.0, float(custom_scenario.product.taste_appeal), step=0.05

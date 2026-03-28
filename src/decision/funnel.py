@@ -26,12 +26,18 @@ from src.constants import (
     DEFAULT_CHANNEL_MIX_YOUTUBE,
     FUNNEL_AGE_RELEVANCE_IN_RANGE,
     FUNNEL_AGE_RELEVANCE_OUTSIDE_RANGE,
+    FUNNEL_AWARENESS_BASE_FLOOR,
     FUNNEL_BOOST_INFLUENCER_CAMPAIGN,
     FUNNEL_BOOST_PEDIATRICIAN_ENDORSEMENT,
     FUNNEL_BOOST_SCHOOL_PARTNERSHIP,
     FUNNEL_CONSIDERATION_DIETARY_MATCH,
     FUNNEL_CONSIDERATION_DIETARY_MISMATCH,
     FUNNEL_CONSIDERATION_TRUST_THRESHOLD,
+    FUNNEL_CONSIDERATION_WEIGHT_BRAND,
+    FUNNEL_CONSIDERATION_WEIGHT_CULTURAL,
+    FUNNEL_CONSIDERATION_WEIGHT_RESEARCH,
+    FUNNEL_CONSIDERATION_WEIGHT_RISK,
+    FUNNEL_CONSIDERATION_WEIGHT_TRUST,
     FUNNEL_INFLUENCER_TRUST_THRESHOLD,
     FUNNEL_NON_PRIMARY_SOCIAL_PLATFORM_MATCH,
     FUNNEL_PURCHASE_BARRIER_THRESHOLD,
@@ -277,7 +283,7 @@ def compute_awareness(
 
     marketing = scenario.marketing
     base = marketing.awareness_budget * _channel_persona_match(persona, marketing)
-    score = base
+    score = max(base, FUNNEL_AWARENESS_BASE_FLOOR) if marketing.awareness_budget > 0 else base
 
     if marketing.pediatrician_endorsement and (
         persona.health.medical_authority_trust > FUNNEL_TRUST_SIGNAL_PEDIATRICIAN_TRUST
@@ -339,10 +345,14 @@ def compute_consideration(
     else:
         risk_factor = 1.0
 
-    multiplier = _clip_unit(
-        trust_factor * research_factor * cultural_fit * brand_factor * risk_factor
+    weighted = (
+        FUNNEL_CONSIDERATION_WEIGHT_TRUST * trust_factor
+        + FUNNEL_CONSIDERATION_WEIGHT_RESEARCH * research_factor
+        + FUNNEL_CONSIDERATION_WEIGHT_CULTURAL * cultural_fit
+        + FUNNEL_CONSIDERATION_WEIGHT_BRAND * brand_factor
+        + FUNNEL_CONSIDERATION_WEIGHT_RISK * risk_factor
     )
-    return _clip_unit(awareness * multiplier)
+    return _clip_unit(weighted)
 
 
 def compute_purchase(
@@ -381,14 +391,14 @@ def compute_purchase(
     value = _clip_unit(value_core * benefit_mix)
 
     emotional = _clip_unit(
-        persona.emotional.emotional_persuasion_susceptibility
-        * persona.values.guilt_driven_spending
-        * persona.values.best_for_my_child_intensity
+        persona.emotional.emotional_persuasion_susceptibility * 0.3
+        + persona.values.guilt_driven_spending * 0.3
+        + persona.values.best_for_my_child_intensity * 0.4
     )
 
     combo = value + emotional - price_barrier - effort_barrier
     combo = max(FUNNEL_PURCHASE_COMBO_CLIP_MIN, min(FUNNEL_PURCHASE_COMBO_CLIP_MAX, combo))
-    purchase_score = _clip_unit(consideration * combo)
+    purchase_score = _clip_unit(combo)
 
     hint: str | None = None
     if purchase_score < FUNNEL_THRESHOLD_PURCHASE:

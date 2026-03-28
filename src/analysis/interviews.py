@@ -116,6 +116,36 @@ def _daily_routine_summary(persona: Persona) -> str:
     )
 
 
+def _natural_budget_description(budget_consciousness: float) -> str:
+    if budget_consciousness >= 0.75:
+        return "I'm very careful about what we spend — every rupee counts"
+    if budget_consciousness >= 0.5:
+        return "I keep a close eye on our budget but I'll spend when it matters"
+    if budget_consciousness >= 0.25:
+        return "money isn't the first thing I think about when shopping"
+    return "I don't worry too much about price if the quality is right"
+
+
+def _natural_health_description(health_anxiety: float) -> str:
+    if health_anxiety >= 0.75:
+        return "I worry a lot about whether my kids are getting proper nutrition"
+    if health_anxiety >= 0.5:
+        return "I try to stay on top of their health without overthinking it"
+    if health_anxiety >= 0.25:
+        return "I trust that a balanced diet covers most of their needs"
+    return "I believe kids are naturally resilient and don't stress about it"
+
+
+def _natural_trust_description(medical_authority_trust: float) -> str:
+    if medical_authority_trust >= 0.75:
+        return "I always check with our pediatrician before trying anything new"
+    if medical_authority_trust >= 0.5:
+        return "I value medical advice but also do my own research"
+    if medical_authority_trust >= 0.25:
+        return "I prefer to research things myself rather than just follow doctor's orders"
+    return "I trust my own instincts more than medical recommendations"
+
+
 def _psychographic_highlights(persona: Persona) -> list[str]:
     flat = persona.to_flat_dict()
     scored: list[tuple[str, float]] = []
@@ -290,36 +320,42 @@ class PersonaInterviewer:
         )
         outcome = str(decision_result.get("outcome", "reject")).lower()
         history_prefix = "As I mentioned earlier, " if conversation_history else ""
+        name = persona.display_name or persona.demographics.city_name + " parent"
 
         if "price" in lowered:
+            budget_desc = _natural_budget_description(persona.daily_routine.budget_consciousness)
             if outcome == "adopt":
                 body = (
-                    f"{history_prefix}the price still has to feel justified, but with our roughly "
-                    f"{persona.demographics.household_income_lpa:.1f} lakh household income I could make room for "
-                    f"{product_name} because it matched my {persona.values.best_for_my_child_intensity:.2f} level of "
+                    f"{history_prefix}the price still has to feel justified, but as a {persona.demographics.socioeconomic_class} family, "
+                    f"I could make room for {product_name} because it matched my strong desire of "
                     "wanting the best for my child. I still compare it against what I already buy and whether the "
                     "benefits feel real, but if the routine is simple and I trust the ingredients, I can stretch a little."
                 )
             else:
                 body = (
-                    f"{history_prefix}price was exactly where I hesitated. With our income at about "
-                    f"{persona.demographics.household_income_lpa:.1f} lakh and my budget_consciousness sitting around "
-                    f"{persona.daily_routine.budget_consciousness:.2f}, {product_name} felt like one more premium add-on. "
-                    "If I am not fully convinced on trust and visible results, I will usually delay or skip the purchase."
+                    f"{history_prefix}price was exactly where I hesitated. With our family income, {budget_desc}. "
+                    f"{product_name} felt like one more premium add-on. If I am not fully convinced on trust and visible "
+                    "results, I will usually delay or skip the purchase."
                 )
         elif "trust" in lowered or "doctor" in lowered:
+            trust_desc = _natural_trust_description(persona.health.medical_authority_trust)
+            sources = (
+                ", ".join(persona.health.health_info_sources[:2])
+                if persona.health.health_info_sources
+                else "recommendations from friends"
+            )
             body = (
-                f"{history_prefix}I rarely buy on hype alone. I usually start with {', '.join(persona.health.health_info_sources[:2])}, "
-                f"and because my medical_authority_trust is {persona.health.medical_authority_trust:.2f}, a pediatrician's opinion "
-                "matters more to me than influencer chatter. I need the label to look clean, the claim to sound sensible, and the "
+                f"{history_prefix}I rarely buy on hype alone. I usually start with {sources}, "
+                f"and {trust_desc}. I need the label to look clean, the claim to sound sensible, and the "
                 "routine to fit how our mornings actually work."
             )
         else:
+            health_desc = _natural_health_description(persona.psychology.health_anxiety)
             body = (
-                f"{history_prefix}life in {persona.demographics.city_name} already feels like a steady juggle between "
+                f"{history_prefix}For me, {name}, life already feels like a steady juggle between "
                 f"work, school, and meals, so I answer most product questions through that lens. My child is {persona.demographics.child_ages[0]}, "
-                f"I keep a {persona.daily_routine.breakfast_routine} breakfast routine, and my health_anxiety is {persona.psychology.health_anxiety:.2f}, "
-                "so I care about nutrition, but I also want practical choices that my family can actually sustain."
+                f"I keep a {persona.daily_routine.breakfast_routine} breakfast routine, and {health_desc}. "
+                "I care about nutrition, but I also want practical choices that my family can actually sustain."
             )
 
         closing = (

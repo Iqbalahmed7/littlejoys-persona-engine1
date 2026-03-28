@@ -1,7 +1,7 @@
 # Streamlit multipage: numeric module name (``1_…``) is required for sidebar order.
 # ruff: noqa: N999, TC002
 """
-Population Explorer — Tier 1 overview, demographics, psychographics, Tier 2 narratives.
+Population Explorer — cohort overview, demographics, psychographics, persona stories.
 """
 
 from __future__ import annotations
@@ -17,11 +17,17 @@ from src.constants import (
     SCENARIO_IDS,
 )
 from src.simulation.static import StaticSimulationResult
-from src.taxonomy.schema import list_psychographic_continuous_attributes
 from src.utils.dashboard_data import tier1_dataframe_with_results
+from src.utils.display import (
+    ATTRIBUTE_CATEGORIES,
+    SEC_DESCRIPTIONS,
+    display_name,
+    outcome_label,
+    persona_display_name,
+)
 
 st.title("Population Explorer")
-st.caption("Synthetic Tier 1 cohort, demographics, and deep (Tier 2) persona narratives.")
+st.caption("Synthetic statistical cohort, demographics, psychographics, and rich persona stories.")
 
 if "population" not in st.session_state:
     st.warning("Load or generate a population from the home page first.")
@@ -83,8 +89,8 @@ c1, c2, c3 = (
     DASHBOARD_BRAND_COLORS["accent"],
 )
 m1, m2, m3 = st.columns(3)
-m1.metric("Tier 1 (statistical)", f"{n1:,}")
-m2.metric("Tier 2 (deep)", f"{n2:,}")
+m1.metric("Population Size", f"{n1:,}")
+m2.metric("Personas with Narratives", f"{n2:,}")
 m3.metric("Total personas", f"{n1 + n2:,}")
 
 st.subheader("Demographics")
@@ -104,7 +110,12 @@ if demo_cols:
     with h1:
         cat = [c for c in demo_cols if c != "household_income_lpa"]
         if cat:
-            choice = st.selectbox("Distribution (categorical)", cat, key="pop_demo_cat")
+            choice = st.selectbox(
+                "Distribution (categorical)",
+                cat,
+                format_func=display_name,
+                key="pop_demo_cat",
+            )
             vc = df[choice].astype(str).value_counts().reset_index()
             vc.columns = [choice, "count"]
             fig = px.bar(
@@ -112,81 +123,169 @@ if demo_cols:
                 x=choice,
                 y="count",
                 color_discrete_sequence=[c1],
-                title=f"Count by {choice}",
+                title=f"Count by {display_name(choice)}",
             )
+            fig.update_xaxes(title=display_name(choice))
+            fig.update_yaxes(title="Count")
             fig.update_layout(height=400, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
+            if choice == "socioeconomic_class":
+                with st.expander("What do SEC classes mean?"):
+                    for cls, desc in SEC_DESCRIPTIONS.items():
+                        st.markdown(f"**{cls}**: {desc}")
     with h2:
         if "household_income_lpa" in df.columns:
+            inc_label = display_name("household_income_lpa")
             fig_h = px.histogram(
                 df,
                 x="household_income_lpa",
                 nbins=24,
                 color_discrete_sequence=[c2],
-                title="Household income (LPA)",
+                title=f"Distribution — {inc_label}",
             )
+            fig_h.update_xaxes(title=inc_label)
+            fig_h.update_yaxes(title="Count")
             fig_h.update_layout(height=400, showlegend=False)
             st.plotly_chart(fig_h, use_container_width=True)
 else:
     st.info("No demographic columns found in Tier 1 frame.")
 
 st.subheader("Psychographics — scatter")
-psy_attrs = [a for a in list_psychographic_continuous_attributes() if a in df.columns]
-if len(psy_attrs) >= 2:
+category = st.selectbox(
+    "Attribute category",
+    list(ATTRIBUTE_CATEGORIES.keys()),
+    key="pop_psy_category",
+)
+attrs_in_category = [a for a in ATTRIBUTE_CATEGORIES[category] if a in df.columns]
+if len(attrs_in_category) >= 2:
     cxa, cxb = st.columns(2)
     with cxa:
-        x_attr = st.selectbox("X axis", psy_attrs, index=0, key="pop_scatter_x")
+        x_attr = st.selectbox(
+            "X axis",
+            attrs_in_category,
+            format_func=display_name,
+            key="pop_scatter_x",
+        )
     with cxb:
-        y_choices = [a for a in psy_attrs if a != x_attr]
-        y_attr = st.selectbox("Y axis", y_choices, index=0, key="pop_scatter_y")
+        y_choices = [a for a in attrs_in_category if a != x_attr]
+        y_attr = st.selectbox(
+            "Y axis",
+            y_choices,
+            format_func=display_name,
+            key="pop_scatter_y",
+        )
     color_col = "outcome" if "outcome" in df.columns else None
+    plot_df = df
+    if color_col:
+        plot_df = df.assign(
+            _outcome_display=df["outcome"].map(
+                lambda v: outcome_label(str(v) if v is not None else "")
+            )
+        )
+        color_key = "_outcome_display"
+        outcome_title = display_name("outcome")
+    else:
+        color_key = None
+        outcome_title = ""
+
     fig_s = px.scatter(
-        df,
+        plot_df,
         x=x_attr,
         y=y_attr,
-        color=color_col,
-        color_discrete_map={
-            "adopt": DASHBOARD_BRAND_COLORS["adopt"],
-            "reject": DASHBOARD_BRAND_COLORS["reject"],
-        }
-        if color_col
-        else None,
+        color=color_key,
+        color_discrete_map=None,
         opacity=0.65,
-        title=f"{x_attr} vs {y_attr}"
-        + (" (colored by simulation outcome)" if color_col else ""),
+        title=f"{display_name(x_attr)} vs {display_name(y_attr)}"
+        + (f" (by {outcome_title})" if color_col else ""),
     )
+    if color_col:
+        fig_s.update_layout(legend_title_text=outcome_title)
+    fig_s.update_xaxes(title=display_name(x_attr))
+    fig_s.update_yaxes(title=display_name(y_attr))
     fig_s.update_traces(marker={"size": 8})
     fig_s.update_layout(height=DASHBOARD_CHART_HEIGHT)
+
+    if color_col and color_col in df.columns:
+        median_x = df[x_attr].median()
+        median_y = df[y_attr].median()
+
+        quadrants = {
+            "High-High": df[(df[x_attr] >= median_x) & (df[y_attr] >= median_y)],
+            "High-Low": df[(df[x_attr] >= median_x) & (df[y_attr] < median_y)],
+            "Low-High": df[(df[x_attr] < median_x) & (df[y_attr] >= median_y)],
+            "Low-Low": df[(df[x_attr] < median_x) & (df[y_attr] < median_y)],
+        }
+
+        overall_rate = (df[color_col] == "adopt").mean()
+
+        insight_parts = []
+        for quad_name, quad_df in quadrants.items():
+            if len(quad_df) > 0:
+                quad_rate = (quad_df[color_col] == "adopt").mean()
+                ratio = quad_rate / overall_rate if overall_rate > 0 else 0
+                if ratio > 1.3 or ratio < 0.7:
+                    insight_parts.append(
+                        f"**{quad_name}** quadrant: {quad_rate:.0%} adoption ({ratio:.1f}x average)"
+                    )
+
+        fig_s.add_hline(y=median_y, line_dash="dot", line_color="gray", opacity=0.5)
+        fig_s.add_vline(x=median_x, line_dash="dot", line_color="gray", opacity=0.5)
+
     st.plotly_chart(fig_s, use_container_width=True)
     if color_col is None:
-        st.caption("Run simulations on the home page to merge outcomes and color this chart.")
+        st.info(
+            "Run a simulation from the Home page to see how these attributes relate to adoption decisions."
+        )
+    else:
+        if insight_parts:
+            st.caption(" · ".join(insight_parts))
+            best_quad = max(
+                quadrants.items(),
+                key=lambda q: (q[1][color_col] == "adopt").mean() if len(q[1]) > 0 else 0,
+            )
+            best_quad_rate = (best_quad[1][color_col] == "adopt").mean()
+            x_dir = "high" if "High-" in best_quad[0] else "low"
+            y_dir = "high" if "-High" in best_quad[0] else "low"
+            st.info(
+                f"Parents with {x_dir} {display_name(x_attr)} and {y_dir} {display_name(y_attr)} "
+                f"adopt at {best_quad_rate:.0%} vs {overall_rate:.0%} overall."
+            )
+        else:
+            st.caption("No strong adoption differences across quadrants for these attributes.")
 else:
-    st.info("Not enough continuous psychographic columns in the current frame.")
+    st.info(
+        "Not enough attributes from this category appear in the current frame for a scatter plot "
+        "(need at least two).",
+    )
 
 st.subheader("Persona lookup")
 lookup_id = st.text_input("Persona ID", placeholder="e.g. abc-t1-00042", key="pop_lookup_id")
 if lookup_id.strip():
     try:
         persona = pop.get_persona(lookup_id.strip())
-        st.success(f"Found: **{persona.id}** (`{persona.tier}`)")
-        with st.expander("Flattened identity attributes", expanded=False):
-            st.json(persona.to_flat_dict())
+        primary = persona_display_name(persona)
+        st.success(f"**{primary}** · `{persona.id}`")
+        with st.expander("Identity attributes (technical view)", expanded=False):
+            labeled = {display_name(k): v for k, v in sorted(persona.to_flat_dict().items())}
+            st.json(labeled)
         if persona.narrative:
             st.markdown("**Narrative**")
             st.write(persona.narrative)
         else:
-            st.caption("No Tier 2 narrative stored for this persona.")
+            st.caption("No narrative text stored for this persona yet.")
     except KeyError:
         st.error("No persona matches that ID.")
 
-st.subheader("Tier 2 deep narratives")
+st.subheader("Persona stories")
 cap = min(DASHBOARD_MAX_TIER2_DISPLAY, len(pop.tier2_personas))
 if cap == 0:
-    st.caption("No Tier 2 personas in this population.")
+    st.caption("No personas with narratives in this population.")
 else:
-    st.caption(f"Showing up to {cap} of {len(pop.tier2_personas)} deep personas.")
+    st.caption(
+        f"Showing up to {cap} of {len(pop.tier2_personas)} personas that include narrative text."
+    )
     for persona in pop.tier2_personas[:cap]:
-        title = f"{persona.id} — {persona.demographics.city_tier}"
+        title = f"{persona_display_name(persona)} · `{persona.id}`"
         with st.expander(title, expanded=False):
-            body = persona.narrative or "_No narrative text (statistical enrichment pending)._"
+            body = persona.narrative or "_No narrative text yet._"
             st.markdown(body)

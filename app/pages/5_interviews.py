@@ -107,7 +107,7 @@ def _coerce_turns(raw_turns: Any) -> list[InterviewTurn]:
 
 st.title("Persona Interviews")
 st.caption(
-    "Chat with Tier 2 personas in-character about why they adopted or rejected a scenario product."
+    "Chat with deep personas in-character about why they adopted or rejected a scenario product."
 )
 
 with st.sidebar:
@@ -119,7 +119,7 @@ with st.sidebar:
 with st.spinner("Loading population..."):
     population = _load_population(population_path)
 
-persona_pool = population.tier2_personas if population.tier2_personas else population.tier1_personas
+persona_pool = population.tier1_personas
 if not persona_pool:
     st.warning("No personas available. Generate population data first.")
     st.stop()

@@ -56,6 +56,6 @@ if "scenario_results" not in st.session_state:
 if "population" in st.session_state:
     pop = st.session_state.population
     c1, c2, c3 = st.columns(3)
-    c1.metric("Tier 1 (Statistical) Personas", len(pop.tier1_personas))
-    c2.metric("Tier 2 (Deep) Personas", len(pop.tier2_personas))
+    c1.metric("Total Personas", len(pop.tier1_personas))
+    c2.metric("With Narratives", sum(1 for p in pop.tier1_personas if p.narrative))
     c3.metric("Scenarios Evaluated", len(st.session_state.get("scenario_results", {})))
