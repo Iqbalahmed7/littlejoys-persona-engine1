@@ -102,7 +102,7 @@ def adoption_heatmap_matrix(
     outcome_col: str = "outcome",
 ) -> tuple[list[list[float]], list[str], list[str]]:
     """
-    Build adoption-rate matrix for heatmap (row_attr × col_attr).
+    Build adoption-rate matrix for heatmap (row_attr vs col_attr).
 
     Returns:
         ``z_matrix``, ``row_labels``, ``col_labels`` suitable for

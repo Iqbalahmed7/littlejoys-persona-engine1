@@ -6,7 +6,7 @@ PRD-011 / Sprint 4. All builders return Plotly ``go.Figure`` instances.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import plotly.graph_objects as go
 
@@ -118,7 +118,7 @@ def create_segment_heatmap(
     """
     Heatmap of adoption rates.
 
-    If ``matrix`` and labels are provided, builds a 2D heatmap (e.g. city tier × income).
+    If ``matrix`` and labels are provided, builds a 2D heatmap (e.g. city tier vs income).
     Otherwise uses ``segments`` (:class:`~src.analysis.segments.SegmentAnalysis`) as a
     single-row heatmap for ``group_by``.
     """
@@ -140,8 +140,8 @@ def create_segment_heatmap(
         fig.update_layout(
             title=f"Adoption rate by {group_by}",
             height=DASHBOARD_CHART_HEIGHT,
-            xaxis_title=col_labels and "Column" or "",
-            yaxis_title=row_labels and "Row" or "",
+            xaxis_title="Column" if col_labels else "",
+            yaxis_title="Row" if row_labels else "",
         )
         return fig
 
