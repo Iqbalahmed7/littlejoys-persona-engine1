@@ -92,6 +92,16 @@ def _apply_modifications(
     return ScenarioConfig.model_validate(payload), parameter_changes
 
 
+def apply_scenario_modifications(
+    base: ScenarioConfig,
+    modifications: dict[str, Any],
+) -> ScenarioConfig:
+    """Return a new ``ScenarioConfig`` with dot-path modifications applied (see PRD-007)."""
+
+    updated, _ = _apply_modifications(base, modifications)
+    return updated
+
+
 def _income_bracket(flat: dict[str, Any]) -> str:
     income = float(flat.get("household_income_lpa", 0.0))
     if income <= INCOME_BRACKET_LOW_MAX_LPA:
