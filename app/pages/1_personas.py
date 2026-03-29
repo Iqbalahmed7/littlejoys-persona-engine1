@@ -102,19 +102,19 @@ with f2:
     )
 with f3:
     sel_diet = st.multiselect(
-        "Diet",
-        sorted(df["dietary_preference"].dropna().unique()),
+        "Diet Culture",
+        sorted(df["dietary_culture"].dropna().unique()),
         default=[],
         placeholder="All diets",
         key="personas_sel_diet",
     )
 with f4:
-    sel_religion = st.multiselect(
-        "Religion",
-        sorted(df["religion"].dropna().unique()),
+    sel_region = st.multiselect(
+        "Region",
+        sorted(df["cultural_region"].dropna().unique()),
         default=[],
         placeholder="All",
-        key="personas_sel_religion",
+        key="personas_sel_region",
     )
 
 filtered = df.copy()
@@ -123,13 +123,13 @@ if sel_tier:
 if sel_sec:
     filtered = filtered[filtered["socioeconomic_class"].isin(sel_sec)]
 if sel_diet:
-    filtered = filtered[filtered["dietary_preference"].isin(sel_diet)]
-if sel_religion:
-    filtered = filtered[filtered["religion"].isin(sel_religion)]
+    filtered = filtered[filtered["dietary_culture"].isin(sel_diet)]
+if sel_region:
+    filtered = filtered[filtered["cultural_region"].isin(sel_region)]
 
 st.caption(f"Showing {len(filtered)} of {len(df)} personas")
 
-if sel_tier or sel_sec or sel_diet or sel_religion:
+if sel_tier or sel_sec or sel_diet or sel_region:
     c1, c2 = st.columns(2)
     with c1:
         tier_counts = filtered["city_tier"].value_counts().reset_index()
@@ -167,7 +167,7 @@ st.subheader("Persona Browser")
 persona_ids = [p.id for p in pop.personas]
 persona_labels = {p.id: f"{persona_display_name(p)} · {p.id}" for p in pop.personas}
 
-if sel_tier or sel_sec or sel_diet or sel_religion:
+if sel_tier or sel_sec or sel_diet or sel_region:
     filtered_ids = set(filtered["id"].tolist())
     persona_ids = [pid for pid in persona_ids if pid in filtered_ids]
 
