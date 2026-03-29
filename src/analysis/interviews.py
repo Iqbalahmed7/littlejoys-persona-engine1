@@ -210,6 +210,27 @@ class PersonaInterviewer:
 
     def __init__(self, llm_client: LLMClient) -> None:
         self.llm = llm_client
+        self._last_input_tokens: int = 0
+        self._last_output_tokens: int = 0
+        self._last_model: str = ""
+
+    @property
+    def last_input_tokens(self) -> int:
+        """Input tokens from the last real LLM call (0 if mock or not yet called)."""
+
+        return self._last_input_tokens
+
+    @property
+    def last_output_tokens(self) -> int:
+        """Output tokens from the last real LLM call (0 if mock or not yet called)."""
+
+        return self._last_output_tokens
+
+    @property
+    def last_model_name(self) -> str:
+        """Resolved model id from the last real LLM call."""
+
+        return self._last_model
 
     def build_system_prompt(
         self,
@@ -452,6 +473,10 @@ class PersonaInterviewer:
         system_prompt = self.build_system_prompt(persona, scenario_id, decision_result)
         history_block = self._render_history(conversation_history)
 
+        self._last_input_tokens = 0
+        self._last_output_tokens = 0
+        self._last_model = ""
+
         if self.llm.config.llm_mock_enabled:
             response_text = self._build_mock_response(
                 persona=persona,
@@ -471,6 +496,9 @@ class PersonaInterviewer:
                 model=_llm_route(INTERVIEW_LLM_MODEL),
             )
             response_text = response.text.strip()
+            self._last_input_tokens = int(response.input_tokens)
+            self._last_output_tokens = int(response.output_tokens)
+            self._last_model = str(response.model)
 
         guardrail_warnings = run_all_guardrails(
             response=response_text,

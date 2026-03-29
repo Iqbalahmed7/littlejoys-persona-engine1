@@ -130,6 +130,12 @@ class LLMClient:
             )
             self._persist_response(cache_key, response)
             self.usage.record(response)
+            try:
+                from src.utils.spend_tracker import record_llm_response
+
+                record_llm_response(response)
+            except Exception:
+                pass
             return response
 
         last_error: Exception | None = None
@@ -154,6 +160,12 @@ class LLMClient:
                 )
                 self._persist_response(cache_key, response)
                 self.usage.record(response)
+                try:
+                    from src.utils.spend_tracker import record_llm_response
+
+                    record_llm_response(response)
+                except Exception:
+                    pass
                 logger.info("llm_generate_success", model=model_name, cached=False)
                 return response
             except Exception as exc:

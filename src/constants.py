@@ -258,6 +258,12 @@ INTERVIEW_AI_DISCLOSURE_PATTERNS = [
     "i was programmed",
 ]
 
+# Interview LLM spend controls (Sprint 11)
+INTERVIEW_MAX_CALLS_PER_SESSION = 50
+INTERVIEW_MAX_COST_PER_SESSION_USD = 2.00
+INTERVIEW_COST_PER_1K_INPUT_USD = 0.003  # Claude Sonnet-class input (approximate)
+INTERVIEW_COST_PER_1K_OUTPUT_USD = 0.015  # Claude Sonnet-class output (approximate)
+
 # --- Code Coverage ---
 MIN_CODE_COVERAGE_PERCENT = 80
 
