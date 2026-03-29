@@ -3,22 +3,27 @@
 from __future__ import annotations
 
 import pytest
+
+from src.analysis.research_consolidator import ConsolidatedReport, consolidate_research
 from src.decision.scenarios import get_scenario
 from src.generation.population import Population
-from src.simulation.static import run_static_simulation
-from src.probing.smart_sample import select_smart_sample
 from src.probing.question_bank import get_question
+from src.probing.smart_sample import select_smart_sample
 from src.simulation.research_runner import (
-    ResearchResult, ResearchMetadata, InterviewResult, AlternativeRunSummary,
+    AlternativeRunSummary,
+    InterviewResult,
+    ResearchMetadata,
+    ResearchResult,
 )
-from src.analysis.research_consolidator import consolidate_research, ConsolidatedReport
+from src.simulation.static import run_static_simulation
 
 
 @pytest.fixture
 def population():
     """Load or generate a small test population."""
-    from src.constants import DASHBOARD_DEFAULT_POPULATION_PATH
     from pathlib import Path
+
+    from src.constants import DASHBOARD_DEFAULT_POPULATION_PATH
     path = Path(DASHBOARD_DEFAULT_POPULATION_PATH)
     if (path / "population_meta.json").exists():
         return Population.load(path)
@@ -139,7 +144,6 @@ def test_question_context_populated(research_result, population) -> None:
     assert len(report.question_title) > 0
     assert len(report.question_description) > 0
     # Verify title matches real question bank
-    from src.probing.question_bank import get_question
     q = get_question("q_nm26_repeat_purchase")
     assert report.question_title == q.title
 

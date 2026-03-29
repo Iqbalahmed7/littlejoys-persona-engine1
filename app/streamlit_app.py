@@ -46,16 +46,31 @@ if "population" not in st.session_state:
 if "scenario_results" not in st.session_state:
     st.session_state.scenario_results = {}
     if "population" in st.session_state:
-        with st.spinner("Pre-computing default scenario bounds..."):
-            for sid in SCENARIO_IDS:
-                st.session_state.scenario_results[sid] = run_static_simulation(
-                    st.session_state.population, get_scenario(sid)
-                )
-            st.toast("Baseline scenarios evaluated successfully.", icon="📈")
+        for sid in SCENARIO_IDS:
+            st.session_state.scenario_results[sid] = run_static_simulation(
+                st.session_state.population,
+                get_scenario(sid),
+            )
 
 if "population" in st.session_state:
     pop = st.session_state.population
+
     c1, c2, c3 = st.columns(3)
     c1.metric("Total Personas", len(pop.personas))
     c2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
-    c3.metric("Scenarios Evaluated", len(st.session_state.get("scenario_results", {})))
+    c3.metric("Scenarios Available", len(SCENARIO_IDS))
+
+    st.markdown("---")
+    st.subheader("Getting Started")
+    st.markdown(
+        "1. **Browse personas** — Explore your synthetic population\n"
+        "2. **Design research** — Pick a scenario, choose a business question, run the hybrid pipeline\n"
+        "3. **View results** — Quantitative findings, qualitative themes, strategic alternatives\n"
+        "4. **Deep-dive interviews** — Read the smart-sampled persona conversations"
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.page_link("pages/1_personas.py", label="Browse Personas →", icon="👥")
+    with col2:
+        st.page_link("pages/2_research.py", label="Design Research →", icon="🔬")

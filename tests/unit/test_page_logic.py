@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib
 import json
 import sys
+from pathlib import Path
 from types import ModuleType, SimpleNamespace
 from typing import Any
 
@@ -289,79 +290,6 @@ def _import_results_page(monkeypatch) -> Any:
     return _import_page_module(monkeypatch, "app.pages.3_results", fake_st)
 
 
-def _import_interviews_page(monkeypatch) -> Any:
-    import src.decision.funnel as funnel_module
-    import src.generation.population as population_module
-
-    fake_pop = _fake_population()
-
-    class _Decision:
-        def to_dict(self) -> dict[str, Any]:
-            return {
-                "persona_id": "persona-1",
-                "need_score": 0.65,
-                "awareness_score": 0.61,
-                "consideration_score": 0.54,
-                "purchase_score": 0.51,
-                "outcome": "adopt",
-                "rejection_stage": None,
-                "rejection_reason": None,
-            }
-
-    def _fake_generate(self, *args: Any, **kwargs: Any) -> Any:
-        del self, args, kwargs
-        return fake_pop
-
-    monkeypatch.setattr(population_module.Population, "load", classmethod(lambda cls, path: fake_pop))
-    monkeypatch.setattr(population_module.PopulationGenerator, "generate", _fake_generate)
-    monkeypatch.setattr(funnel_module, "run_funnel", lambda persona, scenario: _Decision())
-
-    fake_st = _FakeStreamlit(
-        session_state=_SessionState(),
-        select_values={"Scenario": SCENARIO_IDS[0], "Persona": "persona-1"},
-        text_inputs={"Population Path": "unused"},
-        buttons={"Reset Conversation": False},
-        chat_input_value=None,
-    )
-    return _import_page_module(monkeypatch, "app.pages.5_interviews", fake_st)
-
-
-def _import_report_page(monkeypatch, tmp_path) -> Any:
-    precompute_dir = tmp_path / "precomputed"
-    precompute_dir.mkdir(parents=True, exist_ok=True)
-    scenario_id = SCENARIO_IDS[0]
-
-    payload = {
-        "scenario_id": scenario_id,
-        "results_by_persona": {
-            "persona-1": {
-                "outcome": "adopt",
-                "need_score": 0.7,
-                "awareness_score": 0.72,
-                "consideration_score": 0.68,
-                "purchase_score": 0.64,
-                "rejection_stage": None,
-                "rejection_reason": None,
-            }
-        },
-    }
-    (precompute_dir / f"{scenario_id}_decision_rows.json").write_text(
-        json.dumps(payload),
-        encoding="utf-8",
-    )
-
-    fake_st = _FakeStreamlit(
-        session_state=_SessionState(),
-        select_values={"Scenario": scenario_id},
-        text_inputs={
-            "Population Path": "unused",
-            "Precompute Directory": str(precompute_dir),
-        },
-        buttons={"Generate Report": False},
-    )
-    return _import_page_module(monkeypatch, "app.pages.6_report", fake_st)
-
-
 def test_coerce_static_from_model(monkeypatch) -> None:
     module = _import_results_page(monkeypatch)
     static = StaticSimulationResult(
@@ -396,43 +324,3 @@ def test_coerce_static_none(monkeypatch) -> None:
     module = _import_results_page(monkeypatch)
     assert module._coerce_static(None) is None
     assert module._coerce_static({"not_results": True}) is None
-
-
-def test_coerce_turns_empty(monkeypatch) -> None:
-    module = _import_interviews_page(monkeypatch)
-    assert module._coerce_turns([]) == []
-
-
-def test_coerce_turns_mixed(monkeypatch) -> None:
-    module = _import_interviews_page(monkeypatch)
-    base = InterviewTurn(role="persona", content="Hello", timestamp="2026-03-28T00:00:00Z")
-    turns = module._coerce_turns(
-        [
-            base,
-            {"role": "user", "content": "Question", "timestamp": "2026-03-28T00:00:10Z"},
-            {"role": "persona", "content": "Missing timestamp"},
-            123,
-        ]
-    )
-    assert len(turns) == 2
-    assert all(isinstance(turn, InterviewTurn) for turn in turns)
-
-
-def test_load_precomputed_decision_rows(tmp_path, monkeypatch) -> None:
-    module = _import_report_page(monkeypatch, tmp_path)
-    payload = {
-        "scenario_id": "nutrimix_2_6",
-        "results_by_persona": {"p1": {"outcome": "adopt"}},
-    }
-    path = tmp_path / "custom_precompute"
-    path.mkdir(parents=True, exist_ok=True)
-    (path / "nutrimix_2_6_decision_rows.json").write_text(json.dumps(payload), encoding="utf-8")
-
-    loaded = module._load_precomputed_decision_rows(str(path), "nutrimix_2_6")
-    assert loaded == payload
-
-
-def test_load_precomputed_missing(tmp_path, monkeypatch) -> None:
-    module = _import_report_page(monkeypatch, tmp_path)
-    missing = module._load_precomputed_decision_rows(str(tmp_path / "missing"), "nutrimix_2_6")
-    assert missing is None

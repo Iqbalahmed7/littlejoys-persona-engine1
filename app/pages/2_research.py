@@ -5,35 +5,14 @@ import copy
 
 import streamlit as st
 
-from src.config import Config, get_config
+from src.config import Config
 from src.constants import SCENARIO_IDS
 from src.decision.scenarios import get_scenario
 from src.probing.question_bank import get_questions_for_scenario, get_tree_for_question
 from src.simulation.research_runner import ResearchRunner
+from src.utils.api_keys import has_api_key, resolve_api_key
 from src.utils.display import CHANNEL_HELP
 from src.utils.llm import LLMClient
-
-# --- API key helpers (same pattern as app/pages/5_interviews.py) ---
-
-
-def _resolve_api_key() -> str:
-    """Read Anthropic API key from Streamlit secrets (cloud) or .env.local (local)."""
-    try:
-        if hasattr(st, "secrets") and "ANTHROPIC_API_KEY" in st.secrets:
-            return str(st.secrets["ANTHROPIC_API_KEY"]).strip()
-    except Exception:
-        pass
-    key = get_config().anthropic_api_key.strip()
-    if not key or key == "sk-ant-REPLACE_ME":
-        return ""
-    return key
-
-
-def _has_api_key() -> bool:
-    """Return True if a non-placeholder API key is available."""
-    key = _resolve_api_key()
-    return bool(key) and not key.startswith("sk-ant-REPLACE")
-
 
 # --- Page ---
 
@@ -363,7 +342,7 @@ summary_cols[0].metric("Personas", f"{n_personas}")
 summary_cols[1].metric("Deep Interviews", f"~{sample_size}")
 summary_cols[2].metric("Alternative Scenarios", f"{alternative_count}")
 
-api_available = _has_api_key()
+api_available = has_api_key()
 if api_available:
     mock_mode = st.toggle("Mock Mode", value=False, help="Use real LLM for deep interviews")
     if not mock_mode:
@@ -384,7 +363,7 @@ if run_clicked:
             Config(
                 llm_mock_enabled=mock_mode,
                 llm_cache_enabled=not mock_mode,
-                anthropic_api_key="" if mock_mode else _resolve_api_key(),
+                anthropic_api_key="" if mock_mode else resolve_api_key(),
             )
         )
 

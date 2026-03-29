@@ -49,6 +49,6 @@ def test_interviews_deepdive_page_syntax():
 
 def test_research_consolidator_importable():
     """Verify research consolidator symbols are correctly exposed."""
-    from src.analysis.research_consolidator import consolidate_research, ConsolidatedReport
+    from src.analysis.research_consolidator import ConsolidatedReport, consolidate_research
     assert consolidate_research is not None
     assert ConsolidatedReport is not None
