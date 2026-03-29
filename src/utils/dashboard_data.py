@@ -87,7 +87,7 @@ def tier1_dataframe_with_results(
     """
 
     rows: list[dict[str, Any]] = []
-    for persona in population.tier1_personas:
+    for persona in population.personas:
         flat = persona.to_flat_dict()
         flat["id"] = persona.id
         flat["tier"] = persona.tier

@@ -1,7 +1,7 @@
 # Streamlit multipage: numeric module name (``3_…``) is required for sidebar order.
 # ruff: noqa: N999
 """
-Results Dashboard — KPIs, funnel, segments, barriers, causal insights, what-if.
+Results Dashboard — KPIs, decision pathway, segments, barriers, causal insights, what-if.
 """
 
 from __future__ import annotations
@@ -30,7 +30,9 @@ from src.utils.viz import (
 )
 
 st.title("Results Dashboard")
-st.caption("Static funnel outcomes, segment heatmaps, barriers, drivers, and quick what-if runs.")
+st.caption(
+    "Static decision-pathway outcomes, segment heatmaps, barriers, drivers, and quick what-if runs."
+)
 
 if "population" not in st.session_state:
     st.warning("Load or generate a population from the home page first.")
@@ -79,15 +81,15 @@ reject_n = max(0, n - adopt_n)
 
 k1, k2, k3, k4 = st.columns(4)
 k1.metric("Population (Tier 1)", f"{n:,}")
-k2.metric("Adoption rate", f"{static.adoption_rate:.1%}")
-k3.metric("Adopted", f"{adopt_n:,}")
-k4.metric("Rejected", f"{reject_n:,}")
+k2.metric("Positive response rate", f"{static.adoption_rate:.1%}")
+k3.metric("Positive response", f"{adopt_n:,}")
+k4.metric("No / not now", f"{reject_n:,}")
 
-st.subheader("Funnel waterfall")
+st.subheader("Decision pathway waterfall")
 waterfall = compute_funnel_waterfall(results)
 st.plotly_chart(create_funnel_chart(waterfall), use_container_width=True)
 
-st.subheader("Segment adoption heatmap")
+st.subheader("Segment response heatmap")
 df_seg = tier1_dataframe_with_results(pop, results)
 mat, row_lbl, col_lbl = adoption_heatmap_matrix(df_seg, "city_tier", "income_bracket")
 if mat and row_lbl and col_lbl:
@@ -144,7 +146,7 @@ with st.expander("Temporal simulation (Mode B)", expanded=False):
             temporal = run_temporal_simulation(pop, scenario, months=months)
         st.plotly_chart(create_temporal_chart(temporal), use_container_width=True)
         st.caption(
-            f"Final adoption rate {temporal.final_adoption_rate:.1%} · "
+            f"Final positive response rate {temporal.final_adoption_rate:.1%} · "
             f"Active rate {temporal.final_active_rate:.1%}"
         )
 
@@ -164,7 +166,7 @@ with w1:
         step=1.0,
         key="whatif_price",
         help=(
-            "Drag to test how price changes affect adoption. "
+            "Drag to test how price changes affect positive response. "
             "This runs a quick simulation on a subset of personas."
         ),
     )
@@ -191,15 +193,15 @@ with w3:
         key="whatif_ab",
         help=(
             "Marketing reach. 0 = no spend, 1 = saturated. "
-            "See how awareness scaling changes adoption."
+            "See how awareness scaling changes positive response."
         ),
     )
 
 if st.button("Run What-If", key="run_whatif"):
-    n_what = min(DASHBOARD_WHATIF_POPULATION_SIZE, len(pop.tier1_personas))
+    n_what = min(DASHBOARD_WHATIF_POPULATION_SIZE, len(pop.personas))
     mini = pop.model_copy(
         update={
-            "tier1_personas": pop.tier1_personas[:n_what],
+            "tier1_personas": pop.personas[:n_what],
             "tier2_personas": [],
         },
         deep=True,
@@ -218,7 +220,7 @@ if st.button("Run What-If", key="run_whatif"):
         cf_mini = run_static_simulation(mini, mod)
     d_adopt = cf_mini.adoption_rate - baseline_mini.adoption_rate
     st.metric(
-        "Adoption rate delta (subset)",
+        "Positive response rate delta (subset)",
         f"{d_adopt:+.2%}",
         help=f"Subset size {n_what}; baseline {baseline_mini.adoption_rate:.1%} → "
         f"counterfactual {cf_mini.adoption_rate:.1%}",

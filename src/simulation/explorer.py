@@ -139,6 +139,7 @@ PRICE_MAX = 999.0
 
 
 def _normalize_channel_mix(channel_mix: dict[str, float]) -> dict[str, float]:
+    """Rescale channel weights so they sum to 1.0 (uniform split if total ≤ 0)."""
     if not channel_mix:
         return {}
     total = sum(channel_mix.values())
@@ -149,6 +150,7 @@ def _normalize_channel_mix(channel_mix: dict[str, float]) -> dict[str, float]:
 
 
 def _get_path_value(obj: object, path: str) -> Any:
+    """Read a dotted attribute path (e.g. ``product.price_inr``) from a nested object."""
     cur: object = obj
     for part in path.split("."):
         cur = getattr(cur, part)
@@ -156,10 +158,12 @@ def _get_path_value(obj: object, path: str) -> Any:
 
 
 def _clamp_unit(x: float) -> float:
+    """Clamp to the closed unit interval [0.0, 1.0] for marketing/product scores."""
     return max(0.0, min(1.0, float(x)))
 
 
 def _clamp_price(x: float) -> float:
+    """Clamp INR price to the explorer's allowed band (see ``PRICE_MIN`` / ``PRICE_MAX``)."""
     return max(PRICE_MIN, min(PRICE_MAX, float(x)))
 
 
@@ -175,6 +179,7 @@ def _finalize_scenario(base: ScenarioConfig, modifications: dict[str, Any]) -> S
 
 
 def _float_linear_values(spec: ParameterSpec) -> list[float]:
+    """Enumerate sweep values from ``min_val`` to ``max_val`` inclusive using ``spec.step``."""
     mn = float(spec.min_val)
     mx = float(spec.max_val)
     st = float(spec.step) if spec.step is not None else 0.0
@@ -191,10 +196,12 @@ def _float_linear_values(spec: ParameterSpec) -> list[float]:
 
 
 def _values_close(a: float, b: float, tol: float = 1e-5) -> bool:
+    """True if two floats differ by at most ``tol`` (baseline deduping and mix comparison)."""
     return abs(float(a) - float(b)) <= tol
 
 
 def _sweep_variant_name(spec: ParameterSpec, value: Any) -> str:
+    """Build a short human-readable label for a one-parameter sweep variant."""
     if spec.is_bool:
         return f"{spec.display_name} {'ON' if value else 'OFF'}"
     if spec.path.endswith("price_inr"):
@@ -207,6 +214,7 @@ def _sweep_variant_name(spec: ParameterSpec, value: Any) -> str:
 
 
 def _channel_preset_equals_base(base: ScenarioConfig, preset: dict[str, float]) -> bool:
+    """True if the preset mix matches the base scenario's channels (normalized, same keys)."""
     base_mix = _normalize_channel_mix(dict(base.marketing.channel_mix))
     preset_n = _normalize_channel_mix(dict(preset))
     if set(base_mix.keys()) != set(preset_n.keys()):
@@ -284,6 +292,7 @@ def generate_sweep_variants(
 
 
 def _grid_variant_name(mods: dict[str, Any]) -> str:
+    """Compact name for a grid cell (price / awareness / taste shorthand plus any extra keys)."""
     parts: list[str] = []
     if "product.price_inr" in mods:
         parts.append(f"P₹{int(mods['product.price_inr'])}")
@@ -388,6 +397,7 @@ def _remediation_mods(base: ScenarioConfig, rems: list[dict[str, Any]]) -> dict[
 
 
 def _remediation_title(stage: str, rem: dict[str, Any]) -> str:
+    """UI-style title for a single smart variant (funnel stage + short lever label)."""
     key = rem["path"]
     short = _REMEDIATION_SHORT.get(key, key.split(".")[-1])
     return f"Fix {stage.replace('_', ' ').title()}: {short}"

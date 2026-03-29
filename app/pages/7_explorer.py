@@ -20,10 +20,6 @@ st.caption(
 )
 
 
-def _safe_attr(obj: Any, name: str, default: Any = None) -> Any:
-    return getattr(obj, name, default)
-
-
 def _format_variant_mods(mods: Any, limit: int = 3) -> str:
     if not mods or not isinstance(mods, dict):
         return "—"
@@ -151,56 +147,46 @@ if "explorer_report" in st.session_state:
     st.divider()
     st.subheader("Exploration Results")
 
-    base_result = _safe_attr(report, "baseline_result")
-    best_result = _safe_attr(report, "best_result")
-    worst_result = _safe_attr(report, "worst_result")
-    median_adoption_rate = _safe_attr(report, "median_adoption_rate", None)
+    base_result = report.baseline_result
+    best_result = report.best_result
+    worst_result = report.worst_result
+    median_adoption_rate = report.median_adoption_rate
 
     m1, m2, m3, m4 = st.columns(4)
-    if base_result is not None:
-        m1.metric("Your Scenario", f"{_safe_attr(base_result, 'adoption_rate', 0):.0%}")
-    if best_result is not None:
-        m2.metric(
-            "Best Variant",
-            f"{_safe_attr(best_result, 'adoption_rate', 0):.0%}",
-            delta=(
-                _safe_attr(best_result, "adoption_rate", 0)
-                - _safe_attr(base_result, "adoption_rate", 0)
-            ),
-        )
-    if worst_result is not None:
-        m3.metric(
-            "Worst Variant",
-            f"{_safe_attr(worst_result, 'adoption_rate', 0):.0%}",
-            delta=(
-                _safe_attr(worst_result, "adoption_rate", 0)
-                - _safe_attr(base_result, "adoption_rate", 0)
-            ),
-        )
-    if median_adoption_rate is not None:
-        m4.metric("Median Adoption", f"{median_adoption_rate:.0%}")
+    m1.metric("Your Scenario", f"{base_result.adoption_rate:.0%}")
+    m2.metric(
+        "Best Variant",
+        f"{best_result.adoption_rate:.0%}",
+        delta=f"{best_result.adoption_rate - base_result.adoption_rate:+.0%}",
+    )
+    m3.metric(
+        "Worst Variant",
+        f"{worst_result.adoption_rate:.0%}",
+        delta=f"{worst_result.adoption_rate - base_result.adoption_rate:+.0%}",
+    )
+    m4.metric("Median Adoption", f"{median_adoption_rate:.0%}")
 
-    missed_insights = _safe_attr(report, "missed_insights", [])
+    missed_insights = report.missed_insights
     if missed_insights:
         st.subheader("⚡ You Missed This")
         for insight in missed_insights[:5]:
             with st.container(border=True):
                 cols = st.columns([0.7, 0.3])
                 with cols[0]:
-                    st.markdown(f"**{_safe_attr(insight, 'variant_name')}**")
-                    st.write(_safe_attr(insight, "explanation", ""))
-                    for diff in _safe_attr(insight, "key_differences", [])[:20]:
+                    st.markdown(f"**{insight.variant_name}**")
+                    st.write(insight.explanation)
+                    for diff in insight.key_differences[:20]:
                         st.markdown(f"- {diff}")
                 with cols[1]:
-                    insight_rate = float(_safe_attr(insight, "adoption_rate", 0.0))
-                    lift = float(_safe_attr(insight, "lift_over_baseline", 0.0))
+                    insight_rate = float(insight.adoption_rate)
+                    lift = float(insight.lift_over_baseline)
                     st.metric(
                         "Adoption Rate",
                         f"{insight_rate:.0%}",
                         delta=f"+{lift:.0%} vs yours",
                     )
 
-    parameter_sensitivities = _safe_attr(report, "parameter_sensitivities", [])
+    parameter_sensitivities = report.parameter_sensitivities
     if parameter_sensitivities:
         st.subheader("Parameter Sensitivity")
         st.caption("Which parameters move the needle most?")
@@ -208,10 +194,10 @@ if "explorer_report" in st.session_state:
         sens_df = pd.DataFrame(
             [
                 {
-                    "Parameter": _safe_attr(s, "parameter_display_name"),
-                    "Impact": _safe_attr(s, "sensitivity_score"),
-                    "Best Value": _safe_attr(s, "max_value"),
-                    "Worst Value": _safe_attr(s, "min_value"),
+                    "Parameter": s.parameter_display_name,
+                    "Impact": s.sensitivity_score,
+                    "Best Value": s.max_value,
+                    "Worst Value": s.min_value,
                 }
                 for s in parameter_sensitivities[:10]
             ]
@@ -235,16 +221,16 @@ if "explorer_report" in st.session_state:
         st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Adoption Distribution")
-    all_results = _safe_attr(report, "all_results", [])
-    rates = [float(_safe_attr(r, "adoption_rate", 0.0)) for r in all_results]
+    all_results = report.all_results
+    rates = [float(r.adoption_rate) for r in all_results]
     rates_df = pd.DataFrame({"adoption_rate": rates})
-    baseline_rate = float(_safe_attr(base_result, "adoption_rate", 0.0))
+    baseline_rate = float(base_result.adoption_rate)
 
     fig_hist = px.histogram(
         rates_df,
         x="adoption_rate",
         nbins=30,
-        title=f"Adoption rate distribution across {int(_safe_attr(report, 'total_variants', len(rates)))} variants",
+        title=f"Adoption rate distribution across {report.total_variants} variants",
         color_discrete_sequence=[DASHBOARD_BRAND_COLORS["primary"]],
     )
     fig_hist.add_vline(
@@ -261,13 +247,13 @@ if "explorer_report" in st.session_state:
     st.subheader("All Variants")
     table_data: list[dict[str, Any]] = []
     for r in all_results:
-        mods_summary = _format_variant_mods(_safe_attr(r, "modifications"), limit=3)
+        mods_summary = _format_variant_mods(r.modifications, limit=3)
         table_data.append(
             {
-                "Rank": _safe_attr(r, "rank"),
-                "Variant": _safe_attr(r, "variant_name"),
-                "Adoption": f"{float(_safe_attr(r, 'adoption_rate', 0.0)):.1%}",
-                "Count": _safe_attr(r, "adoption_count"),
+                "Rank": r.rank,
+                "Variant": r.variant_name,
+                "Adoption": f"{float(r.adoption_rate):.1%}",
+                "Count": r.adoption_count,
                 "Key Changes": mods_summary,
             }
         )
@@ -278,7 +264,7 @@ if "explorer_report" in st.session_state:
         hide_index=True,
     )
 
-    recommended_mods = _safe_attr(report, "recommended_modifications", None)
+    recommended_mods = report.recommended_modifications
     if recommended_mods:
         st.subheader("Recommended Configuration")
         st.caption("Based on the best-performing variant")

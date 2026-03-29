@@ -446,7 +446,7 @@ class Persona(BaseModel):
     id: str
     generation_seed: int
     generation_timestamp: str
-    tier: Literal["statistical", "deep"]
+    tier: Literal["statistical", "deep"] = "deep"
 
     demographics: DemographicAttributes
     health: HealthAttributes
@@ -506,7 +506,7 @@ class Persona(BaseModel):
         persona_id: str,
         seed: int,
         timestamp: str,
-        tier: Literal["statistical", "deep"] = "statistical",
+        tier: Literal["statistical", "deep"] = "deep",
     ) -> Persona:
         """Reconstruct a persona from a flattened identity attribute mapping.
 

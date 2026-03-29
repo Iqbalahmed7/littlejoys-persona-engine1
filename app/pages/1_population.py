@@ -17,6 +17,7 @@ from src.constants import (
     DASHBOARD_CHART_HEIGHT,
     SCENARIO_IDS,
 )
+from src.decision.scenarios import get_scenario
 from src.simulation.static import StaticSimulationResult
 from src.utils.dashboard_data import child_age_group_label, tier1_dataframe_with_results
 from src.utils.display import (
@@ -40,16 +41,16 @@ pop = st.session_state.population
 
 
 def _active_scenario_id() -> str:
-    raw = st.session_state.get("scenario_results") or {}
-    sid = next((s for s in SCENARIO_IDS if s in raw), None)
-    return sid if sid is not None else SCENARIO_IDS[0]
+    return str(st.session_state.get("pop_scenario_selector", SCENARIO_IDS[0]))
 
 
 def _results_for_merge() -> dict[str, dict] | None:
     raw = st.session_state.get("scenario_results") or {}
     if not raw:
         return None
-    sid = next((s for s in SCENARIO_IDS if s in raw), next(iter(raw.keys()), None))
+    sid = _active_scenario_id()
+    if sid not in raw:
+        sid = next((s for s in SCENARIO_IDS if s in raw), next(iter(raw.keys()), None))
     if sid is None:
         return None
     entry = raw[sid]
@@ -65,6 +66,7 @@ def _tier1_dataframe(
     _population_id: str,
     tier1_ids_fingerprint: tuple[str, ...],
     _scenario_fingerprint: str,
+    _active_scenario: str = "",
 ) -> pd.DataFrame:
     """Cache Tier-1 frame; scenario fingerprint busts cache when sim outputs change."""
 
@@ -73,7 +75,7 @@ def _tier1_dataframe(
     return tier1_dataframe_with_results(_p, res)
 
 
-tier1_ids = tuple(sorted(p.id for p in pop.tier1_personas))
+tier1_ids = tuple(sorted(p.id for p in pop.personas))
 scenario_fp = ""
 raw_sr = st.session_state.get("scenario_results") or {}
 if raw_sr:
@@ -88,19 +90,24 @@ if raw_sr:
             parts.append(f"{sid}:{e.get('adoption_count')}:{e.get('population_size')}")
     scenario_fp = "|".join(parts)
 
-df = _tier1_dataframe(pop.id, tier1_ids, scenario_fp)
+df = _tier1_dataframe(pop.id, tier1_ids, scenario_fp, _active_scenario_id())
 
-n1 = len(pop.tier1_personas)
-n2 = sum(1 for p in pop.tier1_personas if p.narrative)
-c1, c2, c3 = (
-    DASHBOARD_BRAND_COLORS["primary"],
-    DASHBOARD_BRAND_COLORS["secondary"],
-    DASHBOARD_BRAND_COLORS["accent"],
-)
+n_personas = len(pop.personas)
+n_with_narrative = sum(1 for p in pop.personas if p.narrative)
+n_scenarios = len(SCENARIO_IDS)
 m1, m2, m3 = st.columns(3)
-m1.metric("Population Size", f"{n1:,}")
-m2.metric("Personas with Narratives", f"{n2:,}")
-m3.metric("Total personas", f"{n1 + n2:,}")
+m1.metric("Personas", f"{n_personas:,}")
+m2.metric("With Narratives", f"{n_with_narrative:,}")
+m3.metric("Scenarios", f"{n_scenarios}")
+
+# Scenario selector for openness / response overlay
+st.selectbox(
+    "Product scenario",
+    SCENARIO_IDS,
+    format_func=lambda sid: get_scenario(sid).name,
+    key="pop_scenario_selector",
+    help="Openness to trial data in the scatter plot and quadrant analysis uses this product scenario.",
+)
 
 st.subheader("Demographics")
 demo_cols = [
@@ -272,23 +279,21 @@ if family_cols <= set(df.columns):
             pct = count / len(df) * 100
             column.metric(group, f"{int(count)}", f"{pct:.0f}% of population")
 
-    toddler_pct = (
-        df["youngest_child_age"]
-        .apply(lambda age: False if pd.isna(age) else float(age) <= 5)
-        .mean()
-        * 100
-    )
-    older_pct = (
-        df["youngest_child_age"]
-        .apply(lambda age: False if pd.isna(age) else float(age) >= 7)
-        .mean()
-        * 100
-    )
-    st.caption(
-        f"LittleJoys NutriMix (ages 2-6) is most relevant for the {toddler_pct:.0f}% of "
-        f"families with toddlers. The 7-14 range ({older_pct:.0f}%) maps to NutriMix 7-14 "
-        f"and Protein Mix."
-    )
+    # Age-relevance insight for all products
+    _age_lines = []
+    for _sid in SCENARIO_IDS:
+        _sc = get_scenario(_sid)
+        _sc_lo, _sc_hi = _sc.target_age_range
+        _match_pct = (
+            df["youngest_child_age"]
+            .apply(lambda age, lo=_sc_lo, hi=_sc_hi: False if pd.isna(age) else lo <= float(age) <= hi)
+            .mean()
+            * 100
+        )
+        _age_lines.append(
+            f"- **{_sc.product.name}** (ages {_sc_lo}-{_sc_hi}) → **{_match_pct:.0f}%** of families in range"
+        )
+    st.caption("\n".join(_age_lines))
 
     family_structure_counts = (
         df["family_structure"]
@@ -355,9 +360,9 @@ elif len(attrs_in_category) >= 2:
             _outcome_display=df_s["outcome"].map(scatter_purchase_outcome_label),
         )
         color_key = "_outcome_display"
-        outcome_legend = "Purchase intent"
+        outcome_legend = "Openness to trial"
         title_text = (
-            f"Do parents with high {display_name(x_attr)} and {display_name(y_attr)} buy more?"
+            f"Do parents with high {display_name(x_attr)} and {display_name(y_attr)} respond more positively?"
         )
         subtitle_text = f"{display_name(x_attr)} vs {display_name(y_attr)}"
         median_x = float(df_s[x_attr].median())
@@ -393,8 +398,8 @@ elif len(attrs_in_category) >= 2:
         narrative = (
             f"Among the **{len(df_s):,} parents** matching your filters, those with **{x_dir}** "
             f"{display_name(x_attr)} and **{y_dir}** {display_name(y_attr)} are "
-            f"**{delta_pp:+.0f} percentage points** versus baseline on purchase intent for "
-            f"**{prod}** — **{best_quad_rate:.0%}** would buy vs **{overall_rate:.0%}** across "
+            f"**{delta_pp:+.0f} percentage points** versus baseline on openness to trial for "
+            f"**{prod}** — **{best_quad_rate:.0%}** would try vs **{overall_rate:.0%}** across "
             f"this filtered cohort{rel_clause} {interp}"
         )
     else:
@@ -412,8 +417,8 @@ elif len(attrs_in_category) >= 2:
         opacity=0.65,
         title=title_text if color_col else subtitle_text,
         color_discrete_map={
-            "Would buy": DASHBOARD_BRAND_COLORS["adopt"],
-            "Wouldn't buy": DASHBOARD_BRAND_COLORS["reject"],
+            "Would try": DASHBOARD_BRAND_COLORS["adopt"],
+            "Wouldn't try": DASHBOARD_BRAND_COLORS["reject"],
             "No simulation": DASHBOARD_BRAND_COLORS["neutral"],
         }
         if color_col
@@ -432,8 +437,8 @@ elif len(attrs_in_category) >= 2:
     if color_col is None:
         st.info(
             "Run a scenario from the **Home** page first. Once you do, this chart will colour "
-            "each persona by whether they **would buy** or **wouldn't buy** — revealing which "
-            "attribute combinations predict purchase behaviour."
+            "each persona by whether they **would try** or **wouldn't try** — revealing which "
+            "attribute combinations predict response patterns."
         )
     else:
         if overall_rate > 0:
@@ -465,22 +470,28 @@ else:
 results_by_persona = _results_for_merge()
 
 st.subheader("Persona lookup")
-lookup_id = st.text_input("Persona ID", placeholder="e.g. Priya-Mumbai-Mom-32", key="pop_lookup_id")
-if lookup_id.strip():
-    try:
-        persona = pop.get_persona(lookup_id.strip())
-        primary = persona_display_name(persona)
-        st.success(f"**{primary}** · `{persona.id}`")
-        with st.expander("Identity attributes (technical view)", expanded=False):
-            labeled = {display_name(k): v for k, v in sorted(persona.to_flat_dict().items())}
-            st.json(labeled)
-        if persona.narrative:
-            st.markdown("**Narrative**")
-            st.write(persona.narrative)
-        else:
-            st.caption("No narrative text stored for this persona yet.")
-    except KeyError:
-        st.error("No persona matches that ID.")
+_persona_ids = [p.id for p in pop.personas]
+_persona_labels = {p.id: f"{persona_display_name(p)} · {p.id}" for p in pop.personas}
+lookup_id = st.selectbox(
+    "Select persona",
+    options=_persona_ids,
+    format_func=lambda pid: _persona_labels.get(pid, pid),
+    key="pop_lookup_id",
+    placeholder="Choose a persona...",
+    index=None,
+)
+if lookup_id:
+    persona = pop.get_persona(lookup_id)
+    primary = persona_display_name(persona)
+    st.success(f"**{primary}** · `{persona.id}`")
+    with st.expander("Identity attributes (technical view)", expanded=False):
+        labeled = {display_name(k): v for k, v in sorted(persona.to_flat_dict().items())}
+        st.json(labeled)
+    if persona.narrative:
+        st.markdown("**Narrative**")
+        st.write(persona.narrative)
+    else:
+        st.caption("No narrative text stored for this persona yet.")
 
 st.subheader("Persona Browser")
 
@@ -489,21 +500,24 @@ with pb_cols[0]:
     pb_tier = st.multiselect(
         display_name("city_tier"),
         options=sorted(df["city_tier"].dropna().unique().tolist()),
-        default=sorted(df["city_tier"].dropna().unique().tolist()),
+        default=[],
+        placeholder="All tiers",
         key="pb_tier",
     )
 with pb_cols[1]:
     pb_sec = st.multiselect(
         display_name("socioeconomic_class"),
         options=sorted(df["socioeconomic_class"].dropna().unique().tolist()),
-        default=sorted(df["socioeconomic_class"].dropna().unique().tolist()),
+        default=[],
+        placeholder="All SEC",
         key="pb_sec",
     )
 with pb_cols[2]:
     pb_children = st.multiselect(
         display_name("num_children"),
         options=sorted(df["num_children"].dropna().unique().tolist()),
-        default=sorted(df["num_children"].dropna().unique().tolist()),
+        default=[],
+        placeholder="All",
         key="pb_children",
     )
 with pb_cols[3]:
@@ -523,25 +537,29 @@ with pb_cols[4]:
         pb_outcome = st.multiselect(
             display_name("outcome"),
             ["adopt", "reject"],
-            default=["adopt", "reject"],
+            default=[],
+            placeholder="All outcomes",
             key="pb_outcome",
         )
     else:
-        pb_outcome = ["adopt", "reject"]
+        pb_outcome = []
 
 browser_df = df
-browser_df = browser_df[browser_df["city_tier"].isin(pb_tier)]
-browser_df = browser_df[browser_df["socioeconomic_class"].isin(pb_sec)]
-browser_df = browser_df[browser_df["num_children"].isin(pb_children)]
+if pb_tier:
+    browser_df = browser_df[browser_df["city_tier"].isin(pb_tier)]
+if pb_sec:
+    browser_df = browser_df[browser_df["socioeconomic_class"].isin(pb_sec)]
+if pb_children:
+    browser_df = browser_df[browser_df["num_children"].isin(pb_children)]
 browser_df = browser_df[browser_df["household_income_lpa"].between(*pb_income)]
-if "outcome" in browser_df.columns:
+if pb_outcome and "outcome" in browser_df.columns:
     browser_df = browser_df[browser_df["outcome"].isin(pb_outcome)]
 
 sort_options = {
     "Persona ID": "id",
     "Income (high to low)": "household_income_lpa",
     "Parent Age": "parent_age",
-    "Purchase Score": "purchase_score",
+    "Openness Score": "purchase_score",
 }
 sort_choice = st.selectbox("Sort by", list(sort_options.keys()), key="pb_sort")
 sort_col = sort_options[sort_choice]
@@ -555,9 +573,9 @@ stat_cols = st.columns(4)
 stat_cols[0].metric("Matching Personas", len(browser_df))
 if "outcome" in browser_df.columns and len(browser_df) > 0:
     adopt_rate = float((browser_df["outcome"] == "adopt").mean())
-    stat_cols[1].metric("Adoption Rate", f"{adopt_rate:.0%}")
+    stat_cols[1].metric("Positive Response Rate", f"{adopt_rate:.0%}")
 else:
-    stat_cols[1].metric("Adoption Rate", "—")
+    stat_cols[1].metric("Positive Response Rate", "—")
 if len(browser_df) > 0:
     stat_cols[2].metric("Avg Income", f"₹{float(browser_df['household_income_lpa'].mean()):.1f}L")
     stat_cols[3].metric("Avg Children", f"{float(browser_df['num_children'].mean()):.1f}")
@@ -583,8 +601,7 @@ if page_df.empty:
 else:
     for _, row in page_df.iterrows():
         persona = pop.get_persona(str(row["id"]))
-        result = results_by_persona.get(persona.id) if results_by_persona else None
-        render_persona_card(persona, result)
+        render_persona_card(persona)
         if persona.narrative:
             with st.expander(
                 "Read narrative",

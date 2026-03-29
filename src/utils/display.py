@@ -97,13 +97,13 @@ ATTRIBUTE_DISPLAY_NAMES: dict[str, str] = {
     "aspirational_messaging_responsiveness": "Aspirational Message Response",
     "testimonial_impact": "Testimonial Impact",
     # Simulation outcomes
-    "outcome": "Decision Outcome",
+    "outcome": "Response",
     "need_score": "Need Score",
     "awareness_score": "Awareness Score",
     "consideration_score": "Consideration Score",
-    "purchase_score": "Purchase Score",
-    "rejection_stage": "Rejection Stage",
-    "rejection_reason": "Rejection Reason",
+    "purchase_score": "Openness Score",
+    "rejection_stage": "Drop-off Stage",
+    "rejection_reason": "Drop-off Reason",
     "persona_id": "Persona Identifier",
     "child_age_group_filter": "Child Age Group",
 }
@@ -172,14 +172,14 @@ ATTRIBUTE_CATEGORIES: dict[str, list[str]] = {
 }
 
 OUTCOME_DISPLAY: dict[str, str] = {
-    "adopt": "Adopted",
-    "reject": "Did not adopt",
+    "adopt": "Would try",
+    "reject": "Wouldn't try",
 }
 
 # Psychographic scatter legend (PRD-014a — clearer than adopt/reject for executives)
 SCATTER_PURCHASE_OUTCOME_LABELS: dict[str, str] = {
-    "adopt": "Would buy",
-    "reject": "Wouldn't buy",
+    "adopt": "Would try",
+    "reject": "Wouldn't try",
 }
 
 CHANNEL_HELP: dict[str, str] = {
@@ -193,6 +193,18 @@ CHANNEL_HELP: dict[str, str] = {
     "whatsapp": (
         "Community-driven sharing. Highest trust signal in Tier 2-3 cities. "
         "Low cost, high conversion when organic."
+    ),
+    "pediatrician": (
+        "Doctor-endorsed distribution. The strongest trust signal for health-anxious parents, "
+        "especially for toddler nutrition products."
+    ),
+    "school": (
+        "School-based partnerships and endorsements. High-trust channel for 7-14 age group. "
+        "Bypasses digital ad skepticism."
+    ),
+    "sports_clubs": (
+        "Sports club and academy partnerships. Reaches active, fitness-oriented families. "
+        "Strong credibility for protein and energy products."
     ),
 }
 

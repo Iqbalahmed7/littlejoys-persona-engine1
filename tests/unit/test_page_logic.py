@@ -107,6 +107,12 @@ class _FakeStreamlit(ModuleType):
     def warning(self, *args: object, **kwargs: object) -> None:
         del args, kwargs
 
+    def success(self, *args: object, **kwargs: object) -> None:
+        del args, kwargs
+
+    def error(self, *args: object, **kwargs: object) -> None:
+        del args, kwargs
+
     def info(self, *args: object, **kwargs: object) -> None:
         del args, kwargs
 
@@ -123,6 +129,12 @@ class _FakeStreamlit(ModuleType):
         del args, kwargs
 
     def metric(self, *args: object, **kwargs: object) -> None:
+        del args, kwargs
+
+    def divider(self, *args: object, **kwargs: object) -> None:
+        del args, kwargs
+
+    def progress(self, *args: object, **kwargs: object) -> None:
         del args, kwargs
 
     def download_button(self, *args: object, **kwargs: object) -> None:
@@ -224,6 +236,10 @@ def _fake_population() -> Any:
             self.tier1_personas = [persona]
             self.tier2_personas = [persona]
             self._lookup = {persona.id: persona}
+
+        @property
+        def personas(self) -> list[Any]:
+            return self.tier1_personas
 
         def get_persona(self, persona_id: str) -> Any:
             return self._lookup[persona_id]

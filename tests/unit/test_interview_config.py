@@ -5,9 +5,10 @@ from __future__ import annotations
 from src.config import Config
 
 
-def test_config_defaults_to_mock_enabled() -> None:
-    """Default config should have mock mode enabled."""
-    config = Config()
+def test_config_defaults_to_mock_enabled(monkeypatch) -> None:
+    """Default config should have mock mode enabled when no env override."""
+    monkeypatch.delenv("LLM_MOCK_ENABLED", raising=False)
+    config = Config(_env_file=None)
     assert config.llm_mock_enabled is True
 
 

@@ -47,8 +47,8 @@ def test_attribute_categories_reference_valid_attrs() -> None:
 
 
 def test_outcome_label_maps_known_codes() -> None:
-    assert outcome_label("adopt") == "Adopted"
-    assert outcome_label("reject") == "Did not adopt"
+    assert outcome_label("adopt") == "Would try"
+    assert outcome_label("reject") == "Wouldn't try"
 
 
 def test_persona_display_name_contains_city_and_age(sample_persona) -> None:

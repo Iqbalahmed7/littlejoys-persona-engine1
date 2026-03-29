@@ -138,7 +138,7 @@ def _segment_impacts(
     baseline_results: dict[str, dict[str, Any]],
     counterfactual_results: dict[str, dict[str, Any]],
 ) -> list[SegmentImpact]:
-    personas = population.tier1_personas if population.tier1_personas else population.tier2_personas
+    personas = population.personas
     aggregates: dict[tuple[str, str], dict[str, int]] = {}
 
     for persona in personas:

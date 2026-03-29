@@ -49,7 +49,7 @@ def render_demographic_filters(
     n_total = len(df)
 
     st.markdown("**Demographic filters**")
-    st.caption("Narrow the psychographics scatter; demographics charts above still use the full cohort.")
+    st.caption("Select specific segments to drill down. Empty = show all.")
 
     row1 = st.columns(3)
     row2 = st.columns(3)
@@ -61,7 +61,8 @@ def render_demographic_filters(
         sel = row1[0].multiselect(
             display_name("city_tier"),
             options=opts,
-            default=opts,
+            default=[],
+            placeholder="All city tiers",
             key=f"{key_prefix}_city_tier",
         )
         if sel:
@@ -74,7 +75,8 @@ def render_demographic_filters(
         sel = row1[1].multiselect(
             display_name("socioeconomic_class"),
             options=opts,
-            default=opts,
+            default=[],
+            placeholder="All SEC classes",
             key=f"{key_prefix}_sec",
         )
         if sel:
@@ -87,7 +89,8 @@ def render_demographic_filters(
         sel = row1[2].multiselect(
             display_name("region"),
             options=opts,
-            default=opts,
+            default=[],
+            placeholder="All regions",
             key=f"{key_prefix}_region",
         )
         if sel:
@@ -101,7 +104,8 @@ def render_demographic_filters(
             display_name("income_bracket"),
             options=opts,
             format_func=income_bracket_ui_label,
-            default=opts,
+            default=[],
+            placeholder="All income levels",
             key=f"{key_prefix}_income",
         )
         if sel:
@@ -114,7 +118,8 @@ def render_demographic_filters(
         sel = row2[1].multiselect(
             display_name("num_children"),
             options=opts,
-            default=opts,
+            default=[],
+            placeholder="All",
             key=f"{key_prefix}_num_children",
         )
         if sel:
@@ -124,7 +129,8 @@ def render_demographic_filters(
         sel = row2[2].multiselect(
             display_name("child_age_group_filter"),
             options=list(_CHILD_AGE_GROUPS),
-            default=list(_CHILD_AGE_GROUPS),
+            default=[],
+            placeholder="All age groups",
             help=(
                 "Based on youngest child age. A persona matches if any selected band "
                 "includes that age."

@@ -67,7 +67,7 @@ def _clip(value: float) -> float:
 
 
 def _iter_primary_personas(population: Population) -> list[Any]:
-    return population.tier1_personas if population.tier1_personas else population.tier2_personas
+    return population.personas
 
 
 def _mean_child_age(flat: dict[str, Any]) -> float:
@@ -152,11 +152,21 @@ def _estimate_persona_result(flat: dict[str, Any], scenario: ScenarioConfig) -> 
     for channel, weight in scenario.marketing.channel_mix.items():
         channel_score += weight * _channel_affinity(channel, flat, scenario)
 
+    # Offline channel awareness boosts from campaign toggles
+    offline_awareness = 0.0
+    if scenario.marketing.pediatrician_endorsement:
+        offline_awareness += 0.5 * float(flat.get("pediatrician_influence", 0.5))
+    if scenario.marketing.school_partnership:
+        offline_awareness += 0.5 * float(flat.get("peer_influence_strength", 0.5))
+    if scenario.marketing.sports_club_partnership:
+        offline_awareness += 0.5 * float(flat.get("wellness_trend_follower", 0.5))
+
     awareness_score = _clip(
-        scenario.marketing.awareness_level * 0.45
-        + scenario.marketing.awareness_budget * 0.20
-        + channel_score * 0.20
-        + scenario.marketing.social_buzz * float(flat.get("wom_receiver_openness", 0.5)) * 0.10
+        scenario.marketing.awareness_level * 0.40
+        + scenario.marketing.awareness_budget * 0.18
+        + channel_score * 0.18
+        + offline_awareness * 0.10
+        + scenario.marketing.social_buzz * float(flat.get("wom_receiver_openness", 0.5)) * 0.09
         + float(flat.get("ad_receptivity", 0.5)) * 0.05
     )
 
@@ -169,10 +179,13 @@ def _estimate_persona_result(flat: dict[str, Any], scenario: ScenarioConfig) -> 
         / 4.0
         * float(flat.get("transparency_importance", 0.5))
         * 0.12
-        + float(scenario.marketing.school_partnership) * age_fit * 0.05
+        + float(scenario.marketing.school_partnership) * age_fit * 0.04
         + float(scenario.marketing.pediatrician_endorsement)
         * float(flat.get("pediatrician_influence", 0.5))
-        * 0.05
+        * 0.04
+        + float(scenario.marketing.sports_club_partnership)
+        * float(flat.get("wellness_trend_follower", 0.5))
+        * 0.02
     )
 
     switching_barrier = (

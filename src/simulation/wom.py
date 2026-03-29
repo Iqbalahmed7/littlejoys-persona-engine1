@@ -49,7 +49,7 @@ def propagate_wom(
         Mapping of receiver persona id → awareness delta (non-adopters only).
     """
 
-    tier1_ids = [p.id for p in population.tier1_personas]
+    tier1_ids = [p.id for p in population.personas]
     adopter_set = set(adopter_ids)
     non_adopters = [pid for pid in tier1_ids if pid not in adopter_set]
     if not non_adopters or not adopter_ids:

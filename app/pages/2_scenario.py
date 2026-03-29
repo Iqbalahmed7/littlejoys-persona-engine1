@@ -39,6 +39,12 @@ base_scenario = get_scenario(scenario_id)
 st.markdown(f"**Description**: {base_scenario.description}")
 
 session_key = f"custom_scenario_{scenario_id}"
+# Reset stale cached scenarios from previous schema versions
+_SCHEMA_VERSION = 2  # bump when MarketingConfig / ScenarioConfig fields change
+_version_key = f"{session_key}_v"
+if st.session_state.get(_version_key) != _SCHEMA_VERSION:
+    st.session_state[session_key] = copy.deepcopy(base_scenario)
+    st.session_state[_version_key] = _SCHEMA_VERSION
 if session_key not in st.session_state:
     st.session_state[session_key] = copy.deepcopy(base_scenario)
 
@@ -197,7 +203,7 @@ with col2:
 st.divider()
 
 st.subheader("Channel Mix")
-st.caption("Sum must equal 1.0")
+st.caption("Digital marketing spend allocation. Must sum to 1.0.")
 channels = ["instagram", "youtube", "whatsapp"]
 mix_cols = st.columns(3)
 mix_sum = 0.0
@@ -220,8 +226,20 @@ if mix_sum > 1.05 or mix_sum < 0.95:
     st.error(f"Invalid mix sum ({mix_sum:.2f}). Please adjust sliders to sum to ~1.0.")
 
 st.subheader("Campaign Toggles")
-t1, t2, t3 = st.columns(3)
+st.caption("Offline partnerships and endorsements. These boost both trust and awareness independently of the digital channel mix.")
+t1, t2 = st.columns(2)
+t3, t4 = st.columns(2)
 with t1:
+    custom_scenario.marketing.pediatrician_endorsement = st.toggle(
+        "Pediatrician Endorsement",
+        custom_scenario.marketing.pediatrician_endorsement,
+        help=(
+            "Formal endorsement from pediatricians. "
+            "The single strongest trust signal for health-anxious parents. "
+            "Also boosts awareness through doctor-office reach."
+        ),
+    )
+with t2:
     custom_scenario.marketing.school_partnership = st.toggle(
         "School Partnership",
         custom_scenario.marketing.school_partnership,
@@ -231,16 +249,17 @@ with t1:
             "Especially effective for 7-14 age group."
         ),
     )
-with t2:
-    custom_scenario.marketing.pediatrician_endorsement = st.toggle(
-        "Pediatrician Endorsement",
-        custom_scenario.marketing.pediatrician_endorsement,
+with t3:
+    custom_scenario.marketing.sports_club_partnership = st.toggle(
+        "Sports Club Partnership",
+        custom_scenario.marketing.sports_club_partnership,
         help=(
-            "Formal endorsement from pediatricians. "
-            "The single strongest trust signal for health-anxious parents."
+            "Sports club and academy partnerships. "
+            "Reaches active, fitness-oriented families. "
+            "Strong credibility for protein and energy products."
         ),
     )
-with t3:
+with t4:
     custom_scenario.marketing.influencer_campaign = st.toggle(
         "Influencer Campaign",
         custom_scenario.marketing.influencer_campaign,
@@ -264,20 +283,20 @@ with cmp2:
 st.divider()
 
 if st.button(
-    "Run Simulation",
+    "Run Research",
     type="primary",
     use_container_width=True,
-    help="Run the static funnel on your loaded population and save results for Results and "
+    help="Run the static decision pathway on your loaded population and save results for Results and "
     "Population charts.",
 ):
     if mix_sum > 1.05 or mix_sum < 0.95:
-        st.error("Cannot run simulation with unbalanced channel mix.")
+        st.error("Cannot run research with unbalanced channel mix.")
     else:
-        with st.spinner("Running simulation on population..."):
+        with st.spinner("Running research on population..."):
             res = run_static_simulation(st.session_state.population, custom_scenario)
             st.session_state.scenario_results[scenario_id] = res
-            st.toast("Simulation complete and cached in session_state!", icon="✅")
+            st.toast("Research complete and cached in session_state!", icon="✅")
             st.success(
-                f"Results recorded! Adoption: {res.adoption_count} / {res.population_size} "
+                f"Results recorded! Positive response: {res.adoption_count} / {res.population_size} "
                 f"({res.adoption_rate:.1%})"
             )

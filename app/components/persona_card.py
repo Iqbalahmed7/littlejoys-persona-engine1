@@ -26,7 +26,7 @@ def render_persona_card(persona: Persona, decision_result: dict[str, Any] | None
         with c1:
             st.markdown("**Demographics**")
             st.write(
-                f"- {display_name('household_income_lpa')}: {persona.demographics.household_income_lpa}",
+                f"- {display_name('household_income_lpa')}: ₹{persona.demographics.household_income_lpa:.1f}L",
             )
             st.write(f"- {display_name('parent_age')}: {persona.demographics.parent_age}")
             st.write(f"- {display_name('num_children')}: {persona.demographics.num_children}")

@@ -14,7 +14,7 @@ from typing import Any, TypeVar
 import streamlit as st
 
 from src.analysis.report_agent import ReportAgent, ReportOutput, validate_report_grounding
-from src.config import Config
+from src.config import Config, get_config
 from src.constants import DASHBOARD_DEFAULT_POPULATION_PATH, DEFAULT_SEED, SCENARIO_IDS
 from src.decision.scenarios import get_scenario
 from src.generation.population import Population, PopulationGenerator
@@ -48,13 +48,33 @@ def _load_population(population_path: str) -> Population:
     return generated
 
 
+def _resolve_api_key() -> str:
+    """Read Anthropic API key from Streamlit secrets (cloud) or .env.local (local)."""
+    try:
+        if hasattr(st, "secrets") and "ANTHROPIC_API_KEY" in st.secrets:
+            return str(st.secrets["ANTHROPIC_API_KEY"]).strip()
+    except Exception:
+        pass
+    key = get_config().anthropic_api_key.strip()
+    if not key or key == "sk-ant-REPLACE_ME":
+        return ""
+    return key
+
+
+def _has_api_key() -> bool:
+    """Return True if a non-placeholder API key is available."""
+    key = _resolve_api_key()
+    return bool(key) and not key.startswith("sk-ant-REPLACE")
+
+
 @st.cache_resource(show_spinner=False)
 def _build_llm_client(mock_llm: bool) -> LLMClient:
+    api_key = "" if mock_llm else _resolve_api_key()
     return LLMClient(
         Config(
             llm_mock_enabled=mock_llm,
-            llm_cache_enabled=False,
-            anthropic_api_key="",
+            llm_cache_enabled=not mock_llm,
+            anthropic_api_key=api_key,
         )
     )
 
@@ -99,7 +119,19 @@ st.caption("Generate grounded strategy reports with the ReportAgent.")
 with st.sidebar:
     st.subheader("Report Controls")
     scenario_id = st.selectbox("Scenario", options=SCENARIO_IDS, index=0)
-    mock_llm = st.toggle("Mock LLM Mode", value=True)
+
+    api_available = _has_api_key()
+    if api_available:
+        mock_llm = st.toggle(
+            "Mock LLM Mode",
+            value=False,
+            key="report_mock_toggle",
+            help="Real LLM reports powered by Claude. Toggle on for instant mock reports.",
+        )
+    else:
+        mock_llm = True
+        st.info("No API key configured. Using mock mode. See docs/DEPLOYMENT.md to set up.")
+
     population_path = st.text_input("Population Path", value=DASHBOARD_DEFAULT_POPULATION_PATH)
     precompute_dir = st.text_input("Precompute Directory", value=DEFAULT_PRECOMPUTE_DIR)
     run_generation = st.button("Generate Report", use_container_width=True)

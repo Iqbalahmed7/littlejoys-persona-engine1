@@ -193,7 +193,7 @@ with st.sidebar:
 with st.spinner("Loading population..."):
     population = _load_population(population_path)
 
-persona_pool = population.tier1_personas
+persona_pool = population.personas
 if not persona_pool:
     st.warning("No personas available. Generate population data first.")
     st.stop()
