@@ -136,14 +136,14 @@ if sel_tier or sel_sec or sel_diet or sel_region:
         tier_counts.columns = ["City Tier", "Count"]
         fig = px.bar(tier_counts, x="City Tier", y="Count", title="City Tier Distribution")
         fig.update_layout(height=250, margin=dict(l=20, r=20, t=40, b=20))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="filtered_tier")
 
     with c2:
         income_counts = filtered["income_bracket"].value_counts().sort_index().reset_index()
         income_counts.columns = ["Income Bracket", "Count"]
         fig = px.bar(income_counts, x="Income Bracket", y="Count", title="Income Distribution")
         fig.update_layout(height=250, margin=dict(l=20, r=20, t=40, b=20))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="filtered_income")
 
     c3, c4 = st.columns(2)
     with c3:
@@ -151,14 +151,14 @@ if sel_tier or sel_sec or sel_diet or sel_region:
         fam_counts.columns = ["Family Structure", "Count"]
         fig = px.bar(fam_counts, x="Family Structure", y="Count", title="Family Structure")
         fig.update_layout(height=250, margin=dict(l=20, r=20, t=40, b=20))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="filtered_family")
 
     with c4:
         age_counts = filtered["age_group"].value_counts().reset_index()
         age_counts.columns = ["Age Group", "Count"]
         fig = px.bar(age_counts, x="Age Group", y="Count", title="Youngest Child Age")
         fig.update_layout(height=250, margin=dict(l=20, r=20, t=40, b=20))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="filtered_age")
 else:
     st.caption("Apply filters above to see segmented views.")
 
