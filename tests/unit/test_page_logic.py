@@ -98,6 +98,9 @@ class _FakeStreamlit(ModuleType):
     def title(self, *args: object, **kwargs: object) -> None:
         del args, kwargs
 
+    def header(self, *args: object, **kwargs: object) -> None:
+        del args, kwargs
+
     def caption(self, *args: object, **kwargs: object) -> None:
         del args, kwargs
 

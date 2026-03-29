@@ -3,27 +3,29 @@
 from __future__ import annotations
 
 import pytest
+
 from src.config import Config
 from src.decision.scenarios import get_scenario
-from src.generation.population import Population, GenerationParams, PopulationMetadata
+from src.generation.population import GenerationParams, Population, PopulationMetadata
 from src.probing.question_bank import get_questions_for_scenario
 from src.simulation.research_runner import ResearchRunner
-from src.utils.llm import LLMClient
 from src.taxonomy.schema import (
-    Persona, 
-    DemographicAttributes, 
     CareerAttributes,
-    HealthAttributes,
-    PsychologyAttributes,
     CulturalAttributes,
-    RelationshipAttributes,
-    EducationLearningAttributes,
-    LifestyleAttributes,
     DailyRoutineAttributes,
-    ValueAttributes,
+    DemographicAttributes,
+    EducationLearningAttributes,
     EmotionalAttributes,
-    MediaAttributes
+    HealthAttributes,
+    LifestyleAttributes,
+    MediaAttributes,
+    Persona,
+    PsychologyAttributes,
+    RelationshipAttributes,
+    ValueAttributes,
 )
+from src.utils.llm import LLMClient
+
 
 def mk_persona(pid: str, income: float = 10.0, budget: float = 0.5, ref_point: float = 500.0) -> Persona:
     return Persona(
@@ -74,7 +76,7 @@ def mock_runner():
         else:
             # Adoption profile
             personas.append(mk_persona(f"p{i}", income=20.0, budget=0.2, ref_point=800.0))
-            
+
     pop = Population(
         id="test_pop",
         generation_params=GenerationParams(size=25, seed=42, deep_persona_count=25),
@@ -114,10 +116,10 @@ def test_progress_callback_invoked(mock_runner) -> None:
     progress_values = []
     def cb(msg: str, p: float):
         progress_values.append(p)
-    
+
     mock_runner.progress_callback = cb
     mock_runner.run()
-    
+
     assert len(progress_values) > 1
     for i in range(len(progress_values) - 1):
         assert progress_values[i] <= progress_values[i+1]

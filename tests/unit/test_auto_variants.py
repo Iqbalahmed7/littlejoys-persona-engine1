@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-import pytest
 import math
+
+import pytest
+
 from src.decision.scenarios import get_scenario
 from src.simulation.auto_variants import generate_business_variants
+
 
 @pytest.fixture(params=["nutrimix_2_6", "nutrimix_7_14", "magnesium_gummies", "protein_mix"])
 def scenario(request):

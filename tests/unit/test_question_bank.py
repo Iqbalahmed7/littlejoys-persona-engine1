@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import pytest
+
 from src.constants import SCENARIO_IDS
+from src.probing.predefined_trees import get_problem_tree
 from src.probing.question_bank import (
     get_question,
     get_questions_for_scenario,
     list_all_questions,
 )
-from src.probing.predefined_trees import get_problem_tree
+
 
 def test_every_scenario_has_questions() -> None:
     """Each of the 4 scenario IDs has at least 3 questions."""
@@ -48,7 +50,7 @@ def test_get_question_by_id() -> None:
     if all_qs:
         target = all_qs[0]
         assert get_question(target.id).id == target.id
-    
+
     with pytest.raises(KeyError):
         get_question("nonexistent_id_404")
 

@@ -3,22 +3,24 @@
 from __future__ import annotations
 
 import pytest
+
 from src.probing.smart_sample import select_smart_sample
 from src.taxonomy.schema import (
-    Persona, 
-    DemographicAttributes, 
     CareerAttributes,
-    HealthAttributes,
-    PsychologyAttributes,
     CulturalAttributes,
-    RelationshipAttributes,
-    EducationLearningAttributes,
-    LifestyleAttributes,
     DailyRoutineAttributes,
-    ValueAttributes,
+    DemographicAttributes,
+    EducationLearningAttributes,
     EmotionalAttributes,
-    MediaAttributes
+    HealthAttributes,
+    LifestyleAttributes,
+    MediaAttributes,
+    Persona,
+    PsychologyAttributes,
+    RelationshipAttributes,
+    ValueAttributes,
 )
+
 
 def mk_persona(pid: str, tier: str = "Tier1", sec: str = "A1") -> Persona:
     """Helper to create minimal personas for sampling tests."""
@@ -58,7 +60,7 @@ def mk_persona(pid: str, tier: str = "Tier1", sec: str = "A1") -> Persona:
 def mock_population_data() -> tuple[list[Persona], dict[str, dict]]:
     """Create a diverse pool of 30 personas and mock funnel decisions."""
     personas = [mk_persona(f"p{i}", "Tier1" if i < 20 else "Tier3", "A1" if i % 2 == 0 else "C1") for i in range(30)]
-    
+
     # Force persona 5 to be an adopter in a TRULY minority segment
     # Current segments: Tier1_A1 (9), Tier1_C1 (10), Tier3_A1 (5), Tier3_C1 (5)
     # Move p5 to Tier2_B1 (Count 1, which is < 6)
@@ -82,7 +84,7 @@ def mock_population_data() -> tuple[list[Persona], dict[str, dict]]:
             stage = "awareness"
             # Threshold 0.25 (need). 0.70 is "high_need_rejecter"
             scores = {"need_score": 0.70, "awareness_score": 0.2, "consideration_score": 0.0, "purchase_score": 0.0}
-        
+
         decisions[p.id] = {
             "outcome": outcome,
             "rejection_stage": stage,
@@ -96,7 +98,7 @@ def test_determinism(mock_population_data) -> None:
     sample1 = select_smart_sample(personas, decisions, seed=42)
     sample2 = select_smart_sample(personas, decisions, seed=42)
     assert sample1.persona_ids == sample2.persona_ids
-    
+
     # Different seed should likely produce different order/control group
     sample3 = select_smart_sample(personas, decisions, seed=43)
     assert sample3.persona_ids != sample1.persona_ids
@@ -112,7 +114,7 @@ def test_all_buckets_represented(mock_population_data) -> None:
     """The sample contains at least 1 persona from each major reason if available."""
     personas, decisions = mock_population_data
     sample = select_smart_sample(personas, decisions, target_size=20)
-    
+
     reasons = {s.selection_reason for s in sample.selections}
     assert "fragile_yes" in reasons
     assert "persuadable_no" in reasons

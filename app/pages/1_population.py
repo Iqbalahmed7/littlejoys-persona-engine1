@@ -30,6 +30,10 @@ from src.utils.display import (
     scenario_product_display_name,
 )
 
+c1 = DASHBOARD_BRAND_COLORS["primary"]
+c2 = DASHBOARD_BRAND_COLORS["secondary"]
+c3 = DASHBOARD_BRAND_COLORS["accent"]
+
 st.title("Population Explorer")
 st.caption("Synthetic statistical cohort, demographics, psychographics, and rich persona stories.")
 
@@ -286,7 +290,9 @@ if family_cols <= set(df.columns):
         _sc_lo, _sc_hi = _sc.target_age_range
         _match_pct = (
             df["youngest_child_age"]
-            .apply(lambda age, lo=_sc_lo, hi=_sc_hi: False if pd.isna(age) else lo <= float(age) <= hi)
+            .apply(
+                lambda age, lo=_sc_lo, hi=_sc_hi: False if pd.isna(age) else lo <= float(age) <= hi
+            )
             .mean()
             * 100
         )
@@ -361,9 +367,7 @@ elif len(attrs_in_category) >= 2:
         )
         color_key = "_outcome_display"
         outcome_legend = "Openness to trial"
-        title_text = (
-            f"Do parents with high {display_name(x_attr)} and {display_name(y_attr)} respond more positively?"
-        )
+        title_text = f"Do parents with high {display_name(x_attr)} and {display_name(y_attr)} respond more positively?"
         subtitle_text = f"{display_name(x_attr)} vs {display_name(y_attr)}"
         median_x = float(df_s[x_attr].median())
         median_y = float(df_s[y_attr].median())
