@@ -163,6 +163,10 @@ with w1:
         value=float(base.product.price_inr),
         step=1.0,
         key="whatif_price",
+        help=(
+            "Drag to test how price changes affect adoption. "
+            "This runs a quick simulation on a subset of personas."
+        ),
     )
 with w2:
     taste = st.slider(
@@ -172,6 +176,10 @@ with w2:
         float(base.product.taste_appeal),
         0.01,
         key="whatif_taste",
+        help=(
+            "How likely kids accept the taste. 0 = refuse, 1 = love it. "
+            "Try 0.8+ for gummy formats."
+        ),
     )
 with w3:
     ab = st.slider(
@@ -181,6 +189,10 @@ with w3:
         float(base.marketing.awareness_budget),
         0.01,
         key="whatif_ab",
+        help=(
+            "Marketing reach. 0 = no spend, 1 = saturated. "
+            "See how awareness scaling changes adoption."
+        ),
     )
 
 if st.button("Run What-If", key="run_whatif"):

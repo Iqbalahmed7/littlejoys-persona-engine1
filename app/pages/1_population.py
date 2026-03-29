@@ -22,8 +22,8 @@ from src.utils.display import (
     ATTRIBUTE_CATEGORIES,
     SEC_DESCRIPTIONS,
     display_name,
-    outcome_label,
     persona_display_name,
+    scatter_purchase_outcome_label,
 )
 
 st.title("Population Explorer")
@@ -176,36 +176,21 @@ if len(attrs_in_category) >= 2:
         )
     color_col = "outcome" if "outcome" in df.columns else None
     plot_df = df
+    insight_parts: list[str] = []
+    headline: str | None = None
+    quadrants: dict[str, pd.DataFrame] = {}
+    overall_rate = 0.0
+
     if color_col:
         plot_df = df.assign(
-            _outcome_display=df["outcome"].map(
-                lambda v: outcome_label(str(v) if v is not None else "")
-            )
+            _outcome_display=df["outcome"].map(scatter_purchase_outcome_label),
         )
         color_key = "_outcome_display"
-        outcome_title = display_name("outcome")
-    else:
-        color_key = None
-        outcome_title = ""
-
-    fig_s = px.scatter(
-        plot_df,
-        x=x_attr,
-        y=y_attr,
-        color=color_key,
-        color_discrete_map=None,
-        opacity=0.65,
-        title=f"{display_name(x_attr)} vs {display_name(y_attr)}"
-        + (f" (by {outcome_title})" if color_col else ""),
-    )
-    if color_col:
-        fig_s.update_layout(legend_title_text=outcome_title)
-    fig_s.update_xaxes(title=display_name(x_attr))
-    fig_s.update_yaxes(title=display_name(y_attr))
-    fig_s.update_traces(marker={"size": 8})
-    fig_s.update_layout(height=DASHBOARD_CHART_HEIGHT)
-
-    if color_col and color_col in df.columns:
+        outcome_legend = "Purchase intent"
+        title_text = (
+            f"Do parents with high {display_name(x_attr)} and {display_name(y_attr)} buy more?"
+        )
+        subtitle_text = f"{display_name(x_attr)} vs {display_name(y_attr)}"
         median_x = df[x_attr].median()
         median_y = df[y_attr].median()
 
@@ -218,40 +203,72 @@ if len(attrs_in_category) >= 2:
 
         overall_rate = (df[color_col] == "adopt").mean()
 
-        insight_parts = []
         for quad_name, quad_df in quadrants.items():
             if len(quad_df) > 0:
                 quad_rate = (quad_df[color_col] == "adopt").mean()
                 ratio = quad_rate / overall_rate if overall_rate > 0 else 0
                 if ratio > 1.3 or ratio < 0.7:
                     insight_parts.append(
-                        f"**{quad_name}** quadrant: {quad_rate:.0%} adoption ({ratio:.1f}x average)"
+                        f"**{quad_name}** quadrant: {quad_rate:.0%} would buy "
+                        f"({ratio:.1f}x average)"
                     )
 
+        best_quad = max(
+            quadrants.items(),
+            key=lambda q: (q[1][color_col] == "adopt").mean() if len(q[1]) > 0 else 0,
+        )
+        best_quad_rate = (best_quad[1][color_col] == "adopt").mean()
+        x_dir = "high" if "High-" in best_quad[0] else "low"
+        y_dir = "high" if "-High" in best_quad[0] else "low"
+        headline = (
+            f"Parents with {x_dir} {display_name(x_attr)} and {y_dir} {display_name(y_attr)} "
+            f"would buy at {best_quad_rate:.0%}, compared with {overall_rate:.0%} across "
+            "everyone in this simulation."
+        )
+    else:
+        color_key = None
+        outcome_legend = ""
+        title_text = ""
+        subtitle_text = f"{display_name(x_attr)} vs {display_name(y_attr)}"
+
+    fig_s = px.scatter(
+        plot_df,
+        x=x_attr,
+        y=y_attr,
+        color=color_key,
+        opacity=0.65,
+        title=title_text if color_col else subtitle_text,
+        color_discrete_map={
+            "Would buy": DASHBOARD_BRAND_COLORS["adopt"],
+            "Wouldn't buy": DASHBOARD_BRAND_COLORS["reject"],
+            "No simulation": DASHBOARD_BRAND_COLORS["neutral"],
+        }
+        if color_col
+        else None,
+    )
+    if color_col:
+        fig_s.update_layout(legend_title_text=outcome_legend)
         fig_s.add_hline(y=median_y, line_dash="dot", line_color="gray", opacity=0.5)
         fig_s.add_vline(x=median_x, line_dash="dot", line_color="gray", opacity=0.5)
+    fig_s.update_xaxes(title=f"{display_name(x_attr)} (0 = low, 1 = high)")
+    fig_s.update_yaxes(title=f"{display_name(y_attr)} (0 = low, 1 = high)")
+    fig_s.update_traces(marker={"size": 8})
+    fig_s.update_layout(height=DASHBOARD_CHART_HEIGHT)
 
     st.plotly_chart(fig_s, use_container_width=True)
     if color_col is None:
         st.info(
-            "Run a simulation from the Home page to see how these attributes relate to adoption decisions."
+            "Run a scenario from the **Home** page first. Once you do, this chart will colour "
+            "each persona by whether they **would buy** or **wouldn't buy** — revealing which "
+            "attribute combinations predict purchase behaviour."
         )
     else:
+        if headline:
+            st.info(headline)
         if insight_parts:
-            st.caption(" · ".join(insight_parts))
-            best_quad = max(
-                quadrants.items(),
-                key=lambda q: (q[1][color_col] == "adopt").mean() if len(q[1]) > 0 else 0,
-            )
-            best_quad_rate = (best_quad[1][color_col] == "adopt").mean()
-            x_dir = "high" if "High-" in best_quad[0] else "low"
-            y_dir = "high" if "-High" in best_quad[0] else "low"
-            st.info(
-                f"Parents with {x_dir} {display_name(x_attr)} and {y_dir} {display_name(y_attr)} "
-                f"adopt at {best_quad_rate:.0%} vs {overall_rate:.0%} overall."
-            )
-        else:
-            st.caption("No strong adoption differences across quadrants for these attributes.")
+            st.info(" · ".join(insight_parts))
+        elif not insight_parts:
+            st.caption("No strong differences between quadrants for these two attributes.")
 else:
     st.info(
         "Not enough attributes from this category appear in the current frame for a scatter plot "

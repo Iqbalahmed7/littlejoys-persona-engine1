@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from src.decision.funnel import (
     compute_awareness,
+    compute_consideration,
     compute_need_recognition,
     run_funnel,
 )
@@ -152,8 +153,6 @@ def test_dietary_incompatible_reduces_consideration(sample_persona: Persona) -> 
         ),
         target_age_range=(4, 10),
     )
-    from src.decision.funnel import compute_consideration, compute_awareness
-
     awareness_i = compute_awareness(sample_persona, incompatible)
     awareness_c = compute_awareness(sample_persona, compatible)
     score_i = compute_consideration(sample_persona, incompatible, awareness_i)
