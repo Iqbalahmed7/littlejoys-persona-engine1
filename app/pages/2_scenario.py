@@ -13,7 +13,6 @@ from src.utils.display import CHANNEL_HELP
 
 log = structlog.get_logger(__name__)
 
-st.set_page_config(page_title="Scenario Configurator", page_icon="🎛️", layout="wide")
 st.header("Scenario Configurator")
 st.caption(
     "Configure the market conditions for your product. These become the **baseline** "

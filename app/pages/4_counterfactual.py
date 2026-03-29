@@ -14,7 +14,6 @@ from src.simulation.counterfactual import (
 )
 from src.utils.display import INTERVENTION_RATIONALE
 
-st.set_page_config(page_title="Counterfactual Analysis", page_icon="⚖️", layout="wide")
 st.header("Counterfactual Analysis")
 st.caption(
     "Your current scenario defines the baseline. Here, test what happens when you "

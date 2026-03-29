@@ -29,8 +29,6 @@ from src.probing.sampling import PROBE_SAMPLE_SIZE
 from src.utils.display import display_name
 from src.utils.llm import LLMClient
 
-st.set_page_config(page_title="Probing Tree", page_icon="🌳", layout="wide")
-
 st.title("Probing Tree")
 st.caption(
     "Decompose a business question into testable hypotheses. "
