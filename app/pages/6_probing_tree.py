@@ -9,11 +9,8 @@ from app.components.probing_tree_helpers import (
     load_population_for_probing,
     probe_icon,
     probe_label,
-    render_attribute_detail,
-    render_interview_detail,
-    render_simulation_detail,
-    verdict_status_display,
 )
+from app.components.probing_tree_viz import render_probing_tree_visualization
 from src.config import Config
 from src.probing import (
     Hypothesis,
@@ -96,8 +93,7 @@ for hyp in sorted(hypotheses, key=lambda h: h.order):
     with st.expander("Why this hypothesis?", expanded=False, key=f"why_hyp_{selected_id}_{hyp.id}"):
         st.write(hyp.rationale)
         st.caption(
-            "Indicator attributes: "
-            + ", ".join(display_name(a) for a in hyp.indicator_attributes)
+            "Indicator attributes: " + ", ".join(display_name(a) for a in hyp.indicator_attributes)
         )
 
 for hyp in hypotheses:
@@ -164,100 +160,10 @@ if "probing_synthesis" in st.session_state:
     problem_r: ProblemStatement = st.session_state["probing_problem"]
 
     st.divider()
-    st.markdown(f"**Latest run:** {problem_r.title}")
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Overall Confidence", f"{synthesis.overall_confidence:.0%}")
-    c2.metric("Hypotheses Tested", synthesis.hypotheses_tested)
-    c3.metric("Confirmed", synthesis.hypotheses_confirmed)
-    c4.metric("Estimated Cost", f"${synthesis.total_cost_estimate:.2f}")
-
-    if synthesis.dominant_hypothesis:
-        dominant_title = next(
-            (h.title for h in hypotheses_r if h.id == synthesis.dominant_hypothesis),
-            synthesis.dominant_hypothesis,
-        )
-        st.info(
-            f"**Dominant finding:** {dominant_title} "
-            f"({synthesis.overall_confidence:.0%} confidence)"
-        )
-
-    st.subheader("Hypothesis Results")
-
-    for hyp_id, _confidence in synthesis.confidence_ranking:
-        verdict = verdicts.get(hyp_id)
-        hyp = next((h for h in hypotheses_r if h.id == hyp_id), None)
-        if not verdict or not hyp:
-            continue
-
-        col_title, col_bar = st.columns([0.55, 0.45])
-        with col_title:
-            status_icon = {
-                "confirmed": "✅",
-                "partially_confirmed": "⚠️",
-                "rejected": "❌",
-                "inconclusive": "❔",
-            }.get(verdict.status, "")
-            st.markdown(
-                f"**{status_icon} {hyp.title}** — {verdict_status_display(verdict.status)}"
-            )
-        with col_bar:
-            st.progress(min(verdict.confidence, 1.0))
-            st.caption(
-                f"Confidence: {verdict.confidence:.0%} · "
-                f"Consistency: {verdict.consistency_score:.0%}"
-            )
-
-        hyp_probes = [p for p in probes_r if p.hypothesis_id == hyp_id and p.result]
-        with st.expander(f"View {len(hyp_probes)} probe results", expanded=False):
-            for probe in sorted(hyp_probes, key=lambda p: p.order):
-                result = probe.result
-                if result is None:
-                    continue
-                icon = probe_icon(probe.probe_type)
-
-                sample_info = ""
-                if result.population_size and result.population_size > result.sample_size:
-                    sample_info = f" · {result.sample_size}/{result.population_size} sampled"
-                if result.clustering_method:
-                    sample_info += f" · {result.clustering_method} clustering"
-
-                st.markdown(f"{icon} **{probe_label(probe)}**")
-                st.caption(f"Confidence: {result.confidence:.0%}{sample_info}")
-                st.write(result.evidence_summary)
-
-                if probe.probe_type == ProbeType.INTERVIEW and result.response_clusters:
-                    render_interview_detail(result)
-                elif probe.probe_type == ProbeType.SIMULATION and result.lift is not None:
-                    render_simulation_detail(result)
-                elif probe.probe_type == ProbeType.ATTRIBUTE and result.attribute_splits:
-                    render_attribute_detail(result)
-
-                st.markdown("---")
-
-        st.caption(verdict.evidence_summary)
-
-    disabled = [h for h in hypotheses_r if not h.enabled]
-    if disabled:
-        st.subheader("Skipped Hypotheses")
-        for hyp in disabled:
-            st.markdown(f"~~{hyp.title}~~")
-        if synthesis.confidence_impact_of_disabled > 0:
-            st.warning(
-                f"Skipping {len(disabled)} hypothesis(es) may reduce confidence "
-                f"by up to {synthesis.confidence_impact_of_disabled:.0%}."
-            )
-
-    st.subheader("Synthesis")
-    st.write(synthesis.synthesis_narrative)
-
-    if synthesis.recommended_actions:
-        st.subheader("Recommended Actions")
-        for i, action in enumerate(synthesis.recommended_actions, 1):
-            st.markdown(f"{i}. {action}")
-
-    st.divider()
-    st.caption(
-        "🎤 = Interview probe (sampled, 30 personas) · "
-        "🔬 = Simulation probe (full population, no LLM) · "
-        "📊 = Attribute analysis (full population, no LLM)"
+    render_probing_tree_visualization(
+        problem=problem_r,
+        synthesis=synthesis,
+        hypotheses=hypotheses_r,
+        probes=probes_r,
+        verdicts=verdicts,
     )

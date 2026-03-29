@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 import streamlit as st
 from pydantic import ValidationError
 
+from src.analysis.interview_guardrails import run_all_guardrails
 from src.analysis.interviews import InterviewTurn, PersonaInterviewer, check_interview_quality
 from src.config import Config
 from src.constants import (
@@ -165,10 +166,12 @@ if st.session_state.get("interview_session_key") != session_key:
     st.session_state["interview_session_key"] = session_key
     st.session_state["interview_turns"] = []
     st.session_state["interview_quality_warnings"] = []
+    st.session_state["interview_guardrail_warnings"] = []
 
 if st.button("Reset Conversation"):
     st.session_state["interview_turns"] = []
     st.session_state["interview_quality_warnings"] = []
+    st.session_state["interview_guardrail_warnings"] = []
     st.rerun()
 
 metric_cols = st.columns(5)
@@ -209,11 +212,39 @@ if question:
 
     turns.append(reply)
     quality = check_interview_quality(reply.content, selected_persona, decision_result)
+    guardrail_warnings = run_all_guardrails(
+        response=reply.content,
+        question=question,
+        persona=selected_persona,
+        decision_result=decision_result,
+        previous_turns=history,
+    )
 
     st.session_state["interview_turns"] = turns
     st.session_state["interview_quality_warnings"] = quality.warnings
+    st.session_state["interview_guardrail_warnings"] = guardrail_warnings
     st.rerun()
 
 warnings = st.session_state.get("interview_quality_warnings", [])
 if isinstance(warnings, list) and warnings:
     st.warning("Quality checks: " + ", ".join(str(item) for item in warnings))
+
+guardrail_warnings = st.session_state.get("interview_guardrail_warnings", [])
+if isinstance(guardrail_warnings, list) and guardrail_warnings:
+    scope_violations = [warning for warning in guardrail_warnings if "scope" in warning]
+    sec_issues = [warning for warning in guardrail_warnings if "sec" in warning]
+    reframing = [warning for warning in guardrail_warnings if "reframing" in warning]
+    consistency = [
+        warning
+        for warning in guardrail_warnings
+        if "flip" in warning or "contradiction" in warning or "inconsistency" in warning
+    ]
+
+    if scope_violations:
+        st.warning("Response may have ventured outside the study scope.")
+    if sec_issues:
+        st.warning("Some references may not match this persona's socioeconomic profile.")
+    if reframing:
+        st.warning("Persona may have agreed too readily with a leading question.")
+    if consistency:
+        st.warning("Response may contradict something said earlier in this conversation.")

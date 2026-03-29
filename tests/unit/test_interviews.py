@@ -29,6 +29,7 @@ def _decision_result(outcome: str = "reject") -> dict[str, object]:
         "consideration_score": 0.44,
         "purchase_score": 0.31,
         "rejection_reason": "price_too_high" if outcome == "reject" else None,
+        "rejection_stage": None if outcome == "adopt" else "purchase",
     }
 
 
@@ -45,10 +46,10 @@ def test_system_prompt_includes_persona_demographics(sample_persona: Persona) ->
     )
 
     assert "Mumbai" in prompt
-    assert "Tier1" in prompt
-    assert "full time" in prompt
-    assert "masters" in prompt
-    assert "15.0 LPA" in prompt
+    assert "major metro" in prompt.lower()
+    assert "work full-time" in prompt
+    assert "₹15 lakhs" in prompt or "15 lakhs" in prompt.lower()
+    assert "mother" in prompt.lower()
 
 
 def test_system_prompt_includes_decision_outcome(sample_persona: Persona) -> None:
@@ -58,9 +59,9 @@ def test_system_prompt_includes_decision_outcome(sample_persona: Persona) -> Non
         _decision_result("reject"),
     )
 
-    assert "Outcome: reject" in prompt
-    assert "Rejection reason: price_too_high" in prompt
     assert "Nutrimix" in prompt
+    assert "B1" in prompt or "seriously considered" in prompt.lower()
+    assert "SCOPE OF THIS CONVERSATION" in prompt
 
 
 def test_system_prompt_includes_psychographic_highlights(sample_persona: Persona) -> None:
@@ -78,9 +79,10 @@ def test_system_prompt_includes_psychographic_highlights(sample_persona: Persona
         _decision_result(),
     )
 
-    assert "health_anxiety = 0.92" in prompt
-    assert "budget_consciousness = 0.91" in prompt
-    assert "medical_authority_trust = 0.88" in prompt
+    lowered = prompt.lower()
+    assert "worry" in lowered or "nutrition" in lowered
+    assert "rupee" in lowered or "compare prices" in lowered
+    assert "pediatrician" in lowered or "doctor" in lowered
 
 
 @pytest.mark.asyncio
@@ -116,6 +118,41 @@ async def test_interview_maintains_conversation_history(sample_persona: Persona)
     )
 
     assert "As I mentioned earlier" in turn.content
+
+
+@pytest.mark.asyncio
+async def test_mock_awareness_rejection_skips_price_framing(sample_persona: Persona) -> None:
+    dr = {
+        **_decision_result("reject"),
+        "rejection_stage": "awareness",
+        "rejection_reason": "low_awareness",
+    }
+    turn = await _mock_interviewer().interview(
+        sample_persona,
+        "Is the price of Nutrimix too high for your budget?",
+        "nutrimix_2_6",
+        dr,
+    )
+    low = turn.content.lower()
+    assert "price was exactly where i hesitated" not in low
+    assert "barely" in low or "hardly" in low or "invisible" in low or "never bought" in low
+
+
+@pytest.mark.asyncio
+async def test_mock_purchase_rejection_mentions_money(sample_persona: Persona) -> None:
+    dr = {
+        **_decision_result("reject"),
+        "rejection_stage": "purchase",
+        "rejection_reason": "price_too_high",
+    }
+    turn = await _mock_interviewer().interview(
+        sample_persona,
+        "What about the price and monthly budget?",
+        "nutrimix_2_6",
+        dr,
+    )
+    low = turn.content.lower()
+    assert "money" in low or "price" in low or "rupee" in low or "budget" in low
 
 
 @pytest.mark.asyncio

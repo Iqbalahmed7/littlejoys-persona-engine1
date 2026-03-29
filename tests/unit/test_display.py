@@ -21,6 +21,12 @@ def test_display_name_unknown_field() -> None:
     assert display_name("some_random_field") == "Some Random Field"
 
 
+def test_display_name_family_structure_values() -> None:
+    assert display_name("nuclear") == "Nuclear Family"
+    assert display_name("joint") == "Joint Family"
+    assert display_name("single_parent") == "Single Parent"
+
+
 def test_describe_attribute_value_high() -> None:
     result = describe_attribute_value("health_anxiety", 0.85)
     assert "very high" in result

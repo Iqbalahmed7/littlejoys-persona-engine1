@@ -14,7 +14,13 @@ ATTRIBUTE_DISPLAY_NAMES: dict[str, str] = {
     "parent_age": "Parent's Age",
     "parent_gender": "Parent Gender",
     "num_children": "Number of Children",
+    "child_ages": "Children's Ages",
+    "youngest_child_age": "Youngest Child's Age",
+    "oldest_child_age": "Oldest Child's Age",
     "family_structure": "Family Type",
+    "nuclear": "Nuclear Family",
+    "joint": "Joint Family",
+    "single_parent": "Single Parent",
     "employment_status": "Work Status",
     "education_level": "Education",
     "socioeconomic_class": "SEC Class",
@@ -99,6 +105,7 @@ ATTRIBUTE_DISPLAY_NAMES: dict[str, str] = {
     "rejection_stage": "Rejection Stage",
     "rejection_reason": "Rejection Reason",
     "persona_id": "Persona Identifier",
+    "child_age_group_filter": "Child Age Group",
 }
 
 SEC_DESCRIPTIONS: dict[str, str] = {
@@ -245,6 +252,61 @@ INTERVENTION_RATIONALE: dict[str, dict[str, str]] = {
         ),
     },
 }
+
+# Scenario labels for scatter / narrative context (PRD-014c Sprint 8)
+SCENARIO_PRODUCT_NAMES: dict[str, str] = {
+    "nutrimix_2_6": "NutriMix (ages 2-6)",
+    "nutrimix_7_14": "NutriMix (ages 7-14)",
+    "magnesium_gummies": "Magnesium Gummies",
+    "protein_mix": "Protein Mix",
+}
+
+INCOME_BRACKET_UI_LABELS: dict[str, str] = {
+    "low_income": "Under ₹8L",
+    "middle_income": "₹8L-15L",
+    "high_income": "Above ₹15L",
+}
+
+# Sorted attribute pair -> closing "so what" line for scatter insights
+QUADRANT_INTERPRETATIONS: dict[tuple[str, str], str] = {
+    ("budget_consciousness", "deal_seeking_intensity"): (
+        "Parents who watch price closely but still hunt deals may respond to clear value framing."
+    ),
+    ("budget_consciousness", "diet_consciousness"): (
+        "Deliberate nutrition spenders often weigh price against perceived health payoff."
+    ),
+    ("deal_seeking_intensity", "diet_consciousness"): (
+        "Convenience-oriented health consciousness can drive purchase intent in this segment."
+    ),
+    ("health_anxiety", "social_proof_bias"): (
+        "Trust-seeking, anxious parents may convert when peer proof and expert cues align."
+    ),
+    ("risk_tolerance", "simplicity_preference"): (
+        "Low-friction, low-risk positioning can unlock parents who avoid complex choices."
+    ),
+}
+
+
+def income_bracket_ui_label(code: str) -> str:
+    """Human label for income bracket filter options."""
+
+    return INCOME_BRACKET_UI_LABELS.get(code, display_name(code))
+
+
+def scenario_product_display_name(scenario_id: str) -> str:
+    """Marketing-friendly product line for the active scenario."""
+
+    return SCENARIO_PRODUCT_NAMES.get(scenario_id, display_name(scenario_id))
+
+
+def scatter_attribute_pair_interpretation(attr_a: str, attr_b: str) -> str:
+    """Narrative hint for a psychographic pair (order-independent)."""
+
+    key = tuple(sorted((attr_a, attr_b)))
+    return QUADRANT_INTERPRETATIONS.get(
+        key,
+        "This pattern is worth exploring further for positioning and messaging tests.",
+    )
 
 
 def scatter_purchase_outcome_label(value: object) -> str:
