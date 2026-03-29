@@ -156,9 +156,10 @@ def evaluate_decision(
     if not has_pack_event:
         return "delay"
 
+    habit_threshold = 0.05 if state.total_purchases < 3 else 0.2
     can_reorder = (
         state.reorder_urgency > 0.4
-        and state.habit_strength > 0.2
+        and state.habit_strength > habit_threshold
         and state.child_acceptance > 0.3
         and state.perceived_value > state.price_salience
         and state.fatigue < 0.6
@@ -208,7 +209,8 @@ def apply_decision(state: CanonicalState, decision: str, scenario: ScenarioConfi
         state.days_since_purchase = 0
         state.current_pack_day = 1
         state.reorder_urgency = 0.0
-        state.habit_strength = min(1.0, state.habit_strength + 0.08)
+        habit_boost = 0.15 if state.total_purchases <= 1 else 0.08
+        state.habit_strength = min(1.0, state.habit_strength + habit_boost)
         state.consecutive_purchase_months += 1
         if decision == "subscribe" and scenario.lj_pass_available:
             state.has_lj_pass = True

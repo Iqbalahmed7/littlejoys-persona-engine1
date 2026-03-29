@@ -132,6 +132,9 @@ def apply_daily_dynamics(state: CanonicalState) -> None:
                     EVENT_REORDER_URGENCY_RAMP_DAYS - remaining_days
                 ) / EVENT_REORDER_URGENCY_RAMP_DAYS
                 state.reorder_urgency = max(state.reorder_urgency, _clip(ramp))
+        if state.current_pack_day > state.pack_duration + 10:
+            state.current_pack_day = 0
+            state.reorder_urgency = max(state.reorder_urgency, 0.8)
     else:
         state.habit_strength -= EVENT_HABIT_DECAY_PER_DAY
 

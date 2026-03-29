@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.constants import SCENARIO_MODE_TEMPORAL
 from src.decision.scenarios import get_all_scenarios, get_scenario
 
 
@@ -48,6 +49,17 @@ def test_scenario_prices_are_positive() -> None:
 
     for scenario in get_all_scenarios():
         assert scenario.product.price_inr > 0.0
+
+
+def test_nutrimix_7_14_temporal_event_ready() -> None:
+    """Sprint 18: 7-14 scenario runs monthly/event engine with PRD parameters."""
+    scenario = get_scenario("nutrimix_7_14")
+    assert scenario.mode == SCENARIO_MODE_TEMPORAL
+    assert scenario.months == 12
+    assert scenario.marketing.awareness_level == 0.35
+    assert scenario.lj_pass_available is True
+    assert scenario.product.age_range == (7, 14)
+    assert scenario.product.price_inr == 649.0
 
 
 def test_channel_mix_sums_to_approximately_one() -> None:

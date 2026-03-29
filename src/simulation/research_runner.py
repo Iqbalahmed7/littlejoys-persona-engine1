@@ -16,6 +16,11 @@ from src.constants import INTERVIEW_COST_PER_1K_INPUT_USD, INTERVIEW_COST_PER_1K
 from src.probing.models import ProbeType
 from src.probing.question_bank import BusinessQuestion, get_tree_for_question
 from src.probing.smart_sample import SampledPersona, SmartSample, select_smart_sample
+from src.simulation.counterfactual import (
+    CounterfactualReport,
+    generate_default_counterfactuals,
+    run_counterfactual_analysis,
+)
 from src.simulation.event_engine import EventSimulationResult, run_event_simulation
 from src.simulation.explorer import VariantStrategy, generate_variants
 from src.simulation.static import StaticSimulationResult, run_static_simulation
@@ -116,6 +121,7 @@ class ResearchResult(BaseModel):
     interview_results: list[InterviewResult]
     alternative_runs: list[AlternativeRunSummary]
     metadata: ResearchMetadata
+    counterfactual_report: CounterfactualReport | None = None
 
 
 class ResearchRunner:
@@ -353,11 +359,12 @@ class ResearchRunner:
                 )[:5]
                 ev_n = max(1, len(top_for_event))
                 alt_duration = max(1, int(self.scenario.months) * 30)
-                # Stay strictly above the temporal-alternatives band (ends at 0.98).
+                # Stay strictly above the temporal-alternatives band (ends at 0.98);
+                # leave headroom before compile (1.0) for counterfactual analysis.
                 for idx, (variant, _sim) in enumerate(top_for_event):
                     self._progress(
                         "Running day-level event alternatives...",
-                        0.98 + ((idx + 1) / ev_n) * 0.02,
+                        0.98 + ((idx + 1) / ev_n) * 0.015,
                     )
                     # Do not forward engine progress here: it maps p→[0.12,0.20] and would
                     # rewind the overall progress bar after higher phases.
@@ -422,6 +429,19 @@ class ResearchRunner:
         else:
             alternative_runs.sort(key=lambda x: x.delta_vs_primary, reverse=True)
 
+        counterfactual_report: CounterfactualReport | None = None
+        if self.scenario.mode == "temporal" and event_primary is not None:
+            self._progress("Running counterfactual analysis...", 0.997)
+            counterfactual_report = run_counterfactual_analysis(
+                population=self.population,
+                baseline_scenario=self.scenario,
+                counterfactuals=generate_default_counterfactuals(self.scenario),
+                duration_days=max(1, int(self.scenario.months) * 30),
+                seed=self.seed,
+                progress_callback=None,
+                baseline_event_result=event_primary,
+            )
+
         self._progress("Compiling results...", 1.0)
         elapsed = time.monotonic() - started
         estimated_cost = (
@@ -449,4 +469,5 @@ class ResearchRunner:
             interview_results=interview_results,
             alternative_runs=alternative_runs,
             metadata=metadata,
+            counterfactual_report=counterfactual_report,
         )

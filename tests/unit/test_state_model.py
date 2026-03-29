@@ -83,3 +83,18 @@ def test_apply_daily_dynamics_clips():
     state_1 = CanonicalState(fatigue=1.0, is_active=True)
     apply_daily_dynamics(state_1)
     assert state_1.fatigue == 1.0
+
+
+def test_apply_daily_dynamics_resets_overstayed_pack():
+    """Overstayed active packs should reset tracking to avoid endless pack_finished loops."""
+
+    state = CanonicalState(
+        is_active=True,
+        current_pack_day=40,
+        pack_duration=25,
+        reorder_urgency=0.2,
+    )
+    apply_daily_dynamics(state)
+
+    assert state.current_pack_day == 0
+    assert state.reorder_urgency >= 0.8

@@ -192,7 +192,7 @@ Simulates a 12-month journey for each persona. Each month:
 
 **Per-persona trajectories**: `extract_persona_trajectories()` returns a `PersonaTrajectory` per persona with month-by-month state (is_active, satisfaction, consecutive_months, has_lj_pass, churned/adopted flags). Used for behavioural clustering.
 
-### 5.3 Event-Driven Simulation (Sprint 17 — Planned)
+### 5.3 Event-Driven Simulation (Sprint 17 — Implemented)
 
 Replaces the month-level loop with a day-level event-driven engine.
 
@@ -209,7 +209,7 @@ Each event has: `id`, `type`, `timestamp` (day), `intensity` (0-1), optional att
 
 **Processing order**: Deterministic events fire first, then stochastic. Impacts update the Canonical State Model variables.
 
-### 5.4 Canonical State Model (Sprint 17 — Planned)
+### 5.4 Canonical State Model (Sprint 17 — Implemented)
 
 10 mutable dynamic variables per persona, evolving daily:
 

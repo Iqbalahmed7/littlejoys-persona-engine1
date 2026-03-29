@@ -9,17 +9,20 @@ from pydantic import BaseModel, ConfigDict
 
 from src.analysis.barriers import analyze_barriers
 from src.analysis.causal import compute_variable_importance
+from src.analysis.executive_summary import ExecutiveSummary, generate_executive_summary
 from src.analysis.segments import analyze_segments
 from src.analysis.trajectory_clustering import cluster_trajectories
 from src.analysis.waterfall import compute_funnel_waterfall
 from src.constants import INCOME_BRACKET_LOW_MAX_LPA, INCOME_BRACKET_MID_MAX_LPA
 from src.decision.scenarios import get_scenario
+from src.generation.population import Population  # noqa: TC001
 from src.probing.clustering import cluster_responses_mock
 from src.probing.question_bank import get_question
+from src.simulation.counterfactual import CounterfactualResult  # noqa: TC001
 from src.simulation.temporal import MonthState, PersonaTrajectory, extract_persona_trajectories
+from src.utils.llm import LLMClient  # noqa: TC001
 
 if TYPE_CHECKING:
-    from src.generation.population import Population
     from src.simulation.research_runner import AlternativeRunSummary, ResearchResult
 
 
@@ -103,6 +106,8 @@ class ConsolidatedReport(BaseModel):
     event_clusters: list[dict[str, Any]] | None = None
     peak_churn_day: int | None = None
     decision_rationale_summary: list[dict[str, Any]] | None = None
+    counterfactual_results: list[CounterfactualResult] | None = None
+    executive_summary: ExecutiveSummary | None = None
     mock_mode: bool
     duration_seconds: float
     llm_calls_made: int
@@ -242,6 +247,8 @@ def _persona_trajectories_from_event(event_result: Any) -> list[PersonaTrajector
 def consolidate_research(
     result: ResearchResult,
     population: Population,
+    *,
+    llm_client: LLMClient | None = None,
 ) -> ConsolidatedReport:
     """Transform raw ResearchResult into a structured report."""
 
@@ -319,6 +326,7 @@ def consolidate_research(
     event_clusters: list[dict[str, Any]] | None = None
     peak_churn_day: int | None = None
     decision_rationale_summary: list[dict[str, Any]] | None = None
+    counterfactual_results: list[CounterfactualResult] | None = None
 
     if result.temporal_result is not None:
         temporal_snapshots = [
@@ -385,7 +393,10 @@ def consolidate_research(
         month_12_active_rate = er.final_active_rate
         revenue_estimate = er.total_revenue_estimate
 
-    return ConsolidatedReport(
+    if result.counterfactual_report is not None:
+        counterfactual_results = list(result.counterfactual_report.results)
+
+    report = ConsolidatedReport(
         scenario_id=result.metadata.scenario_id,
         scenario_name=scenario.name,
         question_title=question.title,
@@ -408,8 +419,24 @@ def consolidate_research(
         event_clusters=event_clusters,
         peak_churn_day=peak_churn_day,
         decision_rationale_summary=decision_rationale_summary,
+        counterfactual_results=counterfactual_results,
+        executive_summary=None,
         mock_mode=result.metadata.mock_mode,
         duration_seconds=result.metadata.duration_seconds,
         llm_calls_made=result.metadata.llm_calls_made,
         estimated_cost_usd=result.metadata.estimated_cost_usd,
     )
+
+    executive_summary: ExecutiveSummary | None = None
+    if result.metadata.mock_mode:
+        executive_summary = generate_executive_summary(
+            report, scenario, llm_client=None, mock_mode=True
+        )
+    elif llm_client is not None:
+        executive_summary = generate_executive_summary(
+            report, scenario, llm_client, mock_mode=False
+        )
+
+    if executive_summary is not None:
+        return report.model_copy(update={"executive_summary": executive_summary})
+    return report

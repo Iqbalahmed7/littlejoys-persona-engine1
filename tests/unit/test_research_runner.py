@@ -8,6 +8,7 @@ from src.config import Config
 from src.decision.scenarios import get_scenario
 from src.generation.population import GenerationParams, Population, PopulationMetadata
 from src.probing.question_bank import get_questions_for_scenario
+from src.simulation.counterfactual import CounterfactualReport, CounterfactualResult
 from src.simulation.event_engine import EventSimulationResult
 from src.simulation.explorer import ScenarioVariant
 from src.simulation.research_runner import ResearchRunner
@@ -69,7 +70,7 @@ def mk_persona(pid: str, income: float = 10.0, budget: float = 0.5, ref_point: f
     )
 
 @pytest.fixture
-def mock_runner():
+def mock_runner(monkeypatch: pytest.MonkeyPatch):
     """Create a ResearchRunner with a mock population and mock LLM."""
     # Split population: 13 high-budget/low-ref-point (will reject), 12 normal (will adopt)
     personas = []
@@ -95,6 +96,46 @@ def mock_runner():
     scenario = get_scenario("nutrimix_2_6")
     questions = get_questions_for_scenario("nutrimix_2_6")
     llm = LLMClient(Config(llm_mock_enabled=True, llm_cache_enabled=False, anthropic_api_key=""))
+
+    def _stub_counterfactual(
+        *, population, baseline_scenario, counterfactuals, **kwargs
+    ):  # type: ignore[no-untyped-def]
+        del counterfactuals
+        bid = baseline_scenario.id
+        ber = kwargs.get("baseline_event_result")
+        base = 0.2 if ber is None else float(ber.final_active_rate)
+        return CounterfactualReport(
+            baseline_scenario_id=bid,
+            results=[
+                CounterfactualResult(
+                    scenario_id="stub_cf",
+                    label="Stub intervention",
+                    baseline_active_rate=base,
+                    counterfactual_active_rate=min(1.0, base + 0.02),
+                    lift=0.02,
+                    lift_pct=10.0,
+                    baseline_revenue=1000.0,
+                    counterfactual_revenue=1020.0,
+                    revenue_lift=20.0,
+                    baseline_scenario_id=bid,
+                    counterfactual_name="stub_cf",
+                    parameter_changes={"product.price_inr": 500.0},
+                    baseline_adoption_rate=base,
+                    counterfactual_adoption_rate=min(1.0, base + 0.02),
+                    absolute_lift=0.02,
+                    relative_lift_percent=10.0,
+                )
+            ],
+            top_intervention="stub_cf",
+            population_size=len(population.personas),
+            duration_days=int(kwargs.get("duration_days", 180)),
+        )
+
+    monkeypatch.setattr(
+        "src.simulation.research_runner.run_counterfactual_analysis",
+        _stub_counterfactual,
+    )
+
     return ResearchRunner(
         population=pop,
         scenario=scenario,

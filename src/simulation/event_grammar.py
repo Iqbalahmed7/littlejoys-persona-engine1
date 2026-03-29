@@ -10,6 +10,32 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.constants import (
+    EVENT_FATIGUE_THRESHOLD_BOREDOM,
+    EVENT_IMPACT_BRAND_SALIENCE_INFLUENCER,
+    EVENT_IMPACT_BRAND_SALIENCE_REMINDER,
+    EVENT_IMPACT_CHILD_ACCEPTANCE_BOREDOM,
+    EVENT_IMPACT_CHILD_ACCEPTANCE_POSITIVE,
+    EVENT_IMPACT_DISCRETIONARY_BUDGET_BUDGET_PRESSURE_NEG,
+    EVENT_IMPACT_FATIGUE_CHILD_BOREDOM,
+    EVENT_IMPACT_FATIGUE_USAGE_DROP,
+    EVENT_IMPACT_HABIT_STRENGTH_USAGE_DAILY,
+    EVENT_IMPACT_PERCEIVED_VALUE_CHILD_POSITIVE,
+    EVENT_IMPACT_PERCEIVED_VALUE_USAGE_DROP_NEG,
+    EVENT_IMPACT_PRICE_SALIENCE_BUDGET_PRESSURE,
+    EVENT_IMPACT_REORDER_URGENCY_REMINDER,
+    EVENT_IMPACT_TRUST_INFLUENCER,
+    EVENT_PASS_OFFER_MIN_PURCHASES,
+    EVENT_PROB_BUDGET_PRESSURE_INCREASE_BASE,
+    EVENT_PROB_CHILD_BOREDOM_BASE,
+    EVENT_PROB_CHILD_POSITIVE_REACTION_BASE,
+    EVENT_PROB_DOCTOR_RECOMMENDATION_BASE,
+    EVENT_PROB_INFLUENCER_EXPOSURE_BASE,
+    EVENT_PROB_PASS_OFFER_BASE,
+    EVENT_PROB_REMINDER_BASE,
+    EVENT_PROB_USAGE_DROP_BASE,
+    EVENT_REMINDER_DAYS_SINCE_PURCHASE_THRESHOLD,
+)
 from src.simulation.state_model import CanonicalState, clip_state
 
 if TYPE_CHECKING:
@@ -58,7 +84,7 @@ def fire_stochastic_events(
 ) -> list[SimulationEvent]:
     """Emit stochastic fallback events used for local deterministic testing."""
 
-    del scenario
+
     events: list[SimulationEvent] = []
     if rng.random() < (0.04 + (0.08 * persona.media.ad_receptivity)):
         events.append(SimulationEvent(event_type="ad_exposure", day=day, intensity=0.15))
@@ -68,6 +94,49 @@ def fire_stochastic_events(
         events.append(SimulationEvent(event_type="competitor_discount", day=day, intensity=0.4))
     if rng.random() < (0.02 + (0.05 * persona.relationships.wom_receiver_openness)):
         events.append(SimulationEvent(event_type="peer_mention", day=day, intensity=0.2))
+
+    # 1. child_positive_reaction
+    if state.is_active and rng.random() < EVENT_PROB_CHILD_POSITIVE_REACTION_BASE:
+        events.append(SimulationEvent(event_type="child_positive_reaction", day=day, intensity=0.3))
+
+    # 2. child_boredom
+    if (state.is_active and state.fatigue > EVENT_FATIGUE_THRESHOLD_BOREDOM
+            and rng.random() < EVENT_PROB_CHILD_BOREDOM_BASE):
+        events.append(SimulationEvent(event_type="child_boredom", day=day, intensity=0.2))
+
+    # 3. usage_consistent — daily habit reinforcement when actively using
+    if state.is_active and rng.random() < 0.8:
+        events.append(SimulationEvent(event_type="usage_consistent", day=day, intensity=0.1))
+
+    # 4. usage_drop — reduced usage when fatigue builds
+    if state.is_active and state.fatigue > 0.4 and rng.random() < EVENT_PROB_USAGE_DROP_BASE:
+        events.append(SimulationEvent(event_type="usage_drop", day=day, intensity=0.3))
+
+    # 5. budget_pressure_increase
+    if rng.random() < EVENT_PROB_BUDGET_PRESSURE_INCREASE_BASE:
+        events.append(SimulationEvent(event_type="budget_pressure_increase", day=day, intensity=0.5))
+
+    # 6. influencer_exposure
+    if rng.random() < EVENT_PROB_INFLUENCER_EXPOSURE_BASE * (0.5 + persona.media.ad_receptivity):
+        events.append(SimulationEvent(event_type="influencer_exposure", day=day, intensity=0.3))
+
+    # 7. doctor_recommendation — rare but high impact
+    if rng.random() < EVENT_PROB_DOCTOR_RECOMMENDATION_BASE:
+        events.append(SimulationEvent(event_type="doctor_recommendation", day=day, intensity=0.8))
+
+    # 8. reminder — only for inactive personas who previously adopted
+    if (not state.is_active and state.ever_adopted
+            and state.days_since_purchase > EVENT_REMINDER_DAYS_SINCE_PURCHASE_THRESHOLD
+            and rng.random() < EVENT_PROB_REMINDER_BASE):
+        events.append(SimulationEvent(event_type="reminder", day=day, intensity=0.4))
+
+    # 9. pass_offer — for active multi-purchasers without a pass
+    if (scenario.lj_pass_available and state.is_active
+            and state.total_purchases >= EVENT_PASS_OFFER_MIN_PURCHASES
+            and not state.has_lj_pass
+            and rng.random() < EVENT_PROB_PASS_OFFER_BASE):
+        events.append(SimulationEvent(event_type="pass_offer", day=day, intensity=0.5))
+
     return events
 
 
@@ -93,6 +162,36 @@ def apply_event_impact(state: CanonicalState, event: SimulationEvent, persona: P
     elif event.event_type == "doctor_recommendation":
         state.trust += 0.2 * intensity
         state.perceived_value += 0.1 * intensity
+
+    elif event.event_type == "child_positive_reaction":
+        state.child_acceptance += EVENT_IMPACT_CHILD_ACCEPTANCE_POSITIVE * intensity
+        state.perceived_value += EVENT_IMPACT_PERCEIVED_VALUE_CHILD_POSITIVE * intensity
+
+    elif event.event_type == "child_boredom":
+        state.child_acceptance -= EVENT_IMPACT_CHILD_ACCEPTANCE_BOREDOM * intensity
+        state.fatigue += EVENT_IMPACT_FATIGUE_CHILD_BOREDOM * intensity
+
+    elif event.event_type == "usage_consistent":
+        state.habit_strength += EVENT_IMPACT_HABIT_STRENGTH_USAGE_DAILY * intensity
+
+    elif event.event_type == "usage_drop":
+        state.fatigue += EVENT_IMPACT_FATIGUE_USAGE_DROP * intensity
+        state.perceived_value -= EVENT_IMPACT_PERCEIVED_VALUE_USAGE_DROP_NEG * intensity
+
+    elif event.event_type == "budget_pressure_increase":
+        state.price_salience += EVENT_IMPACT_PRICE_SALIENCE_BUDGET_PRESSURE * intensity
+        state.discretionary_budget -= EVENT_IMPACT_DISCRETIONARY_BUDGET_BUDGET_PRESSURE_NEG * intensity
+
+    elif event.event_type == "influencer_exposure":
+        state.brand_salience += EVENT_IMPACT_BRAND_SALIENCE_INFLUENCER * intensity
+        state.trust += EVENT_IMPACT_TRUST_INFLUENCER * intensity
+
+    elif event.event_type == "reminder":
+        state.reorder_urgency += EVENT_IMPACT_REORDER_URGENCY_REMINDER * intensity
+        state.brand_salience += EVENT_IMPACT_BRAND_SALIENCE_REMINDER * intensity
+
+    elif event.event_type == "pass_offer":
+        state.reorder_urgency += 0.1 * intensity
 
     elif event.event_type == "payday_relief":
         state.price_salience -= 0.03

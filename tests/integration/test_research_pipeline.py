@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -12,8 +13,20 @@ from src.constants import DASHBOARD_DEFAULT_POPULATION_PATH, DEFAULT_SEED
 from src.decision.scenarios import get_scenario
 from src.generation.population import Population, PopulationGenerator
 from src.probing.question_bank import get_questions_for_scenario
+from src.simulation.counterfactual import CounterfactualScenario
 from src.simulation.research_runner import ResearchResult, ResearchRunner
 from src.utils.llm import LLMClient
+
+
+def _few_counterfactuals(scenario):  # type: ignore[no-untyped-def]
+    del scenario
+    return [
+        CounterfactualScenario(
+            id="cf_a",
+            label="Pediatrician endorsement",
+            parameter_changes={"marketing.pediatrician_endorsement": True},
+        ),
+    ]
 
 
 @pytest.fixture(scope="module")
@@ -51,7 +64,11 @@ def research_result(population):
         seed=42,
     )
 
-    return runner.run()
+    with patch(
+        "src.simulation.research_runner.generate_default_counterfactuals",
+        _few_counterfactuals,
+    ):
+        return runner.run()
 
 
 def test_pipeline_produces_result(research_result) -> None:
@@ -106,6 +123,14 @@ def test_all_scenarios_run(population) -> None:
             sample_size=3,
             seed=42,
         )
-        result = runner.run()
+        with patch(
+            "src.simulation.research_runner.generate_default_counterfactuals",
+            _few_counterfactuals,
+        ):
+            result = runner.run()
         assert result.primary_funnel.population_size > 0
         assert result.metadata.scenario_id == sid
+        if scenario.mode == "temporal":
+            assert result.counterfactual_report is not None
+        else:
+            assert result.counterfactual_report is None

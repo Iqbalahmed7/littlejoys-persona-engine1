@@ -390,60 +390,128 @@ Codex (backend) ──→ Cursor (results page)
 
 ---
 
-## Sprint 17: Event-Driven Simulation Engine (Planned)
-**Goal:** Replace month-granularity with day-level events. Model specific triggers (pack finish, child taste reaction, competitor promo, reminder) rather than aggregate monthly satisfaction.
+## Sprint 17: Event-Driven Simulation Engine ✅
+**Goal:** Replace month-granularity with day-level events.
+**Status:** Complete — 2026-03-29
 
-### Planned Tasks
-- Codex: `EventEngine` class with event grammar, day-level loop, event-driven state updates
-- Cursor: Event timeline visualization in results page
-- Codex: Competitive context model (switching to Horlicks/Bournvita as explicit alternative)
-- Antigravity: Event engine tests + trajectory validation
+### Delivered
+- Goose: `state_model.py` (CanonicalState, initialization, daily dynamics) + `event_grammar.py` (4 events)
+- Codex: `event_engine.py` (day loop, decision rules, monthly rollup) + EVENT_* constants
+- Cursor: Wired event engine into ResearchRunner + Results page (daily/monthly toggle, event timeline, decision drivers, intervention comparison)
+- OpenCode: Research page UI text (event simulation labels, duration display, progress steps)
+- Antigravity: 12 new tests (state model, event engine, event grammar, integration pipeline)
+- Tech Lead fixes: 5 bug fixes across Goose and Codex deliveries
 
----
-
-## Sprint 18-19: Intelligence Layer (Planned)
-**Goal:** Counterfactual engine + LLM calibration + executive summary generation.
-
-### Planned Tasks
-- Counterfactual engine: re-run temporal simulation with parameter perturbations, measure causal lift
-- LLM-calibrated thresholds: run LLM on 5-10 representative personas to extract decision parameters, apply as rules to full population
-- Executive summary: single LLM call to synthesize temporal findings into PM-ready narrative
-- Extend to Nutrimix 7-14 scenario (school context, peer influence, different event grammar)
+### Known Issues (Fixed in Sprint 18)
+- **0% repeat purchase rate** — habit_strength threshold (0.2) unreachable after first purchase (+0.08)
+- **Incomplete event grammar** — Only 4 of 15 event types implemented; no positive events
+- **Pack overstay loop** — pack_finished fires indefinitely when persona delays reorder
 
 ---
 
-## Sprint 20-21: Presentation + Second Scenario (Planned)
+## Sprint 18: Intelligence Layer + Simulation Fix
+**Goal:** Fix the broken repeat-purchase loop, complete all 15 event types, add counterfactual engine, executive summary, and Nutrimix 7-14 temporal support.
+
+### Goose — Complete Event Grammar
+**Files:** `src/simulation/event_grammar.py` (edit)
+**Brief:** `docs/briefs/sprint18_goose.md`
+- Add 11 missing event types: child_positive_reaction, child_boredom, usage_consistent, usage_drop, budget_pressure_increase, influencer_exposure, doctor_recommendation, reminder, pass_offer
+- Wire to EVENT_* constants from constants.py
+- Critical: positive events (child_positive_reaction, usage_consistent) counterbalance the decline
+
+### Codex — Repeat Fix + Counterfactual Engine + Calibration
+**Files:** `src/simulation/event_engine.py` (edit), `src/simulation/state_model.py` (edit), `src/simulation/counterfactual.py` (new), `scripts/calibrate_event_params.py` (new)
+**Brief:** `docs/briefs/sprint18_codex.md`
+- Fix repeat purchase: progressive habit threshold (0.05 for first 2 reorders, 0.2 after)
+- Fix pack overstay: reset pack tracking after 10 days past depletion
+- Counterfactual engine: 8-12 standard business perturbations with lift measurement
+- Calibration script: diagnostic that validates simulation health metrics
+
+### Cursor — Executive Summary + Counterfactual UI + 7-14 Config
+**Files:** `src/analysis/executive_summary.py` (new), `app/pages/3_results.py` (edit), `src/analysis/research_consolidator.py` (edit), `src/simulation/research_runner.py` (edit), `src/decision/scenarios.py` (edit)
+**Brief:** `docs/briefs/sprint18_cursor.md`
+- Executive summary: single Sonnet LLM call → PM-ready narrative with mock mode
+- Counterfactual UI: bar chart + expandable cards per intervention on Results page
+- Wire summary + counterfactual into consolidation pipeline
+- Nutrimix 7-14: switch to mode="temporal" for event engine support
+
+### OpenCode — Retention Curve + Health Metrics
+**Files:** `app/pages/3_results.py` (edit)
+**Brief:** `docs/briefs/sprint18_opencode.md`
+- Retention curve chart (% of adopters still active per month)
+- Simulation health banner (trial rate, final active, repeat count, peak churn)
+
+### Antigravity — Tests for All Sprint 18 Deliverables
+**Files:** `tests/unit/test_event_grammar.py` (edit), `tests/unit/test_event_engine.py` (edit), `tests/unit/test_counterfactual.py` (new), `tests/unit/test_executive_summary.py` (new), `tests/integration/test_event_pipeline.py` (edit)
+**Brief:** `docs/briefs/sprint18_antigravity.md`
+- Tests for 11 new event types
+- Repeat purchase validation (reorders > 0, churn < 100%)
+- Counterfactual engine tests
+- Executive summary mock mode tests
+- Nutrimix 7-14 temporal pipeline test
+
+### Execution Order
+```
+Goose (grammar) + Codex (engine fix + counterfactual) ──→ Cursor (summary + UI + 7-14)
+                                                                    │
+                                                          OpenCode (retention curve)
+                                                                    │
+                                                          Antigravity (all tests)
+```
+
+---
+
+## Sprint 19: Calibration + LLM Parameter Tuning (Planned)
+**Goal:** Tune simulation parameters for face validity, add LLM-calibrated thresholds.
+
+### Planned Tasks
+- Run calibration script, adjust event probabilities and impact constants until simulation produces realistic metrics (15-25% trial, 40-60% repeat, 10-20% month-12 active)
+- LLM-calibrated thresholds: interview 5-10 representative personas with LLM, extract decision parameters, apply as rules
+- Sensitivity analysis: which parameters have most impact on outcomes
+- Face validity: inspect 50+ trajectories for coherence
+
+---
+
+## Sprint 20-21: Presentation + Demo Polish (Planned)
 **Goal:** Polish the PM-facing experience for POC demo.
 
 ### Planned Tasks
-- Cohort heatmaps and retention curves
+- Cohort heatmaps
 - Intervention recommendation engine
-- Nutrimix 7-14 full temporal scenario
 - Demo mode with guided walkthrough
+- Cost tracking dashboard
+- Final deploy to Streamlit Cloud
 
 ---
 
 ## Dependency Graph (Phase 2)
 ```
-Sprint 16 (Temporal Pipeline)
-  ├── Temporal → Research Runner ───────┐
-  ├── Trajectory Clustering ────────────┤
-  ├── Results Page (Temporal) ──────────┤
-  └── Tests ────────────────────────────┤
-                                        ▼
-Sprint 17 (Event Engine)               │
-  ├── Day-level events ─────────────────┤
-  ├── Competitive context ──────────────┤
-  └── Event timeline UI ────────────────┤
-                                        ▼
-Sprint 18-19 (Intelligence)            │
-  ├── Counterfactual engine ────────────┤
-  ├── LLM calibration ─────────────────┤
-  ├── Executive summary ────────────────┤
-  └── Nutrimix 7-14 scenario ──────────┤
-                                        ▼
+Sprint 16 (Temporal Pipeline) ✅
+  ├── Temporal → Research Runner
+  ├── Trajectory Clustering
+  ├── Results Page (Temporal)
+  └── Tests
+          ▼
+Sprint 17 (Event Engine) ✅
+  ├── Day-level events
+  ├── State model + decision rules
+  └── Event timeline UI
+          ▼
+Sprint 18 (Intelligence Layer)  ← CURRENT
+  ├── Complete event grammar (15/15 types)
+  ├── Fix repeat purchase + pack overstay
+  ├── Counterfactual engine
+  ├── Executive summary (LLM)
+  ├── Nutrimix 7-14 temporal
+  └── Retention curve UI
+          ▼
+Sprint 19 (Calibration)
+  ├── Parameter tuning for face validity
+  ├── LLM-calibrated thresholds
+  └── Sensitivity analysis
+          ▼
 Sprint 20-21 (Presentation)
-  ├── Retention curves / heatmaps
+  ├── Cohort heatmaps
   ├── Recommendation engine
   └── Demo walkthrough
 ```

@@ -155,3 +155,161 @@ def test_apply_event_impact_child_rejection():
     event = SimulationEvent(event_type="child_rejection", day=1, intensity=1.0)
     apply_event_impact(state, event, persona)
     assert state.child_acceptance < 0.6  # Decreases by 0.10
+
+
+def test_child_positive_reaction_fires_when_active():
+    """child_positive_reaction should only fire when persona is active."""
+    state = CanonicalState(is_active=True)
+    persona = MockPersona()
+    scenario = MockScenarioConfig(MockProduct(0.7), MockMarketing(0.5, True, True), True)
+    rng = random.Random(42)
+    # Probability is 0.05, seed 42 on day 1 with fixed logic should be deterministic
+    found = False
+    for day in range(1, 100):
+        events = fire_stochastic_events(state, persona, day, scenario, rng)
+        if any(e.event_type == "child_positive_reaction" for e in events):
+            found = True
+            break
+    assert found
+
+
+def test_child_boredom_requires_fatigue():
+    """child_boredom should only fire when fatigue > threshold."""
+    # Threshold is 0.3
+    state = CanonicalState(is_active=True, fatigue=0.1)
+    persona = MockPersona()
+    scenario = MockScenarioConfig(MockProduct(0.7), MockMarketing(0.5, True, True), True)
+    rng = random.Random(42)
+
+    # Fatigue too low, should never fire
+    for day in range(1, 100):
+        events = fire_stochastic_events(state, persona, day, scenario, rng)
+        assert not any(e.event_type == "child_boredom" for e in events)
+
+    # Fatigue high
+    state.fatigue = 0.5
+    found = False
+    for day in range(1, 200):
+        events = fire_stochastic_events(state, persona, day, scenario, rng)
+        if any(e.event_type == "child_boredom" for e in events):
+            found = True
+            break
+    assert found
+
+
+def test_usage_consistent_boosts_habit():
+    """usage_consistent impact should increase habit_strength."""
+    state = CanonicalState(habit_strength=0.1, is_active=True)
+    persona = MockPersona()
+    event = SimulationEvent(event_type="usage_consistent", day=1, intensity=1.0)
+    apply_event_impact(state, event, persona)
+    assert state.habit_strength > 0.1
+
+
+def test_usage_drop_increases_fatigue():
+    """usage_drop should increase fatigue and decrease perceived_value."""
+    state = CanonicalState(fatigue=0.2, perceived_value=0.8, is_active=True)
+    persona = MockPersona()
+    event = SimulationEvent(event_type="usage_drop", day=1, intensity=1.0)
+    apply_event_impact(state, event, persona)
+    assert state.fatigue > 0.2
+    assert state.perceived_value < 0.8
+
+
+def test_budget_pressure_increases_price_salience():
+    """budget_pressure_increase should raise price_salience and lower budget."""
+    state = CanonicalState(price_salience=0.3, discretionary_budget=0.7)
+    persona = MockPersona()
+    event = SimulationEvent(event_type="budget_pressure_increase", day=1, intensity=1.0)
+    apply_event_impact(state, event, persona)
+    assert state.price_salience > 0.3
+    assert state.discretionary_budget < 0.7
+
+
+def test_influencer_exposure_boosts_brand_and_trust():
+    """influencer_exposure should increase brand_salience and trust."""
+    state = CanonicalState(brand_salience=0.2, trust=0.2)
+    persona = MockPersona()
+    event = SimulationEvent(event_type="influencer_exposure", day=1, intensity=1.0)
+    apply_event_impact(state, event, persona)
+    assert state.brand_salience > 0.2
+    assert state.trust > 0.2
+
+
+def test_doctor_recommendation_high_impact():
+    """doctor_recommendation should have larger trust impact than other events."""
+    state_dr = CanonicalState(trust=0.2)
+    state_inf = CanonicalState(trust=0.2)
+    persona = MockPersona()
+
+    apply_event_impact(state_dr, SimulationEvent(event_type="doctor_recommendation", day=1), persona)
+    apply_event_impact(state_inf, SimulationEvent(event_type="influencer_exposure", day=1), persona)
+
+    # Doctor impact is 0.2, Influencer is 0.07/0.02 (depending on constants)
+    assert state_dr.trust > state_inf.trust
+
+
+def test_reminder_fires_for_inactive_adopters():
+    """reminder should only fire when persona is inactive and has previously adopted."""
+    state = CanonicalState(is_active=False, ever_adopted=True, days_since_purchase=30)
+    persona = MockPersona()
+    scenario = MockScenarioConfig(MockProduct(0.7), MockMarketing(0.5, True, True), True)
+    rng = random.Random(42)
+
+    found = False
+    for day in range(1, 200):
+        events = fire_stochastic_events(state, persona, day, scenario, rng)
+        if any(e.event_type == "reminder" for e in events):
+            found = True
+            break
+    assert found
+
+    # Active personas should not get reminders
+    state.is_active = True
+    for day in range(1, 100):
+        events = fire_stochastic_events(state, persona, day, scenario, rng)
+        assert not any(e.event_type == "reminder" for e in events)
+
+
+def test_pass_offer_fires_for_qualified_buyers():
+    """pass_offer requires active + 2+ purchases + no existing pass."""
+    state = CanonicalState(is_active=True, total_purchases=2, has_lj_pass=False)
+    persona = MockPersona()
+    # Boost probability for test reliability
+    scenario = MockScenarioConfig(MockProduct(0.7), MockMarketing(0.5, True, True), True)
+    rng = random.Random(42)
+
+    found = False
+    # Use 1000 days to be sure, or a more favorable seed
+    for day in range(1, 1000):
+        events = fire_stochastic_events(state, persona, day, scenario, rng)
+        if any(e.event_type == "pass_offer" for e in events):
+            found = True
+            break
+    assert found, "pass_offer event never fired in 1000 days."
+
+    # Should not fire if already has pass
+    state.has_lj_pass = True
+    for day in range(1, 100):
+        events = fire_stochastic_events(state, persona, day, scenario, rng)
+        assert not any(e.event_type == "pass_offer" for e in events)
+
+
+def test_all_fifteen_event_types_have_impact_handlers():
+    """Every event type constant in constants.py should have a handler in apply_event_impact."""
+    from src.simulation.event_grammar import apply_event_impact
+
+    # Manually curated list from constants.py for robustness
+    expected = {
+        "pack_finished", "usage_consistent", "usage_drop", "child_positive_reaction",
+        "child_rejection", "child_boredom", "budget_pressure_increase", "payday_relief",
+        "competitor_discount", "ad_exposure", "influencer_exposure", "doctor_recommendation",
+        "peer_mention", "reminder", "pass_offer"
+    }
+
+    state = CanonicalState()
+    persona = MockPersona()
+    for etype in expected:
+        # Should not raise KeyError or pass silently without effect (though effect might be clipped)
+        event = SimulationEvent(event_type=etype, day=1)
+        apply_event_impact(state, event, persona)

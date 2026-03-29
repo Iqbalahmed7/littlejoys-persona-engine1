@@ -257,7 +257,14 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
             target_age_range=(7, 14),
             lj_pass_available=True,
             lj_pass=LJPassConfig(),
-            mode=SCENARIO_MODE_STATIC,
+            mode=SCENARIO_MODE_TEMPORAL,
+            months=12,
+            thresholds={
+                "need_recognition": DEFAULT_NEED_RECOGNITION_THRESHOLD,
+                "awareness": DEFAULT_AWARENESS_THRESHOLD,
+                "consideration": DEFAULT_CONSIDERATION_THRESHOLD,
+                "purchase": DEFAULT_PURCHASE_THRESHOLD,
+            },
         ),
         "magnesium_gummies": ScenarioConfig(
             id="magnesium_gummies",

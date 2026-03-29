@@ -23,8 +23,11 @@ from src.constants import (
 )
 from src.decision.calibration import evaluate_scenario_adoption
 from src.decision.scenarios import ScenarioConfig, get_scenario
+from src.simulation.event_engine import EventSimulationResult, run_event_simulation
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from src.generation.population import Population
 
 
@@ -45,14 +48,48 @@ class CounterfactualResult(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    # Sprint 18 event-engine comparison fields
+    scenario_id: str | None = None
+    label: str | None = None
+    baseline_active_rate: float | None = None
+    counterfactual_active_rate: float | None = None
+    lift: float | None = None
+    lift_pct: float | None = None
+    baseline_revenue: float | None = None
+    counterfactual_revenue: float | None = None
+    revenue_lift: float | None = None
+
+    # Existing static-funnel comparison fields
     baseline_scenario_id: str
     counterfactual_name: str
-    parameter_changes: dict[str, tuple[Any, Any]]
+    parameter_changes: dict[str, Any]
     baseline_adoption_rate: float
     counterfactual_adoption_rate: float
     absolute_lift: float
     relative_lift_percent: float
     most_affected_segments: list[SegmentImpact] = Field(default_factory=list)
+
+
+class CounterfactualScenario(BaseModel):
+    """One perturbation to test in event simulation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    label: str
+    parameter_changes: dict[str, object]
+
+
+class CounterfactualReport(BaseModel):
+    """Full event-simulation counterfactual analysis report."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    baseline_scenario_id: str
+    results: list[CounterfactualResult]
+    top_intervention: str
+    population_size: int
+    duration_days: int
 
 
 def _get_nested_value(payload: dict[str, Any], path: str) -> Any:
@@ -298,4 +335,146 @@ def run_counterfactual(
             baseline_results=baseline_result.results_by_persona,
             counterfactual_results=counterfactual_result.results_by_persona,
         ),
+    )
+
+
+def generate_default_counterfactuals(scenario: ScenarioConfig) -> list[CounterfactualScenario]:
+    """Generate standard business counterfactuals for event simulation analysis."""
+
+    price_down = round(float(scenario.product.price_inr) * 0.85, 2)
+    price_up = round(float(scenario.product.price_inr) * 1.15, 2)
+    awareness_double = min(1.0, float(scenario.marketing.awareness_budget) * 2.0)
+    taste_up = min(1.0, float(scenario.product.taste_appeal) + 0.1)
+    effort_down = max(0.0, float(scenario.product.effort_to_acquire) - 0.15)
+
+    defaults = [
+        CounterfactualScenario(
+            id="add_pediatrician",
+            label="Add pediatrician endorsement",
+            parameter_changes={"marketing.pediatrician_endorsement": True},
+        ),
+        CounterfactualScenario(
+            id="add_school_partnership",
+            label="Add school partnership",
+            parameter_changes={"marketing.school_partnership": True},
+        ),
+        CounterfactualScenario(
+            id="price_minus_15",
+            label="Reduce price by 15%",
+            parameter_changes={"product.price_inr": price_down},
+        ),
+        CounterfactualScenario(
+            id="price_plus_15",
+            label="Increase price by 15%",
+            parameter_changes={"product.price_inr": price_up},
+        ),
+        CounterfactualScenario(
+            id="double_awareness_budget",
+            label="Double awareness budget",
+            parameter_changes={"marketing.awareness_budget": awareness_double},
+        ),
+        CounterfactualScenario(
+            id="add_influencer_campaign",
+            label="Enable influencer campaign",
+            parameter_changes={"marketing.influencer_campaign": True},
+        ),
+        CounterfactualScenario(
+            id="improve_taste_appeal",
+            label="Improve taste appeal +0.1",
+            parameter_changes={"product.taste_appeal": taste_up},
+        ),
+        CounterfactualScenario(
+            id="reduce_acquisition_effort",
+            label="Reduce effort to acquire by 0.15",
+            parameter_changes={"product.effort_to_acquire": effort_down},
+        ),
+        CounterfactualScenario(
+            id="add_sports_club_partnership",
+            label="Add sports club partnership",
+            parameter_changes={"marketing.sports_club_partnership": True},
+        ),
+    ]
+    if not scenario.lj_pass_available:
+        defaults.append(
+            CounterfactualScenario(
+                id="enable_lj_pass",
+                label="Enable LJ Pass",
+                parameter_changes={"lj_pass_available": True},
+            )
+        )
+    return defaults
+
+
+def run_counterfactual_analysis(
+    population: Population,
+    baseline_scenario: ScenarioConfig,
+    counterfactuals: list[CounterfactualScenario],
+    duration_days: int = 360,
+    seed: int = 42,
+    progress_callback: Callable[[float], None] | None = None,
+    baseline_event_result: EventSimulationResult | None = None,
+) -> CounterfactualReport:
+    """Run baseline + counterfactual event simulations and compute lift metrics."""
+
+    if baseline_event_result is not None:
+        baseline_active_rate = baseline_event_result.final_active_rate
+        baseline_revenue = baseline_event_result.total_revenue_estimate
+    else:
+        baseline = run_event_simulation(
+            population=population,
+            scenario=baseline_scenario,
+            duration_days=duration_days,
+            seed=seed,
+        )
+        baseline_active_rate = baseline.final_active_rate
+        baseline_revenue = baseline.total_revenue_estimate
+
+    results: list[CounterfactualResult] = []
+    total = max(1, len(counterfactuals))
+    for idx, item in enumerate(counterfactuals):
+        counterfactual_scenario = apply_scenario_modifications(
+            baseline_scenario,
+            dict(item.parameter_changes),
+        )
+        event_result = run_event_simulation(
+            population=population,
+            scenario=counterfactual_scenario,
+            duration_days=duration_days,
+            seed=seed,
+        )
+        lift = event_result.final_active_rate - baseline_active_rate
+        lift_pct = (lift / baseline_active_rate * 100.0) if baseline_active_rate > 0 else 0.0
+        revenue_lift = event_result.total_revenue_estimate - baseline_revenue
+        results.append(
+            CounterfactualResult(
+                scenario_id=item.id,
+                label=item.label,
+                baseline_active_rate=baseline_active_rate,
+                counterfactual_active_rate=event_result.final_active_rate,
+                lift=lift,
+                lift_pct=lift_pct,
+                baseline_revenue=baseline_revenue,
+                counterfactual_revenue=event_result.total_revenue_estimate,
+                revenue_lift=revenue_lift,
+                parameter_changes=dict(item.parameter_changes),
+                baseline_scenario_id=baseline_scenario.id,
+                counterfactual_name=item.id,
+                baseline_adoption_rate=baseline_active_rate,
+                counterfactual_adoption_rate=event_result.final_active_rate,
+                absolute_lift=lift,
+                relative_lift_percent=lift_pct,
+                most_affected_segments=[],
+            )
+        )
+        if progress_callback:
+            progress_callback((idx + 1) / total)
+
+    results.sort(key=lambda row: row.lift if row.lift is not None else 0.0, reverse=True)
+    top_intervention = results[0].scenario_id if results else "baseline"
+    return CounterfactualReport(
+        baseline_scenario_id=baseline_scenario.id,
+        results=results,
+        top_intervention=top_intervention or "baseline",
+        population_size=len(population.personas),
+        duration_days=duration_days,
     )

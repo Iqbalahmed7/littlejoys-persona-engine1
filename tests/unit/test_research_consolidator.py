@@ -90,6 +90,8 @@ def test_consolidation_returns_valid_report(research_result, population) -> None
     """consolidate_research() returns a ConsolidatedReport."""
     report = consolidate_research(research_result, population)
     assert isinstance(report, ConsolidatedReport)
+    assert report.executive_summary is not None
+    assert report.executive_summary.mock_mode is True
 
 def test_funnel_summary_matches_primary(research_result, population) -> None:
     """Funnel quantitative stats are correctly propagated."""

@@ -1,12 +1,15 @@
 """Unit tests for the counterfactual engine."""
 
-from __future__ import annotations
+import pytest
 
-from src.decision.scenarios import MarketingConfig, ProductConfig, ScenarioConfig
+from src.decision.scenarios import MarketingConfig, ProductConfig, ScenarioConfig, get_scenario
 from src.generation.population import GenerationParams, Population, PopulationMetadata
 from src.simulation.counterfactual import (
+    CounterfactualScenario,
+    generate_default_counterfactuals,
     get_predefined_counterfactuals,
     run_counterfactual,
+    run_counterfactual_analysis,
 )
 from src.taxonomy.schema import (
     CareerAttributes,
@@ -330,3 +333,128 @@ def test_relative_lift_is_positive_for_beneficial_changes(sample_persona: Person
     )
 
     assert result.relative_lift_percent > 0.0
+
+
+def test_generate_default_counterfactuals_has_core_interventions() -> None:
+    """Default event-engine counterfactual catalog should include key business levers."""
+
+    scenario = get_scenario("nutrimix_2_6")
+    defaults = generate_default_counterfactuals(scenario)
+    ids = {item.id for item in defaults}
+    assert "price_minus_15" in ids
+    assert "add_pediatrician" in ids
+    assert len(defaults) >= 8
+
+
+def test_run_counterfactual_analysis_is_deterministic(sample_persona: Persona) -> None:
+    """Event counterfactual analysis should be deterministic for same seed and inputs."""
+
+    population = _counterfactual_population(sample_persona)
+    scenario = _counterfactual_scenario().model_copy(update={"mode": "temporal"}, deep=True)
+    counterfactuals = [
+        CounterfactualScenario(
+            id="price_down",
+            label="Lower price",
+            parameter_changes={"product.price_inr": 699.0},
+        ),
+        CounterfactualScenario(
+            id="awareness_up",
+            label="Higher awareness budget",
+            parameter_changes={"marketing.awareness_budget": 1.0},
+        ),
+    ]
+    report_a = run_counterfactual_analysis(
+        population=population,
+        baseline_scenario=scenario,
+        counterfactuals=counterfactuals,
+        duration_days=60,
+        seed=42,
+    )
+    report_b = run_counterfactual_analysis(
+        population=population,
+        baseline_scenario=scenario,
+        counterfactuals=counterfactuals,
+        duration_days=60,
+        seed=42,
+    )
+
+    assert report_a.model_dump() == report_b.model_dump()
+    assert len(report_a.results) == 2
+
+
+def test_counterfactual_result_structure():
+    """Verify CounterfactualResult contains all required event-engine metrics."""
+    from src.simulation.counterfactual import CounterfactualResult
+    res = CounterfactualResult(
+        scenario_id="test",
+        label="Test Label",
+        baseline_active_rate=0.5,
+        counterfactual_active_rate=0.6,
+        lift=0.1,
+        lift_pct=20.0,
+        baseline_revenue=1000.0,
+        counterfactual_revenue=1200.0,
+        revenue_lift=200.0,
+        parameter_changes={"product.price": (100, 80)},
+        baseline_scenario_id="base",
+        counterfactual_name="cut",
+        baseline_adoption_rate=0.5,
+        counterfactual_adoption_rate=0.6,
+        absolute_lift=0.1,
+        relative_lift_percent=20.0
+    )
+    assert res.scenario_id == "test"
+    assert res.revenue_lift == 200.0
+    assert res.lift_pct == 20.0
+
+
+def test_counterfactual_lift_computation(sample_persona):
+    """Verify lift is correctly computed as Counterfactual - Baseline."""
+    from src.simulation.counterfactual import CounterfactualScenario, run_counterfactual_analysis
+
+    population = _counterfactual_population(sample_persona)
+    scenario = _counterfactual_scenario().model_copy(update={"mode": "temporal"}, deep=True)
+
+    # We'll use a single counterfactual
+    item = CounterfactualScenario(id="test", label="Test", parameter_changes={})
+    report = run_counterfactual_analysis(
+        population=population,
+        baseline_scenario=scenario,
+        counterfactuals=[item],
+        duration_days=30,
+        seed=42
+    )
+
+    res = report.results[0]
+    expected_lift = res.counterfactual_active_rate - res.baseline_active_rate
+    assert res.lift == pytest.approx(expected_lift)
+
+    expected_rev_lift = res.counterfactual_revenue - res.baseline_revenue
+    assert res.revenue_lift == pytest.approx(expected_rev_lift)
+
+
+def test_counterfactual_report_sorted_by_lift(sample_persona):
+    """Verify CounterfactualReport results are sorted by lift in descending order."""
+    from src.simulation.counterfactual import CounterfactualScenario, run_counterfactual_analysis
+
+    population = _counterfactual_population(sample_persona)
+    scenario = _counterfactual_scenario().model_copy(update={"mode": "temporal"}, deep=True)
+
+    # One good, one bad (higher price)
+    items = [
+        CounterfactualScenario(id="cheaper", label="Cheaper", parameter_changes={"product.price_inr": 100.0}),
+        CounterfactualScenario(id="expensive", label="Expensive", parameter_changes={"product.price_inr": 5000.0}),
+    ]
+
+    report = run_counterfactual_analysis(
+        population=population,
+        baseline_scenario=scenario,
+        counterfactuals=items,
+        duration_days=60,
+        seed=42
+    )
+
+    assert len(report.results) == 2
+    # First result should be the one with higher lift
+    assert report.results[0].lift >= report.results[1].lift
+    assert report.top_intervention == report.results[0].scenario_id

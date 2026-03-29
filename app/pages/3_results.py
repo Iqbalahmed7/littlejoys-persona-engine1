@@ -265,9 +265,22 @@ def _render_legacy_dashboard() -> None:
 def _consolidate(_result_json: str, _population_id: str) -> dict[str, Any]:
     """Rebuild :class:`ConsolidatedReport` from cached JSON; uses live session population."""
 
+    from src.config import Config
+    from src.utils.api_keys import has_api_key, resolve_api_key
+    from src.utils.llm import LLMClient
+
     r = ResearchResult.model_validate_json(_result_json)
     pop = st.session_state.population
-    report = consolidate_research(r, pop)
+    llm_client = None
+    if not r.metadata.mock_mode and has_api_key():
+        llm_client = LLMClient(
+            Config(
+                llm_mock_enabled=False,
+                llm_cache_enabled=True,
+                anthropic_api_key=resolve_api_key(),
+            )
+        )
+    report = consolidate_research(r, pop, llm_client=llm_client)
     return report.model_dump(mode="json")
 
 
@@ -288,6 +301,67 @@ if "research_result" in st.session_state:
         _consolidate(result.model_dump_json(), pop.id),
     )
 
+    event_monthly_rows = report.event_monthly_rollup or []
+    pop_n = max(report.funnel.population_size, 1)
+
+    if event_monthly_rows:
+        month1_trial_pct = (
+            float(_snap_val(event_monthly_rows[0], "new_adopters", default=0)) / pop_n * 100.0
+        )
+        final_active_pct = (
+            float(_snap_val(event_monthly_rows[-1], "total_active", "active", default=0))
+            / pop_n
+            * 100.0
+        )
+        total_repeat_purchases = int(
+            sum(int(_snap_val(r, "repeat_purchasers", default=0)) for r in event_monthly_rows),
+        )
+    else:
+        month1_trial_pct = None
+        final_active_pct = None
+        total_repeat_purchases = None
+
+    peak_churn_month = report.peak_churn_month
+    health_banner_rendered = False
+
+    if report.executive_summary:
+        st.markdown(f"### {report.executive_summary.headline}")
+        st.markdown(report.executive_summary.trajectory_summary)
+
+        col_es1, col_es2, col_es3 = st.columns(3)
+        with col_es1:
+            st.markdown("**Key Drivers**")
+            for d in report.executive_summary.key_drivers:
+                st.markdown(f"- {d}")
+        with col_es2:
+            st.markdown("**Recommendations**")
+            for r_item in report.executive_summary.recommendations:
+                st.markdown(f"- {r_item}")
+        with col_es3:
+            st.markdown("**Risk Factors**")
+            for r_item in report.executive_summary.risk_factors:
+                st.markdown(f"- {r_item}")
+        st.divider()
+
+        health_cols = st.columns(4)
+        health_cols[0].metric(
+            "Month-1 Trial %",
+            f"{month1_trial_pct:.1f}%" if month1_trial_pct is not None else "—",
+        )
+        health_cols[1].metric(
+            "Final Active %",
+            f"{final_active_pct:.1f}%" if final_active_pct is not None else "—",
+        )
+        health_cols[2].metric(
+            "Repeat Purchases",
+            f"{total_repeat_purchases:,}" if total_repeat_purchases is not None else "—",
+        )
+        health_cols[3].metric(
+            "Peak Churn Month",
+            f"Month {peak_churn_month}" if peak_churn_month is not None else "—",
+        )
+        health_banner_rendered = True
+
     st.subheader(f"{report.scenario_name}: {report.question_title}")
     st.caption(report.question_description)
 
@@ -307,6 +381,25 @@ if "research_result" in st.session_state:
         f"{len(report.top_alternatives) + len(report.worst_alternatives)}",
     )
     m5.metric("Duration", f"{report.duration_seconds:.1f}s")
+
+    if not health_banner_rendered:
+        health_cols = st.columns(4)
+        health_cols[0].metric(
+            "Month-1 Trial %",
+            f"{month1_trial_pct:.1f}%" if month1_trial_pct is not None else "—",
+        )
+        health_cols[1].metric(
+            "Final Active %",
+            f"{final_active_pct:.1f}%" if final_active_pct is not None else "—",
+        )
+        health_cols[2].metric(
+            "Repeat Purchases",
+            f"{total_repeat_purchases:,}" if total_repeat_purchases is not None else "—",
+        )
+        health_cols[3].metric(
+            "Peak Churn Month",
+            f"Month {peak_churn_month}" if peak_churn_month is not None else "—",
+        )
 
     st.subheader("Decision Pathway")
     # ``report.funnel.waterfall_data`` is stage→passed counts only; chart needs full waterfall rows.
@@ -427,10 +520,47 @@ if "research_result" in st.session_state:
         st.plotly_chart(traj_fig, use_container_width=True, key=traj_key)
         st.caption(f"Month-by-month customer dynamics for {report.scenario_name}")
 
+        if event_monthly_rows:
+            retention_months = [int(_snap_val(s, "month")) for s in event_monthly_rows]
+            retention_pct: list[float] = []
+            for s in event_monthly_rows:
+                total_active = float(_snap_val(s, "total_active", "active", default=0))
+                cumulative_adopters = float(_snap_val(s, "cumulative_adopters", default=0))
+                retention = (
+                    (total_active / cumulative_adopters * 100.0) if cumulative_adopters else 0.0
+                )
+                retention_pct.append(retention)
+
+            retention_fig = go.Figure(
+                go.Scatter(
+                    x=retention_months,
+                    y=retention_pct,
+                    mode="lines",
+                    fill="tozeroy",
+                    fillcolor="rgba(46, 204, 113, 0.20)",
+                    line={"color": "#2ECC71", "width": 3},
+                )
+            )
+            retention_fig.update_layout(
+                height=_CHART_HEIGHT,
+                margin=_CHART_MARGINS,
+                xaxis_title="Month",
+                yaxis_title="Retention %",
+            )
+            retention_fig.update_yaxes(range=[0, 100])
+            st.subheader("Retention Curve")
+            st.plotly_chart(
+                retention_fig,
+                use_container_width=True,
+                key="retention_curve",
+            )
+
         st.markdown("**Key Temporal Metrics**")
         pop_n = max(report.funnel.population_size, 1)
         first_snap = monthly_rows[0]
-        month1_adoption_rate = float(_snap_val(first_snap, "cumulative_adopters", default=0)) / pop_n
+        month1_adoption_rate = (
+            float(_snap_val(first_snap, "cumulative_adopters", default=0)) / pop_n
+        )
         m12_active = report.month_12_active_rate
         if m12_active is None and monthly_rows:
             last_snap = monthly_rows[-1]
@@ -455,7 +585,9 @@ if "research_result" in st.session_state:
             tm2.metric("Peak Churn Month", f"Month {peak_m}" if peak_m is not None else "—")
         revenue_inr = report.revenue_estimate
         revenue_l = revenue_inr / 100_000.0 if revenue_inr is not None else None
-        tm3.metric("Estimated Annual Revenue", f"₹{revenue_l:.1f}L" if revenue_l is not None else "—")
+        tm3.metric(
+            "Estimated Annual Revenue", f"₹{revenue_l:.1f}L" if revenue_l is not None else "—"
+        )
         lj_last = int(_snap_val(monthly_rows[-1], "lj_pass_holders", default=0))
         tm4.metric("LJ Pass Holders", f"{lj_last:,}")
 
@@ -509,9 +641,7 @@ if "research_result" in st.session_state:
         st.subheader("Event Timeline")
         st.caption("Day-level events and decision points for one smart-sample persona.")
         sample_ids = [s.persona_id for s in result.smart_sample.selections]
-        label_map = {
-            sid: (pop.get_persona(sid).display_name or sid) for sid in sample_ids
-        }
+        label_map = {sid: (pop.get_persona(sid).display_name or sid) for sid in sample_ids}
         selected_pid = st.selectbox(
             "Persona (smart sample)",
             options=sample_ids,
@@ -655,11 +785,12 @@ if "research_result" in st.session_state:
         )
         ranked_alt = sorted(
             event_compare,
-            key=lambda a: (a.event_active_rate if a.event_active_rate is not None else 0.0),
+            key=lambda a: a.event_active_rate if a.event_active_rate is not None else 0.0,
             reverse=True,
         )[:5]
         labels = [
-            (a.variant_id[:28] + "…") if len(a.variant_id) > 28 else a.variant_id for a in ranked_alt
+            (a.variant_id[:28] + "…") if len(a.variant_id) > 28 else a.variant_id
+            for a in ranked_alt
         ]
         comp_fig = go.Figure()
         comp_fig.add_trace(
@@ -693,11 +824,12 @@ if "research_result" in st.session_state:
         )
         ranked_alt = sorted(
             temporal_compare,
-            key=lambda a: (a.temporal_active_rate if a.temporal_active_rate is not None else 0.0),
+            key=lambda a: a.temporal_active_rate if a.temporal_active_rate is not None else 0.0,
             reverse=True,
         )[:5]
         labels = [
-            (a.variant_id[:28] + "…") if len(a.variant_id) > 28 else a.variant_id for a in ranked_alt
+            (a.variant_id[:28] + "…") if len(a.variant_id) > 28 else a.variant_id
+            for a in ranked_alt
         ]
         comp_fig = go.Figure()
         comp_fig.add_trace(
@@ -748,6 +880,71 @@ if "research_result" in st.session_state:
             for alt in report.worst_alternatives:
                 delta_str = f"{alt.delta_vs_primary:.1%}"
                 st.markdown(f"- {alt.variant_id}: {delta_str}")
+
+    if report.counterfactual_results:
+        st.subheader("Counterfactual Analysis")
+        st.caption("What would happen if you changed one thing?")
+
+        cf_rows = sorted(
+            report.counterfactual_results,
+            key=lambda c: float(c.lift_pct) if c.lift_pct is not None else 0.0,
+        )
+        cf_labels = [
+            (c.label or c.counterfactual_name or c.scenario_id or "?")[:42] for c in cf_rows
+        ]
+        cf_lifts = [float(c.lift_pct) if c.lift_pct is not None else 0.0 for c in cf_rows]
+        cf_colors = ["#2ca02c" if lift >= 0 else "#d62728" for lift in cf_lifts]
+
+        cf_fig = go.Figure()
+        cf_fig.add_trace(
+            go.Bar(
+                x=cf_lifts,
+                y=cf_labels,
+                orientation="h",
+                marker_color=cf_colors,
+                showlegend=False,
+            )
+        )
+        cf_fig.add_vline(x=0, line_dash="dash", line_color="#333333")
+        cf_fig.add_trace(
+            go.Scatter(
+                x=[0] * len(cf_labels),
+                y=cf_labels,
+                mode="markers",
+                marker={"symbol": "diamond", "size": 14, "color": "#333333"},
+                name="Baseline",
+                showlegend=False,
+            )
+        )
+        cf_fig.update_layout(
+            height=300,
+            margin=_CHART_MARGINS,
+            xaxis_title="Lift vs baseline (% active rate)",
+            yaxis_title="",
+        )
+        st.plotly_chart(cf_fig, use_container_width=True, key="counterfactual_analysis")
+
+        for cf in cf_rows:
+            lift = float(cf.lift_pct) if cf.lift_pct is not None else 0.0
+            label = cf.label or cf.counterfactual_name or cf.scenario_id or "Intervention"
+            base_rate = (
+                float(cf.baseline_active_rate) if cf.baseline_active_rate is not None else 0.0
+            )
+            cf_rate = (
+                float(cf.counterfactual_active_rate)
+                if cf.counterfactual_active_rate is not None
+                else 0.0
+            )
+            rev = float(cf.revenue_lift) if cf.revenue_lift is not None else 0.0
+            with st.expander(f"{label} → {lift:+.1f}% active rate"):
+                c1, c2 = st.columns(2)
+                c1.metric("Baseline Active", f"{base_rate:.1%}")
+                c2.metric(
+                    "With Intervention",
+                    f"{cf_rate:.1%}",
+                    delta=f"{lift:+.1f}%",
+                )
+                st.caption(f"Revenue impact: ₹{rev:+,.0f}")
 
     st.subheader("Interview Themes")
     st.caption(f"Themes identified from {report.interview_count} deep interviews.")
