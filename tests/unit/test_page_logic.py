@@ -3,13 +3,10 @@
 from __future__ import annotations
 
 import importlib
-import json
 import sys
-from pathlib import Path
 from types import ModuleType, SimpleNamespace
 from typing import Any
 
-from src.analysis.interviews import InterviewTurn
 from src.constants import DEFAULT_SEED, SCENARIO_IDS
 from src.simulation.static import StaticSimulationResult
 

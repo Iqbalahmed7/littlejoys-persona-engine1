@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.utils.api_keys import resolve_api_key, has_api_key
+from src.utils.api_keys import has_api_key, resolve_api_key
 
 
 def test_resolve_api_key_returns_string():
