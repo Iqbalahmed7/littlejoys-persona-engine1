@@ -169,6 +169,92 @@ OUTCOME_DISPLAY: dict[str, str] = {
     "reject": "Did not adopt",
 }
 
+# Psychographic scatter legend (PRD-014a — clearer than adopt/reject for executives)
+SCATTER_PURCHASE_OUTCOME_LABELS: dict[str, str] = {
+    "adopt": "Would buy",
+    "reject": "Wouldn't buy",
+}
+
+CHANNEL_HELP: dict[str, str] = {
+    "instagram": (
+        "Visual storytelling channel. Strongest with SEC A1-A2 urban mothers aged 25-35."
+    ),
+    "youtube": (
+        "Long-form educational content. Reaches all SEC classes. "
+        "Best for building trust via expert reviews."
+    ),
+    "whatsapp": (
+        "Community-driven sharing. Highest trust signal in Tier 2-3 cities. "
+        "Low cost, high conversion when organic."
+    ),
+}
+
+INTERVENTION_RATIONALE: dict[str, dict[str, str]] = {
+    "nutrimix_2_6": {
+        "price_reduction_20": (
+            "Tests whether a 20% price cut moves price-sensitive SEC B2 parents "
+            "past the purchase barrier."
+        ),
+        "school_partnership": (
+            "Tests whether institutional trust drives adoption among parents sceptical "
+            "of social media ads."
+        ),
+        "free_trial": (
+            "Tests whether reducing first-purchase friction through free trials "
+            "builds the habit loop."
+        ),
+        "influencer_blitz": (
+            "Tests whether aggressive awareness spend reaches parents who simply "
+            "haven't heard of the product."
+        ),
+    },
+    "nutrimix_7_14": {
+        "taste_improvement": (
+            "Tests whether older kids' taste preferences are the primary barrier to adoption."
+        ),
+        "age_specific_branding": (
+            "Tests whether repositioning away from 'toddler brand' changes parent perception "
+            "for school-age kids."
+        ),
+        "pediatrician_push": (
+            "Tests whether doctor endorsement overcomes the 'my older kid doesn't need "
+            "supplements' belief."
+        ),
+    },
+    "magnesium_gummies": {
+        "awareness_campaign": (
+            "Tests whether the primary barrier is simply that parents don't know kids need magnesium."
+        ),
+        "price_premium_reduction": (
+            "Tests price elasticity in a category where parents have no reference price."
+        ),
+        "doctor_endorsement": (
+            "Tests whether clinical credibility makes 'gummy supplement' feel like real medicine."
+        ),
+    },
+    "protein_mix": {
+        "convenience_format": (
+            "Tests whether eliminating the cooking requirement (powder to ready-to-drink) "
+            "unlocks adoption."
+        ),
+        "taste_improvement": (
+            "Tests whether kids rejecting the taste in cooked food is the core blocker."
+        ),
+        "school_sports_partnership": (
+            "Tests whether embedding the product in a sports/activity context drives relevance."
+        ),
+    },
+}
+
+
+def scatter_purchase_outcome_label(value: object) -> str:
+    """Map simulation outcome to scatter-plot legend labels (purchase intent wording)."""
+
+    if value is None:
+        return "No simulation"
+    key = str(value).strip().lower()
+    return SCATTER_PURCHASE_OUTCOME_LABELS.get(key, str(value))
+
 
 def display_name(field: str) -> str:
     """Convert raw field name to human-readable label."""
