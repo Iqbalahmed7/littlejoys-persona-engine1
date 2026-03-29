@@ -8,7 +8,10 @@ from src.config import Config
 from src.decision.scenarios import get_scenario
 from src.generation.population import GenerationParams, Population, PopulationMetadata
 from src.probing.question_bank import get_questions_for_scenario
+from src.simulation.explorer import ScenarioVariant
 from src.simulation.research_runner import ResearchRunner
+from src.simulation.static import StaticSimulationResult
+from src.simulation.temporal import MonthlySnapshot, TemporalSimulationResult
 from src.taxonomy.schema import (
     CareerAttributes,
     CulturalAttributes,
@@ -153,3 +156,105 @@ def test_alternatives_sorted_by_delta(mock_runner) -> None:
     assert len(result.alternative_runs) > 0
     deltas = [r.delta_vs_primary for r in result.alternative_runs]
     assert deltas == sorted(deltas, reverse=True)
+
+
+def test_temporal_mode_populates_temporal_result(mock_runner) -> None:
+    """Temporal scenario runs include primary and alternative temporal metrics."""
+
+    mock_runner.scenario = mock_runner.scenario.model_copy(
+        update={"mode": "temporal", "months": 4},
+        deep=True,
+    )
+    mock_runner.alternative_count = 4
+    result = mock_runner.run()
+
+    assert result.temporal_result is not None
+    assert result.temporal_result.months == 4
+    assert all(run.temporal_active_rate is not None for run in result.alternative_runs)
+
+
+def test_temporal_alternatives_limited_to_top_10(mock_runner, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Only the top 10 static alternatives should run temporal simulation."""
+
+    mock_runner.scenario = mock_runner.scenario.model_copy(
+        update={"mode": "temporal", "months": 3},
+        deep=True,
+    )
+    mock_runner.alternative_count = 15
+
+    variants = [
+        ScenarioVariant(
+            variant_id=f"alt_{idx}",
+            variant_name=f"Alt {idx}",
+            strategy="smart",
+            modifications={"product.price_inr": 500 + idx},
+            scenario_config=mock_runner.scenario.model_copy(update={"id": f"alt_{idx}"}, deep=True),
+        )
+        for idx in range(15)
+    ]
+    monkeypatch.setattr(
+        "src.simulation.research_runner.generate_variants",
+        lambda **_: variants,
+    )
+
+    def fake_static(population, scenario, seed):  # type: ignore[no-untyped-def]
+        rate = 0.1
+        if scenario.id.startswith("alt_"):
+            rate = int(scenario.id.split("_")[1]) / 100
+        return StaticSimulationResult(
+            scenario_id=scenario.id,
+            population_size=len(population.personas),
+            adoption_count=int(rate * len(population.personas)),
+            adoption_rate=rate,
+            results_by_persona={
+                persona.id: {
+                    "scenario_id": scenario.id,
+                    "outcome": "adopt",
+                    "need_score": 0.8,
+                    "awareness_score": 0.8,
+                    "consideration_score": 0.8,
+                    "purchase_score": 0.8,
+                }
+                for persona in population.personas
+            },
+            rejection_distribution={},
+            random_seed=seed,
+        )
+
+    temporal_calls: list[str] = []
+
+    def fake_temporal(population, scenario, thresholds=None, months=12, seed=42):  # type: ignore[no-untyped-def]
+        temporal_calls.append(scenario.id)
+        idx = int(scenario.id.split("_")[1]) if scenario.id.startswith("alt_") else 0
+        active_rate = 0.2 + (idx / 100)
+        return TemporalSimulationResult(
+            scenario_id=scenario.id,
+            months=months,
+            population_size=len(population.personas),
+            monthly_snapshots=[
+                MonthlySnapshot(
+                    month=1,
+                    new_adopters=1,
+                    repeat_purchasers=0,
+                    churned=0,
+                    total_active=max(1, int(active_rate * len(population.personas))),
+                    cumulative_adopters=1,
+                    awareness_level_mean=0.5,
+                    lj_pass_holders=0,
+                )
+            ],
+            final_adoption_rate=active_rate,
+            final_active_rate=active_rate,
+            total_revenue_estimate=1000.0,
+            random_seed=seed,
+        )
+
+    monkeypatch.setattr("src.simulation.research_runner.run_static_simulation", fake_static)
+    monkeypatch.setattr("src.simulation.research_runner.run_temporal_simulation", fake_temporal)
+
+    result = mock_runner.run()
+
+    assert len(temporal_calls) == 11  # primary + top 10 alternatives
+    temporal_scored = [row for row in result.alternative_runs if row.temporal_active_rate is not None]
+    assert len(temporal_scored) == 10
+    assert result.alternative_runs[0].variant_id == "alt_14"

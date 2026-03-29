@@ -9,11 +9,13 @@ from pydantic import BaseModel, ConfigDict
 from src.analysis.barriers import analyze_barriers
 from src.analysis.causal import compute_variable_importance
 from src.analysis.segments import analyze_segments
+from src.analysis.trajectory_clustering import cluster_trajectories
 from src.analysis.waterfall import compute_funnel_waterfall
 from src.constants import INCOME_BRACKET_LOW_MAX_LPA, INCOME_BRACKET_MID_MAX_LPA
 from src.decision.scenarios import get_scenario
 from src.probing.clustering import cluster_responses_mock
 from src.probing.question_bank import get_question
+from src.simulation.temporal import extract_persona_trajectories
 
 if TYPE_CHECKING:
     from src.generation.population import Population
@@ -69,6 +71,7 @@ class AlternativeInsight(BaseModel):
     adoption_rate: float
     delta_vs_primary: float
     parameter_changes: dict[str, object]
+    temporal_active_rate: float | None = None
 
 
 class ConsolidatedReport(BaseModel):
@@ -88,6 +91,11 @@ class ConsolidatedReport(BaseModel):
     clusters: list[QualitativeCluster]
     top_alternatives: list[AlternativeInsight]
     worst_alternatives: list[AlternativeInsight]
+    temporal_snapshots: list[dict[str, Any]] | None = None
+    behaviour_clusters: list[dict[str, Any]] | None = None
+    month_12_active_rate: float | None = None
+    peak_churn_month: int | None = None
+    revenue_estimate: float | None = None
     mock_mode: bool
     duration_seconds: float
     llm_calls_made: int
@@ -139,6 +147,7 @@ def _alternative_rows(
             adoption_rate=alt.adoption_rate,
             delta_vs_primary=alt.delta_vs_primary,
             parameter_changes=alt.parameter_changes,
+            temporal_active_rate=alt.temporal_active_rate,
         )
         for index, alt in enumerate(ordered)
     ]
@@ -214,6 +223,55 @@ def consolidate_research(
     top_alternatives = _alternative_rows(result.alternative_runs, reverse=True, limit=10)
     worst_alternatives = _alternative_rows(result.alternative_runs, reverse=False, limit=3)
 
+    temporal_snapshots: list[dict[str, Any]] | None = None
+    behaviour_clusters: list[dict[str, Any]] | None = None
+    month_12_active_rate: float | None = None
+    peak_churn_month: int | None = None
+    revenue_estimate: float | None = None
+
+    if result.temporal_result is not None:
+        temporal_snapshots = [
+            {
+                "month": snap.month,
+                "new_adopters": snap.new_adopters,
+                "repeat_purchasers": snap.repeat_purchasers,
+                "churned": snap.churned,
+                "total_active": snap.total_active,
+                "cumulative_adopters": snap.cumulative_adopters,
+                "awareness_level_mean": snap.awareness_level_mean,
+                "lj_pass_holders": snap.lj_pass_holders,
+            }
+            for snap in result.temporal_result.monthly_snapshots
+        ]
+        trajectories = extract_persona_trajectories(
+            population=population,
+            scenario=scenario,
+            months=result.temporal_result.months,
+            seed=result.temporal_result.random_seed,
+        )
+        clustered = cluster_trajectories(trajectories, population)
+        behaviour_clusters = [
+            {
+                "cluster_name": cluster.cluster_name,
+                "size": cluster.size,
+                "pct": cluster.pct,
+                "avg_lifetime_months": cluster.avg_lifetime_months,
+                "avg_satisfaction": cluster.avg_satisfaction,
+                "dominant_attributes": cluster.dominant_attributes,
+            }
+            for cluster in clustered.clusters
+        ]
+
+        if result.temporal_result.monthly_snapshots:
+            final_snapshot = result.temporal_result.monthly_snapshots[-1]
+            if result.temporal_result.population_size > 0:
+                month_12_active_rate = final_snapshot.total_active / result.temporal_result.population_size
+            peak_churn_month = max(
+                result.temporal_result.monthly_snapshots,
+                key=lambda snap: snap.churned,
+            ).month
+        revenue_estimate = result.temporal_result.total_revenue_estimate
+
     return ConsolidatedReport(
         scenario_id=result.metadata.scenario_id,
         scenario_name=scenario.name,
@@ -227,6 +285,11 @@ def consolidate_research(
         clusters=clusters,
         top_alternatives=top_alternatives,
         worst_alternatives=worst_alternatives,
+        temporal_snapshots=temporal_snapshots,
+        behaviour_clusters=behaviour_clusters,
+        month_12_active_rate=month_12_active_rate,
+        peak_churn_month=peak_churn_month,
+        revenue_estimate=revenue_estimate,
         mock_mode=result.metadata.mock_mode,
         duration_seconds=result.metadata.duration_seconds,
         llm_calls_made=result.metadata.llm_calls_made,

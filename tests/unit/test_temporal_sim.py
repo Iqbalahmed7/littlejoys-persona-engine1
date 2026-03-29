@@ -5,7 +5,7 @@ from __future__ import annotations
 from src.decision.repeat import compute_churn_probability
 from src.decision.scenarios import ScenarioConfig
 from src.generation.population import PopulationGenerator
-from src.simulation.temporal import run_temporal_simulation
+from src.simulation.temporal import extract_persona_trajectories, run_temporal_simulation
 
 
 def test_temporal_runs_for_specified_months(sample_scenario) -> None:  # type: ignore[no-untyped-def]
@@ -86,3 +86,20 @@ def test_temporal_lj_pass_scenario_assigns_holders() -> None:
     )
     result = run_temporal_simulation(pop, scenario, months=4, seed=3)
     assert result.monthly_snapshots[-1].lj_pass_holders > 0
+
+
+def test_extract_persona_trajectories_shape(sample_scenario) -> None:  # type: ignore[no-untyped-def]
+    """Trajectory export returns one row per persona with month-wise states."""
+
+    temporal_scenario = sample_scenario.model_copy(
+        update={"mode": "temporal", "months": 5},
+        deep=True,
+    )
+    gen = PopulationGenerator()
+    pop = gen.generate(size=12, seed=512, deep_persona_count=2)
+    trajectories = extract_persona_trajectories(pop, temporal_scenario, months=5, seed=9)
+
+    assert len(trajectories) == len(pop.personas)
+    assert all(len(item.monthly_states) == 5 for item in trajectories)
+    assert trajectories[0].monthly_states[0].month == 1
+    assert trajectories[0].monthly_states[-1].month == 5

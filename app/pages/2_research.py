@@ -8,10 +8,10 @@ import streamlit as st
 from src.config import Config
 from src.constants import SCENARIO_IDS
 from src.decision.scenarios import get_scenario
-from src.probing.question_bank import get_questions_for_scenario, get_tree_for_question
+from src.probing.question_bank import get_questions_for_scenario
 from src.simulation.research_runner import ResearchRunner
 from src.utils.api_keys import has_api_key, resolve_api_key
-from src.utils.display import CHANNEL_HELP
+from src.utils.display import CHANNEL_HELP, display_name
 from src.utils.llm import LLMClient
 
 # --- Page ---
@@ -20,6 +20,12 @@ st.header("Research Design")
 st.caption(
     "Design your research: pick a scenario, choose a business question, and run the hybrid pipeline."
 )
+
+if not has_api_key():
+    st.info(
+        "🧪 Running in mock mode — Insights reflect model structure. "
+        "Add an API key for LLM-powered qualitative depth.",
+    )
 
 if "population" not in st.session_state:
     st.warning("Load or generate a population from the home page first.")
@@ -34,6 +40,15 @@ scenario_id = st.selectbox(
     format_func=lambda sid: f"{get_scenario(sid).name} ({sid})",
 )
 scenario = get_scenario(scenario_id)
+
+if scenario.mode == "temporal":
+    st.info(
+        "📊 Temporal mode — This scenario simulates 12 months of repeat purchase, "
+        "churn, and word-of-mouth dynamics.",
+    )
+else:
+    st.info("📊 Static mode — This scenario evaluates a single purchase decision funnel.")
+
 st.markdown(f"**{scenario.description}**")
 st.caption(
     f"Product: {scenario.product.name} · ₹{scenario.product.price_inr:.0f} · "
@@ -306,28 +321,10 @@ with st.expander("Advanced: Tune Parameters", expanded=False):
 custom_scenario = st.session_state[session_key]
 
 with st.expander("Probing Tree", expanded=True):
-    st.caption("Review the hypotheses that will be tested. Toggle branches to include/exclude.")
-
-    tree = get_tree_for_question(question.id)
-    enabled_hypotheses = []
-    for hyp in tree.hypotheses:
-        col1, col2 = st.columns([0.1, 0.9])
-        with col1:
-            enabled = st.checkbox(
-                "",
-                value=hyp.enabled,
-                key=f"hyp_{question.id}_{hyp.id}",
-            )
-        with col2:
-            st.markdown(f"**{hyp.title}**")
-            st.caption(hyp.rationale)
-            probe_count = sum(1 for p in tree.probes if p.hypothesis_id == hyp.id)
-            st.caption(f"{probe_count} probes")
-        if enabled:
-            enabled_hypotheses.append(hyp)
-
-    st.caption(f"{len(enabled_hypotheses)} of {len(tree.hypotheses)} hypotheses enabled")
-    # Hypothesis toggles are for review only; ResearchRunner uses the full catalog tree.
+    st.subheader("Research Hypotheses")
+    st.caption("These hypotheses will be explored in the research pipeline.")
+    for h in question.hypotheses:
+        st.markdown(f"- **{display_name(h.id)}**: {h.description}")
 
 st.subheader("Run Research")
 
@@ -351,7 +348,10 @@ else:
     mock_mode = True
     st.info("No API key configured. Running in mock mode.")
 
-run_clicked = st.button("Run Research", type="primary", use_container_width=True)
+run_label = (
+    "Run 12-Month Simulation" if custom_scenario.mode == "temporal" else "Run Scenario Analysis"
+)
+run_clicked = st.button(run_label, type="primary", use_container_width=True)
 
 if run_clicked:
     channels = ["instagram", "youtube", "whatsapp"]

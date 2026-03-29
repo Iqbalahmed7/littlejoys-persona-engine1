@@ -328,3 +328,122 @@ Sprint 15 (Polish + Deploy)
 - **LLM cost for 18 interviews per run:** ~$0.15-0.30 per run with Sonnet. Budget allows ~10 runs per session at $2 cap.
 - **OpenCode on Nano for Sprint 13 dashboard:** Recommend upgrading to Pro for the population page refactor — it's complex layout work.
 - **Probing tree ↔ interview integration:** Sprint 12 ResearchRunner is the critical path. If it slips, Sprint 13 page can still render with funnel-only results.
+
+---
+
+# Phase 2: Simulation-Native Architecture Transition
+
+## Architecture Shift
+The Phase 1 system (Sprints 12-15) produces static funnel snapshots + LLM interviews. Phase 2 transitions to a **simulation-native architecture** where temporal behavioral modeling is the primary source of evidence. The probing tree becomes a diagnostic overlay rather than the primary execution layer.
+
+**Priority Scenarios:**
+1. Nutrimix Repeat Purchase (2-6 year olds) — temporal, 12-month simulation
+2. Nutrimix 7-14 Expansion — static with social/school dynamics
+
+**Cost Target:** < $0.50 per simulation run (rule-based simulation + 2-3 targeted LLM interviews)
+
+**What's stripped for POC:**
+- Deep interviews capped at 2-3 per run (down from 18)
+- Magnesium Gummies and ProteinMix scenarios deferred
+- Spider charts and persona comparison tools deferred
+- Probing tree UI removed from primary flow (becomes background diagnostic)
+
+---
+
+## Sprint 16: Wire Temporal Simulation into Research Pipeline
+**Goal:** When a PM runs research on "repeat purchase for Nutrimix", they see month-by-month trajectories, behavioural clusters, and intervention comparisons — not just a static funnel snapshot.
+
+### Codex — Backend Pipeline (Core)
+**Files:** `src/simulation/research_runner.py` (edit), `src/simulation/temporal.py` (edit), `src/analysis/research_consolidator.py` (edit), `src/analysis/trajectory_clustering.py` (new)
+1. Wire `run_temporal_simulation()` into `ResearchRunner.run()` for temporal scenarios
+2. Add per-persona trajectory export (`PersonaTrajectory` model)
+3. Run temporal simulation on top 10 alternative scenarios
+4. Build trajectory clustering (heuristic-based: loyal, fatigued, switcher, forgot, never-reached)
+5. Extend `ConsolidatedReport` with temporal fields
+
+### Cursor — Temporal Results Page
+**Files:** `app/pages/3_results.py` (edit)
+1. Add trajectory line chart (active/new/churned per month)
+2. Add temporal metric cards (month-12 active rate, peak churn, revenue, LJ Pass holders)
+3. Add behavioural segment visualization (bar chart + cluster detail expanders)
+4. Add intervention comparison (static vs temporal adoption for top alternatives)
+5. Guard: skip temporal sections for static scenarios
+
+### OpenCode — Research Design Cleanup
+**Files:** `app/pages/2_research.py` (edit)
+1. Add simulation mode indicator (temporal vs static badge)
+2. Add mock mode banner
+3. Dynamic run button label ("Run 12-Month Simulation" vs "Run Scenario Analysis")
+
+### Antigravity — Tests
+**Files:** `tests/unit/test_trajectory_clustering.py` (new), `tests/unit/test_temporal_trajectories.py` (new), `tests/integration/test_temporal_pipeline.py` (new)
+1. Trajectory clustering tests (cluster validity, assignment, edge cases)
+2. Trajectory export tests (per-persona state, determinism)
+3. Integration pipeline test (full temporal research run end-to-end)
+
+### Execution Order
+```
+Codex (backend) ──→ Cursor (results page)
+       │                                   } ──→ Antigravity (tests)
+       └──────→ OpenCode (research cleanup)
+```
+
+---
+
+## Sprint 17: Event-Driven Simulation Engine (Planned)
+**Goal:** Replace month-granularity with day-level events. Model specific triggers (pack finish, child taste reaction, competitor promo, reminder) rather than aggregate monthly satisfaction.
+
+### Planned Tasks
+- Codex: `EventEngine` class with event grammar, day-level loop, event-driven state updates
+- Cursor: Event timeline visualization in results page
+- Codex: Competitive context model (switching to Horlicks/Bournvita as explicit alternative)
+- Antigravity: Event engine tests + trajectory validation
+
+---
+
+## Sprint 18-19: Intelligence Layer (Planned)
+**Goal:** Counterfactual engine + LLM calibration + executive summary generation.
+
+### Planned Tasks
+- Counterfactual engine: re-run temporal simulation with parameter perturbations, measure causal lift
+- LLM-calibrated thresholds: run LLM on 5-10 representative personas to extract decision parameters, apply as rules to full population
+- Executive summary: single LLM call to synthesize temporal findings into PM-ready narrative
+- Extend to Nutrimix 7-14 scenario (school context, peer influence, different event grammar)
+
+---
+
+## Sprint 20-21: Presentation + Second Scenario (Planned)
+**Goal:** Polish the PM-facing experience for POC demo.
+
+### Planned Tasks
+- Cohort heatmaps and retention curves
+- Intervention recommendation engine
+- Nutrimix 7-14 full temporal scenario
+- Demo mode with guided walkthrough
+
+---
+
+## Dependency Graph (Phase 2)
+```
+Sprint 16 (Temporal Pipeline)
+  ├── Temporal → Research Runner ───────┐
+  ├── Trajectory Clustering ────────────┤
+  ├── Results Page (Temporal) ──────────┤
+  └── Tests ────────────────────────────┤
+                                        ▼
+Sprint 17 (Event Engine)               │
+  ├── Day-level events ─────────────────┤
+  ├── Competitive context ──────────────┤
+  └── Event timeline UI ────────────────┤
+                                        ▼
+Sprint 18-19 (Intelligence)            │
+  ├── Counterfactual engine ────────────┤
+  ├── LLM calibration ─────────────────┤
+  ├── Executive summary ────────────────┤
+  └── Nutrimix 7-14 scenario ──────────┤
+                                        ▼
+Sprint 20-21 (Presentation)
+  ├── Retention curves / heatmaps
+  ├── Recommendation engine
+  └── Demo walkthrough
+```

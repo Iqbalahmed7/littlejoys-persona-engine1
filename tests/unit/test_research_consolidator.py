@@ -16,6 +16,7 @@ from src.simulation.research_runner import (
     ResearchResult,
 )
 from src.simulation.static import run_static_simulation
+from src.simulation.temporal import MonthlySnapshot, TemporalSimulationResult
 
 
 @pytest.fixture
@@ -160,3 +161,58 @@ def test_interview_count_matches(research_result, population) -> None:
     """Interview count matches input results."""
     report = consolidate_research(research_result, population)
     assert report.interview_count == len(research_result.interview_results)
+
+
+def test_temporal_outputs_populated(research_result, population) -> None:
+    """Temporal result should add snapshots and behaviour cluster summaries."""
+
+    temporal = TemporalSimulationResult(
+        scenario_id=research_result.metadata.scenario_id,
+        months=3,
+        population_size=len(population.personas),
+        monthly_snapshots=[
+            MonthlySnapshot(
+                month=1,
+                new_adopters=10,
+                repeat_purchasers=2,
+                churned=1,
+                total_active=10,
+                cumulative_adopters=10,
+                awareness_level_mean=0.4,
+                lj_pass_holders=5,
+            ),
+            MonthlySnapshot(
+                month=2,
+                new_adopters=5,
+                repeat_purchasers=4,
+                churned=3,
+                total_active=12,
+                cumulative_adopters=15,
+                awareness_level_mean=0.45,
+                lj_pass_holders=5,
+            ),
+            MonthlySnapshot(
+                month=3,
+                new_adopters=3,
+                repeat_purchasers=5,
+                churned=2,
+                total_active=13,
+                cumulative_adopters=18,
+                awareness_level_mean=0.5,
+                lj_pass_holders=5,
+            ),
+        ],
+        final_adoption_rate=0.5,
+        final_active_rate=0.4,
+        total_revenue_estimate=12345.0,
+        random_seed=42,
+    )
+    temporal_result = research_result.model_copy(update={"temporal_result": temporal}, deep=True)
+    report = consolidate_research(temporal_result, population)
+
+    assert report.temporal_snapshots is not None
+    assert len(report.temporal_snapshots) == 3
+    assert report.behaviour_clusters is not None
+    assert report.month_12_active_rate == pytest.approx(13 / len(population.personas))
+    assert report.peak_churn_month == 2
+    assert report.revenue_estimate == 12345.0

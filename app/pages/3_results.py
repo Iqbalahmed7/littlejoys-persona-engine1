@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import plotly.graph_objects as go
 import streamlit as st
 
 from src.analysis.barriers import analyze_barriers, summarize_barrier_stages
@@ -33,6 +34,27 @@ from src.utils.viz import (
     create_segment_heatmap,
     create_temporal_chart,
 )
+
+_CHART_HEIGHT = 300
+_CHART_MARGINS = dict(l=20, r=20, t=40, b=20)
+
+
+def _snap_val(row: dict[str, Any], *keys: str, default: Any = 0) -> Any:
+    for k in keys:
+        if k in row and row[k] is not None:
+            return row[k]
+    return default
+
+
+def _cluster_bar_color(cluster_name: str) -> str:
+    n = cluster_name.lower()
+    if "loyal" in n and "repeat" in n:
+        return "#2ca02c"
+    if "churn" in n or "lapsed" in n:
+        return "#d62728"
+    if "never" in n:
+        return "#7f7f7f"
+    return "#aec7e8"
 
 
 def _coerce_static(entry: object) -> StaticSimulationResult | None:
@@ -150,7 +172,9 @@ def _render_legacy_dashboard() -> None:
         st.caption("No causal statements (needs importances and segmentable numeric splits).")
 
     with st.expander("Temporal simulation (Mode B)", expanded=False):
-        months = st.slider("Months", 3, 24, min(DEFAULT_SIMULATION_MONTHS, 12), key="temporal_months")
+        months = st.slider(
+            "Months", 3, 24, min(DEFAULT_SIMULATION_MONTHS, 12), key="temporal_months"
+        )
         if st.button("Run temporal", key="run_temporal"):
             with st.spinner("Running temporal simulation…"):
                 temporal = run_temporal_simulation(pop, scenario, months=months)
@@ -267,9 +291,16 @@ if "research_result" in st.session_state:
     st.subheader(f"{report.scenario_name}: {report.question_title}")
     st.caption(report.question_description)
 
+    if report.mock_mode:
+        st.info(
+            "🧪 Mock mode: Insights reflect model structure. Run with an API key for LLM-powered qualitative depth.",
+        )
+
     m1, m2, m3, m4, m5 = st.columns(5)
     m1.metric("Population", f"{report.funnel.population_size:,}")
-    m2.metric("Would Try", f"{report.funnel.adoption_count:,}", f"{report.funnel.adoption_rate:.1%}")
+    m2.metric(
+        "Would Try", f"{report.funnel.adoption_count:,}", f"{report.funnel.adoption_rate:.1%}"
+    )
     m3.metric("Interviews", f"{report.interview_count}")
     m4.metric(
         "Alternatives Tested",
@@ -286,6 +317,126 @@ if "research_result" in st.session_state:
         st.caption("Top barriers to trial:")
         for b in report.funnel.top_barriers[:5]:
             st.markdown(f"- **{b['stage']}** → {b['reason']} ({b['count']} personas)")
+
+    temporal_snaps = report.temporal_snapshots
+    if temporal_snaps:
+        st.subheader("Repeat Purchase Trajectory")
+        months = [int(_snap_val(s, "month")) for s in temporal_snaps]
+        total_active = [float(_snap_val(s, "total_active", "active")) for s in temporal_snaps]
+        new_adopters = [float(_snap_val(s, "new_adopters")) for s in temporal_snaps]
+        churned_s = [float(_snap_val(s, "churned")) for s in temporal_snaps]
+
+        traj_fig = go.Figure()
+        traj_fig.add_trace(
+            go.Scatter(
+                x=months,
+                y=total_active,
+                mode="lines+markers",
+                name="Total active",
+                line={"color": "#1f77b4", "width": 3},
+            )
+        )
+        traj_fig.add_trace(
+            go.Scatter(
+                x=months,
+                y=new_adopters,
+                mode="lines+markers",
+                name="New adopters",
+                line={"color": "#2ca02c", "width": 2},
+            )
+        )
+        traj_fig.add_trace(
+            go.Scatter(
+                x=months,
+                y=churned_s,
+                mode="lines+markers",
+                name="Churned",
+                line={"color": "#d62728", "width": 2},
+            )
+        )
+        traj_fig.update_layout(
+            height=_CHART_HEIGHT,
+            margin=_CHART_MARGINS,
+            xaxis_title="Month",
+            yaxis_title="Personas",
+            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
+        )
+        st.plotly_chart(traj_fig, use_container_width=True, key="temporal_trajectory")
+        st.caption(f"Month-by-month customer dynamics for {report.scenario_name}")
+
+        st.markdown("**Key Temporal Metrics**")
+        pop_n = max(report.funnel.population_size, 1)
+        first_snap = temporal_snaps[0]
+        month1_adoption_rate = float(_snap_val(first_snap, "cumulative_adopters", default=0)) / pop_n
+        m12_active = report.month_12_active_rate
+        if m12_active is None and temporal_snaps:
+            last_snap = temporal_snaps[-1]
+            m12_active = float(_snap_val(last_snap, "total_active", "active")) / pop_n
+
+        tm1, tm2, tm3, tm4 = st.columns(4)
+        m12_delta = (
+            f"{(m12_active - month1_adoption_rate):+.1%}"
+            if m12_active is not None and pop_n
+            else None
+        )
+        tm1.metric(
+            "Month 12 Active Rate",
+            f"{m12_active:.1%}" if m12_active is not None else "—",
+            delta=m12_delta,
+            help="Share still active by horizon vs. Month 1 cumulative adoption share.",
+        )
+        peak_m = report.peak_churn_month
+        tm2.metric("Peak Churn Month", f"Month {peak_m}" if peak_m is not None else "—")
+        revenue_inr = report.revenue_estimate
+        revenue_l = revenue_inr / 100_000.0 if revenue_inr is not None else None
+        tm3.metric("Estimated Annual Revenue", f"₹{revenue_l:.1f}L" if revenue_l is not None else "—")
+        lj_last = int(_snap_val(temporal_snaps[-1], "lj_pass_holders", default=0))
+        tm4.metric("LJ Pass Holders", f"{lj_last:,}")
+
+    if report.behaviour_clusters:
+        st.subheader("Behavioural Segments")
+        clusters_sorted = sorted(
+            report.behaviour_clusters,
+            key=lambda c: int(c.get("size", 0) or 0),
+            reverse=True,
+        )
+        names = [str(c.get("cluster_name", "Cluster")) for c in clusters_sorted]
+        sizes = [int(c.get("size", 0) or 0) for c in clusters_sorted]
+        colors = [_cluster_bar_color(n) for n in names]
+        beh_fig = go.Figure(
+            go.Bar(
+                y=names[::-1],
+                x=sizes[::-1],
+                orientation="h",
+                marker_color=colors[::-1],
+            )
+        )
+        beh_fig.update_layout(
+            height=_CHART_HEIGHT,
+            margin=_CHART_MARGINS,
+            showlegend=False,
+            xaxis_title="Cluster size",
+        )
+        st.plotly_chart(beh_fig, use_container_width=True, key="behaviour_clusters")
+
+        for cl in clusters_sorted:
+            cname = str(cl.get("cluster_name", "Cluster"))
+            pct = float(cl.get("pct", 0) or 0)
+            with st.expander(f"{cname} — {cl.get('size', 0)} personas ({pct:.0%})"):
+                st.markdown(
+                    f"**Cluster size:** {cl.get('size', 0)} · **Share of sample:** {pct:.1%}",
+                )
+                life = float(cl.get("avg_lifetime_months", cl.get("avg_lifetime", 0)) or 0)
+                st.markdown(f"**Average lifetime (months):** {life:.1f}")
+                sat = cl.get("avg_satisfaction")
+                if sat is not None:
+                    st.markdown(f"**Average satisfaction score:** {float(sat):.2f}")
+                attrs: dict[str, Any] = cl.get("dominant_attributes") or cl.get("key_traits") or {}
+                top3 = list(attrs.items())[:3]
+                if top3:
+                    st.markdown("**Top distinguishing persona attributes:**")
+                    for k, v in top3:
+                        st.markdown(f"- **{display_name(str(k))}:** {float(v):.2f}")
 
     st.subheader("Segment Analysis")
     tab_tier, tab_income = st.tabs(["By City Tier", "By Income Bracket"])
@@ -320,8 +471,10 @@ if "research_result" in st.session_state:
                     help=f"{seg.persona_count} personas",
                 )
 
-    st.subheader("Key Drivers")
-    st.caption("Variables most strongly associated with trial openness, ranked by importance.")
+    st.subheader("Key Decision Variables")
+    st.caption(
+        "These variables had the strongest influence on adoption outcomes in the simulation model.",
+    )
 
     if report.causal_drivers:
         for driver in report.causal_drivers[:8]:
@@ -329,6 +482,72 @@ if "research_result" in st.session_state:
             name = display_name(str(driver["variable"]))
             imp = float(driver["importance"])
             st.markdown(f"- {direction} **{name}** — importance: {imp:.3f}")
+
+    has_temporal_snapshots = bool(report.temporal_snapshots)
+    temporal_compare = [a for a in result.alternative_runs if a.temporal_active_rate is not None]
+    if has_temporal_snapshots and temporal_compare:
+        st.subheader("Intervention Comparison")
+        st.caption(
+            "Top interventions by month-12 active rate: static trial vs retention "
+            "(high trial can mask weak ongoing engagement)."
+        )
+        ranked_alt = sorted(
+            temporal_compare,
+            key=lambda a: (a.temporal_active_rate if a.temporal_active_rate is not None else 0.0),
+            reverse=True,
+        )[:5]
+        labels = [
+            (a.variant_id[:28] + "…") if len(a.variant_id) > 28 else a.variant_id for a in ranked_alt
+        ]
+        comp_fig = go.Figure()
+        comp_fig.add_trace(
+            go.Bar(
+                name="Static adoption rate",
+                x=labels,
+                y=[a.adoption_rate for a in ranked_alt],
+                marker_color="#1f77b4",
+            )
+        )
+        comp_fig.add_trace(
+            go.Bar(
+                name="Month-12 active rate",
+                x=labels,
+                y=[float(a.temporal_active_rate) for a in ranked_alt],
+                marker_color="#ff7f0e",
+            )
+        )
+        comp_fig.update_layout(
+            barmode="group",
+            height=_CHART_HEIGHT,
+            margin=_CHART_MARGINS,
+            legend={"orientation": "h", "yanchor": "bottom", "y": 1.08, "x": 0},
+        )
+        st.plotly_chart(comp_fig, use_container_width=True, key="intervention_comparison")
+    else:
+        st.subheader("Strategic Alternatives")
+        st.caption(
+            "Top-performing and worst-performing scenario variants ranked by impact on trial rate."
+        )
+
+        col_top, col_worst = st.columns([2, 1])
+
+        with col_top:
+            st.markdown("**Best alternatives:**")
+            for alt in report.top_alternatives[:10]:
+                delta_str = (
+                    f"+{alt.delta_vs_primary:.1%}"
+                    if alt.delta_vs_primary > 0
+                    else f"{alt.delta_vs_primary:.1%}"
+                )
+                with st.expander(f"#{alt.rank} {alt.variant_id} ({delta_str})"):
+                    st.markdown(alt.business_rationale)
+                    st.caption(f"Adoption rate: {alt.adoption_rate:.1%}")
+
+        with col_worst:
+            st.markdown("**Worst alternatives:**")
+            for alt in report.worst_alternatives:
+                delta_str = f"{alt.delta_vs_primary:.1%}"
+                st.markdown(f"- {alt.variant_id}: {delta_str}")
 
     st.subheader("Interview Themes")
     st.caption(f"Themes identified from {report.interview_count} deep interviews.")
@@ -355,29 +574,6 @@ if "research_result" in st.session_state:
     else:
         st.caption("No interview themes available (mock mode or insufficient responses).")
 
-    st.subheader("Strategic Alternatives")
-    st.caption("Top-performing and worst-performing scenario variants ranked by impact on trial rate.")
-
-    col_top, col_worst = st.columns([2, 1])
-
-    with col_top:
-        st.markdown("**Best alternatives:**")
-        for alt in report.top_alternatives[:10]:
-            delta_str = (
-                f"+{alt.delta_vs_primary:.1%}"
-                if alt.delta_vs_primary > 0
-                else f"{alt.delta_vs_primary:.1%}"
-            )
-            with st.expander(f"#{alt.rank} {alt.variant_id} ({delta_str})"):
-                st.markdown(alt.business_rationale)
-                st.caption(f"Adoption rate: {alt.adoption_rate:.1%}")
-
-    with col_worst:
-        st.markdown("**Worst alternatives:**")
-        for alt in report.worst_alternatives:
-            delta_str = f"{alt.delta_vs_primary:.1%}"
-            st.markdown(f"- {alt.variant_id}: {delta_str}")
-
     st.divider()
     export_cols = st.columns(2)
     with export_cols[0]:
@@ -396,5 +592,7 @@ elif st.session_state.get("scenario_results"):
     _render_legacy_dashboard()
 
 else:
-    st.warning("No research results available. Run a research pipeline from the Research Design page.")
+    st.warning(
+        "No research results available. Run a research pipeline from the Research Design page."
+    )
     st.stop()

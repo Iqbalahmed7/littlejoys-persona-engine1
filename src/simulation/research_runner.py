@@ -18,6 +18,7 @@ from src.probing.question_bank import BusinessQuestion, get_tree_for_question
 from src.probing.smart_sample import SampledPersona, SmartSample, select_smart_sample
 from src.simulation.explorer import VariantStrategy, generate_variants
 from src.simulation.static import StaticSimulationResult, run_static_simulation
+from src.simulation.temporal import TemporalSimulationResult, run_temporal_simulation
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -68,6 +69,8 @@ class AlternativeRunSummary(BaseModel):
     business_rationale: str
     adoption_count: int
     adoption_rate: float
+    temporal_adoption_rate: float | None = None
+    temporal_active_rate: float | None = None
     delta_vs_primary: float
 
 
@@ -105,6 +108,7 @@ class ResearchResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     primary_funnel: StaticSimulationResult
+    temporal_result: TemporalSimulationResult | None = None
     smart_sample: SmartSample
     interview_results: list[InterviewResult]
     alternative_runs: list[AlternativeRunSummary]
@@ -207,6 +211,16 @@ class ResearchRunner:
             scenario=self.scenario,
             seed=self.seed,
         )
+        temporal_primary: TemporalSimulationResult | None = None
+        if self.scenario.mode == "temporal":
+            self._progress("Running temporal simulation...", 0.16)
+            temporal_primary = run_temporal_simulation(
+                population=self.population,
+                scenario=self.scenario,
+                thresholds=self.scenario.funnel_thresholds,
+                months=self.scenario.months,
+                seed=self.seed,
+            )
 
         self._progress("Selecting personas for deep interviews...", 0.2)
         smart_sample = select_smart_sample(
@@ -279,7 +293,7 @@ class ResearchRunner:
             : self.alternative_count
         ]
 
-        alternative_runs: list[AlternativeRunSummary] = []
+        alternative_rows: list[tuple[Any, StaticSimulationResult]] = []
         alt_n = max(1, len(alternatives))
         for idx, variant in enumerate(alternatives):
             self._progress(
@@ -291,6 +305,35 @@ class ResearchRunner:
                 scenario=variant.scenario_config,
                 seed=self.seed,
             )
+            alternative_rows.append((variant, sim))
+
+        temporal_by_variant: dict[str, TemporalSimulationResult] = {}
+        if self.scenario.mode == "temporal":
+            top_for_temporal = sorted(
+                alternative_rows,
+                key=lambda row: row[1].adoption_rate,
+                reverse=True,
+            )[:10]
+            top_n = max(1, len(top_for_temporal))
+            for idx, (variant, _sim) in enumerate(top_for_temporal):
+                self._progress(
+                    "Running temporal alternatives...",
+                    0.95 + ((idx + 1) / top_n) * 0.03,
+                )
+                temporal_by_variant[variant.variant_id] = run_temporal_simulation(
+                    population=self.population,
+                    scenario=variant.scenario_config,
+                    thresholds=variant.scenario_config.funnel_thresholds,
+                    months=variant.scenario_config.months,
+                    seed=self.seed,
+                )
+
+        alternative_runs: list[AlternativeRunSummary] = []
+        for variant, sim in alternative_rows:
+            temporal_alt = temporal_by_variant.get(variant.variant_id)
+            base_delta = sim.adoption_rate - primary.adoption_rate
+            if temporal_alt is not None and temporal_primary is not None:
+                base_delta = temporal_alt.final_active_rate - temporal_primary.final_active_rate
             alternative_runs.append(
                 AlternativeRunSummary(
                     variant_id=variant.variant_id,
@@ -301,12 +344,28 @@ class ResearchRunner:
                     ),
                     adoption_count=sim.adoption_count,
                     adoption_rate=sim.adoption_rate,
-                    delta_vs_primary=sim.adoption_rate - primary.adoption_rate,
+                    temporal_adoption_rate=(
+                        temporal_alt.final_adoption_rate if temporal_alt is not None else None
+                    ),
+                    temporal_active_rate=(
+                        temporal_alt.final_active_rate if temporal_alt is not None else None
+                    ),
+                    delta_vs_primary=base_delta,
                 )
             )
 
-        # Sort alternatives by impact delta descending (best results first)
-        alternative_runs.sort(key=lambda x: x.delta_vs_primary, reverse=True)
+        # Temporal scenarios prioritize month-12 active rate; static keeps delta sorting.
+        if temporal_by_variant:
+            alternative_runs.sort(
+                key=lambda x: (
+                    x.temporal_active_rate is not None,
+                    x.temporal_active_rate if x.temporal_active_rate is not None else -1.0,
+                    x.delta_vs_primary,
+                ),
+                reverse=True,
+            )
+        else:
+            alternative_runs.sort(key=lambda x: x.delta_vs_primary, reverse=True)
 
         self._progress("Compiling results...", 0.98)
         elapsed = time.monotonic() - started
@@ -329,9 +388,9 @@ class ResearchRunner:
 
         return ResearchResult(
             primary_funnel=primary,
+            temporal_result=temporal_primary,
             smart_sample=smart_sample,
             interview_results=interview_results,
             alternative_runs=alternative_runs,
             metadata=metadata,
         )
-

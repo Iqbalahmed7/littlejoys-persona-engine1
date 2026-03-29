@@ -52,3 +52,15 @@ def test_research_consolidator_importable():
     from src.analysis.research_consolidator import ConsolidatedReport, consolidate_research
     assert consolidate_research is not None
     assert ConsolidatedReport is not None
+
+
+def test_trajectory_clustering_importable():
+    """Verify trajectory clustering symbols are correctly exposed."""
+    from src.analysis.trajectory_clustering import (
+        BehaviourCluster,
+        TrajectoryClusterResult,
+        cluster_trajectories,
+    )
+    assert TrajectoryClusterResult is not None
+    assert BehaviourCluster is not None
+    assert cluster_trajectories is not None

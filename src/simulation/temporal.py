@@ -62,6 +62,25 @@ class TemporalSimulationResult(BaseModel):
     random_seed: int = 42
 
 
+class MonthState(BaseModel):
+    """Per-month state for one persona in the temporal simulation."""
+
+    month: int
+    is_active: bool
+    satisfaction: float
+    consecutive_months: int
+    has_lj_pass: bool
+    churned_this_month: bool
+    adopted_this_month: bool
+
+
+class PersonaTrajectory(BaseModel):
+    """Month-by-month trajectory for one persona."""
+
+    persona_id: str
+    monthly_states: list[MonthState]
+
+
 @dataclass
 class _PersonaTemporalState:
     awareness_boost: float = 0.0
@@ -100,18 +119,64 @@ def run_temporal_simulation(
         ``TemporalSimulationResult`` with per-month snapshots and headline metrics.
     """
 
+    snapshots, total_revenue_estimate, states, _trajectories = _simulate_temporal(
+        population=population,
+        scenario=scenario,
+        thresholds=thresholds,
+        months=months,
+        seed=seed,
+        collect_trajectories=False,
+    )
+
+    n = len(population.personas)
+
+    final_cumulative = sum(1 for st in states.values() if st.ever_adopted)
+    final_active = sum(1 for st in states.values() if st.active)
+    final_adoption_rate = final_cumulative / n if n else 0.0
+    final_active_rate = final_active / n if n else 0.0
+
+    log.info(
+        "temporal_simulation_complete",
+        final_adoption_rate=final_adoption_rate,
+        total_revenue_estimate=total_revenue_estimate,
+    )
+
+    return TemporalSimulationResult(
+        scenario_id=scenario.id,
+        months=months,
+        population_size=n,
+        monthly_snapshots=snapshots,
+        final_adoption_rate=final_adoption_rate,
+        final_active_rate=final_active_rate,
+        total_revenue_estimate=total_revenue_estimate,
+        random_seed=seed,
+    )
+
+
+def _simulate_temporal(
+    population: Population,
+    scenario: ScenarioConfig,
+    thresholds: dict[str, float] | None,
+    months: int,
+    seed: int,
+    *,
+    collect_trajectories: bool,
+) -> tuple[
+    list[MonthlySnapshot],
+    float,
+    dict[str, _PersonaTemporalState],
+    dict[str, list[MonthState]],
+]:
     rng = random.Random(seed)
     personas = population.personas
     n = len(personas)
     states: dict[str, _PersonaTemporalState] = {
         p.id: _PersonaTemporalState(has_lj_pass=_lj_pass_assigned(p.id, scenario)) for p in personas
     }
-
+    trajectories: dict[str, list[MonthState]] = {p.id: [] for p in personas}
     snapshots: list[MonthlySnapshot] = []
     total_revenue_estimate = 0.0
     price = scenario.product.price_inr
-
-    log.info("temporal_simulation_started", scenario_id=scenario.id, months=months, seed=seed)
 
     for month in range(1, months + 1):
         for st in states.values():
@@ -133,6 +198,8 @@ def run_temporal_simulation(
             states[pid].awareness_boost = min(1.0, states[pid].awareness_boost + min(0.4, delta))
 
         active_at_start = {pid for pid, st in states.items() if st.active}
+        adopted_this_month: set[str] = set()
+        churned_this_month: set[str] = set()
         new_adopters = 0
 
         for persona in personas:
@@ -150,6 +217,7 @@ def run_temporal_simulation(
                 st.active = True
                 st.consecutive_months = 1
                 new_adopters += 1
+                adopted_this_month.add(persona.id)
                 sat0 = compute_satisfaction(persona, scenario.product, month)
                 st.satisfaction_trajectory.append(sat0)
 
@@ -172,6 +240,7 @@ def run_temporal_simulation(
                 st.active = False
                 st.consecutive_months = 0
                 churned += 1
+                churned_this_month.add(pid)
                 continue
 
             repeat_p = compute_repeat_probability(
@@ -213,24 +282,42 @@ def run_temporal_simulation(
             )
         )
 
-    final_cumulative = sum(1 for st in states.values() if st.ever_adopted)
-    final_active = sum(1 for st in states.values() if st.active)
-    final_adoption_rate = final_cumulative / n if n else 0.0
-    final_active_rate = final_active / n if n else 0.0
+        if collect_trajectories:
+            for persona in personas:
+                st = states[persona.id]
+                satisfaction = st.satisfaction_trajectory[-1] if st.satisfaction_trajectory else 0.0
+                trajectories[persona.id].append(
+                    MonthState(
+                        month=month,
+                        is_active=st.active,
+                        satisfaction=float(satisfaction),
+                        consecutive_months=st.consecutive_months,
+                        has_lj_pass=st.has_lj_pass,
+                        churned_this_month=persona.id in churned_this_month,
+                        adopted_this_month=persona.id in adopted_this_month,
+                    )
+                )
 
-    log.info(
-        "temporal_simulation_complete",
-        final_adoption_rate=final_adoption_rate,
-        total_revenue_estimate=total_revenue_estimate,
-    )
+    return snapshots, total_revenue_estimate, states, trajectories
 
-    return TemporalSimulationResult(
-        scenario_id=scenario.id,
+
+def extract_persona_trajectories(
+    population: Population,
+    scenario: ScenarioConfig,
+    months: int = 12,
+    seed: int = 42,
+) -> list[PersonaTrajectory]:
+    """Return per-persona month-by-month temporal simulation trajectories."""
+
+    _snapshots, _revenue, _states, trajectories = _simulate_temporal(
+        population=population,
+        scenario=scenario,
+        thresholds=None,
         months=months,
-        population_size=n,
-        monthly_snapshots=snapshots,
-        final_adoption_rate=final_adoption_rate,
-        final_active_rate=final_active_rate,
-        total_revenue_estimate=total_revenue_estimate,
-        random_seed=seed,
+        seed=seed,
+        collect_trajectories=True,
     )
+    return [
+        PersonaTrajectory(persona_id=persona_id, monthly_states=monthly_states)
+        for persona_id, monthly_states in trajectories.items()
+    ]
