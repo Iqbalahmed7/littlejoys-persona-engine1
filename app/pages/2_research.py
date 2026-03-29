@@ -43,11 +43,18 @@ scenario = get_scenario(scenario_id)
 
 if scenario.mode == "temporal":
     st.info(
-        "📊 Temporal mode — This scenario simulates 12 months of repeat purchase, "
-        "churn, and word-of-mouth dynamics.",
+        "📊 Event simulation — This scenario models day-by-day behaviour over 12 months: "
+        "product events, child reactions, competitive pressures, and purchase decisions.",
     )
 else:
     st.info("📊 Static mode — This scenario evaluates a single purchase decision funnel.")
+
+if scenario.mode == "temporal":
+    duration_days = int(scenario.months * 30)
+    st.caption(
+        f"Simulation duration: {duration_days} days ({scenario.months} months) · "
+        "200 personas · Day-level events"
+    )
 
 st.markdown(f"**{scenario.description}**")
 st.caption(
@@ -371,8 +378,25 @@ if run_clicked:
         status_text = st.empty()
 
         def on_progress(message: str, progress: float) -> None:
-            progress_bar.progress(min(progress, 1.0))
-            status_text.caption(message)
+            pct = max(0.0, min(float(progress), 1.0))
+            progress_bar.progress(pct)
+
+            if custom_scenario.mode == "temporal":
+                if pct < 0.10:
+                    label = "Running decision funnel..."
+                elif pct < 0.20:
+                    label = "Selecting interview sample..."
+                elif pct < 0.50:
+                    label = "Running day-by-day event simulation..."
+                elif pct < 0.70:
+                    label = "Conducting persona interviews..."
+                elif pct < 0.90:
+                    label = "Testing alternative strategies..."
+                else:
+                    label = "Consolidating results..."
+                status_text.caption(label)
+            else:
+                status_text.caption(message)
 
         runner = ResearchRunner(
             population=pop,

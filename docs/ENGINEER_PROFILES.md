@@ -1,7 +1,7 @@
 # Engineer Profiles & Performance System
 
 > **Owner**: Technical Lead (Claude Opus)
-> **Last Updated**: 2026-03-27
+> **Last Updated**: 2026-03-29
 
 ---
 
@@ -11,30 +11,33 @@
                     ┌──────────────────────┐
                     │    TECHNICAL LEAD     │
                     │    (Claude Opus)      │
+                    │  Day-to-day: Sonnet   │
                     │                       │
                     │  Orchestration        │
                     │  Architecture         │
                     │  Code Review          │
                     │  Documentation        │
-                    │  Subject Matter Expert│
                     └──────────┬───────────┘
                                │
-           ┌───────────────────┼───────────────────┐
-           │                   │                    │
-  ┌────────▼────────┐ ┌───────▼────────┐ ┌────────▼────────┐
-  │     CURSOR       │ │     CODEX      │ │   ANTIGRAVITY   │
-  │  Sr. Engineer    │ │  Sr. Engineer  │ │  Engineer        │
-  │                  │ │                │ │                  │
-  │  Core systems    │ │  Data models   │ │  Utilities       │
-  │  Algorithms      │ │  LLM integr.  │ │  Scraping        │
-  │  Dashboard       │ │  AI features  │ │  Support tasks   │
-  └──────────────────┘ └────────────────┘ └──────────────────┘
+        ┌──────────────────────┼──────────────────────┐
+        │                      │                       │
+┌───────▼───────┐  ┌──────────▼──────┐  ┌────────────▼────────┐
+│    CURSOR      │  │     CODEX       │  │    ANTIGRAVITY       │
+│  Auto model   │  │ GPT-5.3-Codex   │  │  Gemini 3 Flash      │
+│               │  │ (Medium)        │  │                      │
+│  Architecture │  │ Backend logic   │  │  Tests               │
+│  Complex pages│  │ Data models     │  │  Validation          │
+│  Refactors    │  │ Pipelines       │  │  Support tasks       │
+└───────────────┘  └─────────────────┘  └──────────────────────┘
 
-  ┌──────────────────────────────────────────────────────────┐
-  │                      QA AGENT                             │
-  │  Reviews every PR. Blocks bad code. Runs UAT.            │
-  │  Reports to Tech Lead.                                   │
-  └──────────────────────────────────────────────────────────┘
+┌───────────────┐  ┌─────────────────┐
+│   OPENCODE    │  │     GOOSE       │
+│ GPT-5.4 Nano  │  │  Grok-4-1-fast  │
+│               │  │  -reasoning     │
+│  UI/Streamlit │  │                 │
+│  Frontend     │  │  Complex logic  │
+│  UX polish    │  │  Reasoning tasks│
+└───────────────┘  └─────────────────┘
 ```
 
 ---
@@ -43,79 +46,117 @@
 
 ### Cursor — Senior Software Engineer
 
-**Strengths (Expected)**:
-- Strong at systems-level code: algorithms, data pipelines, compute-heavy logic
-- Good at UI/dashboard work (Streamlit, interactive components)
-- Fast iteration speed — good for rapid prototyping
-- Can handle complex multi-file refactors
+**Model**: Auto (Claude selects best model per task)
+**Upgrade path**: N/A — already adaptive
 
-**Assigned Domains**:
-- Gaussian copula generator + correlation enforcement (algorithmic complexity)
-- Decision engine (Layer 0-4 functions) — core simulation logic
-- Static + temporal simulation runners
-- Streamlit app scaffolding + main dashboard pages
-- Error handling + performance optimization
+**Strengths**:
+- Architecture, complex multi-file refactors, system design
+- Results/dashboard pages with intricate layout logic
+- Cross-module integration work
+- Best engineer for highest-complexity tasks
+
+**Assigned Domains (Phase 2)**:
+- Temporal results page (trajectory charts, behavioural segments)
+- Event-driven simulation UI (Sprint 17+)
+- Complex page refactors requiring deep context
 
 **Work Style Notes**:
-- Give Cursor well-defined PRDs with clear input/output specs
-- Best when working on a single focused module at a time
-- Watch for: over-engineering, adding unnecessary abstractions
-- Review focus: correctness of math, edge cases in numeric computation
+- Give full ARCHITECTURE.md context
+- Best for tasks spanning multiple modules
+- Watch for: occasionally over-engineers; keep scope tight
 
 ---
 
 ### Codex — Senior Software Engineer
 
-**Strengths (Expected)**:
-- Strong at data modeling, schema design, structured outputs
-- Good at LLM integration (prompt engineering, output parsing)
-- Thorough with error handling
-- Can work asynchronously on well-scoped tasks
+**Model**: GPT-5.3-Codex (Medium)
+**Upgrade path**: GPT-5.4 (High) for very complex tasks | GPT-5.4-mini (Low/Medium) for simpler ones
+**When to upgrade**: Canonical State Model implementation (Sprint 17), counterfactual engine (Sprint 18)
 
-**Assigned Domains**:
-- Pydantic schema for all 145 persona attributes
-- Demographic distribution tables
-- LLM wrapper (Claude API client with caching + routing)
-- Tier 2 narrative generation (progressive attribute sampling via LLM)
-- Scenario configuration system
-- Threshold calibration
-- Counterfactual engine
-- Causal statement generator
-- ReportAgent (ReACT with tools)
-- Deep persona interview system
+**Strengths**:
+- Backend algorithms, data pipelines, simulation engine logic
+- Pydantic models, structured data transforms
+- Wiring modules together (research runner, consolidator)
+- Reliable delivery; needs well-specified briefs
+
+**Assigned Domains (Phase 2)**:
+- EventEngine + Canonical State Model (Sprint 17) — upgrade to GPT-5.4
+- Counterfactual engine (Sprint 18)
+- LLM-calibrated thresholds
+- Executive summary generation
 
 **Work Style Notes**:
-- Give Codex comprehensive context (full ARCHITECTURE.md reference)
-- Best when task involves data structures + LLM interaction
-- Watch for: verbose output, large monolithic files
-- Review focus: LLM prompt quality, output parsing robustness, schema completeness
+- Give comprehensive specs — Codex executes well with detail
+- Watch for: files not on disk on first attempt (re-export if needed)
+- Review focus: Pydantic model completeness, edge cases
 
 ---
 
 ### Antigravity — Software Engineer
 
-**Strengths (Expected)**:
-- Good at utility code, data processing, scraping
-- Reliable for well-defined, bounded tasks
-- Can handle testing and validation work
+**Model**: Gemini 3 Flash
+**Upgrade path**: Gemini 3.1 Pro (High or Low) for complex test logic
+**When to upgrade**: Integration tests with multiple fixture dependencies, complex edge case debugging
 
-**Assigned Domains**:
-- Persona validation framework
-- Web scraping pipeline (Amazon reviews, BabyChakra, Google Trends)
-- Distribution fitting from scraped data
-- Word-of-mouth propagation model
-- Variable importance analysis (SHAP)
-- Funnel waterfall data pipeline
-- Pre-computing all scenario results
-- Visual polish + secondary dashboard pages
-- Static HTML export backup
+**Strengths**:
+- Tests, validation, well-bounded tasks
+- Good at debugging test failures systematically (showed this in Sprint 16)
+- Reliable for explicit, clearly-scoped work
+
+**Assigned Domains (Phase 2)**:
+- All unit + integration tests across sprints
+- Upgrade to Pro when tests require deep fixture setup or complex assertions
 
 **Work Style Notes**:
-- Give Antigravity very explicit specifications — less ambiguity
-- Best for tasks that are self-contained with clear boundaries
-- Start with lower-risk tasks, increase scope based on performance
-- Watch for: incomplete edge case coverage
-- Review focus: test coverage, error handling at data boundaries
+- Very explicit specifications — minimal ambiguity
+- Watch for: edge case gaps in first pass
+- Review focus: test coverage completeness, fixture reuse
+
+---
+
+### OpenCode — Software Engineer
+
+**Model**: GPT-5.4 Nano
+**Upgrade path**: GPT-5.4-mini | GPT-5.4 for more complex UI tasks
+**When to upgrade**: Pages with complex state logic or multiple inter-dependent components
+
+**Strengths**:
+- UI/Streamlit pages, frontend polish
+- Clean, fast delivery on well-defined UI tasks
+- Good at mode indicators, banners, labels, layout tweaks
+
+**Assigned Domains (Phase 2)**:
+- Research Design page updates
+- UI cleanup, mock banners, indicators
+- UX polish tasks
+- Upgrade to GPT-5.4-mini for pages with complex conditional rendering
+
+**Work Style Notes**:
+- Keep tasks UI-only — don't mix backend logic
+- Watch for: may not handle complex conditional state well on Nano
+
+---
+
+### Goose — Software Engineer
+
+**Model**: Grok-4-1-fast-reasoning
+**Upgrade path**: N/A (reasoning model, already strong)
+
+**Strengths**:
+- Fast reasoning — good for tasks requiring logical deduction
+- Can handle moderately complex backend tasks
+- Good for well-scoped algorithmic problems
+
+**Best Fit Tasks**:
+- Rule derivation and threshold calibration logic
+- Event grammar validation and firing rules
+- Decision rule implementation (if/then logic heavy)
+- Tasks where reasoning through edge cases matters more than broad context
+
+**Work Style Notes**:
+- PATH must be set: `export PATH="/Users/admin/.local/bin:$PATH"` in `.goosehints`
+- Give precise, bounded tasks — reasoning models work best with clear constraints
+- Good parallel option when Codex is on critical path
 
 ---
 

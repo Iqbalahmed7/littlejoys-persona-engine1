@@ -16,6 +16,7 @@ from src.constants import INTERVIEW_COST_PER_1K_INPUT_USD, INTERVIEW_COST_PER_1K
 from src.probing.models import ProbeType
 from src.probing.question_bank import BusinessQuestion, get_tree_for_question
 from src.probing.smart_sample import SampledPersona, SmartSample, select_smart_sample
+from src.simulation.event_engine import EventSimulationResult, run_event_simulation
 from src.simulation.explorer import VariantStrategy, generate_variants
 from src.simulation.static import StaticSimulationResult, run_static_simulation
 from src.simulation.temporal import TemporalSimulationResult, run_temporal_simulation
@@ -71,6 +72,7 @@ class AlternativeRunSummary(BaseModel):
     adoption_rate: float
     temporal_adoption_rate: float | None = None
     temporal_active_rate: float | None = None
+    event_active_rate: float | None = None
     delta_vs_primary: float
 
 
@@ -109,6 +111,7 @@ class ResearchResult(BaseModel):
 
     primary_funnel: StaticSimulationResult
     temporal_result: TemporalSimulationResult | None = None
+    event_result: EventSimulationResult | None = None
     smart_sample: SmartSample
     interview_results: list[InterviewResult]
     alternative_runs: list[AlternativeRunSummary]
@@ -211,9 +214,22 @@ class ResearchRunner:
             scenario=self.scenario,
             seed=self.seed,
         )
+        event_primary: EventSimulationResult | None = None
         temporal_primary: TemporalSimulationResult | None = None
         if self.scenario.mode == "temporal":
-            self._progress("Running temporal simulation...", 0.16)
+            duration_days = max(1, int(self.scenario.months) * 30)
+
+            def _event_progress(p: float) -> None:
+                self._progress("Running day-level event simulation...", 0.12 + 0.08 * min(p, 1.0))
+
+            event_primary = run_event_simulation(
+                population=self.population,
+                scenario=self.scenario,
+                duration_days=duration_days,
+                seed=self.seed,
+                progress_callback=_event_progress,
+            )
+            self._progress("Running temporal simulation (monthly)...", 0.22)
             temporal_primary = run_temporal_simulation(
                 population=self.population,
                 scenario=self.scenario,
@@ -222,7 +238,7 @@ class ResearchRunner:
                 seed=self.seed,
             )
 
-        self._progress("Selecting personas for deep interviews...", 0.2)
+        self._progress("Selecting personas for deep interviews...", 0.26)
         smart_sample = select_smart_sample(
             personas=self.population.personas,
             decisions=primary.results_by_persona,
@@ -250,7 +266,7 @@ class ResearchRunner:
             persona = self.population.get_persona(sampled.persona_id)
             self._progress(
                 f"Interviewing persona {persona.display_name or persona.id}...",
-                0.2 + ((idx + 1) / sample_n) * 0.5,
+                0.26 + ((idx + 1) / sample_n) * 0.48,
             )
             decision_result = primary.results_by_persona.get(
                 persona.id, {"scenario_id": self.scenario.id, "outcome": "reject"}
@@ -308,6 +324,7 @@ class ResearchRunner:
             alternative_rows.append((variant, sim))
 
         temporal_by_variant: dict[str, TemporalSimulationResult] = {}
+        event_by_variant: dict[str, EventSimulationResult] = {}
         if self.scenario.mode == "temporal":
             top_for_temporal = sorted(
                 alternative_rows,
@@ -328,11 +345,40 @@ class ResearchRunner:
                     seed=self.seed,
                 )
 
+            if event_primary is not None:
+                top_for_event = sorted(
+                    alternative_rows,
+                    key=lambda row: row[1].adoption_rate,
+                    reverse=True,
+                )[:5]
+                ev_n = max(1, len(top_for_event))
+                alt_duration = max(1, int(self.scenario.months) * 30)
+                # Stay strictly above the temporal-alternatives band (ends at 0.98).
+                for idx, (variant, _sim) in enumerate(top_for_event):
+                    self._progress(
+                        "Running day-level event alternatives...",
+                        0.98 + ((idx + 1) / ev_n) * 0.02,
+                    )
+                    # Do not forward engine progress here: it maps p→[0.12,0.20] and would
+                    # rewind the overall progress bar after higher phases.
+                    event_by_variant[variant.variant_id] = run_event_simulation(
+                        population=self.population,
+                        scenario=variant.scenario_config,
+                        duration_days=alt_duration,
+                        seed=self.seed,
+                        progress_callback=None,
+                    )
+
         alternative_runs: list[AlternativeRunSummary] = []
         for variant, sim in alternative_rows:
             temporal_alt = temporal_by_variant.get(variant.variant_id)
+            event_alt = event_by_variant.get(variant.variant_id)
+            evt_rate = event_alt.final_active_rate if event_alt is not None else None
+
             base_delta = sim.adoption_rate - primary.adoption_rate
-            if temporal_alt is not None and temporal_primary is not None:
+            if event_primary is not None and evt_rate is not None:
+                base_delta = evt_rate - event_primary.final_active_rate
+            elif temporal_alt is not None and temporal_primary is not None:
                 base_delta = temporal_alt.final_active_rate - temporal_primary.final_active_rate
             alternative_runs.append(
                 AlternativeRunSummary(
@@ -350,12 +396,21 @@ class ResearchRunner:
                     temporal_active_rate=(
                         temporal_alt.final_active_rate if temporal_alt is not None else None
                     ),
+                    event_active_rate=evt_rate,
                     delta_vs_primary=base_delta,
                 )
             )
 
-        # Temporal scenarios prioritize month-12 active rate; static keeps delta sorting.
-        if temporal_by_variant:
+        if event_by_variant:
+            alternative_runs.sort(
+                key=lambda x: (
+                    x.event_active_rate is not None,
+                    x.event_active_rate if x.event_active_rate is not None else -1.0,
+                    x.delta_vs_primary,
+                ),
+                reverse=True,
+            )
+        elif temporal_by_variant:
             alternative_runs.sort(
                 key=lambda x: (
                     x.temporal_active_rate is not None,
@@ -367,7 +422,7 @@ class ResearchRunner:
         else:
             alternative_runs.sort(key=lambda x: x.delta_vs_primary, reverse=True)
 
-        self._progress("Compiling results...", 0.98)
+        self._progress("Compiling results...", 1.0)
         elapsed = time.monotonic() - started
         estimated_cost = (
             (total_input_tokens / 1000) * INTERVIEW_COST_PER_1K_INPUT_USD
@@ -389,6 +444,7 @@ class ResearchRunner:
         return ResearchResult(
             primary_funnel=primary,
             temporal_result=temporal_primary,
+            event_result=event_primary,
             smart_sample=smart_sample,
             interview_results=interview_results,
             alternative_runs=alternative_runs,

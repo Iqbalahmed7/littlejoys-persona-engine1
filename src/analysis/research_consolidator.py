@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ConfigDict
@@ -15,7 +16,7 @@ from src.constants import INCOME_BRACKET_LOW_MAX_LPA, INCOME_BRACKET_MID_MAX_LPA
 from src.decision.scenarios import get_scenario
 from src.probing.clustering import cluster_responses_mock
 from src.probing.question_bank import get_question
-from src.simulation.temporal import extract_persona_trajectories
+from src.simulation.temporal import MonthState, PersonaTrajectory, extract_persona_trajectories
 
 if TYPE_CHECKING:
     from src.generation.population import Population
@@ -72,6 +73,7 @@ class AlternativeInsight(BaseModel):
     delta_vs_primary: float
     parameter_changes: dict[str, object]
     temporal_active_rate: float | None = None
+    event_active_rate: float | None = None
 
 
 class ConsolidatedReport(BaseModel):
@@ -96,6 +98,11 @@ class ConsolidatedReport(BaseModel):
     month_12_active_rate: float | None = None
     peak_churn_month: int | None = None
     revenue_estimate: float | None = None
+    event_monthly_rollup: list[dict[str, Any]] | None = None
+    event_daily_rollups: list[dict[str, Any]] | None = None
+    event_clusters: list[dict[str, Any]] | None = None
+    peak_churn_day: int | None = None
+    decision_rationale_summary: list[dict[str, Any]] | None = None
     mock_mode: bool
     duration_seconds: float
     llm_calls_made: int
@@ -148,9 +155,88 @@ def _alternative_rows(
             delta_vs_primary=alt.delta_vs_primary,
             parameter_changes=alt.parameter_changes,
             temporal_active_rate=alt.temporal_active_rate,
+            event_active_rate=alt.event_active_rate,
         )
         for index, alt in enumerate(ordered)
     ]
+
+
+def _build_event_daily_rollups(event_result: Any) -> list[dict[str, int]]:
+    duration = event_result.duration_days
+    trajectories = event_result.trajectories
+    rollups: list[dict[str, int]] = []
+    for day in range(1, duration + 1):
+        total_active = sum(1 for t in trajectories if t.days[day - 1].is_active)
+        new_adopters = sum(1 for t in trajectories if t.first_purchase_day == day)
+        churned = sum(1 for t in trajectories if t.churned_day == day)
+        rollups.append(
+            {
+                "day": day,
+                "total_active": total_active,
+                "new_adopters": new_adopters,
+                "churned": churned,
+            }
+        )
+    return rollups
+
+
+def _peak_churn_day(event_result: Any) -> int | None:
+    counts: dict[int, int] = {}
+    for traj in event_result.trajectories:
+        if traj.churned_day is not None:
+            counts[traj.churned_day] = counts.get(traj.churned_day, 0) + 1
+    return max(counts, key=counts.get) if counts else None
+
+
+def _decision_rationale_summary(event_result: Any) -> list[dict[str, Any]]:
+    dominant: Counter[str] = Counter()
+    total = 0
+    for traj in event_result.trajectories:
+        for snap in traj.days:
+            if snap.decision in {"churn", "switch"} and snap.decision_rationale:
+                top_var = max(snap.decision_rationale.items(), key=lambda x: x[1])[0]
+                dominant[top_var] += 1
+                total += 1
+    if not total:
+        return []
+    return [
+        {"variable": var, "count": n, "fraction": n / total}
+        for var, n in dominant.most_common(10)
+    ]
+
+
+def _persona_trajectories_from_event(event_result: Any) -> list[PersonaTrajectory]:
+    duration = event_result.duration_days
+    months = max(1, (duration + 29) // 30)
+    monthly_trajs: list[PersonaTrajectory] = []
+    for traj in event_result.trajectories:
+        states: list[MonthState] = []
+        for m in range(1, months + 1):
+            end_day = min(m * 30, duration)
+            start_day = (m - 1) * 30 + 1
+            snap = traj.days[end_day - 1]
+            adopted_this = (
+                traj.first_purchase_day is not None
+                and start_day <= traj.first_purchase_day <= end_day
+            )
+            churned_this = (
+                traj.churned_day is not None and start_day <= traj.churned_day <= end_day
+            )
+            sat = float(snap.state.get("perceived_value", 0.0))
+            consec = m if snap.is_active else 0
+            states.append(
+                MonthState(
+                    month=m,
+                    is_active=snap.is_active,
+                    satisfaction=sat,
+                    consecutive_months=min(consec, 24),
+                    has_lj_pass=snap.has_lj_pass,
+                    churned_this_month=churned_this,
+                    adopted_this_month=adopted_this,
+                )
+            )
+        monthly_trajs.append(PersonaTrajectory(persona_id=traj.persona_id, monthly_states=states))
+    return monthly_trajs
 
 
 def consolidate_research(
@@ -228,6 +314,11 @@ def consolidate_research(
     month_12_active_rate: float | None = None
     peak_churn_month: int | None = None
     revenue_estimate: float | None = None
+    event_monthly_rollup: list[dict[str, Any]] | None = None
+    event_daily_rollups: list[dict[str, Any]] | None = None
+    event_clusters: list[dict[str, Any]] | None = None
+    peak_churn_day: int | None = None
+    decision_rationale_summary: list[dict[str, Any]] | None = None
 
     if result.temporal_result is not None:
         temporal_snapshots = [
@@ -272,6 +363,28 @@ def consolidate_research(
             ).month
         revenue_estimate = result.temporal_result.total_revenue_estimate
 
+    if result.event_result is not None:
+        er = result.event_result
+        event_monthly_rollup = [dict(row) for row in er.aggregate_monthly]
+        event_daily_rollups = _build_event_daily_rollups(er)
+        peak_churn_day = _peak_churn_day(er)
+        decision_rationale_summary = _decision_rationale_summary(er)
+        monthly_from_event = _persona_trajectories_from_event(er)
+        clustered_event = cluster_trajectories(monthly_from_event, population)
+        event_clusters = [
+            {
+                "cluster_name": c.cluster_name,
+                "size": c.size,
+                "pct": c.pct,
+                "avg_lifetime_months": c.avg_lifetime_months,
+                "avg_satisfaction": c.avg_satisfaction,
+                "dominant_attributes": c.dominant_attributes,
+            }
+            for c in clustered_event.clusters
+        ]
+        month_12_active_rate = er.final_active_rate
+        revenue_estimate = er.total_revenue_estimate
+
     return ConsolidatedReport(
         scenario_id=result.metadata.scenario_id,
         scenario_name=scenario.name,
@@ -290,6 +403,11 @@ def consolidate_research(
         month_12_active_rate=month_12_active_rate,
         peak_churn_month=peak_churn_month,
         revenue_estimate=revenue_estimate,
+        event_monthly_rollup=event_monthly_rollup,
+        event_daily_rollups=event_daily_rollups,
+        event_clusters=event_clusters,
+        peak_churn_day=peak_churn_day,
+        decision_rationale_summary=decision_rationale_summary,
         mock_mode=result.metadata.mock_mode,
         duration_seconds=result.metadata.duration_seconds,
         llm_calls_made=result.metadata.llm_calls_made,

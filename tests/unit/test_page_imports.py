@@ -64,3 +64,16 @@ def test_trajectory_clustering_importable():
     assert TrajectoryClusterResult is not None
     assert BehaviourCluster is not None
     assert cluster_trajectories is not None
+
+
+def test_event_engine_importable():
+    """Verify event-level simulation symbols are correctly exposed."""
+    from src.simulation.event_engine import EventSimulationResult, run_event_simulation
+    from src.simulation.event_grammar import SimulationEvent
+    from src.simulation.state_model import CanonicalState, initialize_state
+
+    assert EventSimulationResult is not None
+    assert run_event_simulation is not None
+    assert SimulationEvent is not None
+    assert CanonicalState is not None
+    assert initialize_state is not None

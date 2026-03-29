@@ -318,59 +318,122 @@ if "research_result" in st.session_state:
         for b in report.funnel.top_barriers[:5]:
             st.markdown(f"- **{b['stage']}** → {b['reason']} ({b['count']} personas)")
 
-    temporal_snaps = report.temporal_snapshots
-    if temporal_snaps:
+    monthly_rows = report.event_monthly_rollup or report.temporal_snapshots
+    has_event_daily = bool(report.event_daily_rollups)
+
+    if has_event_daily or monthly_rows:
         st.subheader("Repeat Purchase Trajectory")
-        months = [int(_snap_val(s, "month")) for s in temporal_snaps]
-        total_active = [float(_snap_val(s, "total_active", "active")) for s in temporal_snaps]
-        new_adopters = [float(_snap_val(s, "new_adopters")) for s in temporal_snaps]
-        churned_s = [float(_snap_val(s, "churned")) for s in temporal_snaps]
+        traj_key = "event_trajectory" if has_event_daily else "temporal_trajectory"
+
+        resolution = "Show monthly"
+        if has_event_daily:
+            resolution = st.radio(
+                "Resolution",
+                ["Show daily", "Show monthly"],
+                horizontal=True,
+                key="traj_resolution_radio",
+            )
 
         traj_fig = go.Figure()
-        traj_fig.add_trace(
-            go.Scatter(
-                x=months,
-                y=total_active,
-                mode="lines+markers",
-                name="Total active",
-                line={"color": "#1f77b4", "width": 3},
+        if resolution == "Show daily" and has_event_daily:
+            daily = report.event_daily_rollups or []
+            xs = [int(d["day"]) for d in daily]
+            traj_fig.add_trace(
+                go.Scatter(
+                    x=xs,
+                    y=[int(d["total_active"]) for d in daily],
+                    mode="lines+markers",
+                    name="Total active",
+                    line={"color": "#1f77b4", "width": 3},
+                )
             )
-        )
-        traj_fig.add_trace(
-            go.Scatter(
-                x=months,
-                y=new_adopters,
-                mode="lines+markers",
-                name="New adopters",
-                line={"color": "#2ca02c", "width": 2},
+            traj_fig.add_trace(
+                go.Scatter(
+                    x=xs,
+                    y=[int(d["new_adopters"]) for d in daily],
+                    mode="lines+markers",
+                    name="New adopters",
+                    line={"color": "#2ca02c", "width": 2},
+                )
             )
-        )
-        traj_fig.add_trace(
-            go.Scatter(
-                x=months,
-                y=churned_s,
-                mode="lines+markers",
-                name="Churned",
-                line={"color": "#d62728", "width": 2},
+            traj_fig.add_trace(
+                go.Scatter(
+                    x=xs,
+                    y=[int(d["churned"]) for d in daily],
+                    mode="lines+markers",
+                    name="Churned",
+                    line={"color": "#d62728", "width": 2},
+                )
             )
-        )
-        traj_fig.update_layout(
-            height=_CHART_HEIGHT,
-            margin=_CHART_MARGINS,
-            xaxis_title="Month",
-            yaxis_title="Personas",
-            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
-        )
-        st.plotly_chart(traj_fig, use_container_width=True, key="temporal_trajectory")
+            traj_fig.update_layout(
+                height=_CHART_HEIGHT,
+                margin=_CHART_MARGINS,
+                xaxis_title="Day",
+                yaxis_title="Personas",
+                legend={
+                    "orientation": "h",
+                    "yanchor": "bottom",
+                    "y": 1.02,
+                    "xanchor": "right",
+                    "x": 1,
+                },
+            )
+        elif monthly_rows:
+            months = [int(_snap_val(s, "month")) for s in monthly_rows]
+            total_active = [float(_snap_val(s, "total_active", "active")) for s in monthly_rows]
+            new_adopters = [float(_snap_val(s, "new_adopters")) for s in monthly_rows]
+            churned_s = [float(_snap_val(s, "churned")) for s in monthly_rows]
+            traj_fig.add_trace(
+                go.Scatter(
+                    x=months,
+                    y=total_active,
+                    mode="lines+markers",
+                    name="Total active",
+                    line={"color": "#1f77b4", "width": 3},
+                )
+            )
+            traj_fig.add_trace(
+                go.Scatter(
+                    x=months,
+                    y=new_adopters,
+                    mode="lines+markers",
+                    name="New adopters",
+                    line={"color": "#2ca02c", "width": 2},
+                )
+            )
+            traj_fig.add_trace(
+                go.Scatter(
+                    x=months,
+                    y=churned_s,
+                    mode="lines+markers",
+                    name="Churned",
+                    line={"color": "#d62728", "width": 2},
+                )
+            )
+            traj_fig.update_layout(
+                height=_CHART_HEIGHT,
+                margin=_CHART_MARGINS,
+                xaxis_title="Month",
+                yaxis_title="Personas",
+                legend={
+                    "orientation": "h",
+                    "yanchor": "bottom",
+                    "y": 1.02,
+                    "xanchor": "right",
+                    "x": 1,
+                },
+            )
+
+        st.plotly_chart(traj_fig, use_container_width=True, key=traj_key)
         st.caption(f"Month-by-month customer dynamics for {report.scenario_name}")
 
         st.markdown("**Key Temporal Metrics**")
         pop_n = max(report.funnel.population_size, 1)
-        first_snap = temporal_snaps[0]
+        first_snap = monthly_rows[0]
         month1_adoption_rate = float(_snap_val(first_snap, "cumulative_adopters", default=0)) / pop_n
         m12_active = report.month_12_active_rate
-        if m12_active is None and temporal_snaps:
-            last_snap = temporal_snaps[-1]
+        if m12_active is None and monthly_rows:
+            last_snap = monthly_rows[-1]
             m12_active = float(_snap_val(last_snap, "total_active", "active")) / pop_n
 
         tm1, tm2, tm3, tm4 = st.columns(4)
@@ -385,18 +448,22 @@ if "research_result" in st.session_state:
             delta=m12_delta,
             help="Share still active by horizon vs. Month 1 cumulative adoption share.",
         )
-        peak_m = report.peak_churn_month
-        tm2.metric("Peak Churn Month", f"Month {peak_m}" if peak_m is not None else "—")
+        if report.peak_churn_day is not None:
+            tm2.metric("Peak Churn Day", f"Day {report.peak_churn_day}")
+        else:
+            peak_m = report.peak_churn_month
+            tm2.metric("Peak Churn Month", f"Month {peak_m}" if peak_m is not None else "—")
         revenue_inr = report.revenue_estimate
         revenue_l = revenue_inr / 100_000.0 if revenue_inr is not None else None
         tm3.metric("Estimated Annual Revenue", f"₹{revenue_l:.1f}L" if revenue_l is not None else "—")
-        lj_last = int(_snap_val(temporal_snaps[-1], "lj_pass_holders", default=0))
+        lj_last = int(_snap_val(monthly_rows[-1], "lj_pass_holders", default=0))
         tm4.metric("LJ Pass Holders", f"{lj_last:,}")
 
-    if report.behaviour_clusters:
+    clusters_src = report.event_clusters or report.behaviour_clusters
+    if clusters_src:
         st.subheader("Behavioural Segments")
         clusters_sorted = sorted(
-            report.behaviour_clusters,
+            clusters_src,
             key=lambda c: int(c.get("size", 0) or 0),
             reverse=True,
         )
@@ -437,6 +504,98 @@ if "research_result" in st.session_state:
                     st.markdown("**Top distinguishing persona attributes:**")
                     for k, v in top3:
                         st.markdown(f"- **{display_name(str(k))}:** {float(v):.2f}")
+
+    if result.event_result is not None and result.smart_sample.selections:
+        st.subheader("Event Timeline")
+        st.caption("Day-level events and decision points for one smart-sample persona.")
+        sample_ids = [s.persona_id for s in result.smart_sample.selections]
+        label_map = {
+            sid: (pop.get_persona(sid).display_name or sid) for sid in sample_ids
+        }
+        selected_pid = st.selectbox(
+            "Persona (smart sample)",
+            options=sample_ids,
+            format_func=lambda pid: f"{label_map.get(pid, pid)} ({pid})",
+            key="event_timeline_persona",
+        )
+        persona_traj = next(
+            (t for t in result.event_result.trajectories if t.persona_id == selected_pid),
+            None,
+        )
+        if persona_traj is not None:
+            evt_days: list[int] = []
+            evt_types: list[str] = []
+            evt_sizes: list[int] = []
+            for snap in persona_traj.days:
+                for et in snap.events_fired:
+                    evt_days.append(snap.day)
+                    evt_types.append(et)
+                    evt_sizes.append(10)
+            dec_days = [s.day for s in persona_traj.days if s.decision]
+            dec_y = [str(s.decision) for s in persona_traj.days if s.decision]
+            tline = go.Figure()
+            if evt_days:
+                tline.add_trace(
+                    go.Scatter(
+                        x=evt_days,
+                        y=evt_types,
+                        mode="markers",
+                        name="Events",
+                        marker={"size": evt_sizes, "opacity": 0.75},
+                    )
+                )
+            if dec_days:
+                tline.add_trace(
+                    go.Scatter(
+                        x=dec_days,
+                        y=dec_y,
+                        mode="markers",
+                        name="Decisions",
+                        marker={"symbol": "diamond", "size": 14, "color": "#7b1fa2"},
+                    )
+                )
+            tline.update_layout(
+                height=_CHART_HEIGHT,
+                margin=_CHART_MARGINS,
+                xaxis_title="Day",
+                yaxis_title="Event / decision",
+                legend={"orientation": "h", "y": 1.12},
+            )
+            st.plotly_chart(tline, use_container_width=True, key="event_timeline")
+
+    if report.decision_rationale_summary:
+        st.subheader("Decision Drivers")
+        st.caption(
+            "State variables most often dominant in churn/switch decisions (event model).",
+        )
+        summ = sorted(
+            report.decision_rationale_summary,
+            key=lambda x: float(x.get("fraction", 0)),
+            reverse=True,
+        )[:10]
+        drv_labels = [display_name(str(item["variable"])) for item in summ]
+        drv_x = [float(item["fraction"]) for item in summ]
+        drv_fig = go.Figure(
+            go.Bar(
+                x=drv_x,
+                y=drv_labels[::-1],
+                orientation="h",
+                marker_color="#9467bd",
+            )
+        )
+        drv_fig.update_layout(
+            height=_CHART_HEIGHT,
+            margin=_CHART_MARGINS,
+            xaxis_title="Share of churn/switch decisions",
+            showlegend=False,
+        )
+        st.plotly_chart(drv_fig, use_container_width=True, key="decision_drivers")
+        for item in summ[:5]:
+            frac = float(item.get("fraction", 0))
+            st.caption(
+                f"**{display_name(str(item['variable']))}** was the dominant factor in "
+                f"{frac:.0%} of churn/switch decisions."
+            )
 
     st.subheader("Segment Analysis")
     tab_tier, tab_income = st.tabs(["By City Tier", "By Income Bracket"])
@@ -484,8 +643,49 @@ if "research_result" in st.session_state:
             st.markdown(f"- {direction} **{name}** — importance: {imp:.3f}")
 
     has_temporal_snapshots = bool(report.temporal_snapshots)
+    has_event_rollups = bool(report.event_daily_rollups or report.event_monthly_rollup)
+    event_compare = [a for a in result.alternative_runs if a.event_active_rate is not None]
     temporal_compare = [a for a in result.alternative_runs if a.temporal_active_rate is not None]
-    if has_temporal_snapshots and temporal_compare:
+
+    if has_event_rollups and event_compare and result.event_result is not None:
+        st.subheader("Intervention Comparison")
+        st.caption(
+            "Static trial vs event-model active rate for top interventions "
+            "(high trial can mask weak retention)."
+        )
+        ranked_alt = sorted(
+            event_compare,
+            key=lambda a: (a.event_active_rate if a.event_active_rate is not None else 0.0),
+            reverse=True,
+        )[:5]
+        labels = [
+            (a.variant_id[:28] + "…") if len(a.variant_id) > 28 else a.variant_id for a in ranked_alt
+        ]
+        comp_fig = go.Figure()
+        comp_fig.add_trace(
+            go.Bar(
+                name="Static adoption rate",
+                x=labels,
+                y=[a.adoption_rate for a in ranked_alt],
+                marker_color="#1f77b4",
+            )
+        )
+        comp_fig.add_trace(
+            go.Bar(
+                name="Event model active rate",
+                x=labels,
+                y=[float(a.event_active_rate) for a in ranked_alt],
+                marker_color="#ff7f0e",
+            )
+        )
+        comp_fig.update_layout(
+            barmode="group",
+            height=_CHART_HEIGHT,
+            margin=_CHART_MARGINS,
+            legend={"orientation": "h", "yanchor": "bottom", "y": 1.08, "x": 0},
+        )
+        st.plotly_chart(comp_fig, use_container_width=True, key="intervention_comparison")
+    elif has_temporal_snapshots and temporal_compare:
         st.subheader("Intervention Comparison")
         st.caption(
             "Top interventions by month-12 active rate: static trial vs retention "

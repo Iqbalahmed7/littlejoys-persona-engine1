@@ -8,6 +8,7 @@ from src.config import Config
 from src.decision.scenarios import get_scenario
 from src.generation.population import GenerationParams, Population, PopulationMetadata
 from src.probing.question_bank import get_questions_for_scenario
+from src.simulation.event_engine import EventSimulationResult
 from src.simulation.explorer import ScenarioVariant
 from src.simulation.research_runner import ResearchRunner
 from src.simulation.static import StaticSimulationResult
@@ -249,8 +250,27 @@ def test_temporal_alternatives_limited_to_top_10(mock_runner, monkeypatch: pytes
             random_seed=seed,
         )
 
+    def fake_event(population, scenario, duration_days=90, seed=42, progress_callback=None):  # type: ignore[no-untyped-def]
+        del duration_days, seed
+        if progress_callback:
+            progress_callback(1.0)
+        idx = int(scenario.id.split("_")[1]) if scenario.id.startswith("alt_") else 0
+        rate = 0.2 + (idx / 100)
+        return EventSimulationResult(
+            scenario_id=scenario.id,
+            duration_days=1,
+            population_size=len(population.personas),
+            trajectories=[],
+            aggregate_monthly=[],
+            final_active_count=max(1, int(rate * len(population.personas))),
+            final_active_rate=rate,
+            total_revenue_estimate=0.0,
+            random_seed=42,
+        )
+
     monkeypatch.setattr("src.simulation.research_runner.run_static_simulation", fake_static)
     monkeypatch.setattr("src.simulation.research_runner.run_temporal_simulation", fake_temporal)
+    monkeypatch.setattr("src.simulation.research_runner.run_event_simulation", fake_event)
 
     result = mock_runner.run()
 
