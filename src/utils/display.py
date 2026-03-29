@@ -14,7 +14,13 @@ ATTRIBUTE_DISPLAY_NAMES: dict[str, str] = {
     "parent_age": "Parent's Age",
     "parent_gender": "Parent Gender",
     "num_children": "Number of Children",
+    "child_ages": "Children's Ages",
+    "youngest_child_age": "Youngest Child's Age",
+    "oldest_child_age": "Oldest Child's Age",
     "family_structure": "Family Type",
+    "nuclear": "Nuclear Family",
+    "joint": "Joint Family",
+    "single_parent": "Single Parent",
     "employment_status": "Work Status",
     "education_level": "Education",
     "socioeconomic_class": "SEC Class",
@@ -91,14 +97,15 @@ ATTRIBUTE_DISPLAY_NAMES: dict[str, str] = {
     "aspirational_messaging_responsiveness": "Aspirational Message Response",
     "testimonial_impact": "Testimonial Impact",
     # Simulation outcomes
-    "outcome": "Decision Outcome",
+    "outcome": "Response",
     "need_score": "Need Score",
     "awareness_score": "Awareness Score",
     "consideration_score": "Consideration Score",
-    "purchase_score": "Purchase Score",
-    "rejection_stage": "Rejection Stage",
-    "rejection_reason": "Rejection Reason",
+    "purchase_score": "Openness Score",
+    "rejection_stage": "Drop-off Stage",
+    "rejection_reason": "Drop-off Reason",
     "persona_id": "Persona Identifier",
+    "child_age_group_filter": "Child Age Group",
 }
 
 SEC_DESCRIPTIONS: dict[str, str] = {
@@ -165,14 +172,14 @@ ATTRIBUTE_CATEGORIES: dict[str, list[str]] = {
 }
 
 OUTCOME_DISPLAY: dict[str, str] = {
-    "adopt": "Adopted",
-    "reject": "Did not adopt",
+    "adopt": "Would try",
+    "reject": "Wouldn't try",
 }
 
 # Psychographic scatter legend (PRD-014a — clearer than adopt/reject for executives)
 SCATTER_PURCHASE_OUTCOME_LABELS: dict[str, str] = {
-    "adopt": "Would buy",
-    "reject": "Wouldn't buy",
+    "adopt": "Would try",
+    "reject": "Wouldn't try",
 }
 
 CHANNEL_HELP: dict[str, str] = {
@@ -186,6 +193,18 @@ CHANNEL_HELP: dict[str, str] = {
     "whatsapp": (
         "Community-driven sharing. Highest trust signal in Tier 2-3 cities. "
         "Low cost, high conversion when organic."
+    ),
+    "pediatrician": (
+        "Doctor-endorsed distribution. The strongest trust signal for health-anxious parents, "
+        "especially for toddler nutrition products."
+    ),
+    "school": (
+        "School-based partnerships and endorsements. High-trust channel for 7-14 age group. "
+        "Bypasses digital ad skepticism."
+    ),
+    "sports_clubs": (
+        "Sports club and academy partnerships. Reaches active, fitness-oriented families. "
+        "Strong credibility for protein and energy products."
     ),
 }
 
@@ -245,6 +264,61 @@ INTERVENTION_RATIONALE: dict[str, dict[str, str]] = {
         ),
     },
 }
+
+# Scenario labels for scatter / narrative context (PRD-014c Sprint 8)
+SCENARIO_PRODUCT_NAMES: dict[str, str] = {
+    "nutrimix_2_6": "NutriMix (ages 2-6)",
+    "nutrimix_7_14": "NutriMix (ages 7-14)",
+    "magnesium_gummies": "Magnesium Gummies",
+    "protein_mix": "Protein Mix",
+}
+
+INCOME_BRACKET_UI_LABELS: dict[str, str] = {
+    "low_income": "Under ₹8L",
+    "middle_income": "₹8L-15L",
+    "high_income": "Above ₹15L",
+}
+
+# Sorted attribute pair -> closing "so what" line for scatter insights
+QUADRANT_INTERPRETATIONS: dict[tuple[str, str], str] = {
+    ("budget_consciousness", "deal_seeking_intensity"): (
+        "Parents who watch price closely but still hunt deals may respond to clear value framing."
+    ),
+    ("budget_consciousness", "diet_consciousness"): (
+        "Deliberate nutrition spenders often weigh price against perceived health payoff."
+    ),
+    ("deal_seeking_intensity", "diet_consciousness"): (
+        "Convenience-oriented health consciousness can drive purchase intent in this segment."
+    ),
+    ("health_anxiety", "social_proof_bias"): (
+        "Trust-seeking, anxious parents may convert when peer proof and expert cues align."
+    ),
+    ("risk_tolerance", "simplicity_preference"): (
+        "Low-friction, low-risk positioning can unlock parents who avoid complex choices."
+    ),
+}
+
+
+def income_bracket_ui_label(code: str) -> str:
+    """Human label for income bracket filter options."""
+
+    return INCOME_BRACKET_UI_LABELS.get(code, display_name(code))
+
+
+def scenario_product_display_name(scenario_id: str) -> str:
+    """Marketing-friendly product line for the active scenario."""
+
+    return SCENARIO_PRODUCT_NAMES.get(scenario_id, display_name(scenario_id))
+
+
+def scatter_attribute_pair_interpretation(attr_a: str, attr_b: str) -> str:
+    """Narrative hint for a psychographic pair (order-independent)."""
+
+    key = tuple(sorted((attr_a, attr_b)))
+    return QUADRANT_INTERPRETATIONS.get(
+        key,
+        "This pattern is worth exploring further for positioning and messaging tests.",
+    )
 
 
 def scatter_purchase_outcome_label(value: object) -> str:

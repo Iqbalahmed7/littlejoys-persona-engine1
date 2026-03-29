@@ -49,6 +49,20 @@ def income_bracket_label(household_income_lpa: float) -> str:
     return "high_income"
 
 
+def child_age_group_label(age: int | float | None) -> str:
+    """Bucket a child's age into dashboard-friendly life-stage labels."""
+
+    if age is None or pd.isna(age):
+        return "Unknown"
+
+    numeric_age = int(age)
+    if numeric_age <= 5:
+        return "Toddler (2-5)"
+    if numeric_age <= 10:
+        return "School-age (6-10)"
+    return "Pre-teen (11-14)"
+
+
 def load_scenario_results_from_disk() -> dict[str, dict[str, dict[str, Any]]]:
     """Load persisted static simulation outputs keyed by scenario id."""
 
@@ -73,7 +87,7 @@ def tier1_dataframe_with_results(
     """
 
     rows: list[dict[str, Any]] = []
-    for persona in population.tier1_personas:
+    for persona in population.personas:
         flat = persona.to_flat_dict()
         flat["id"] = persona.id
         flat["tier"] = persona.tier

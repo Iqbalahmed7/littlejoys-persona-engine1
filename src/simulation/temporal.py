@@ -101,7 +101,7 @@ def run_temporal_simulation(
     """
 
     rng = random.Random(seed)
-    personas = population.tier1_personas
+    personas = population.personas
     n = len(personas)
     states: dict[str, _PersonaTemporalState] = {
         p.id: _PersonaTemporalState(has_lj_pass=_lj_pass_assigned(p.id, scenario)) for p in personas

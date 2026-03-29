@@ -13,6 +13,8 @@ from typing import TYPE_CHECKING, Any, Literal
 import structlog
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.analysis.interview_guardrails import run_all_guardrails
+from src.analysis.interview_prompts import assemble_system_prompt
 from src.constants import (
     INTERVIEW_AI_DISCLOSURE_PATTERNS,
     INTERVIEW_HISTORY_TAIL_TURNS,
@@ -21,9 +23,7 @@ from src.constants import (
     INTERVIEW_MAX_TURNS,
     INTERVIEW_RESPONSE_MAX_WORDS,
     INTERVIEW_RESPONSE_MIN_WORDS,
-    INTERVIEW_TOP_PSYCHOGRAPHIC_HIGHLIGHTS,
 )
-from src.decision.scenarios import get_scenario
 
 if TYPE_CHECKING:
     from src.taxonomy.schema import Persona
@@ -31,23 +31,15 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger(__name__)
 
-_PSYCHOGRAPHIC_CANDIDATES = (
-    "health_anxiety",
-    "comparison_anxiety",
-    "authority_bias",
-    "social_proof_bias",
-    "budget_consciousness",
-    "supplement_necessity_belief",
-    "best_for_my_child_intensity",
-    "medical_authority_trust",
-    "pediatrician_influence",
-    "perceived_time_scarcity",
-    "simplicity_preference",
-    "child_taste_veto",
-    "transparency_importance",
-    "ad_receptivity",
-    "influencer_trust",
-)
+_QUESTION_INTENT_KEYWORDS: dict[str, tuple[str, ...]] = {
+    "price": ("price", "cost", "expensive", "afford", "budget", "worth", "value", "rupee"),
+    "trust": ("trust", "believe", "doctor", "pediatrician", "recommend", "safe", "research"),
+    "routine": ("morning", "routine", "daily", "breakfast", "cooking", "time", "schedule"),
+    "product": ("product", "nutrimix", "gummies", "supplement", "brand", "taste", "ingredients"),
+    "barrier": ("why not", "hesitate", "concern", "worry", "stop you", "prevent", "barrier"),
+    "influence": ("friend", "family", "influencer", "group", "whatsapp", "social media", "heard"),
+    "child": ("child", "kid", "son", "daughter", "picky", "eat", "refuse"),
+}
 _POSITIVE_PRODUCT_PATTERNS = (
     "buy it",
     "bought it",
@@ -146,25 +138,14 @@ def _natural_trust_description(medical_authority_trust: float) -> str:
     return "I trust my own instincts more than medical recommendations"
 
 
-def _psychographic_highlights(persona: Persona) -> list[str]:
-    flat = persona.to_flat_dict()
-    scored: list[tuple[str, float]] = []
-    for key in _PSYCHOGRAPHIC_CANDIDATES:
-        value = flat.get(key)
-        if isinstance(value, (int, float)) and not isinstance(value, bool):
-            scored.append((key, float(value)))
-
-    scored.sort(key=lambda item: abs(item[1] - 0.5), reverse=True)
-    highlights = []
-    for key, value in scored[:INTERVIEW_TOP_PSYCHOGRAPHIC_HIGHLIGHTS]:
-        if value >= 0.7:
-            qualifier = "strong"
-        elif value <= 0.3:
-            qualifier = "low"
-        else:
-            qualifier = "moderate"
-        highlights.append(f"- {key} = {value:.2f} ({qualifier} signal in your decision style)")
-    return highlights
+def _classify_question_intents(question: str) -> set[str]:
+    lowered = question.lower()
+    found = {
+        name
+        for name, keys in _QUESTION_INTENT_KEYWORDS.items()
+        if any(keyword in lowered for keyword in keys)
+    }
+    return found or {"general"}
 
 
 def check_interview_quality(
@@ -229,6 +210,27 @@ class PersonaInterviewer:
 
     def __init__(self, llm_client: LLMClient) -> None:
         self.llm = llm_client
+        self._last_input_tokens: int = 0
+        self._last_output_tokens: int = 0
+        self._last_model: str = ""
+
+    @property
+    def last_input_tokens(self) -> int:
+        """Input tokens from the last real LLM call (0 if mock or not yet called)."""
+
+        return self._last_input_tokens
+
+    @property
+    def last_output_tokens(self) -> int:
+        """Output tokens from the last real LLM call (0 if mock or not yet called)."""
+
+        return self._last_output_tokens
+
+    @property
+    def last_model_name(self) -> str:
+        """Resolved model id from the last real LLM call."""
+
+        return self._last_model
 
     def build_system_prompt(
         self,
@@ -237,44 +239,7 @@ class PersonaInterviewer:
         decision_result: dict[str, Any],
     ) -> str:
         """Construct the in-character system prompt from persona and decision context."""
-
-        scenario = get_scenario(scenario_id)
-        concern_text = ", ".join(persona.health.child_nutrition_concerns) or "none called out"
-        psychographic_text = "\n".join(_psychographic_highlights(persona))
-        decision_outcome = str(decision_result.get("outcome", "unknown"))
-        rejection_reason = decision_result.get("rejection_reason")
-
-        decision_context = (
-            f"You are deciding about {scenario.product.name} in scenario {scenario_id}.\n"
-            f"Outcome: {decision_outcome}\n"
-            f"need_score={float(decision_result.get('need_score', 0.0)):.2f}, "
-            f"awareness_score={float(decision_result.get('awareness_score', 0.0)):.2f}, "
-            f"consideration_score={float(decision_result.get('consideration_score', 0.0)):.2f}, "
-            f"purchase_score={float(decision_result.get('purchase_score', 0.0)):.2f}\n"
-        )
-        if rejection_reason:
-            decision_context += f"Rejection reason: {rejection_reason}\n"
-
-        return (
-            f"You are persona {persona.id}, a {persona.demographics.parent_age}-year-old "
-            f"{persona.career.employment_status.replace('_', ' ')} parent in "
-            f"{persona.demographics.city_name} ({persona.demographics.city_tier}).\n"
-            f"Education: {persona.education_learning.education_level}\n"
-            f"Household income: {persona.demographics.household_income_lpa:.1f} LPA\n"
-            f"Family structure: {persona.demographics.family_structure}\n"
-            f"Children: {persona.demographics.num_children} child(ren) aged "
-            f"{persona.demographics.child_ages} with concerns: {concern_text}\n\n"
-            f"Psychographic highlights:\n{psychographic_text}\n\n"
-            f"Daily routine summary:\n{_daily_routine_summary(persona)}\n\n"
-            f"Decision context:\n{decision_context}\n"
-            "Rules:\n"
-            "- Stay completely in character.\n"
-            "- Reference specific details from the profile.\n"
-            "- Relate price questions to actual income and spending patterns.\n"
-            "- Relate trust questions to actual information sources and decision style.\n"
-            "- Do not break character or acknowledge being AI.\n"
-            "- Use natural speech patterns appropriate to the persona.\n"
-        )
+        return assemble_system_prompt(persona, scenario_id, decision_result)
 
     async def start_session(
         self,
@@ -314,54 +279,177 @@ class PersonaInterviewer:
         decision_result: dict[str, Any],
         conversation_history: list[InterviewTurn] | None,
     ) -> str:
-        lowered = question.lower()
+        intents = _classify_question_intents(question)
         product_name = str(
             decision_result.get("product_name") or decision_result.get("product") or "the product"
         )
         outcome = str(decision_result.get("outcome", "reject")).lower()
+        stage_raw = decision_result.get("rejection_stage")
+        stage_s = str(stage_raw).lower() if stage_raw else ""
         history_prefix = "As I mentioned earlier, " if conversation_history else ""
-        name = persona.display_name or persona.demographics.city_name + " parent"
 
-        if "price" in lowered:
+        d = persona.demographics
+        city = d.city_name
+        sec = d.socioeconomic_class
+        plat = persona.daily_routine.primary_shopping_platform.replace("_", " ")
+        diet = persona.cultural.dietary_culture.replace("_", " ")
+        ages = ", ".join(str(a) for a in d.child_ages)
+        discovery = persona.media.product_discovery_channel.replace("_", " ")
+        social = persona.media.primary_social_platform
+        name = persona.display_name or f"a parent in {city}"
+
+        awareness_mode = outcome == "reject" and stage_s == "awareness"
+        purchase_mode = outcome == "reject" and stage_s == "purchase"
+
+        def _sec_flavor() -> str:
+            if sec in ("A1", "A2"):
+                return "We are comfortable trying newer formats when the story is clear, but I still compare before I commit."
+            if sec in ("C1", "C2"):
+                return "At our income band, anything new has to earn its place in the monthly list — no casual splurges."
+            return "I balance quality with what the month allows — not stingy, but not careless either."
+
+        def _mock_awareness_block() -> str:
+            return (
+                f"{history_prefix}Honestly, {product_name} barely showed up in my world. I live in {city}, "
+                f"shop mostly through {plat}, and I discover most things via {discovery} — plus whatever surfaces on {social}. "
+                f"If it is not in those places, school pickup chat, or the medical shop counter, it is almost invisible to me. "
+                f"My children are {ages} years old, and we eat {diet} at home. "
+                "So the blocker was not a detailed opinion — I simply did not encounter it where I actually look."
+            )
+
+        def _mock_price_block() -> str:
             budget_desc = _natural_budget_description(persona.daily_routine.budget_consciousness)
             if outcome == "adopt":
-                body = (
-                    f"{history_prefix}the price still has to feel justified, but as a {persona.demographics.socioeconomic_class} family, "
-                    f"I could make room for {product_name} because it matched my strong desire of "
-                    "wanting the best for my child. I still compare it against what I already buy and whether the "
-                    "benefits feel real, but if the routine is simple and I trust the ingredients, I can stretch a little."
+                return (
+                    f"{history_prefix}Price had to clear the bar, but as a {sec} household in {city}, I could justify {product_name} "
+                    f"once the benefit felt concrete. {budget_desc}. I still compared it to what we already spend on powders and snacks, "
+                    "and I wanted the routine to stay simple for the kids."
                 )
-            else:
-                body = (
-                    f"{history_prefix}price was exactly where I hesitated. With our family income, {budget_desc}. "
-                    f"{product_name} felt like one more premium add-on. If I am not fully convinced on trust and visible "
-                    "results, I will usually delay or skip the purchase."
-                )
-        elif "trust" in lowered or "doctor" in lowered:
+            return (
+                f"{history_prefix}Money is where I stalled. {budget_desc}, and {product_name} felt like an extra line item "
+                f"on top of what we already buy through {plat}. {_sec_flavor()} "
+                "If trust or results feel fuzzy, I postpone rather than stretch."
+            )
+
+        def _mock_trust_block() -> str:
             trust_desc = _natural_trust_description(persona.health.medical_authority_trust)
             sources = (
                 ", ".join(persona.health.health_info_sources[:2])
                 if persona.health.health_info_sources
-                else "recommendations from friends"
+                else "friends and family"
             )
-            body = (
-                f"{history_prefix}I rarely buy on hype alone. I usually start with {sources}, "
-                f"and {trust_desc}. I need the label to look clean, the claim to sound sensible, and the "
-                "routine to fit how our mornings actually work."
-            )
-        else:
-            health_desc = _natural_health_description(persona.psychology.health_anxiety)
-            body = (
-                f"{history_prefix}For me, {name}, life already feels like a steady juggle between "
-                f"work, school, and meals, so I answer most product questions through that lens. My child is {persona.demographics.child_ages[0]}, "
-                f"I keep a {persona.daily_routine.breakfast_routine} breakfast routine, and {health_desc}. "
-                "I care about nutrition, but I also want practical choices that my family can actually sustain."
+            if awareness_mode:
+                return (
+                    f"{history_prefix}Trust matters to me — I usually start from {sources}, and {trust_desc} — "
+                    f"but with {product_name} I never got far enough into the story for trust to even become the question. "
+                    f"In {city}, with {diet} meals at home and kids aged {ages}, I need something to show up in my normal channels first."
+                )
+            return (
+                f"{history_prefix}I rarely buy on hype alone. I start with {sources}, and {trust_desc}. "
+                f"For {product_name}, I wanted the label and claims to feel honest, not loud, and I needed it to fit our mornings in {city}."
             )
 
-        closing = (
-            f" That is why my final call on {product_name} was to "
-            f"{'buy it' if outcome == 'adopt' else 'hold back'} based on whether it fit both my trust standard and our daily routine."
-        )
+        def _mock_routine_block() -> str:
+            health_desc = _natural_health_description(persona.psychology.health_anxiety)
+            return (
+                f"{history_prefix}Mornings are the real test for us in {city}. I keep a {persona.daily_routine.breakfast_routine} breakfast rhythm, "
+                f"the kids are {ages}, and {health_desc}. {product_name} only works for me if it slips into that routine without a fight."
+            )
+
+        def _mock_influence_block() -> str:
+            return (
+                f"{history_prefix}Word of mouth still matters here — WhatsApp groups, relatives, other parents at school in {city}. "
+                f"I hear about products through {discovery} and {social} too. "
+                f"For {product_name}, what I needed was a mention in that everyday noise, not a billboard nobody in my circle discusses."
+            )
+
+        def _mock_child_block() -> str:
+            taste = persona.relationships.child_taste_veto
+            veto = "If they push back on taste, I drop it fast." if taste >= 0.6 else "I try to steer what they eat, but I pick battles."
+            return (
+                f"{history_prefix}With my kids at ages {ages}, taste and habit beat theory. We are {diet} at home. {veto} "
+                f"So anything like {product_name} has to pass the real-child test, not just look good on the pack."
+            )
+
+        def _mock_barrier_block() -> str:
+            if awareness_mode:
+                return _mock_awareness_block()
+            if stage_s == "need_recognition":
+                return (
+                    f"{history_prefix}It never felt like an urgent gap for my children ({ages}) in {city}. "
+                    f"Our usual meals and what we already buy through {plat} seemed enough, so {product_name} felt optional from the start."
+                )
+            if stage_s == "consideration":
+                return (
+                    f"{history_prefix}I looked sideways at {product_name} but the story did not lock in — claims, taste risk for the kids, "
+                    f"and whether it matched our {diet} routine in {city}. I buy through {plat}, so I also thought about hassle and repeats."
+                )
+            if purchase_mode:
+                return _mock_price_block()
+            return (
+                f"{history_prefix}A mix of fit and doubt. In {city}, with kids aged {ages}, I need clarity, a clean routine fit, "
+                f"and a price that matches our {sec} reality. {product_name} stumbled on at least one of those for me."
+            )
+
+        def _mock_product_block() -> str:
+            if awareness_mode:
+                return _mock_awareness_block()
+            return (
+                f"{history_prefix}I judge products on ingredients I can understand, whether my children will accept the taste, "
+                f"and how it fits {diet} meals in {city}. For {product_name}, I thought about those pieces against what I already trust from {plat}."
+            )
+
+        def _mock_general_block() -> str:
+            health_desc = _natural_health_description(persona.psychology.health_anxiety)
+            if awareness_mode:
+                return _mock_awareness_block()
+            return (
+                f"{history_prefix}For me, {name}, life is a juggle between work, school runs, and meals in {city}. "
+                f"The kids are {ages}, we eat {diet}, I shop via {plat}, and {health_desc}. "
+                f"When someone asks about {product_name}, I answer through that real weekly rhythm, not a marketing story."
+            )
+
+        # Intent precedence: awareness rejection suppresses price-led framing.
+        if awareness_mode and "price" in intents:
+            body = _mock_awareness_block()
+        elif "price" in intents and not awareness_mode:
+            body = _mock_price_block()
+        elif "trust" in intents:
+            body = _mock_trust_block()
+        elif "routine" in intents:
+            body = _mock_routine_block()
+        elif "barrier" in intents:
+            body = _mock_barrier_block()
+        elif "influence" in intents:
+            body = _mock_influence_block()
+        elif "child" in intents:
+            body = _mock_child_block()
+        elif "product" in intents:
+            body = _mock_product_block()
+        else:
+            body = _mock_general_block()
+
+        if outcome == "adopt":
+            closing = (
+                f" That is why I felt okay moving ahead with {product_name} for our routine in {city}, "
+                "once it cleared taste, trust, and practicality together."
+            )
+        elif awareness_mode:
+            closing = (
+                f" So with {product_name}, the honest reason I never bought is I hardly met it in the places I actually shop and hear from — "
+                "not because I studied the price in detail."
+            )
+        elif purchase_mode:
+            closing = (
+                f" At the purchase step, {product_name} bumped into money and commitment for our {sec} household — "
+                "that is where I stopped."
+            )
+        else:
+            closing = (
+                f" That is why my final call on {product_name} was to "
+                f"{'buy it' if outcome == 'adopt' else 'hold back'} once I weighed trust, routine, and what the month allows."
+            )
+
         return f"{body}{closing}"
 
     async def interview(
@@ -385,6 +473,10 @@ class PersonaInterviewer:
         system_prompt = self.build_system_prompt(persona, scenario_id, decision_result)
         history_block = self._render_history(conversation_history)
 
+        self._last_input_tokens = 0
+        self._last_output_tokens = 0
+        self._last_model = ""
+
         if self.llm.config.llm_mock_enabled:
             response_text = self._build_mock_response(
                 persona=persona,
@@ -404,13 +496,31 @@ class PersonaInterviewer:
                 model=_llm_route(INTERVIEW_LLM_MODEL),
             )
             response_text = response.text.strip()
+            self._last_input_tokens = int(response.input_tokens)
+            self._last_output_tokens = int(response.output_tokens)
+            self._last_model = str(response.model)
+
+        guardrail_warnings = run_all_guardrails(
+            response=response_text,
+            question=question,
+            persona=persona,
+            decision_result=decision_result,
+            previous_turns=conversation_history,
+        )
+        if guardrail_warnings:
+            logger.info(
+                "interview_guardrail_warnings",
+                persona_id=persona.id,
+                warnings=guardrail_warnings,
+            )
 
         quality = check_interview_quality(response_text, persona, decision_result)
-        if quality.warnings:
+        all_warnings = quality.warnings + guardrail_warnings
+        if all_warnings:
             logger.info(
                 "interview_quality_warnings",
                 persona_id=persona.id,
-                warnings=quality.warnings,
+                warnings=all_warnings,
             )
 
         return InterviewTurn(role="persona", content=response_text, timestamp=_iso_timestamp())

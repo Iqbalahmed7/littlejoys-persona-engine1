@@ -89,11 +89,7 @@ class ProbingTreeEngine:
 
     @property
     def _personas(self) -> list[Persona]:
-        return (
-            self.population.tier1_personas
-            if self.population.tier1_personas
-            else self.population.tier2_personas
-        )
+        return self.population.personas
 
     def _precompute_outcomes(self) -> None:
         """Run the funnel once for all personas and cache the results."""

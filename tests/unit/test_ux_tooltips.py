@@ -42,5 +42,5 @@ def test_scatter_purchase_outcome_label_none() -> None:
 
 
 def test_scatter_purchase_outcome_label_known() -> None:
-    assert scatter_purchase_outcome_label("adopt") == "Would buy"
-    assert scatter_purchase_outcome_label("reject") == "Wouldn't buy"
+    assert scatter_purchase_outcome_label("adopt") == "Would try"
+    assert scatter_purchase_outcome_label("reject") == "Wouldn't try"

@@ -29,6 +29,10 @@ class MockPopulation:
         self.tier1_personas = tier1
         self.tier2_personas = []
 
+    @property
+    def personas(self):
+        return self.tier1_personas
+
     def get_persona(self, persona_id):
         for p in self.tier1_personas:
             if p.id == persona_id:

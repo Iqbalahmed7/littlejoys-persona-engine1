@@ -76,6 +76,7 @@ class MarketingConfig(BaseModel):
     school_partnership: bool = False
     influencer_campaign: bool = False
     pediatrician_endorsement: bool = False
+    sports_club_partnership: bool = False
     perceived_quality: UnitInterval = 0.5
     trust_signal: UnitInterval = 0.5
     expert_endorsement: UnitInterval = 0.5
@@ -184,10 +185,9 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
             marketing=MarketingConfig(
                 awareness_budget=0.5,
                 channel_mix={
-                    "instagram": 0.35,
-                    "youtube": 0.25,
-                    "whatsapp": 0.20,
-                    "pediatrician": 0.20,
+                    "instagram": 0.40,
+                    "youtube": 0.30,
+                    "whatsapp": 0.30,
                 },
                 trust_signals=["pediatrician_approved", "clean_label", "no_added_sugar"],
                 pediatrician_endorsement=True,
@@ -239,10 +239,9 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
             marketing=MarketingConfig(
                 awareness_budget=0.35,
                 channel_mix={
-                    "instagram": 0.30,
-                    "youtube": 0.30,
-                    "school": 0.25,
-                    "whatsapp": 0.15,
+                    "instagram": 0.35,
+                    "youtube": 0.40,
+                    "whatsapp": 0.25,
                 },
                 trust_signals=["school_approved", "clean_label"],
                 school_partnership=True,
@@ -327,12 +326,12 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
             marketing=MarketingConfig(
                 awareness_budget=0.30,
                 channel_mix={
-                    "instagram": 0.25,
-                    "youtube": 0.35,
-                    "sports_clubs": 0.25,
-                    "whatsapp": 0.15,
+                    "instagram": 0.35,
+                    "youtube": 0.40,
+                    "whatsapp": 0.25,
                 },
                 trust_signals=["sports_nutrition_certified", "no_artificial_sweeteners"],
+                sports_club_partnership=True,
                 perceived_quality=0.60,
                 trust_signal=0.50,
                 expert_endorsement=0.30,

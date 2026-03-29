@@ -58,7 +58,7 @@ def run_static_simulation(
     rejection_counts: Counter[str] = Counter()
     adoption_count = 0
 
-    personas = population.tier1_personas
+    personas = population.personas
     for persona in personas:
         decision: DecisionResult = run_funnel(persona, scenario, thresholds)
         results_by_persona[persona.id] = decision.to_dict()

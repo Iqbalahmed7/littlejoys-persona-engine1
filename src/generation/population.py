@@ -114,15 +114,19 @@ class Population(BaseModel):
     id: str
     generation_params: GenerationParams
     tier1_personas: list[Persona]
-    tier2_personas: list[Persona]
+    tier2_personas: list[Persona] = Field(default_factory=list)
     validation_report: PopulationValidationReport | None = None
     metadata: PopulationMetadata
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+    @property
+    def personas(self) -> list[Persona]:
+        """All personas in the population (unified view)."""
+        return self.tier1_personas
+
     def get_persona(self, persona_id: str) -> Persona:
-        """
-        Look up a persona by ID across Tier 1 and Tier 2.
+        """Look up a persona by ID.
 
         Args:
             persona_id: Persona identifier.
@@ -133,24 +137,20 @@ class Population(BaseModel):
         Raises:
             KeyError: If no persona matches ``persona_id``.
         """
-        for persona in self.tier2_personas:
-            if persona.id == persona_id:
-                return persona
         for persona in self.tier1_personas:
             if persona.id == persona_id:
                 return persona
         raise KeyError(persona_id)
 
     def filter(self, **kwargs: Any) -> list[Persona]:
-        """
-        Filter personas whose flattened identity attributes match all constraints.
+        """Filter personas whose flattened identity attributes match all constraints.
 
         Args:
             **kwargs: Attribute name → expected value (equality). List values of two
                 ints/floats are treated as inclusive ``[low, high]`` for that key.
 
         Returns:
-            All matching personas from Tier 1 and Tier 2 (Tier 2 first in iteration).
+            All matching personas.
         """
 
         def _matches(flat: dict[str, Any]) -> bool:
@@ -169,20 +169,19 @@ class Population(BaseModel):
             return True
 
         out: list[Persona] = []
-        for persona in (*self.tier2_personas, *self.tier1_personas):
+        for persona in self.tier1_personas:
             if _matches(persona.to_flat_dict()):
                 out.append(persona)
         return out
 
     def to_dataframe(self) -> pd.DataFrame:
-        """
-        Flatten all Tier 1 and Tier 2 personas into one DataFrame.
+        """Flatten all personas into one DataFrame.
 
         Returns:
-            DataFrame with ``id``, ``tier``, and all identity columns.
+            DataFrame with ``id`` and all identity columns.
         """
         rows: list[dict[str, Any]] = []
-        for persona in (*self.tier1_personas, *self.tier2_personas):
+        for persona in self.tier1_personas:
             flat = persona.to_flat_dict()
             flat["id"] = persona.id
             flat["tier"] = persona.tier
@@ -190,8 +189,7 @@ class Population(BaseModel):
         return pd.DataFrame(rows)
 
     def save(self, path: Path) -> None:
-        """
-        Persist Tier 1 as Parquet, Tier 2 as JSON files, and metadata as JSON.
+        """Persist personas as Parquet and metadata as JSON.
 
         Args:
             path: Directory to create or reuse for this population export.
@@ -200,6 +198,7 @@ class Population(BaseModel):
         path.mkdir(parents=True, exist_ok=True)
         meta_path = path / "population_meta.json"
         tier1_path = path / "tier1.parquet"
+        # Keep empty tier2 dir for backward compat with older loaders
         tier2_dir = path / "tier2"
         tier2_dir.mkdir(exist_ok=True)
 
@@ -207,12 +206,6 @@ class Population(BaseModel):
             {"persona_json": [p.model_dump_json() for p in self.tier1_personas]},
         )
         tier1_df.to_parquet(tier1_path, index=False)
-
-        tier2_ids: list[str] = []
-        for persona in self.tier2_personas:
-            tier2_ids.append(persona.id)
-            out_file = tier2_dir / f"{persona.id}.json"
-            out_file.write_text(persona.model_dump_json(indent=2), encoding="utf-8")
 
         payload = {
             "population_id": self.id,
@@ -223,14 +216,13 @@ class Population(BaseModel):
             else None,
             "tier1_parquet": tier1_path.name,
             "tier2_directory": tier2_dir.name,
-            "tier2_ids": tier2_ids,
+            "tier2_ids": [],
         }
         meta_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         log.info(
             "population_saved",
             path=str(path),
-            tier1=len(self.tier1_personas),
-            tier2=len(tier2_ids),
+            personas=len(self.tier1_personas),
         )
 
     @classmethod
