@@ -38,6 +38,25 @@ from src.utils.viz import (
 _CHART_HEIGHT = 300
 _CHART_MARGINS = dict(l=20, r=20, t=40, b=20)
 
+_HUMAN_LABELS: dict[str, str] = {
+    "price_salience": "Price Sensitivity",
+    "brand_salience": "Brand Awareness",
+    "child_acceptance": "Child Acceptance",
+    "habit_strength": "Usage Habit",
+    "effort_friction": "Effort / Friction",
+    "perceived_value": "Perceived Value",
+    "reorder_urgency": "Reorder Urgency",
+    "discretionary_budget": "Budget Headroom",
+    "trust": "Trust",
+    "fatigue": "Fatigue",
+}
+
+
+def _label(key: str) -> str:
+    """Convert internal variable keys into UI-friendly labels."""
+
+    return _HUMAN_LABELS.get(key, key.replace("_", " ").title())
+
 
 def _snap_val(row: dict[str, Any], *keys: str, default: Any = 0) -> Any:
     for k in keys:
@@ -261,6 +280,17 @@ def _render_legacy_dashboard() -> None:
         )
 
 
+@st.cache_data(show_spinner="Preparing PDF…")
+def _research_pdf_bytes(_report_json: str) -> bytes:
+    """Cache PDF generation; keyed by consolidated report JSON."""
+
+    from src.analysis.pdf_export import generate_pdf_report
+
+    rpt = ConsolidatedReport.model_validate_json(_report_json)
+    scenario = get_scenario(rpt.scenario_id)
+    return generate_pdf_report(rpt, scenario)
+
+
 @st.cache_data(show_spinner="Consolidating results...")
 def _consolidate(_result_json: str, _population_id: str) -> dict[str, Any]:
     """Rebuild :class:`ConsolidatedReport` from cached JSON; uses live session population."""
@@ -347,18 +377,22 @@ if "research_result" in st.session_state:
         health_cols[0].metric(
             "Month-1 Trial %",
             f"{month1_trial_pct:.1f}%" if month1_trial_pct is not None else "—",
+            help=("Percentage of the population that becomes new adopters in month 1"),
         )
         health_cols[1].metric(
             "Final Active %",
             f"{final_active_pct:.1f}%" if final_active_pct is not None else "—",
+            help="Percentage of the population still actively using the product at the end of the simulation",
         )
         health_cols[2].metric(
             "Repeat Purchases",
             f"{total_repeat_purchases:,}" if total_repeat_purchases is not None else "—",
+            help="Total number of repeat purchase actions across all months",
         )
         health_cols[3].metric(
             "Peak Churn Month",
             f"Month {peak_churn_month}" if peak_churn_month is not None else "—",
+            help="Month when the simulation had the highest churn count",
         )
         health_banner_rendered = True
 
@@ -387,18 +421,22 @@ if "research_result" in st.session_state:
         health_cols[0].metric(
             "Month-1 Trial %",
             f"{month1_trial_pct:.1f}%" if month1_trial_pct is not None else "—",
+            help=("Percentage of the population that becomes new adopters in month 1"),
         )
         health_cols[1].metric(
             "Final Active %",
             f"{final_active_pct:.1f}%" if final_active_pct is not None else "—",
+            help="Percentage of the population still actively using the product at the end of the simulation",
         )
         health_cols[2].metric(
             "Repeat Purchases",
             f"{total_repeat_purchases:,}" if total_repeat_purchases is not None else "—",
+            help="Total number of repeat purchase actions across all months",
         )
         health_cols[3].metric(
             "Peak Churn Month",
             f"Month {peak_churn_month}" if peak_churn_month is not None else "—",
+            help="Month when the simulation had the highest churn count",
         )
 
     st.subheader("Decision Pathway")
@@ -635,7 +673,7 @@ if "research_result" in st.session_state:
                 if top3:
                     st.markdown("**Top distinguishing persona attributes:**")
                     for k, v in top3:
-                        st.markdown(f"- **{display_name(str(k))}:** {float(v):.2f}")
+                        st.markdown(f"- **{_label(str(k))}:** {float(v):.2f}")
 
     if result.event_result is not None and result.smart_sample.selections:
         st.subheader("Event Timeline")
@@ -768,7 +806,7 @@ if "research_result" in st.session_state:
     if report.causal_drivers:
         for driver in report.causal_drivers[:8]:
             direction = "↑" if driver["direction"] == "positive" else "↓"
-            name = display_name(str(driver["variable"]))
+            name = _label(str(driver["variable"]))
             imp = float(driver["importance"])
             st.markdown(f"- {direction} **{name}** — importance: {imp:.3f}")
 
@@ -964,7 +1002,7 @@ if "research_result" in st.session_state:
                     st.caption(
                         "Dominant persona traits: "
                         + ", ".join(
-                            f"{display_name(k)}: {v:.2f}"
+                            f"{_label(str(k))}: {v:.2f}"
                             for k, v in list(cluster.dominant_attributes.items())[:5]
                         )
                     )
@@ -979,6 +1017,14 @@ if "research_result" in st.session_state:
             data=report.model_dump_json(indent=2),
             file_name=f"{report.scenario_id}_research_report.json",
             mime="application/json",
+        )
+    with export_cols[1]:
+        pdf_bytes = _research_pdf_bytes(report.model_dump_json())
+        st.download_button(
+            "Download Report (PDF)",
+            data=pdf_bytes,
+            file_name=f"{report.scenario_id}_research_report.pdf",
+            mime="application/pdf",
         )
 
 elif st.session_state.get("scenario_results"):

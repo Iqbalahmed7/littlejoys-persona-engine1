@@ -12,6 +12,18 @@ from app.components.persona_spider import render_persona_spider
 from src.constants import SCENARIO_IDS
 from src.utils.display import display_name, persona_display_name
 
+
+def _income_bracket(flat: dict) -> str:
+    income = flat.get("household_income_lpa", 0)
+    if not isinstance(income, (int, float)):
+        return "unknown"
+    if income <= 8.0:
+        return "low_income"
+    if income <= 15.0:
+        return "middle_income"
+    return "high_income"
+
+
 st.header("Personas")
 st.caption("Browse your synthetic population. Use filters to explore segments.")
 

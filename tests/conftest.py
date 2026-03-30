@@ -140,3 +140,6 @@ def sample_scenario() -> ScenarioConfig:
         target_age_range=(3, 10),
         lj_pass_available=False,
     )
+
+
+pytest_plugins = ("tests.unit.test_research_consolidator",)
