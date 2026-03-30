@@ -173,28 +173,28 @@ def test_child_positive_reaction_fires_when_active():
     assert found
 
 
-def test_child_boredom_requires_fatigue():
-    """child_boredom should only fire when fatigue > threshold."""
-    # Threshold is 0.3
+def test_child_boredom_fires_for_active_persona():
+    """child_boredom fires from day 1 for any active persona regardless of fatigue."""
     state = CanonicalState(is_active=True, fatigue=0.1)
     persona = MockPersona()
     scenario = MockScenarioConfig(MockProduct(0.7), MockMarketing(0.5, True, True), True)
     rng = random.Random(42)
 
-    # Fatigue too low, should never fire
-    for day in range(1, 100):
-        events = fire_stochastic_events(state, persona, day, scenario, rng)
-        assert not any(e.event_type == "child_boredom" for e in events)
-
-    # Fatigue high
-    state.fatigue = 0.5
+    # Should fire even with low fatigue — no fatigue prerequisite
     found = False
     for day in range(1, 200):
         events = fire_stochastic_events(state, persona, day, scenario, rng)
         if any(e.event_type == "child_boredom" for e in events):
             found = True
             break
-    assert found
+    assert found, "child_boredom should fire for active personas regardless of fatigue level"
+
+    # Should NOT fire for inactive personas
+    state_inactive = CanonicalState(is_active=False, fatigue=0.5)
+    rng2 = random.Random(42)
+    for day in range(1, 100):
+        events = fire_stochastic_events(state_inactive, persona, day, scenario, rng2)
+        assert not any(e.event_type == "child_boredom" for e in events)
 
 
 def test_usage_consistent_boosts_habit():

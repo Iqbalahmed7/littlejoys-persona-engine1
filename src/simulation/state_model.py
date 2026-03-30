@@ -46,6 +46,7 @@ class CanonicalState(BaseModel):
     is_active: bool = False
     ever_adopted: bool = False
     churned: bool = False
+    churn_count: int = 0
     current_pack_day: int = 0
     pack_duration: int = DEFAULT_PACK_DURATION_DAYS
 
@@ -86,7 +87,7 @@ def initialize_state(persona: Persona, scenario: ScenarioConfig) -> CanonicalSta
             + (0.1 if scenario.marketing.pediatrician_endorsement else 0.0)
         ),
         child_acceptance=_clip(
-            scenario.product.taste_appeal * (1.0 - (0.3 * float(child_veto)))
+            scenario.product.taste_appeal * 0.65 * (1.0 - (0.3 * float(child_veto)))
         ),
         price_salience=_clip(persona.daily_routine.budget_consciousness * 0.5),
         perceived_value=_clip(
@@ -96,7 +97,7 @@ def initialize_state(persona: Persona, scenario: ScenarioConfig) -> CanonicalSta
         ),
         effort_friction=_clip(scenario.product.effort_to_acquire * (1.0 - online_comfort)),
         discretionary_budget=_clip(1.0 - persona.daily_routine.budget_consciousness),
-        brand_salience=_clip(scenario.marketing.awareness_level),
+        brand_salience=_clip(scenario.marketing.awareness_level * 0.60),
         has_lj_pass=False,
         pack_duration=DEFAULT_PACK_DURATION_DAYS,
     )
@@ -132,10 +133,13 @@ def apply_daily_dynamics(state: CanonicalState) -> None:
                     EVENT_REORDER_URGENCY_RAMP_DAYS - remaining_days
                 ) / EVENT_REORDER_URGENCY_RAMP_DAYS
                 state.reorder_urgency = max(state.reorder_urgency, _clip(ramp))
-        if state.current_pack_day > state.pack_duration + 10:
-            state.current_pack_day = 0
-            state.reorder_urgency = max(state.reorder_urgency, 0.8)
+        if state.current_pack_day > state.pack_duration + 15:
+            # Restart pack cycle — prevents zombie state where pack_day=0
+            # kills all future pack_finished events. Natural churn
+            # (fatigue > 0.7) will eventually deactivate the persona.
+            state.current_pack_day = 1
     else:
         state.habit_strength -= EVENT_HABIT_DECAY_PER_DAY
+        state.fatigue = max(0.0, state.fatigue - 0.005)  # fatigue recovers during rest
 
     clip_state(state)

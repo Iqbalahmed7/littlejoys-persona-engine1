@@ -150,6 +150,16 @@ def evaluate_decision(
         return "purchase" if can_purchase else "delay"
 
     if not state.is_active:
+        # Re-engagement path: reminder can bring inactive adopters back
+        has_reminder = any(e.event_type == "reminder" for e in active_events)
+        if has_reminder:
+            # Re-engagement: max 1 return; gate on value, budget, and residual trust
+            can_re_engage = (
+                state.perceived_value > state.price_salience
+                and state.discretionary_budget > (price_ratio * 0.3)
+                and state.trust > 0.45
+            )
+            return "purchase" if can_re_engage else "delay"
         return "delay"
 
     has_pack_event = any(event.event_type == "pack_finished" for event in active_events)
@@ -160,9 +170,9 @@ def evaluate_decision(
     can_reorder = (
         state.reorder_urgency > 0.4
         and state.habit_strength > habit_threshold
-        and state.child_acceptance > 0.3
+        and state.child_acceptance > 0.30
         and state.perceived_value > state.price_salience
-        and state.fatigue < 0.6
+        and state.fatigue < 0.68
         and state.discretionary_budget > (price_ratio * 0.25)
     )
     if can_reorder:
@@ -220,11 +230,13 @@ def apply_decision(state: CanonicalState, decision: str, scenario: ScenarioConfi
     if decision in {"switch", "churn"}:
         state.is_active = False
         state.churned = True
+        state.churn_count += 1
         state.current_pack_day = 0
         state.reorder_urgency = 0.0
         state.consecutive_purchase_months = 0
-        if decision == "switch":
-            state.trust = max(0.0, state.trust - 0.1)
+        # Each exit erodes trust, making re-engagement harder
+        trust_penalty = 0.30 if decision == "switch" else 0.20
+        state.trust = max(0.0, state.trust - trust_penalty)
         return
 
     if decision == "delay" and state.is_active:

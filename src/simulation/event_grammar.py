@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.constants import (
-    EVENT_FATIGUE_THRESHOLD_BOREDOM,
     EVENT_IMPACT_BRAND_SALIENCE_INFLUENCER,
     EVENT_IMPACT_BRAND_SALIENCE_REMINDER,
     EVENT_IMPACT_CHILD_ACCEPTANCE_BOREDOM,
@@ -99,9 +98,8 @@ def fire_stochastic_events(
     if state.is_active and rng.random() < EVENT_PROB_CHILD_POSITIVE_REACTION_BASE:
         events.append(SimulationEvent(event_type="child_positive_reaction", day=day, intensity=0.3))
 
-    # 2. child_boredom
-    if (state.is_active and state.fatigue > EVENT_FATIGUE_THRESHOLD_BOREDOM
-            and rng.random() < EVENT_PROB_CHILD_BOREDOM_BASE):
+    # 2. child_boredom — fires from day 1 (kids can reject early)
+    if state.is_active and rng.random() < EVENT_PROB_CHILD_BOREDOM_BASE:
         events.append(SimulationEvent(event_type="child_boredom", day=day, intensity=0.2))
 
     # 3. usage_consistent — daily habit reinforcement when actively using
@@ -213,7 +211,7 @@ def is_decision_point(state: CanonicalState, events: list[SimulationEvent]) -> b
     event_types = {e.event_type for e in events}
     if "pack_finished" in event_types:
         return True
-    if not state.ever_adopted and state.brand_salience > 0.3:
+    if not state.ever_adopted and state.brand_salience > 0.37:
         return True
     if "pass_offer" in event_types or "subscription_reminder" in event_types:
         return True

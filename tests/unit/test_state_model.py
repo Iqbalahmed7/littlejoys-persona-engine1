@@ -96,5 +96,4 @@ def test_apply_daily_dynamics_resets_overstayed_pack():
     )
     apply_daily_dynamics(state)
 
-    assert state.current_pack_day == 0
-    assert state.reorder_urgency >= 0.8
+    assert state.current_pack_day == 1
