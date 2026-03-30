@@ -343,8 +343,14 @@ custom_scenario = st.session_state[session_key]
 with st.expander("Probing Tree", expanded=True):
     st.subheader("Research Hypotheses")
     st.caption("These hypotheses will be explored in the research pipeline.")
-    for h in question.hypotheses:
-        st.markdown(f"- **{display_name(h.id)}**: {h.description}")
+    if question.probing_tree_id:
+        from src.probing.predefined_trees import get_problem_tree
+
+        _, tree_hypotheses, _ = get_problem_tree(question.probing_tree_id)
+        for h in tree_hypotheses:
+            st.markdown(f"- **{display_name(h.id)}**: {h.description}")
+    else:
+        st.caption("No hypotheses configured for this question.")
 
 st.subheader("Run Research")
 
