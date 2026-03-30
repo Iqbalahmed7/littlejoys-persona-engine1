@@ -9,6 +9,7 @@ from src.generation.population import Population, PopulationGenerator
 def generator():
     return PopulationGenerator()
 
+@pytest.mark.integration
 def test_classify_and_filter_nutrimix(generator):
     scenario = get_scenario("nutrimix_2_6")
     # Small size for unit test
@@ -35,6 +36,7 @@ def test_classify_and_filter_nutrimix(generator):
         for p in filtered_pop.personas:
             assert p.product_relationship == cohort_id
 
+@pytest.mark.integration
 def test_cohort_filtering_edge_case_small_pop(generator):
     scenario = get_scenario("magnesium_gummies")
     # Very small population might lead to empty cohorts
@@ -50,6 +52,7 @@ def test_cohort_filtering_edge_case_small_pop(generator):
         if cohort_id not in cohorts.cohorts or not cohorts.cohorts[cohort_id]:
             assert len(filtered_pop.personas) == 0
 
+@pytest.mark.integration
 def test_population_get_cohort_summary(generator):
     pop = generator.generate(size=5, seed=789)
     scenario = get_scenario("protein_mix")

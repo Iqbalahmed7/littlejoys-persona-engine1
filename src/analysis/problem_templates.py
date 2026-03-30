@@ -1,9 +1,8 @@
 """Scenario-specific problem decomposition templates for Cursor's decompose_problem()."""
 
-from typing import Any, Dict, List
+from typing import Any
 
-
-PROBLEM_TEMPLATES: Dict[str, Dict[str, Any]] = {
+PROBLEM_TEMPLATES: dict[str, dict[str, Any]] = {
     "nutrimix_2_6": {
         "problem": "High NPS but low repeat purchase",
         "sub_problems": [
@@ -23,7 +22,7 @@ PROBLEM_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "research_objectives": ["Optimize repeat purchase drivers"],
     },
     "nutrimix_7_14": {
-        "problem": "Nutrimix dominates 2-6, how to expand to 7-14?", 
+        "problem": "Nutrimix dominates 2-6, how to expand to 7-14?",
         "sub_problems": [
             "Age perception barrier ('my kid is too old for this')",
             "Peer pressure / social acceptability in older kids",

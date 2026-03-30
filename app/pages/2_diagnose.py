@@ -338,6 +338,14 @@ if "phase_a_diagnosis" in st.session_state:
     st.markdown(summary)
 
     if st.button("Proceed to Interventions →", type="primary", key="phase_a_proceed"):
+        from src.analysis.intervention_engine import (
+            InterventionInput,
+            generate_intervention_quadrant,
+        )
+
+        decomp_input = InterventionInput(problem_id=selected_question.id)
+        quadrant = generate_intervention_quadrant(decomp_input, scenario)
+
         st.session_state["phase_a_insights"] = {
             "scenario_id": scenario_id,
             "cohort": selected_cohort.name,
@@ -345,4 +353,5 @@ if "phase_a_diagnosis" in st.session_state:
             "root_causes": root_causes,
             "summary": summary,
         }
-        st.success("Phase A insights saved.")
+        st.session_state["phase_a_quadrant"] = quadrant
+        st.success("Phase A insights + intervention quadrant saved. Go to Simulate \u2192")
