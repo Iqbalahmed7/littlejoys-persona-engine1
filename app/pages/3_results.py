@@ -100,7 +100,7 @@ def _render_legacy_dashboard() -> None:
 
     pop = st.session_state.population
 
-    st.subheader("Simulation summary (legacy)")
+    st.subheader("Scenario Summary")
     st.caption(
         "Static decision-pathway outcomes, segment heatmaps, barriers, drivers, and quick what-if runs."
     )
@@ -198,7 +198,9 @@ def _render_legacy_dashboard() -> None:
 
     try:
         st.subheader("Causal statements")
-        statements = generate_causal_statements(importances, merged_results, scenario_id=scenario_id)
+        statements = generate_causal_statements(
+            importances, merged_results, scenario_id=scenario_id
+        )
         if statements:
             for stmt in statements:
                 with st.expander(
@@ -345,6 +347,32 @@ def _consolidate(_result_json: str, _population_id: str) -> dict[str, Any]:
     return report.model_dump(mode="json")
 
 
+if hasattr(st.sidebar, "toggle"):
+    demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+else:
+    demo_mode = st.toggle("Demo Mode", value=False, key="demo_mode")
+
+
+def _sidebar_caption(text: str) -> None:
+    if hasattr(st.sidebar, "caption"):
+        st.sidebar.caption(text)
+    else:
+        st.caption(text)
+
+
+if demo_mode:
+    _sidebar_caption("🎯 Demo Mode Active")
+_sidebar_caption("1️⃣ Home — Generate your population")
+_sidebar_caption("2️⃣ Personas — Explore your synthetic households")
+_sidebar_caption("3️⃣ Results — Run a scenario simulation")
+_sidebar_caption("4️⃣ Deep Dive — Interview individual personas")
+_sidebar_caption("5️⃣ Comparison — Compare two scenarios")
+
+if demo_mode:
+    from app.utils.demo_mode import ensure_demo_data
+
+    ensure_demo_data()
+
 if "population" not in st.session_state:
     st.warning("Load or generate a population from the home page first.")
     st.stop()
@@ -418,6 +446,9 @@ if "research_result" in st.session_state:
                 for r_item in report.executive_summary.risk_factors:
                     st.markdown(f"- {r_item}")
             st.divider()
+
+            if demo_mode:
+                st.info("👆 AI-generated narrative from simulation results")
         except Exception as e:
             _section_failed(e)
 
@@ -444,6 +475,9 @@ if "research_result" in st.session_state:
                 help="Month when the simulation had the highest churn count",
             )
             health_banner_rendered = True
+
+            if demo_mode:
+                st.info("👆 These 4 metrics are the executive snapshot")
         except Exception as e:
             _section_failed(e)
 
@@ -453,10 +487,10 @@ if "research_result" in st.session_state:
 
         if report.mock_mode:
             st.info(
-                "🧪 Mock mode: Insights reflect model structure. Run with an API key for LLM-powered qualitative depth.",
+                "Demo mode: Results are illustrative. Connect an API key for live LLM-powered insights.",
             )
 
-        m1, m2, m3, m4, m5 = st.columns(5)
+        m1, m2, m3, m4 = st.columns(4)
         m1.metric("Population", f"{report.funnel.population_size:,}")
         m2.metric(
             "Would Try", f"{report.funnel.adoption_count:,}", f"{report.funnel.adoption_rate:.1%}"
@@ -466,7 +500,6 @@ if "research_result" in st.session_state:
             "Alternatives Tested",
             f"{len(report.top_alternatives) + len(report.worst_alternatives)}",
         )
-        m5.metric("Duration", f"{report.duration_seconds:.1f}s")
     except Exception as e:
         _section_failed(e)
 
@@ -629,9 +662,7 @@ if "research_result" in st.session_state:
                     total_active = float(_snap_val(s, "total_active", "active", default=0))
                     cumulative_adopters = float(_snap_val(s, "cumulative_adopters", default=0))
                     retention = (
-                        (total_active / cumulative_adopters * 100.0)
-                        if cumulative_adopters
-                        else 0.0
+                        (total_active / cumulative_adopters * 100.0) if cumulative_adopters else 0.0
                     )
                     retention_pct.append(retention)
 
@@ -740,9 +771,13 @@ if "research_result" in st.session_state:
                     sat = cl.get("avg_satisfaction")
                     if sat is not None:
                         st.markdown(f"**Average satisfaction score:** {float(sat):.2f}")
-                    attrs: dict[str, Any] = cl.get("dominant_attributes") or cl.get(
-                        "key_traits",
-                    ) or {}
+                    attrs: dict[str, Any] = (
+                        cl.get("dominant_attributes")
+                        or cl.get(
+                            "key_traits",
+                        )
+                        or {}
+                    )
                     top3 = list(attrs.items())[:3]
                     if top3:
                         st.markdown("**Top distinguishing persona attributes:**")

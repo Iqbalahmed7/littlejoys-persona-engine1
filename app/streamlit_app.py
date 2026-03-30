@@ -70,7 +70,8 @@ if "population" in st.session_state:
 
     c1, c2, c3 = st.columns(3)
     c1.metric("Total Personas", len(pop.personas))
-    c2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
+    if not demo_mode:
+        c2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
     c3.metric("Scenarios Available", len(SCENARIO_IDS))
 
     st.markdown("---")

@@ -48,7 +48,8 @@ pop = st.session_state.population
 
 m1, m2, m3 = st.columns(3)
 m1.metric("Personas", len(pop.personas))
-m2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
+if not demo_mode:
+    m2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
 m3.metric("Scenarios Available", len(SCENARIO_IDS))
 
 st.subheader("Population Overview")
@@ -119,10 +120,10 @@ with f1:
     )
 with f2:
     sel_sec = st.multiselect(
-        "SEC",
+        "Socioeconomic Class",
         sorted(df["socioeconomic_class"].dropna().unique()),
         default=[],
-        placeholder="All SEC",
+        placeholder="All Socioeconomic Classes",
         key="personas_sel_sec",
     )
 with f3:
