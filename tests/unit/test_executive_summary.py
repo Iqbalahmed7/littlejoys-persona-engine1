@@ -45,7 +45,9 @@ def test_executive_summary_mock_mode(mock_report):
 
     assert isinstance(summary, ExecutiveSummary)
     assert summary.mock_mode is True
-    assert "mock" in summary.headline.lower()
+    assert len(summary.headline) > 0
+    assert "mock" not in summary.headline.lower()
+    assert "mock" not in summary.trajectory_summary.lower()
     assert len(summary.key_drivers) == 3
     assert len(summary.recommendations) == 3
     assert len(summary.risk_factors) == 2

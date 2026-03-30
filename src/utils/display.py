@@ -273,6 +273,55 @@ SCENARIO_PRODUCT_NAMES: dict[str, str] = {
     "protein_mix": "Protein Mix",
 }
 
+CITY_TIER_DISPLAY: dict[str, str] = {
+    "Tier1": "Metro",
+    "Tier2": "Tier 2 City",
+    "Tier3": "Emerging City",
+}
+
+COHORT_DISPLAY: dict[str, str] = {
+    "lapsed_user": "Lapsed Users",
+    "current_user": "Current Users",
+    "first_time_buyer": "First-Time Buyers",
+    "never_aware": "Never Aware",
+    "aware_not_tried": "Aware, Not Tried",
+    "all": "All",
+}
+
+REJECTION_REASON_DISPLAY: dict[str, str] = {
+    "age_irrelevant": "Product not relevant for child's age",
+    "price_too_high": "Price too high",
+    "low_need": "No perceived need",
+    "insufficient_trust": "Insufficient trust in brand",
+    "taste_concerns": "Taste concerns",
+    "habit_failure": "Habit didn't form",
+    "competitive_switch": "Switched to a competitor",
+}
+
+STAGE_DISPLAY: dict[str, str] = {
+    "need_recognition": "Need Recognition",
+    "awareness": "Awareness",
+    "consideration": "Consideration",
+    "purchase": "Purchase",
+}
+
+SCOPE_DISPLAY: dict[str, str] = {
+    "general": "General",
+    "cohort_specific": "Cohort-Specific",
+}
+
+TEMPORALITY_DISPLAY: dict[str, str] = {
+    "temporal": "Temporal",
+    "non_temporal": "Non-Temporal",
+}
+
+INTERVIEW_REASON_DISPLAY: dict[str, str] = {
+    "fragile_yes": "Conditionally Willing",
+    "persuadable_no": "Open to Persuasion",
+    "control": "Confirmed Buyer",
+    "underrepresented": "Underrepresented Segment",
+}
+
 INCOME_BRACKET_UI_LABELS: dict[str, str] = {
     "low_income": "Under ₹8L",
     "middle_income": "₹8L-15L",
@@ -369,3 +418,49 @@ def persona_display_name(persona: Any) -> str:
 
     demo = persona.demographics
     return f"{demo.city_name} · {display_name('parent_age')} {demo.parent_age}"
+
+
+def city_tier_label(tier: str) -> str:
+    """Map raw city tier value to human-readable label."""
+    return CITY_TIER_DISPLAY.get(tier, tier.replace("_", " ").title())
+
+
+def cohort_label(cohort_id: str | None) -> str:
+    """Map raw cohort ID to human-readable label."""
+    if not cohort_id:
+        return "All"
+    return COHORT_DISPLAY.get(cohort_id, cohort_id.replace("_", " ").title())
+
+
+def rejection_reason_label(reason: str) -> str:
+    """Map raw rejection reason to human-readable label."""
+    return REJECTION_REASON_DISPLAY.get(reason, reason.replace("_", " ").title())
+
+
+def stage_label(stage: str) -> str:
+    """Map raw funnel stage to human-readable label."""
+    return STAGE_DISPLAY.get(stage, stage.replace("_", " ").title())
+
+
+def scope_label(scope: str) -> str:
+    """Map raw intervention scope to human-readable label."""
+    return SCOPE_DISPLAY.get(scope, scope.replace("_", " ").title())
+
+
+def temporality_label(temporality: str) -> str:
+    """Map raw temporality to human-readable label."""
+    return TEMPORALITY_DISPLAY.get(temporality, temporality.replace("_", " ").title())
+
+
+def interview_reason_label(reason: str) -> str:
+    """Map raw interview selection reason to human-readable label."""
+    return INTERVIEW_REASON_DISPLAY.get(reason, reason.replace("_", " ").title())
+
+
+def qualitative_level(value: float) -> str:
+    """Convert a 0-1 psychographic score to a Low / Medium / High label."""
+    if value >= 0.67:
+        return "High"
+    if value >= 0.34:
+        return "Medium"
+    return "Low"

@@ -26,7 +26,7 @@ from src.simulation.research_runner import ResearchResult
 from src.simulation.static import StaticSimulationResult, run_static_simulation
 from src.simulation.temporal import run_temporal_simulation
 from src.utils.dashboard_data import adoption_heatmap_matrix, tier1_dataframe_with_results
-from src.utils.display import display_name
+from src.utils.display import display_name, rejection_reason_label, stage_label
 from src.utils.viz import (
     create_barrier_chart,
     create_funnel_chart,
@@ -562,7 +562,10 @@ if "research_result" in st.session_state:
         if report.funnel.top_barriers:
             st.caption("Top barriers to trial:")
             for b in report.funnel.top_barriers[:5]:
-                st.markdown(f"- **{b['stage']}** → {b['reason']} ({b['count']} personas)")
+                st.markdown(
+                    f"- **{stage_label(b['stage'])}** → "
+                    f"{rejection_reason_label(b['reason'])} ({b['count']} personas)"
+                )
     except Exception as e:
         _section_failed(e)
 

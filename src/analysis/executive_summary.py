@@ -157,13 +157,11 @@ def generate_executive_summary(
     if mock_mode:
         return ExecutiveSummary(
             headline=(
-                f"{scenario.product.name}: retention hinges on taste and repeat-use friction - "
-                "mock executive headline for UI preview"
+                f"{scenario.product.name}: retention hinges on taste and repeat-use friction"
             ),
             trajectory_summary=(
                 "Over the simulated year, active households ramp through trial and early "
-                "repurchase, then plateau as churn and switching pressures build. "
-                "This mock summary exercises the results layout when LLM calls are disabled."
+                "repurchase, then plateau as churn and switching pressures build."
             ),
             key_drivers=[
                 "Price vs. perceived value for the target age band awareness and trust signals",

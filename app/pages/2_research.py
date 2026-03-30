@@ -12,7 +12,7 @@ from src.decision.scenarios import get_scenario
 from src.probing.question_bank import get_questions_for_scenario
 from src.simulation.research_runner import ResearchRunner
 from src.utils.api_keys import has_api_key, resolve_api_key
-from src.utils.display import CHANNEL_HELP, display_name
+from src.utils.display import CHANNEL_HELP, display_name, scenario_product_display_name
 from src.utils.llm import LLMClient
 
 # --- Page ---
@@ -453,8 +453,14 @@ if run_clicked:
 prev = st.session_state.get("research_result")
 if prev and not run_clicked:
     st.divider()
+    from src.probing.question_bank import get_question
+
+    try:
+        _prev_q_title = get_question(prev.metadata.question_id).title
+    except Exception:
+        _prev_q_title = prev.metadata.question_id
     st.caption(
-        f"Previous run: {prev.metadata.scenario_id} · {prev.metadata.question_id} · "
-        f"{prev.metadata.timestamp}"
+        f"Previous run: {scenario_product_display_name(prev.metadata.scenario_id)} · "
+        f"{_prev_q_title} · {prev.metadata.timestamp}"
     )
     st.page_link("pages/3_results.py", label="View Previous Results →", icon="📊")

@@ -33,6 +33,7 @@ from src.simulation.quadrant_runner import (
     QuadrantRunResult,
     run_intervention_quadrant,
 )
+from src.utils.display import cohort_label, scope_label, temporality_label
 
 if TYPE_CHECKING:
     from src.generation.population import Population
@@ -304,6 +305,21 @@ if "phase_c_run_result" in st.session_state:
 
     rows = format_quadrant_table(analysis)
     df = pd.DataFrame(rows)
+    df["scope"] = df["scope"].apply(scope_label)
+    df["temporality"] = df["temporality"].apply(temporality_label)
+    df["cohort"] = df["cohort"].apply(cohort_label)
+    df = df.rename(
+        columns={
+            "name": "Intervention",
+            "scope": "Scope",
+            "temporality": "Timing",
+            "cohort": "Target Cohort",
+            "baseline_adoption": "Baseline",
+            "intervention_adoption": "With Intervention",
+            "lift_pct": "Lift (%)",
+            "rank": "Rank",
+        }
+    )
     st.dataframe(df, use_container_width=True)
 
     for qkey, summary in analysis.quadrant_summaries.items():
@@ -319,8 +335,7 @@ if "phase_c_run_result" in st.session_state:
     st.divider()
     sim_export_cols = st.columns(2)
     with sim_export_cols[0]:
-        rows = format_quadrant_table(analysis)
-        sim_df = pd.DataFrame(rows)
+        sim_df = df
         st.download_button(
             "⬇️ Export Results (CSV)",
             data=sim_df.to_csv(index=False),

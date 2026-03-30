@@ -15,7 +15,7 @@ import streamlit as st
 from app.components.persona_spider import render_persona_spider
 from app.utils.demo_mode import ensure_demo_data
 from src.probing.clustering import cluster_responses_mock
-from src.utils.display import persona_display_name
+from src.utils.display import city_tier_label, interview_reason_label, persona_display_name
 
 st.header("Interview Deep-Dive")
 st.caption("Explore the qualitative evidence from deep persona interviews.")
@@ -68,11 +68,11 @@ for ir in result.interview_results:
     outcome_label = "Would try" if outcome == "adopt" else "Wouldn't try"
 
     with st.expander(
-        f"{persona_display_name(persona)} · {outcome_label} · Reason: {ir.selection_reason.replace('_', ' ')}",
+        f"{persona_display_name(persona)} · {outcome_label} · Reason: {interview_reason_label(ir.selection_reason)}",
         expanded=False,
     ):
         p1, p2, p3 = st.columns(3)
-        p1.caption(f"City: {persona.demographics.city_tier}")
+        p1.caption(f"City: {city_tier_label(persona.demographics.city_tier)}")
         p2.caption(f"Income: ₹{persona.demographics.household_income_lpa:.1f}L")
         p3.caption(f"Child age: {persona.demographics.youngest_child_age}")
 

@@ -3,6 +3,7 @@
 import streamlit as st
 
 from src.analysis.intervention_engine import InterventionQuadrant
+from src.utils.display import cohort_label
 
 _QUADRANT_LABELS = {
     "general_temporal": ("General", "Temporal"),
@@ -30,7 +31,7 @@ def render_quadrant_grid(quadrant: InterventionQuadrant) -> None:
             with st.container(border=True):
                 st.markdown(f"**{intervention.name}**")
                 st.caption(intervention.description)
-                st.caption(f"Target: {intervention.target_cohort_id or 'All'}")
+                st.caption(f"Target: {cohort_label(intervention.target_cohort_id)}")
                 st.caption(f"Mechanism: {intervention.expected_mechanism}")
 
     # Row 2: Non-temporal
@@ -49,7 +50,7 @@ def render_quadrant_grid(quadrant: InterventionQuadrant) -> None:
             with st.container(border=True):
                 st.markdown(f"**{intervention.name}**")
                 st.caption(intervention.description)
-                st.caption(f"Target: {intervention.target_cohort_id or 'All'}")
+                st.caption(f"Target: {cohort_label(intervention.target_cohort_id)}")
                 st.caption(f"Mechanism: {intervention.expected_mechanism}")
 
     total = sum(len(v) for v in quadrant.quadrants.values())

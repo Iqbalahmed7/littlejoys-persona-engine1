@@ -6,7 +6,15 @@ from typing import TYPE_CHECKING, Any
 
 import streamlit as st
 
-from src.utils.display import display_name, outcome_label, persona_display_name
+from src.utils.display import (
+    city_tier_label,
+    display_name,
+    outcome_label,
+    persona_display_name,
+    qualitative_level,
+    rejection_reason_label,
+    stage_label,
+)
 
 if TYPE_CHECKING:
     from src.taxonomy.schema import Persona
@@ -16,8 +24,8 @@ def render_persona_card(persona: Persona, decision_result: dict[str, Any] | None
     """Render a bordered card with demographics, psychographics, and optional funnel outcome."""
 
     city = persona.demographics.city_name
-    tier = persona.demographics.city_tier
-    header = f"{persona_display_name(persona)} · `{persona.id}` — {city} ({tier})"
+    tier = city_tier_label(persona.demographics.city_tier)
+    header = f"{persona_display_name(persona)} · {persona.id} — {city} ({tier})"
 
     with st.container(border=True):
         st.subheader(header)
@@ -34,14 +42,16 @@ def render_persona_card(persona: Persona, decision_result: dict[str, Any] | None
         with c2:
             st.markdown("**Psychographics**")
             st.write(
-                f"- {display_name('diet_consciousness')}: {persona.health.diet_consciousness:.2f}",
+                f"- {display_name('diet_consciousness')}: "
+                f"{qualitative_level(persona.health.diet_consciousness)}",
             )
             st.write(
                 f"- {display_name('brand_loyalty_tendency')}: "
-                f"{persona.values.brand_loyalty_tendency:.2f}",
+                f"{qualitative_level(persona.values.brand_loyalty_tendency)}",
             )
             st.write(
-                f"- {display_name('social_proof_bias')}: {persona.psychology.social_proof_bias:.2f}",
+                f"- {display_name('social_proof_bias')}: "
+                f"{qualitative_level(persona.psychology.social_proof_bias)}",
             )
 
         if decision_result is not None:
@@ -54,6 +64,6 @@ def render_persona_card(persona: Persona, decision_result: dict[str, Any] | None
                 reason = decision_result.get("rejection_reason") or "unknown"
                 st.error(
                     f"{display_name('outcome')}: {outcome_label(str(outcome))} — "
-                    f"{display_name('rejection_stage')}: {display_name(str(stage))}; "
-                    f"{display_name('rejection_reason')}: {display_name(str(reason))}",
+                    f"{display_name('rejection_stage')}: {stage_label(str(stage))}; "
+                    f"{display_name('rejection_reason')}: {rejection_reason_label(str(reason))}",
                 )

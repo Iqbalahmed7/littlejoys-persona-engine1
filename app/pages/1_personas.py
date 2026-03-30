@@ -11,7 +11,7 @@ from app.components.persona_card import render_persona_card
 from app.components.persona_spider import render_persona_spider
 from app.utils.demo_mode import ensure_demo_data
 from src.constants import SCENARIO_IDS
-from src.utils.display import display_name, persona_display_name
+from src.utils.display import city_tier_label, display_name
 
 
 def _income_bracket(flat: dict) -> str:
@@ -66,6 +66,7 @@ c1, c2 = st.columns(2)
 with c1:
     tier_counts = df["city_tier"].value_counts().reset_index()
     tier_counts.columns = ["City Tier", "Count"]
+    tier_counts["City Tier"] = tier_counts["City Tier"].apply(city_tier_label)
     fig = px.bar(tier_counts, x="City Tier", y="Count", title="City Tier Distribution")
     fig.update_layout(height=250, margin=dict(l=20, r=20, t=40, b=20))
     st.plotly_chart(fig, use_container_width=True)
@@ -197,7 +198,10 @@ else:
 st.subheader("Persona Browser")
 
 persona_ids = [p.id for p in pop.personas]
-persona_labels = {p.id: f"{persona_display_name(p)} · {p.id}" for p in pop.personas}
+persona_labels = {
+    p.id: f"{p.demographics.city_name} · Age {p.demographics.parent_age} · {p.id}"
+    for p in pop.personas
+}
 
 if sel_tier or sel_sec or sel_diet or sel_region:
     filtered_ids = set(filtered["id"].tolist())

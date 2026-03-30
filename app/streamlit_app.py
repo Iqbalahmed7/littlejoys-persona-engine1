@@ -25,14 +25,20 @@ st.title("LittleJoys Persona Simulation Engine")
 st.caption("Synthetic persona engine for kids nutrition D2C in India.")
 st.markdown("---")
 
-demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+demo_mode = st.sidebar.toggle(
+    "Demo Mode",
+    value=st.session_state.get("demo_mode", False),
+    key="demo_mode",
+)
 if demo_mode:
     st.sidebar.caption("🎯 Demo Mode Active")
-st.sidebar.caption("1️⃣ Home — Generate your population")
-st.sidebar.caption("2️⃣ Personas — Explore your synthetic households")
-st.sidebar.caption("3️⃣ Results — Run a scenario simulation")
-st.sidebar.caption("4️⃣ Deep Dive — Interview individual personas")
-st.sidebar.caption("5️⃣ Comparison — Compare two scenarios")
+st.sidebar.caption("1️⃣ Personas — Explore synthetic households")
+st.sidebar.caption("2️⃣ Research — Run scenario research")
+st.sidebar.caption("3️⃣ Results — View research results")
+st.sidebar.caption("4️⃣ Diagnose — Phase A problem decomposition")
+st.sidebar.caption("5️⃣ Simulate — Phase C intervention testing")
+st.sidebar.caption("6️⃣ Interviews — Deep dive conversations")
+st.sidebar.caption("7️⃣ Comparison — Compare two scenarios")
 
 if demo_mode:
     ensure_demo_data()
@@ -70,8 +76,7 @@ if "population" in st.session_state:
 
     c1, c2, c3 = st.columns(3)
     c1.metric("Total Personas", len(pop.personas))
-    if not demo_mode:
-        c2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
+    c2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
     c3.metric("Scenarios Available", len(SCENARIO_IDS))
 
     st.markdown("---")
@@ -80,11 +85,15 @@ if "population" in st.session_state:
         "1. **Browse personas** — Explore your synthetic population\n"
         "2. **Design research** — Pick a scenario, choose a business question, run the hybrid pipeline\n"
         "3. **View results** — Quantitative findings, qualitative themes, strategic alternatives\n"
-        "4. **Deep-dive interviews** — Read the smart-sampled persona conversations"
+        "4. **Diagnose** — Phase A problem decomposition: identify root barriers by cohort\n"
+        "5. **Simulate** — Phase C intervention testing: measure lift across the quadrant\n"
+        "6. **Deep-dive interviews** — Read the smart-sampled persona conversations"
     )
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.page_link("pages/1_personas.py", label="Browse Personas →", icon="👥")
     with col2:
         st.page_link("pages/2_research.py", label="Design Research →", icon="🔬")
+    with col3:
+        st.page_link("pages/2_diagnose.py", label="Diagnose →", icon="🔍")
