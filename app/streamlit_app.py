@@ -4,7 +4,14 @@ LittleJoys Persona Simulation Engine — Streamlit Dashboard.
 Main entry point for the interactive presentation layer.
 """
 
+import sys
 from pathlib import Path
+
+# Ensure repo root is on sys.path so src.* and app.* packages are importable
+# regardless of how Streamlit or the cloud runner sets the working directory.
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
 import streamlit as st
 
