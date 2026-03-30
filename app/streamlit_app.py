@@ -8,7 +8,6 @@ from pathlib import Path
 
 import streamlit as st
 
-from app.utils.demo_mode import ensure_demo_data
 from src.constants import DEFAULT_SEED, SCENARIO_IDS
 from src.decision.scenarios import get_scenario
 from src.generation.population import Population
@@ -33,9 +32,6 @@ st.sidebar.caption("4️⃣ Diagnose — Phase A problem decomposition")
 st.sidebar.caption("5️⃣ Simulate — Phase C intervention testing")
 st.sidebar.caption("6️⃣ Interviews — Deep dive conversations")
 st.sidebar.caption("7️⃣ Comparison — Compare two scenarios")
-
-if demo_mode:
-    ensure_demo_data()
 
 pop_path = Path("data/population")
 
