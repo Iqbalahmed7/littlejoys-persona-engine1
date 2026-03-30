@@ -41,9 +41,19 @@ pop_path = Path("data/population")
 
 if "population" not in st.session_state:
     if pop_path.exists():
-        with st.spinner("Pre-loading cached demographic schemas..."):
+        with st.status("Initialising engine...", expanded=True) as status:
+            st.write("Loading 200 synthetic household profiles...")
             st.session_state.population = Population.load(pop_path)
-            st.toast("Population loaded from disk.", icon="💾")
+            st.write("Running baseline decision simulations across 4 scenarios...")
+            st.session_state.scenario_results = {}
+            for sid in SCENARIO_IDS:
+                st.write(f"  · {get_scenario(sid).name}")
+                st.session_state.scenario_results[sid] = run_static_simulation(
+                    st.session_state.population,
+                    get_scenario(sid),
+                )
+            status.update(label="Engine ready.", state="complete", expanded=False)
+        st.rerun()
     else:
         st.info("No population data found. Generate a synthetic baseline population to begin.")
         if st.button("Generate Population", type="primary"):
@@ -53,7 +63,7 @@ if "population" not in st.session_state:
                 pop = PopulationGenerator().generate(seed=DEFAULT_SEED)
                 pop.save(pop_path)
                 st.session_state.population = pop
-            st.toast("Population explicitly generated successfully!", icon="✅")
+            st.toast("Population generated successfully!", icon="✅")
             st.rerun()
 
 if "scenario_results" not in st.session_state:
