@@ -348,7 +348,7 @@ with st.expander("Probing Tree", expanded=True):
 
         _, tree_hypotheses, _ = get_problem_tree(question.probing_tree_id)
         for h in tree_hypotheses:
-            st.markdown(f"- **{display_name(h.id)}**: {h.description}")
+            st.markdown(f"- **{display_name(h.id)}**: {h.rationale}")
     else:
         st.caption("No hypotheses configured for this question.")
 
