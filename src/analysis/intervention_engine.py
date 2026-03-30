@@ -20,6 +20,18 @@ _QUADRANT_KEYS = (
 )
 
 
+def quadrant_key(scope: str, temporality: str) -> str:
+    """Map intervention metadata to the 2x2 quadrant key used across pages."""
+
+    mapping = {
+        ("general", "temporal"): "general_temporal",
+        ("general", "non_temporal"): "general_non_temporal",
+        ("cohort_specific", "temporal"): "cohort_temporal",
+        ("cohort_specific", "non_temporal"): "cohort_non_temporal",
+    }
+    return mapping.get((scope, temporality), "general_non_temporal")
+
+
 class Intervention(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

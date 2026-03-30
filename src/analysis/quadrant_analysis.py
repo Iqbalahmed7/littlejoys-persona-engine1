@@ -10,6 +10,8 @@ if TYPE_CHECKING:
     from src.analysis.intervention_engine import InterventionQuadrant
     from src.simulation.quadrant_runner import QuadrantRunResult
 
+from src.analysis.intervention_engine import quadrant_key
+
 
 class InterventionLift(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -45,16 +47,6 @@ class QuadrantAnalysis(BaseModel):
     quadrant_summaries: dict[str, dict[str, Any]]
 
 
-def _quadrant_key(scope: str, temporality: str) -> str:
-    mapping = {
-        ("general", "temporal"): "general_temporal",
-        ("general", "non_temporal"): "general_non_temporal",
-        ("cohort_specific", "temporal"): "cohort_temporal",
-        ("cohort_specific", "non_temporal"): "cohort_non_temporal",
-    }
-    return mapping.get((scope, temporality), "general_non_temporal")
-
-
 def _safe_pct(delta: float, base: float) -> float:
     if base == 0:
         return 0.0
@@ -83,16 +75,14 @@ def analyze_quadrant_results(
     for run in run_result.results:
         meta, q_key = intervention_lookup.get(
             run.intervention_id,
-            (None, _quadrant_key(run.scope, run.temporality)),
+            (None, quadrant_key(run.scope, run.temporality)),
         )
         expected_mechanism = meta.expected_mechanism if meta is not None else ""
         adoption_rate = float(run.adoption_rate)
         adoption_lift_abs = adoption_rate - baseline_adoption
         adoption_lift_pct = _safe_pct(adoption_lift_abs, baseline_adoption)
 
-        active_rate = (
-            float(run.final_active_rate) if run.final_active_rate is not None else None
-        )
+        active_rate = float(run.final_active_rate) if run.final_active_rate is not None else None
         active_lift_abs = (
             (active_rate - baseline_active)
             if active_rate is not None and baseline_active is not None
@@ -142,7 +132,12 @@ def analyze_quadrant_results(
         raise ValueError("run_result does not include any intervention runs")
 
     quadrant_summaries: dict[str, dict[str, Any]] = {}
-    for key in ("general_temporal", "general_non_temporal", "cohort_temporal", "cohort_non_temporal"):
+    for key in (
+        "general_temporal",
+        "general_non_temporal",
+        "cohort_temporal",
+        "cohort_non_temporal",
+    ):
         bucket = [item for item in lifts if item.quadrant_key == key]
         if not bucket:
             quadrant_summaries[key] = {"avg_lift": 0.0, "best": None, "count": 0}

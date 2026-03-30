@@ -18,6 +18,7 @@ from src.analysis.intervention_engine import (
     InterventionInput,
     InterventionQuadrant,
     generate_intervention_quadrant,
+    quadrant_key,
 )
 from src.analysis.quadrant_analysis import (
     InterventionLift,
@@ -66,16 +67,6 @@ scenario = get_scenario(scenario_id)
 
 def _quadrant_total(quadrant: InterventionQuadrant) -> int:
     return sum(len(v) for v in quadrant.quadrants.values())
-
-
-def _quadrant_key_from(scope: str, temporality: str) -> str:
-    mapping = {
-        ("general", "temporal"): "general_temporal",
-        ("general", "non_temporal"): "general_non_temporal",
-        ("cohort_specific", "temporal"): "cohort_temporal",
-        ("cohort_specific", "non_temporal"): "cohort_non_temporal",
-    }
-    return mapping.get((scope, temporality), "general_non_temporal")
 
 
 def _make_demo_quadrant_run_and_analysis(
@@ -180,7 +171,7 @@ def _make_demo_quadrant_run_and_analysis(
                 active_rate_lift_abs / baseline_active * 100.0 if baseline_active else 0.0
             )
 
-        qkey = _quadrant_key_from(r.scope, r.temporality)
+        qkey = quadrant_key(r.scope, r.temporality)
 
         ranked.append(
             InterventionLift(
