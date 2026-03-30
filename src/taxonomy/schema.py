@@ -462,6 +462,7 @@ class Persona(BaseModel):
     media: MediaAttributes
 
     narrative: str | None = None
+    product_relationship: str = "unassigned"
 
     # Human-readable name generated post-construction for UX purposes.
     display_name: str | None = None

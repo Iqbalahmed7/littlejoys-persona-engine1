@@ -174,6 +174,21 @@ class Population(BaseModel):
                 out.append(persona)
         return out
 
+    def filter_by_cohort(self, cohort_id: str) -> Population:
+        """Return a sub-population containing only personas in ``cohort_id``."""
+        filtered = [p for p in self.personas if p.product_relationship == cohort_id]
+        return self.model_copy(update={"tier1_personas": filtered}, deep=True)
+
+    def get_cohort_summary(self) -> dict[str, int]:
+        """Return ``{cohort_id: count}`` for personas that were assigned."""
+        summary: dict[str, int] = {}
+        for persona in self.personas:
+            cohort_id = persona.product_relationship
+            if cohort_id == "unassigned":
+                continue
+            summary[cohort_id] = summary.get(cohort_id, 0) + 1
+        return summary
+
     def to_dataframe(self) -> pd.DataFrame:
         """Flatten all personas into one DataFrame.
 

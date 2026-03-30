@@ -314,12 +314,17 @@ def _render_legacy_dashboard() -> None:
 
 
 @st.cache_data(show_spinner="Preparing PDF…")
-def _research_pdf_bytes(_report_json: str) -> bytes:
-    """Cache PDF generation; keyed by consolidated report JSON."""
+def _research_pdf_bytes(report_json: str) -> bytes:
+    """Cache PDF generation; keyed by consolidated report JSON.
+
+    Parameter must NOT have a leading underscore — Streamlit excludes _-prefixed
+    parameters from the cache hash, which would cause the same PDF to be served
+    to every user regardless of report content.
+    """
 
     from src.analysis.pdf_export import generate_pdf_report
 
-    rpt = ConsolidatedReport.model_validate_json(_report_json)
+    rpt = ConsolidatedReport.model_validate_json(report_json)
     scenario = get_scenario(rpt.scenario_id)
     return generate_pdf_report(rpt, scenario)
 
