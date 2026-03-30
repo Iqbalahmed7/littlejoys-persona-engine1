@@ -13,11 +13,24 @@ from typing import Any
 import streamlit as st
 
 from app.components.persona_spider import render_persona_spider
+from app.utils.demo_mode import ensure_demo_data
 from src.probing.clustering import cluster_responses_mock
 from src.utils.display import persona_display_name
 
 st.header("Interview Deep-Dive")
 st.caption("Explore the qualitative evidence from deep persona interviews.")
+
+demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+if demo_mode:
+    st.sidebar.caption("🎯 Demo Mode Active")
+st.sidebar.caption("1️⃣ Home — Generate your population")
+st.sidebar.caption("2️⃣ Personas — Explore your synthetic households")
+st.sidebar.caption("3️⃣ Results — Run a scenario simulation")
+st.sidebar.caption("4️⃣ Deep Dive — Interview individual personas")
+st.sidebar.caption("5️⃣ Comparison — Compare two scenarios")
+
+if demo_mode:
+    ensure_demo_data()
 
 if "research_result" not in st.session_state:
     st.warning(

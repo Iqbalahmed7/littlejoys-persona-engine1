@@ -8,6 +8,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from app.utils.demo_mode import ensure_demo_data
 from src.constants import DEFAULT_SEED, SCENARIO_IDS
 from src.decision.scenarios import get_scenario
 from src.generation.population import Population
@@ -23,6 +24,18 @@ st.set_page_config(
 st.title("LittleJoys Persona Simulation Engine")
 st.caption("Synthetic persona engine for kids nutrition D2C in India.")
 st.markdown("---")
+
+demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+if demo_mode:
+    st.sidebar.caption("🎯 Demo Mode Active")
+st.sidebar.caption("1️⃣ Home — Generate your population")
+st.sidebar.caption("2️⃣ Personas — Explore your synthetic households")
+st.sidebar.caption("3️⃣ Results — Run a scenario simulation")
+st.sidebar.caption("4️⃣ Deep Dive — Interview individual personas")
+st.sidebar.caption("5️⃣ Comparison — Compare two scenarios")
+
+if demo_mode:
+    ensure_demo_data()
 
 pop_path = Path("data/population")
 

@@ -9,6 +9,7 @@ import streamlit as st
 
 from app.components.persona_card import render_persona_card
 from app.components.persona_spider import render_persona_spider
+from app.utils.demo_mode import ensure_demo_data
 from src.constants import SCENARIO_IDS
 from src.utils.display import display_name, persona_display_name
 
@@ -26,6 +27,18 @@ def _income_bracket(flat: dict) -> str:
 
 st.header("Personas")
 st.caption("Browse your synthetic population. Use filters to explore segments.")
+
+demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+if demo_mode:
+    st.sidebar.caption("🎯 Demo Mode Active")
+st.sidebar.caption("1️⃣ Home — Generate your population")
+st.sidebar.caption("2️⃣ Personas — Explore your synthetic households")
+st.sidebar.caption("3️⃣ Results — Run a scenario simulation")
+st.sidebar.caption("4️⃣ Deep Dive — Interview individual personas")
+st.sidebar.caption("5️⃣ Comparison — Compare two scenarios")
+
+if demo_mode:
+    ensure_demo_data()
 
 if "population" not in st.session_state:
     st.warning("Load or generate a population from the home page first.")

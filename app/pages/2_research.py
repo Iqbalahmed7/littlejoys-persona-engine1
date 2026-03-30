@@ -5,6 +5,7 @@ import copy
 
 import streamlit as st
 
+from app.utils.demo_mode import ensure_demo_data
 from src.config import Config
 from src.constants import SCENARIO_IDS
 from src.decision.scenarios import get_scenario
@@ -20,6 +21,18 @@ st.header("Research Design")
 st.caption(
     "Design your research: pick a scenario, choose a business question, and run the hybrid pipeline."
 )
+
+demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+if demo_mode:
+    st.sidebar.caption("🎯 Demo Mode Active")
+st.sidebar.caption("1️⃣ Home — Generate your population")
+st.sidebar.caption("2️⃣ Personas — Explore your synthetic households")
+st.sidebar.caption("3️⃣ Results — Run a scenario simulation")
+st.sidebar.caption("4️⃣ Deep Dive — Interview individual personas")
+st.sidebar.caption("5️⃣ Comparison — Compare two scenarios")
+
+if demo_mode:
+    ensure_demo_data()
 
 if not has_api_key():
     st.info(

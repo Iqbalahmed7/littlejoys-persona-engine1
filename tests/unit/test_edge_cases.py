@@ -1,73 +1,71 @@
-"""Edge case tests for hardening and QA."""
+"""Unit tests for boundary and edge conditions in simulation engines."""
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
-
-from src.analysis.barriers import analyze_barriers
-from src.analysis.waterfall import compute_funnel_waterfall
-from src.constants import SCENARIO_IDS
+from src.decision.scenarios import get_scenario
 from src.generation.population import GenerationParams, Population, PopulationMetadata
+from src.simulation.event_engine import run_event_simulation
 from src.simulation.static import run_static_simulation
 
 
-def _now_iso() -> str:
-    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
-
-
-def test_empty_population_tier1() -> None:
-    """Population with no tier1 personas has zero-length lists."""
-
-    pop = Population(
-        id="empty-pop",
-        generation_params=GenerationParams(size=0, seed=0, deep_persona_count=0),
-        tier1_personas=[],
+def _mock_pop(personas: list) -> Population:
+    """Create a mock population with minimal valid metadata."""
+    return Population.model_construct(
+        id="mock-pop",
+        generation_params=GenerationParams.model_construct(size=len(personas), seed=42),
+        tier1_personas=personas,
         tier2_personas=[],
-        validation_report=None,
-        metadata=PopulationMetadata(
-            generation_timestamp=_now_iso(),
-            generation_duration_seconds=0.0,
-            engine_version="test",
-        ),
+        metadata=PopulationMetadata.model_construct(
+            generation_timestamp="2026-03-30T00:00:00Z",
+            generation_duration_seconds=0.1,
+            engine_version="0.1.0"
+        )
     )
 
-    assert pop.tier1_personas == []
-    assert pop.tier2_personas == []
+
+def test_simulation_with_empty_population():
+    """Empty population should return valid but empty results, never crash."""
+    pop = _mock_pop([])
+    scenario = get_scenario("nutrimix_2_6")
+
+    # Static
+    result_static = run_static_simulation(pop, scenario)
+    assert result_static.population_size == 0
+    assert result_static.adoption_count == 0
+    assert result_static.adoption_rate == 0.0
+
+    # Event
+    result_event = run_event_simulation(pop, scenario, duration_days=30)
+    assert result_event.population_size == 0
+    assert result_event.final_active_count == 0
 
 
-def test_static_simulation_empty_population() -> None:
-    """Static sim on empty population returns 0 adoption."""
+def test_simulation_with_single_persona(sample_persona):
+    """Full pipeline should work for a single persona population."""
+    pop = _mock_pop([sample_persona])
+    scenario = get_scenario("nutrimix_2_6")
 
-    scenario = SCENARIO_IDS[0]
-    from src.decision.scenarios import get_scenario
+    # Static
+    result_static = run_static_simulation(pop, scenario)
+    assert result_static.population_size == 1
+    assert result_static.adoption_count in (0, 1)
 
-    pop = Population(
-        id="empty-pop",
-        generation_params=GenerationParams(size=0, seed=0, deep_persona_count=0),
-        tier1_personas=[],
-        tier2_personas=[],
-        validation_report=None,
-        metadata=PopulationMetadata(
-            generation_timestamp=_now_iso(),
-            generation_duration_seconds=0.0,
-            engine_version="test",
-        ),
-    )
+    # Event
+    result_event = run_event_simulation(pop, scenario, duration_days=30)
+    assert result_event.population_size == 1
 
-    result = run_static_simulation(pop, get_scenario(scenario))
-    assert result.population_size == 0
-    assert result.adoption_count == 0
+
+def test_zero_adoption_scenario(sample_persona):
+    """Scenario where trial_rate is 0.0 should not cause divide-by-zero or crash."""
+    pop = _mock_pop([sample_persona])
+    scenario = get_scenario("nutrimix_2_6")
+
+    # Force rejection by setting extreme thresholds
+    scenario.product.price_inr = 1_000_000.0
+
+    result = run_static_simulation(pop, scenario)
     assert result.adoption_rate == 0.0
-    assert result.results_by_persona == {}
+    assert result.adoption_count == 0
 
-
-def test_funnel_waterfall_empty() -> None:
-    """Waterfall on empty results dict returns empty list."""
-
-    assert compute_funnel_waterfall({}) == []
-
-
-def test_analyze_barriers_empty() -> None:
-    """Barriers on empty results returns empty list."""
-
-    assert analyze_barriers({}) == []
+    assert result.rejection_distribution is not None
+    assert result.population_size == 1

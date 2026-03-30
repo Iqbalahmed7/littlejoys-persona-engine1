@@ -97,27 +97,27 @@ def test_pdf_export_contains_scenario_name():
     from unittest.mock import patch
     report = _mock_report()
     scenario = get_scenario("nutrimix_2_6")
-    
+
     # Disable compression so we can see plain text in bytes
     with patch("src.analysis.pdf_export.ReportPDF.__init__", lambda self, d: None):
         from src.analysis.pdf_export import ReportPDF
         # Manually init to ensure compress is False
         pdf = ReportPDF("2026-03-30")
         pdf.compress = False
-        
+
         # We need to re-implement generate_pdf_report logic slightly or patch it.
         # Actually, let's just patch FPDF globally for this test.
         with patch("fpdf.FPDF.__init__", lambda self, *args, **kwargs: None):
             import fpdf
             pdf = fpdf.FPDF()
             pdf.compress = False
-            # This is getting messy. 
+            # This is getting messy.
 
     # Simpler: just patch the ReportPDF class to always set compress=False
     from src.analysis.pdf_export import generate_pdf_report
     with patch("src.analysis.pdf_export.ReportPDF.header", lambda s: None): # Skip complex headers
         pdf_bytes = generate_pdf_report(report, scenario)
-    
+
     # Most PDF generators for python don't compress by default in memory unless told.
     # Let's try and if it fails, I'll use a more robust way.
     assert len(pdf_bytes) > 0
