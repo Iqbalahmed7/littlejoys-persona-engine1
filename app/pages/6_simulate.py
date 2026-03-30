@@ -51,13 +51,25 @@ demo_mode = st.sidebar.toggle(
     value=st.session_state.get("demo_mode", False),
     key="demo_mode",
 )
-st.sidebar.caption("Phase C: Simulate")
+st.sidebar.caption("1️⃣ Personas — Explore synthetic households")
+st.sidebar.caption("2️⃣ Research — Run scenario research")
+st.sidebar.caption("3️⃣ Results — View research results")
+st.sidebar.caption("4️⃣ Diagnose — Phase A problem decomposition")
+st.sidebar.caption("5️⃣ Simulate — Phase C intervention testing")
+st.sidebar.caption("6️⃣ Interviews — Deep dive conversations")
+st.sidebar.caption("7️⃣ Comparison — Compare two scenarios")
 
 if demo_mode:
     # Keep consistent with other pages: deterministic demo.
     random.seed(DEFAULT_SEED)
 
 st.header("Phase C — Simulate")
+
+st.page_link(
+    "pages/2_diagnose.py",
+    label="← Back to Diagnose",
+    icon="🔍",
+)
 
 pop: Population = st.session_state.population
 phase_a_insights: dict[str, Any] = st.session_state["phase_a_insights"]
@@ -303,3 +315,50 @@ if "phase_c_run_result" in st.session_state:
         f"Simulation completed in {run_result.duration_seconds:.1f}s "
         f"across {len(run_result.results)} interventions"
     )
+
+    st.divider()
+    sim_export_cols = st.columns(2)
+    with sim_export_cols[0]:
+        rows = format_quadrant_table(analysis)
+        sim_df = pd.DataFrame(rows)
+        st.download_button(
+            "⬇️ Export Results (CSV)",
+            data=sim_df.to_csv(index=False),
+            file_name=f"{scenario_id}_phase_c_results.csv",
+            mime="text/csv",
+            key="phase_c_export_csv",
+        )
+    with sim_export_cols[1]:
+        import json
+
+        sim_json = json.dumps(
+            {
+                "scenario_id": analysis.scenario_id,
+                "baseline_adoption_rate": analysis.baseline_adoption_rate,
+                "baseline_active_rate": analysis.baseline_active_rate,
+                "top_recommendation": {
+                    "name": analysis.top_recommendation.intervention_name,
+                    "adoption_lift_pct": analysis.top_recommendation.adoption_lift_pct,
+                    "quadrant": analysis.top_recommendation.quadrant_key,
+                },
+                "quadrant_summaries": analysis.quadrant_summaries,
+                "interventions": rows,
+            },
+            indent=2,
+        )
+        st.download_button(
+            "⬇️ Export Results (JSON)",
+            data=sim_json,
+            file_name=f"{scenario_id}_phase_c_results.json",
+            mime="application/json",
+            key="phase_c_export_json",
+        )
+
+    st.divider()
+    nav_cols = st.columns(3)
+    with nav_cols[0]:
+        st.page_link("pages/2_diagnose.py", label="← Diagnose", icon="🔍")
+    with nav_cols[1]:
+        st.page_link("pages/3_results.py", label="📊 Research Results")
+    with nav_cols[2]:
+        st.page_link("pages/1_personas.py", label="👥 Personas")

@@ -353,9 +353,17 @@ def _consolidate(_result_json: str, _population_id: str) -> dict[str, Any]:
 
 
 if hasattr(st.sidebar, "toggle"):
-    demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+    demo_mode = st.sidebar.toggle(
+        "Demo Mode",
+        value=st.session_state.get("demo_mode", False),
+        key="demo_mode",
+    )
 else:
-    demo_mode = st.toggle("Demo Mode", value=False, key="demo_mode")
+    demo_mode = st.toggle(
+        "Demo Mode",
+        value=st.session_state.get("demo_mode", False),
+        key="demo_mode",
+    )
 
 
 def _sidebar_caption(text: str) -> None:
@@ -367,11 +375,13 @@ def _sidebar_caption(text: str) -> None:
 
 if demo_mode:
     _sidebar_caption("🎯 Demo Mode Active")
-_sidebar_caption("1️⃣ Home — Generate your population")
-_sidebar_caption("2️⃣ Personas — Explore your synthetic households")
-_sidebar_caption("3️⃣ Results — Run a scenario simulation")
-_sidebar_caption("4️⃣ Deep Dive — Interview individual personas")
-_sidebar_caption("5️⃣ Comparison — Compare two scenarios")
+_sidebar_caption("1️⃣ Personas — Explore synthetic households")
+_sidebar_caption("2️⃣ Research — Run scenario research")
+_sidebar_caption("3️⃣ Results — View research results")
+_sidebar_caption("4️⃣ Diagnose — Phase A problem decomposition")
+_sidebar_caption("5️⃣ Simulate — Phase C intervention testing")
+_sidebar_caption("6️⃣ Interviews — Deep dive conversations")
+_sidebar_caption("7️⃣ Comparison — Compare two scenarios")
 
 if demo_mode:
     from app.utils.demo_mode import ensure_demo_data
@@ -386,6 +396,15 @@ st.header("Research Results")
 st.caption(
     "Quantitative findings, qualitative themes, and strategic alternatives from your research run."
 )
+
+if "phase_a_insights" in st.session_state:
+    with st.container(border=True):
+        st.caption("Phase A diagnosis is available")
+        st.page_link(
+            "pages/6_simulate.py",
+            label="View Intervention Simulations →",
+            icon="🧪",
+        )
 
 if "research_result" in st.session_state:
     result = st.session_state["research_result"]
@@ -490,7 +509,7 @@ if "research_result" in st.session_state:
         st.subheader(f"{report.scenario_name}: {report.question_title}")
         st.caption(report.question_description)
 
-        if report.mock_mode:
+        if report.mock_mode or st.session_state.get("demo_mode", False):
             st.info(
                 "Demo mode: Results are illustrative. Connect an API key for live LLM-powered insights.",
             )

@@ -75,4 +75,48 @@ def ensure_demo_data() -> None:
             st.session_state["research_result"] = result
             st.session_state.scenario_results[DEMO_SCENARIO_ID] = result.primary_funnel
 
+        # Phase A/C demo data
+        if question is not None:
+            from src.analysis.cohort_classifier import classify_population
+            from src.analysis.intervention_engine import (
+                InterventionInput,
+                generate_intervention_quadrant,
+            )
+            from src.analysis.problem_decomposition import decompose_problem
+            from src.analysis.quadrant_analysis import analyze_quadrant_results
+            from src.simulation.quadrant_runner import run_intervention_quadrant
+
+            # Phase A
+            cohorts = classify_population(pop, scenario, seed=DEMO_SEED)
+            decomp = decompose_problem(scenario, question, pop, cohorts)
+
+            st.session_state["phase_a_insights"] = {
+                "scenario_id": DEMO_SCENARIO_ID,
+                "cohort": decomp.cohorts[0].name if decomp.cohorts else "Current User",
+                "sub_problems": [sp.title for sp in decomp.sub_problems],
+                "root_causes": [
+                    {"root": sp.title, "pct": 100.0 / max(1, len(decomp.sub_problems)), "count": 5}
+                    for sp in decomp.sub_problems[:3]
+                ],
+                "summary": "\n".join(
+                    f"- {sp.title}: {100.0 / max(1, len(decomp.sub_problems)):.0f}%"
+                    for sp in decomp.sub_problems[:3]
+                ),
+            }
+
+            # Phase A quadrant
+            decomp_input = InterventionInput(problem_id=question.id)
+            quadrant = generate_intervention_quadrant(decomp_input, scenario)
+            st.session_state["phase_a_quadrant"] = quadrant
+
+            # Phase C — run the quadrant
+            run_result = run_intervention_quadrant(quadrant, pop, scenario, seed=DEMO_SEED)
+            analysis = analyze_quadrant_results(run_result, quadrant)
+            st.session_state["phase_c_run_result"] = run_result
+            st.session_state["phase_c_analysis"] = analysis
+
+            # Cohort classification cache
+            _cohort_key = f"phase_a_cohorts_{DEMO_SCENARIO_ID}"
+            st.session_state[_cohort_key] = cohorts
+
     st.session_state.demo_preloaded = True

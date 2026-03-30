@@ -162,17 +162,21 @@ def _cohort_size(pop: Any, expression: str) -> list[Any]:
 st.header("Phase A — Diagnose")
 st.caption("Problem decomposition, cohort deep dive, and interview-based root-cause ranking.")
 
-demo_mode = _sidebar_toggle("Demo Mode", key="demo_mode", value=False)
+demo_mode = _sidebar_toggle(
+    "Demo Mode",
+    key="demo_mode",
+    value=st.session_state.get("demo_mode", False),
+)
 if demo_mode:
     _sidebar_caption("🎯 Demo Mode Active")
 
-_sidebar_caption("1️⃣ Home — Generate your population")
-_sidebar_caption("2️⃣ Personas — Explore your synthetic households")
-_sidebar_caption("3️⃣ Results — Run a scenario simulation")
-_sidebar_caption("4️⃣ Deep Dive — Interview individual personas")
-_sidebar_caption("5️⃣ Comparison — Compare two scenarios")
-
-st.sidebar.caption("Phase A: Diagnose")
+_sidebar_caption("1️⃣ Personas — Explore synthetic households")
+_sidebar_caption("2️⃣ Research — Run scenario research")
+_sidebar_caption("3️⃣ Results — View research results")
+_sidebar_caption("4️⃣ Diagnose — Phase A problem decomposition")
+_sidebar_caption("5️⃣ Simulate — Phase C intervention testing")
+_sidebar_caption("6️⃣ Interviews — Deep dive conversations")
+_sidebar_caption("7️⃣ Comparison — Compare two scenarios")
 
 if demo_mode:
     from app.utils.demo_mode import ensure_demo_data
@@ -337,6 +341,58 @@ if "phase_a_diagnosis" in st.session_state:
     summary = "\n".join(summary_lines)
     st.markdown(summary)
 
+    st.divider()
+    export_cols = st.columns(2)
+    with export_cols[0]:
+        import json
+
+        insights_json = json.dumps(
+            {
+                "scenario_id": scenario_id,
+                "cohort": selected_cohort.name,
+                "problem_title": decomp.problem_title,
+                "sub_problems": [
+                    {
+                        "title": sp.title,
+                        "description": sp.description,
+                        "probe_focus": sp.probe_focus,
+                        "cohort_id": sp.cohort_id,
+                    }
+                    for sp in decomp.sub_problems
+                ],
+                "root_causes": root_causes,
+                "summary": summary,
+            },
+            indent=2,
+        )
+        st.download_button(
+            "⬇️ Export Diagnosis (JSON)",
+            data=insights_json,
+            file_name=f"{scenario_id}_phase_a_diagnosis.json",
+            mime="application/json",
+            key="phase_a_export_json",
+        )
+    with export_cols[1]:
+        cohort_df_data = []
+        for cohort in decomp.cohorts:
+            cohort_df_data.append(
+                {
+                    "Cohort": cohort.name,
+                    "Size": cohort.size,
+                    "Objective": cohort.research_objective,
+                }
+            )
+        import pandas as pd
+
+        cohort_df = pd.DataFrame(cohort_df_data)
+        st.download_button(
+            "⬇️ Export Cohorts (CSV)",
+            data=cohort_df.to_csv(index=False),
+            file_name=f"{scenario_id}_cohorts.csv",
+            mime="text/csv",
+            key="phase_a_export_csv",
+        )
+
     if st.button("Proceed to Interventions →", type="primary", key="phase_a_proceed"):
         from src.analysis.intervention_engine import (
             InterventionInput,
@@ -354,4 +410,5 @@ if "phase_a_diagnosis" in st.session_state:
             "summary": summary,
         }
         st.session_state["phase_a_quadrant"] = quadrant
-        st.success("Phase A insights + intervention quadrant saved. Go to Simulate \u2192")
+        st.success("Phase A insights + intervention quadrant saved.")
+        st.switch_page("pages/6_simulate.py")

@@ -28,6 +28,7 @@ def mock_llm_client():
     return LLMClient(config)
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize("scenario_id", SCENARIO_IDS)
 def test_scenario_full_pipeline(scenario_id, smoke_population, mock_llm_client):
     """

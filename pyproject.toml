@@ -47,7 +47,7 @@ packages = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [
-    "integration: marks tests that require external services (LLM API, web scraping)",
+    "integration: marks tests that are slow, require external services, or run full simulations",
 ]
 asyncio_mode = "auto"
 

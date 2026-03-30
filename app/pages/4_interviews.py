@@ -20,14 +20,20 @@ from src.utils.display import persona_display_name
 st.header("Interview Deep-Dive")
 st.caption("Explore the qualitative evidence from deep persona interviews.")
 
-demo_mode = st.sidebar.toggle("Demo Mode", key="demo_mode")
+demo_mode = st.sidebar.toggle(
+    "Demo Mode",
+    value=st.session_state.get("demo_mode", False),
+    key="demo_mode",
+)
 if demo_mode:
     st.sidebar.caption("🎯 Demo Mode Active")
-st.sidebar.caption("1️⃣ Home — Generate your population")
-st.sidebar.caption("2️⃣ Personas — Explore your synthetic households")
-st.sidebar.caption("3️⃣ Results — Run a scenario simulation")
-st.sidebar.caption("4️⃣ Deep Dive — Interview individual personas")
-st.sidebar.caption("5️⃣ Comparison — Compare two scenarios")
+st.sidebar.caption("1️⃣ Personas — Explore synthetic households")
+st.sidebar.caption("2️⃣ Research — Run scenario research")
+st.sidebar.caption("3️⃣ Results — View research results")
+st.sidebar.caption("4️⃣ Diagnose — Phase A problem decomposition")
+st.sidebar.caption("5️⃣ Simulate — Phase C intervention testing")
+st.sidebar.caption("6️⃣ Interviews — Deep dive conversations")
+st.sidebar.caption("7️⃣ Comparison — Compare two scenarios")
 
 if demo_mode:
     ensure_demo_data()
