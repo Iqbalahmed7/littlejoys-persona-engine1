@@ -47,11 +47,7 @@ if "phase_a_insights" not in st.session_state:
     st.info("Run Phase A Diagnose first")
     st.stop()
 
-demo_mode = st.sidebar.toggle(
-    "Demo Mode",
-    value=st.session_state.get("demo_mode", False),
-    key="demo_mode",
-)
+demo_mode = False
 st.sidebar.caption("1️⃣ Personas — Explore synthetic households")
 st.sidebar.caption("2️⃣ Research — Run scenario research")
 st.sidebar.caption("3️⃣ Results — View research results")

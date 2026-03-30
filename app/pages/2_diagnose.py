@@ -162,13 +162,7 @@ def _cohort_size(pop: Any, expression: str) -> list[Any]:
 st.header("Phase A — Diagnose")
 st.caption("Problem decomposition, cohort deep dive, and interview-based root-cause ranking.")
 
-demo_mode = _sidebar_toggle(
-    "Demo Mode",
-    key="demo_mode",
-    value=st.session_state.get("demo_mode", False),
-)
-if demo_mode:
-    _sidebar_caption("🎯 Demo Mode Active")
+demo_mode = False
 
 _sidebar_caption("1️⃣ Personas — Explore synthetic households")
 _sidebar_caption("2️⃣ Research — Run scenario research")

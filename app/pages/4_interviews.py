@@ -20,13 +20,7 @@ from src.utils.display import city_tier_label, interview_reason_label, persona_d
 st.header("Interview Deep-Dive")
 st.caption("Explore the qualitative evidence from deep persona interviews.")
 
-demo_mode = st.sidebar.toggle(
-    "Demo Mode",
-    value=st.session_state.get("demo_mode", False),
-    key="demo_mode",
-)
-if demo_mode:
-    st.sidebar.caption("🎯 Demo Mode Active")
+demo_mode = False
 st.sidebar.caption("1️⃣ Personas — Explore synthetic households")
 st.sidebar.caption("2️⃣ Research — Run scenario research")
 st.sidebar.caption("3️⃣ Results — View research results")

@@ -352,18 +352,7 @@ def _consolidate(_result_json: str, _population_id: str) -> dict[str, Any]:
     return report.model_dump(mode="json")
 
 
-if hasattr(st.sidebar, "toggle"):
-    demo_mode = st.sidebar.toggle(
-        "Demo Mode",
-        value=st.session_state.get("demo_mode", False),
-        key="demo_mode",
-    )
-else:
-    demo_mode = st.toggle(
-        "Demo Mode",
-        value=st.session_state.get("demo_mode", False),
-        key="demo_mode",
-    )
+demo_mode = False
 
 
 def _sidebar_caption(text: str) -> None:
@@ -373,8 +362,6 @@ def _sidebar_caption(text: str) -> None:
         st.caption(text)
 
 
-if demo_mode:
-    _sidebar_caption("🎯 Demo Mode Active")
 _sidebar_caption("1️⃣ Personas — Explore synthetic households")
 _sidebar_caption("2️⃣ Research — Run scenario research")
 _sidebar_caption("3️⃣ Results — View research results")

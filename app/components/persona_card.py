@@ -10,7 +10,6 @@ from src.utils.display import (
     city_tier_label,
     display_name,
     outcome_label,
-    persona_display_name,
     qualitative_level,
     rejection_reason_label,
     stage_label,
@@ -25,7 +24,7 @@ def render_persona_card(persona: Persona, decision_result: dict[str, Any] | None
 
     city = persona.demographics.city_name
     tier = city_tier_label(persona.demographics.city_tier)
-    header = f"{persona_display_name(persona)} · {persona.id} — {city} ({tier})"
+    header = f"{city} · Parent's Age {persona.demographics.parent_age} · {persona.id} ({tier})"
 
     with st.container(border=True):
         st.subheader(header)
