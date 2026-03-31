@@ -510,6 +510,108 @@ if selected_cohort:
         render_system_voice(narratives.get(selected_cohort, ""))
 
 st.markdown("---")
+
+## 🎯 Segment Builder
+st.caption("Slice the population by demographics and see how cohort distribution shifts.")
+
+col_f1, col_f2, col_f3, col_f4 = st.columns(4)
+with col_f1:
+    city_filter = st.multiselect("City Tier", ["Metro", "Tier 2 City", "Emerging City"])
+with col_f2:
+    income_filter = st.select_slider("Household Income (₹L/yr)",
+                                      options=[3, 5, 8, 12, 18, 25, 40],
+                                      value=(3, 40))
+with col_f3:
+    age_filter = st.select_slider("Child Age Range",
+                                   options=[0,1,2,3,4,5,6,7,8,9,10,11,12,13],
+                                   value=(0, 13))
+with col_f4:
+    health_filter = st.multiselect("Health Consciousness", ["Low", "Medium", "High"])
+
+if st.button("Apply Segment"):
+    filtered_personas = []
+    for p in pop.personas:
+        flat = p.to_flat_dict()
+        match_city = not city_filter or flat.get("city_tier") in city_filter
+        match_income = income_filter[0] <= flat.get("household_income_lpa", 0) <= income_filter[1]
+        # Persona matches age filter if ANY child falls within the range;
+        # childless personas pass through if the full default range is selected.
+        match_age = (not p.children) or any(
+            age_filter[0] <= c.age_years <= age_filter[1] for c in p.children
+        )
+        match_health = not health_filter or flat.get("health_consciousness") in health_filter
+        if match_city and match_income and match_age and match_health:
+            filtered_personas.append(p)
+
+    n_filtered = len(filtered_personas)
+    pct_filtered = round(n_filtered / len(pop.personas) * 100)
+    st.metric("Segment Size", f"{n_filtered} personas ({pct_filtered}%)")
+
+    st.session_state["segment_persona_ids"] = [p.id for p in filtered_personas]
+
+    if n_filtered == 0:
+        st.warning("No personas match this combination. Try widening the filters.")
+    else:
+        # Build segment cohort summary by slicing existing classifications —
+        # avoids re-running classify_population on an incomplete Population object.
+        seg_ids = {p.id for p in filtered_personas}
+        seg_summary = {
+            cid: len([pid for pid in pids if pid in seg_ids])
+            for cid, pids in cohorts.cohorts.items()
+        }
+        seg_total = sum(seg_summary.values()) or 1
+        full_total = sum(cohorts.summary.values()) or 1
+
+        # Side-by-side cohort comparison
+        col_pop, col_seg = st.columns(2)
+        with col_pop:
+            st.caption(f"📊 Full population ({full_total})")
+            cols_pop = st.columns(5)
+            for i, cid in enumerate(["never_aware", "aware_not_tried", "first_time_buyer", "current_user", "lapsed_user"]):
+                count = cohorts.summary.get(cid, 0)
+                pct = round(count / full_total * 100)
+                with cols_pop[i]:
+                    st.metric(cohort_display[cid][0], f"{count} ({pct}%)", delta=None)
+
+        with col_seg:
+            st.caption(f"🎯 Your segment ({n_filtered})")
+            cols_seg = st.columns(5)
+            for i, cid in enumerate(["never_aware", "aware_not_tried", "first_time_buyer", "current_user", "lapsed_user"]):
+                seg_count = seg_summary.get(cid, 0)
+                seg_pct = round(seg_count / seg_total * 100)
+                with cols_seg[i]:
+                    st.metric(cohort_display[cid][0], f"{seg_count} ({seg_pct}%)", delta=None)
+
+        # Comparative insight — find the metric with the largest deviation
+        full_tried = sum(cohorts.summary.get(c, 0) for c in ["first_time_buyer", "current_user", "lapsed_user"])
+        seg_tried = sum(seg_summary.get(c, 0) for c in ["first_time_buyer", "current_user", "lapsed_user"])
+
+        _metrics = {
+            "lapse rate":       (
+                seg_summary.get("lapsed_user", 0) / max(1, seg_tried),
+                cohorts.summary.get("lapsed_user", 0) / max(1, full_tried),
+            ),
+            "adoption rate":    (
+                seg_tried / seg_total,
+                full_tried / full_total,
+            ),
+            "never-aware rate": (
+                seg_summary.get("never_aware", 0) / seg_total,
+                cohorts.summary.get("never_aware", 0) / full_total,
+            ),
+        }
+        top_label = max(_metrics, key=lambda k: abs(_metrics[k][0] - _metrics[k][1]))
+        seg_val, full_val = _metrics[top_label]
+        diff_val = seg_val - full_val
+        if abs(diff_val) > 0.1:
+            direction = "higher" if diff_val > 0 else "lower"
+            st.info(
+                f"💡 This segment has a {direction} {top_label} "
+                f"({seg_val:.0%} vs {full_val:.0%} in the full population).",
+                icon="💡",
+            )
+
+st.markdown("---")
 st.success(
     "✅ Phase 1 complete. "
     "Proceed to **Phase 2 — Decomposition & Probing** to investigate why these outcomes occurred."
