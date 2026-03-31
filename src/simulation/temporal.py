@@ -198,6 +198,19 @@ def _simulate_temporal(
         for pid, delta in wom_deltas.items():
             states[pid].awareness_boost = min(1.0, states[pid].awareness_boost + min(0.4, delta))
 
+        # Referral program boost — additional WoM from incentivized sharing
+        referral_boost = scenario.marketing.referral_program_boost
+        if referral_boost > 0 and active_ids:
+            referral_deltas = propagate_wom(
+                population,
+                active_ids,
+                month,
+                transmission_rate=referral_boost,
+                seed=seed ^ 0xBEEF,
+            )
+            for pid, delta in referral_deltas.items():
+                states[pid].awareness_boost = min(1.0, states[pid].awareness_boost + min(0.3, delta))
+
         active_at_start = {pid for pid, st in states.items() if st.active}
         adopted_this_month: set[str] = set()
         churned_this_month: set[str] = set()

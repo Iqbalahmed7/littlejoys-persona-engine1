@@ -21,8 +21,8 @@ from app.utils.phase_state import phase_complete, render_phase_sidebar
 from src.utils.display import city_tier_label
 from src.analysis.cohort_classifier import classify_population
 from src.analysis.problem_templates import PROBLEM_TEMPLATES
-from src.constants import DEFAULT_SEED
-from src.decision.scenarios import get_scenario
+from src.constants import DEFAULT_SEED, GTM_CHANNELS, GTM_PRESETS
+from src.decision.scenarios import MarketingConfig, get_scenario
 from src.generation.population import Population
 from src.simulation.temporal import run_temporal_simulation
 
@@ -122,14 +122,18 @@ def _post_sim_narrative(problem_id: str, temporal_result: Any, cohorts: Any) -> 
 
 def _run_simulation_with_narrative(pop: Population, scenario_id: str) -> tuple[Any, Any]:
     """Run simulation first, then narrate checkpoints from real monthly outputs."""
-    scenario = get_scenario(scenario_id)
+    # Use GTM-configured scenario if available, else fall back to defaults
+    scenario = st.session_state.get("gtm_scenario_override") or get_scenario(scenario_id)
+    sim_months = scenario.months
     n = len(pop.personas)
 
-    with st.status("Running 12-month baseline simulation...", expanded=True) as status:
+    with st.status(f"Running {sim_months}-month baseline simulation...", expanded=True) as status:
+        _ch_names = ", ".join(scenario.marketing.marketing_channels) if scenario.marketing.channel_mix else "default channels"
         st.write(
-            f"⚙️ Introducing product to {n} personas via their most likely discovery channels..."
+            f"⚙️ Introducing product to {n} personas via {_ch_names} "
+            f"(awareness budget: {scenario.marketing.awareness_budget:.0%})..."
         )
-        temporal_result = run_temporal_simulation(pop, scenario, months=12, seed=DEFAULT_SEED)
+        temporal_result = run_temporal_simulation(pop, scenario, months=sim_months, seed=DEFAULT_SEED)
 
         st.write("⚙️ Classifying behavioral cohorts...")
         cohorts = classify_population(pop, scenario, seed=DEFAULT_SEED)
@@ -182,7 +186,7 @@ def _run_simulation_with_narrative(pop: Population, scenario_id: str) -> tuple[A
                         )
 
         status.update(
-            label=f"✅ Simulation complete — {n} personas × 365 days",
+            label=f"✅ Simulation complete — {n} personas × {sim_months} months",
             state="complete",
             expanded=False,
         )
@@ -234,10 +238,217 @@ template = PROBLEM_TEMPLATES.get(selected_problem, {})
 render_system_voice(
     f"To investigate <b>{meta['label']}</b>, I need to simulate how {len(pop.personas)} "
     f"households interact with this product over 12 months. "
-    f"This will show me who becomes aware, who buys, who repeats, who lapses — and the "
-    f"decision variables that drove each outcome. "
-    f"From these trajectories I'll form behavioral cohorts and identify the signals worth investigating."
+    f"Configure your go-to-market strategy below — marketing channels, awareness campaigns, "
+    f"and referral programs — then run the simulation to see adoption trajectories."
 )
+
+# ── GTM Strategy Panel ───────────────────────────────────────────────────────
+_base_scenario = get_scenario(selected_problem)
+
+with st.expander("**GTM Strategy** — Configure marketing mix & awareness campaigns", expanded=True):
+    # Preset selector
+    preset_names = ["Custom"] + list(GTM_PRESETS.keys())
+    selected_preset = st.selectbox(
+        "Quick Preset",
+        preset_names,
+        index=0,
+        key="gtm_preset",
+        help="Select a go-to-market strategy template or customize manually",
+    )
+
+    # Load preset values or defaults from scenario
+    if selected_preset != "Custom" and selected_preset in GTM_PRESETS:
+        _preset = GTM_PRESETS[selected_preset]
+        st.caption(f"_{_preset['description']}_")
+        _default_budget = _preset["awareness_budget"]
+        _default_channels = _preset["channel_mix"]
+        _default_campaigns = _preset["campaigns"]
+        _default_referral = _preset["referral_program_boost"]
+        _default_discount = _preset["discount_available"]
+    else:
+        _default_budget = _base_scenario.marketing.awareness_budget
+        _default_channels = _base_scenario.marketing.channel_mix
+        _default_campaigns = {
+            "influencer_campaign": _base_scenario.marketing.influencer_campaign,
+            "pediatrician_endorsement": _base_scenario.marketing.pediatrician_endorsement,
+            "school_partnership": _base_scenario.marketing.school_partnership,
+            "sports_club_partnership": _base_scenario.marketing.sports_club_partnership,
+        }
+        _default_referral = _base_scenario.marketing.referral_program_boost
+        _default_discount = _base_scenario.marketing.discount_available
+
+    st.markdown("---")
+
+    # Row 1: Duration + Awareness Budget
+    _dur_col, _budget_col = st.columns(2)
+    with _dur_col:
+        sim_months = st.select_slider(
+            "Simulation Duration",
+            options=[3, 6, 12],
+            value=min(_base_scenario.months, 12),
+            key="gtm_months",
+            help="How many months to simulate the product launch",
+        )
+    with _budget_col:
+        awareness_budget = st.slider(
+            "Awareness Budget",
+            min_value=0.0,
+            max_value=1.0,
+            value=float(_default_budget),
+            step=0.05,
+            key="gtm_awareness_budget",
+            help="Overall marketing spend intensity (0 = no marketing, 1 = maximum push)",
+        )
+
+    st.markdown("---")
+
+    # Row 2: Channel Mix
+    st.markdown("**Marketing Channels** — allocate your spend across channels")
+    st.caption("Select channels and set relative weights. They will be auto-normalized to 100%.")
+
+    # Channel selection
+    available_channels = GTM_CHANNELS
+    _channel_labels = {
+        "instagram": "Instagram / Reels",
+        "youtube": "YouTube (reviews & ads)",
+        "whatsapp": "WhatsApp (mom groups)",
+        "google_ads": "Google Ads / SEM",
+        "facebook_ads": "Facebook / Meta Ads",
+        "pediatrician": "Pediatrician referrals",
+        "momfluencer": "Momfluencer campaigns",
+        "reddit": "Reddit / Parenting forums",
+        "pharmacy_kiosk": "Pharmacy / Retail kiosks",
+        "school_activation": "School activations",
+        "seo_content": "SEO / Content marketing",
+        "email_marketing": "Email / CRM campaigns",
+    }
+
+    default_selected = list(_default_channels.keys())
+    selected_channels = st.multiselect(
+        "Active Channels",
+        options=available_channels,
+        default=[c for c in default_selected if c in available_channels],
+        format_func=lambda c: _channel_labels.get(c, c.replace("_", " ").title()),
+        key="gtm_channels",
+    )
+
+    # Channel weight sliders
+    channel_weights: dict[str, float] = {}
+    if selected_channels:
+        _ch_cols = st.columns(min(len(selected_channels), 4))
+        for i, ch in enumerate(selected_channels):
+            with _ch_cols[i % len(_ch_cols)]:
+                channel_weights[ch] = st.slider(
+                    _channel_labels.get(ch, ch),
+                    min_value=0.0,
+                    max_value=1.0,
+                    value=float(_default_channels.get(ch, 0.20)),
+                    step=0.05,
+                    key=f"gtm_ch_{ch}",
+                )
+
+        # Normalize and display
+        _total_weight = sum(channel_weights.values())
+        if _total_weight > 0:
+            channel_mix = {k: round(v / _total_weight, 2) for k, v in channel_weights.items()}
+            # Fix rounding to exactly 1.0
+            _diff = round(1.0 - sum(channel_mix.values()), 2)
+            if _diff != 0 and channel_mix:
+                _first_key = next(iter(channel_mix))
+                channel_mix[_first_key] = round(channel_mix[_first_key] + _diff, 2)
+        else:
+            channel_mix = {ch: round(1.0 / len(selected_channels), 2) for ch in selected_channels}
+
+        # Show normalized mix
+        _mix_display = " | ".join(
+            f"{_channel_labels.get(ch, ch).split('/')[0].strip()}: {pct:.0%}"
+            for ch, pct in channel_mix.items()
+        )
+        st.caption(f"Normalized mix: {_mix_display}")
+    else:
+        channel_mix = _base_scenario.marketing.channel_mix
+
+    st.markdown("---")
+
+    # Row 3: Awareness Campaigns
+    st.markdown("**Awareness Campaigns & Partnerships**")
+    _camp_cols = st.columns(4)
+    with _camp_cols[0]:
+        camp_influencer = st.checkbox(
+            "Influencer campaign",
+            value=_default_campaigns.get("influencer_campaign", False),
+            key="gtm_influencer",
+            help="Momfluencers, health bloggers, Instagram/YouTube creators",
+        )
+    with _camp_cols[1]:
+        camp_pediatrician = st.checkbox(
+            "Pediatrician endorsement",
+            value=_default_campaigns.get("pediatrician_endorsement", False),
+            key="gtm_pediatrician",
+            help="Doctor recommendations, clinic sampling, Rx pads",
+        )
+    with _camp_cols[2]:
+        camp_school = st.checkbox(
+            "School partnership",
+            value=_default_campaigns.get("school_partnership", False),
+            key="gtm_school",
+            help="School nutrition programs, PTA events, lunchbox demos",
+        )
+    with _camp_cols[3]:
+        camp_sports = st.checkbox(
+            "Sports club partnership",
+            value=_default_campaigns.get("sports_club_partnership", False),
+            key="gtm_sports",
+            help="Youth sports academies, fitness camps, coaching tie-ups",
+        )
+
+    st.markdown("---")
+
+    # Row 4: WoM & Referrals + Launch Discount
+    _wom_col, _ref_col, _disc_col = st.columns(3)
+    with _wom_col:
+        st.caption("**Word-of-Mouth**")
+        st.caption("Organic WoM via WhatsApp groups, parent forums, playground conversations")
+    with _ref_col:
+        referral_boost = st.slider(
+            "Referral Program Boost",
+            min_value=0.0,
+            max_value=0.30,
+            value=float(_default_referral),
+            step=0.01,
+            key="gtm_referral",
+            help="Share-and-earn, referral codes, WhatsApp forwarding incentives",
+        )
+    with _disc_col:
+        launch_discount = st.slider(
+            "Launch Discount",
+            min_value=0.0,
+            max_value=0.30,
+            value=float(_default_discount),
+            step=0.01,
+            key="gtm_discount",
+            help="Introductory offer, first-purchase discount, trial packs",
+        )
+
+# Build the GTM-configured scenario override
+_gtm_marketing = _base_scenario.marketing.model_copy(update={
+    "awareness_budget": awareness_budget,
+    "channel_mix": channel_mix,
+    "influencer_campaign": camp_influencer,
+    "pediatrician_endorsement": camp_pediatrician,
+    "school_partnership": camp_school,
+    "sports_club_partnership": camp_sports,
+    "referral_program_boost": referral_boost,
+    "discount_available": launch_discount,
+})
+_gtm_scenario = _base_scenario.model_copy(update={
+    "marketing": _gtm_marketing,
+    "mode": "temporal",
+    "months": sim_months,
+})
+
+# Store for use by simulation
+st.session_state["gtm_scenario_override"] = _gtm_scenario
 
 # Check if simulation already done for this problem
 already_run = (
@@ -247,7 +458,7 @@ already_run = (
 
 if already_run:
     st.success("✅ Baseline simulation already complete for this problem.")
-    if st.button("Re-run simulation", type="secondary"):
+    if st.button("Re-run simulation with new GTM strategy", type="secondary"):
         for k in ["baseline_cohorts", "baseline_temporal"]:
             st.session_state.pop(k, None)
         st.rerun()
@@ -440,7 +651,8 @@ lapse_rate = round(_lapsed / _tried * 100, 1) if _tried > 0 else 0.0
 m1.metric("Overall Adoption", f"{adoption_pct}%", help="% of population who purchased at least once")
 m2.metric("Active Repeat Buyers", f"{active_pct}%", help="% still buying at end of simulation")
 m3.metric("Lapse Rate", f"{lapse_rate}%", help="% of buyers who did not remain active")
-m4.metric("Simulation Months", "12", help="Day-level simulation across 365 days")
+_sim_months = getattr(temporal_result, "months", 12)
+m4.metric("Simulation Months", str(_sim_months), help=f"Temporal simulation across {_sim_months} months")
 
 st.markdown("---")
 

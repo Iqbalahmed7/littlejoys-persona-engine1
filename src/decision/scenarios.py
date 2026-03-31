@@ -85,6 +85,7 @@ class MarketingConfig(BaseModel):
     awareness_level: UnitInterval = 0.3
     social_buzz: UnitInterval = 0.3
     discount_available: UnitInterval = 0.0
+    referral_program_boost: UnitInterval = 0.0
 
     @model_validator(mode="after")
     def _validate_channel_mix(self) -> MarketingConfig:
@@ -290,10 +291,16 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
                 addresses_concerns=["focus_issues", "low_energy", "low_immunity"],
             ),
             marketing=MarketingConfig(
-                awareness_budget=0.25,
-                channel_mix={"instagram": 0.40, "youtube": 0.30, "whatsapp": 0.30},
+                awareness_budget=0.45,
+                channel_mix={
+                    "instagram": 0.30,
+                    "youtube": 0.20,
+                    "whatsapp": 0.20,
+                    "pediatrician": 0.30,
+                },
                 trust_signals=["imported_ingredients", "pediatrician_recommended"],
                 influencer_campaign=True,
+                pediatrician_endorsement=True,
                 perceived_quality=0.60,
                 trust_signal=0.50,
                 expert_endorsement=0.30,
@@ -305,7 +312,14 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
             ),
             target_age_range=(4, 12),
             lj_pass_available=False,
-            mode=SCENARIO_MODE_STATIC,
+            mode=SCENARIO_MODE_TEMPORAL,
+            months=6,
+            thresholds={
+                "need_recognition": DEFAULT_NEED_RECOGNITION_THRESHOLD,
+                "awareness": DEFAULT_AWARENESS_THRESHOLD,
+                "consideration": DEFAULT_CONSIDERATION_THRESHOLD,
+                "purchase": DEFAULT_PURCHASE_THRESHOLD,
+            },
         ),
         "protein_mix": ScenarioConfig(
             id="protein_mix",
@@ -331,11 +345,12 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
                 addresses_concerns=["underweight", "picky_eater", "low_energy"],
             ),
             marketing=MarketingConfig(
-                awareness_budget=0.30,
+                awareness_budget=0.40,
                 channel_mix={
-                    "instagram": 0.35,
-                    "youtube": 0.40,
-                    "whatsapp": 0.25,
+                    "instagram": 0.30,
+                    "youtube": 0.35,
+                    "whatsapp": 0.20,
+                    "pediatrician": 0.15,
                 },
                 trust_signals=["sports_nutrition_certified", "no_artificial_sweeteners"],
                 sports_club_partnership=True,
@@ -350,7 +365,14 @@ def _scenario_catalog() -> dict[str, ScenarioConfig]:
             ),
             target_age_range=(6, 14),
             lj_pass_available=False,
-            mode=SCENARIO_MODE_STATIC,
+            mode=SCENARIO_MODE_TEMPORAL,
+            months=6,
+            thresholds={
+                "need_recognition": DEFAULT_NEED_RECOGNITION_THRESHOLD,
+                "awareness": DEFAULT_AWARENESS_THRESHOLD,
+                "consideration": DEFAULT_CONSIDERATION_THRESHOLD,
+                "purchase": DEFAULT_PURCHASE_THRESHOLD,
+            },
         ),
     }
 

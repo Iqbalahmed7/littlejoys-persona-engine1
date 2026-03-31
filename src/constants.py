@@ -191,6 +191,57 @@ MAX_SIMULATION_MONTHS = 24
 DEFAULT_SIMULATION_MONTHS = 12
 WOM_TRANSMISSION_DECAY = 0.85
 
+# --- GTM Presets (Sprint 27) ---
+GTM_PRESETS: dict[str, dict] = {
+    "Organic Launch": {
+        "awareness_budget": 0.35,
+        "channel_mix": {"instagram": 0.25, "youtube": 0.15, "whatsapp": 0.40, "pediatrician": 0.10, "momfluencer": 0.10},
+        "campaigns": {"influencer_campaign": True, "pediatrician_endorsement": False, "school_partnership": False, "sports_club_partnership": False},
+        "referral_program_boost": 0.15,
+        "discount_available": 0.05,
+        "description": "Low-budget launch via WhatsApp mom communities, organic referrals, and light influencer seeding",
+    },
+    "Paid Blitz": {
+        "awareness_budget": 0.75,
+        "channel_mix": {"instagram": 0.35, "youtube": 0.25, "google_ads": 0.20, "facebook_ads": 0.15, "whatsapp": 0.05},
+        "campaigns": {"influencer_campaign": True, "pediatrician_endorsement": False, "school_partnership": False, "sports_club_partnership": False},
+        "referral_program_boost": 0.05,
+        "discount_available": 0.15,
+        "description": "Aggressive paid digital push — Instagram/YouTube ads, Google/Facebook retargeting, launch discounts",
+    },
+    "Doctor-Led": {
+        "awareness_budget": 0.50,
+        "channel_mix": {"pediatrician": 0.40, "instagram": 0.15, "youtube": 0.15, "whatsapp": 0.15, "pharmacy_kiosk": 0.15},
+        "campaigns": {"influencer_campaign": False, "pediatrician_endorsement": True, "school_partnership": True, "sports_club_partnership": False},
+        "referral_program_boost": 0.10,
+        "discount_available": 0.05,
+        "description": "Trust-first via pediatrician endorsements, pharmacy kiosks, school partnerships",
+    },
+    "Influencer-Heavy": {
+        "awareness_budget": 0.65,
+        "channel_mix": {"instagram": 0.35, "youtube": 0.25, "momfluencer": 0.20, "whatsapp": 0.10, "reddit": 0.10},
+        "campaigns": {"influencer_campaign": True, "pediatrician_endorsement": False, "school_partnership": False, "sports_club_partnership": False},
+        "referral_program_boost": 0.12,
+        "discount_available": 0.10,
+        "description": "Momfluencer-led awareness — Instagram reels, YouTube reviews, Reddit parenting forums",
+    },
+    "Balanced": {
+        "awareness_budget": 0.55,
+        "channel_mix": {"instagram": 0.20, "youtube": 0.20, "whatsapp": 0.20, "pediatrician": 0.20, "momfluencer": 0.10, "google_ads": 0.10},
+        "campaigns": {"influencer_campaign": True, "pediatrician_endorsement": True, "school_partnership": False, "sports_club_partnership": False},
+        "referral_program_boost": 0.10,
+        "discount_available": 0.07,
+        "description": "Even spread across online, offline, and referral channels",
+    },
+}
+
+# All available marketing channels for the GTM panel
+GTM_CHANNELS = [
+    "instagram", "youtube", "whatsapp", "google_ads", "facebook_ads",
+    "pediatrician", "momfluencer", "reddit", "pharmacy_kiosk", "school_activation",
+    "seo_content", "email_marketing",
+]
+
 # --- Auto-Scenario Exploration (Sprint 10) ---
 EXPLORER_DEFAULT_VARIANT_COUNT = 100
 EXPLORER_MAX_VARIANT_COUNT = 2000
