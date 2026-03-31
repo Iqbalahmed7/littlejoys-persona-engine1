@@ -287,16 +287,42 @@ for iv in interventions:
                     display_val = str(param_val)
                 st.markdown(f"- **{friendly_key}**: {display_val}")
 
-# ── Run All Simulations ───────────────────────────────────────────────────────
+# ── Run Simulations ───────────────────────────────────────────────────────────
 st.divider()
-st.subheader("Run All Simulations")
+st.subheader("Run Simulations")
 st.caption(
-    "The system will test every proposed intervention against your baseline population "
-    "and show a full comparison — adoption lift, cohort impact, complexity, and time to market."
+    "Select one or more interventions to simulate. The system will test each selected "
+    "intervention against your baseline population and show a full comparison — adoption "
+    "lift, cohort impact, and mechanism breakdown."
 )
 
 if interventions:
-    # Pre-simulation population snapshot
+    # ── Intervention selector ──────────────────────────────────────────────────
+    _iv_name_to_obj = {iv.name: iv for iv in interventions}
+    _all_names = list(_iv_name_to_obj.keys())
+
+    _sel_col, _ctrl_col = st.columns([4, 1])
+    with _sel_col:
+        selected_iv_names = st.multiselect(
+            "Select interventions to simulate",
+            options=_all_names,
+            default=_all_names,
+            key="selected_interventions_ms",
+            help="Choose one or more interventions. Deselect any you want to skip.",
+        )
+    with _ctrl_col:
+        st.markdown("<div style='margin-top:28px'>", unsafe_allow_html=True)
+        if st.button("Select All", key="select_all_ivs", use_container_width=True):
+            st.session_state["selected_interventions_ms"] = _all_names
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    selected_ivs = [_iv_name_to_obj[n] for n in selected_iv_names if n in _iv_name_to_obj]
+
+    if not selected_iv_names:
+        st.info("Select at least one intervention above to enable the simulation.")
+
+    # ── Pre-simulation population snapshot ────────────────────────────────────
     st.markdown("**Population going into simulation** *(Phase 1 baseline cohorts)*")
     _cohorts_snap = st.session_state.get("baseline_cohorts")
     if _cohorts_snap is not None:
@@ -319,11 +345,19 @@ if interventions:
             with _pop_snap_cols[_i_s]:
                 st.metric(f"{_cicon_s} {_clabel_s}", _cnt_s, f"{round(_cnt_s / _total_pop_snap * 100)}%")
 
+    _n_sel = len(selected_ivs)
+    _btn_label = (
+        f"▶  Run {_n_sel} Selected Simulation{'s' if _n_sel != 1 else ''}"
+        if selected_ivs
+        else "Select interventions above to run"
+    )
+
     if st.button(
-        f"▶  Run All {len(interventions)} Simulations",
+        _btn_label,
         type="primary",
         use_container_width=True,
-        key="run_all_simulations_btn",
+        key="run_selected_simulations_btn",
+        disabled=not selected_ivs,
     ):
         from src.decision.scenarios import get_scenario as _gs
         from src.simulation.counterfactual import run_counterfactual as _run_cf
@@ -333,8 +367,8 @@ if interventions:
 
         _all_results = []
         _prog = st.progress(0.0, text="Running simulations…")
-        for _si, _iv in enumerate(interventions):
-            _prog.progress(_si / len(interventions), text=f"Simulating: {_iv.name}…")
+        for _si, _iv in enumerate(selected_ivs):
+            _prog.progress(_si / _n_sel, text=f"Simulating: {_iv.name}…")
             try:
                 _r = _run_cf(
                     population=_population,
