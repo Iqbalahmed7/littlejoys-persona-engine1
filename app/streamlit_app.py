@@ -76,8 +76,21 @@ if "population" in st.session_state:
 
     c1, c2, c3 = st.columns(3)
     c1.metric("Total Personas", len(pop.personas))
-    c2.metric("With Narratives", sum(1 for p in pop.personas if p.narrative))
-    c3.metric("Scenarios Available", len(SCENARIO_IDS))
+    _with_narratives = sum(1 for p in pop.personas if p.narrative)
+    # Only show "With Narratives" if more than 0, otherwise show a neutral label.
+    if _with_narratives > 0:
+        c2.metric("With Narratives", _with_narratives)
+    else:
+        c2.metric(
+            "Persona Depth",
+            "Deep Profiles",
+            help="All personas have full demographic and behavioral profiles.",
+        )
+    c3.metric(
+        "Business Problems",
+        4,
+        help="4 pre-configured business problems available to investigate.",
+    )
 
     st.markdown("---")
     st.subheader("Getting Started")
@@ -90,10 +103,10 @@ if "population" in st.session_state:
         "6. **Deep-dive interviews** — Read smart-sampled persona conversations"
     )
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.page_link("pages/1_personas.py", label="Browse Personas →", icon="👥")
-    with col2:
-        st.page_link("pages/2_problem.py", label="Define Problem →", icon="🎯")
-    with col3:
-        st.page_link("pages/3_decompose.py", label="Investigate →", icon="🔬")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.page_link("pages/1_personas.py", label="🔍 Explore Population", icon="👥")
+with col2:
+    st.page_link("pages/2_problem.py", label="💡 State a Problem", icon="🎯")
+with col3:
+    st.page_link("pages/4_finding.py", label="📊 View Core Finding", icon="📋")
