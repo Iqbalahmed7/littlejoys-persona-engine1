@@ -10,9 +10,9 @@ Replaces the old scenario-selection research page with a problem-first flow:
 
 from __future__ import annotations
 
-import time
 from typing import Any
 
+import plotly.graph_objects as go
 import streamlit as st
 
 from app.components.system_voice import render_system_voice
@@ -118,39 +118,69 @@ def _post_sim_narrative(problem_id: str, temporal_result: Any, cohorts: Any) -> 
         )
 
 
-# ── Monthly narrative for dramatic simulation progress ─────────────────────────
-_MONTH_NARRATIVES: dict[int, str] = {
-    1:  "Introducing the product to {n} personas through their most likely discovery channels...",
-    3:  "Month 3: Awareness forming. Early trials beginning. First churn signals appearing...",
-    6:  "Month 6: Trial rate plateauing. First-time buyers either reordering or going quiet...",
-    9:  "Month 9: Habit patterns solidifying or breaking. Word-of-mouth propagating...",
-    12: "Month 12: Final month. Collecting purchase histories and forming behavioral cohorts...",
-}
-
-
 def _run_simulation_with_narrative(pop: Population, scenario_id: str) -> tuple[Any, Any]:
-    """Run temporal simulation + cohort classification with dramatic progress display."""
+    """Run simulation first, then narrate checkpoints from real monthly outputs."""
     scenario = get_scenario(scenario_id)
     n = len(pop.personas)
 
-    temporal_result = None
-    cohorts = None
-
     with st.status("Running 12-month baseline simulation...", expanded=True) as status:
-        for month, template in _MONTH_NARRATIVES.items():
-            msg = template.format(n=n)
-            st.write(f"**Month {month}** — {msg}")
-            time.sleep(0.3)
-
-        # Run the actual simulations
-        st.write("⚙️ Computing temporal trajectories...")
+        st.write(
+            f"⚙️ Introducing product to {n} personas via their most likely discovery channels..."
+        )
         temporal_result = run_temporal_simulation(pop, scenario, months=12, seed=DEFAULT_SEED)
 
         st.write("⚙️ Classifying behavioral cohorts...")
         cohorts = classify_population(pop, scenario, seed=DEFAULT_SEED)
 
+        # Replay narrative from actual monthly data
+        monthly = getattr(temporal_result, "aggregate_monthly", None) or getattr(
+            temporal_result, "monthly_snapshots", None
+        )
+        if not monthly:
+            st.write("Simulation complete — cohorts formed from behavioral trajectories.")
+        else:
+            checkpoints = {3, 6, 9, 12}
+
+            def _month_value(month_data: Any, *keys: str) -> int:
+                if isinstance(month_data, dict):
+                    for key in keys:
+                        if key in month_data:
+                            return int(month_data.get(key, 0) or 0)
+                    return 0
+                for key in keys:
+                    if hasattr(month_data, key):
+                        return int(getattr(month_data, key) or 0)
+                return 0
+
+            for month_data in monthly:
+                m = _month_value(month_data, "month")
+                if m in checkpoints:
+                    cumulative = _month_value(month_data, "cumulative_adopters")
+                    churned = _month_value(month_data, "churned")
+                    active = _month_value(month_data, "active_count", "total_active")
+                    repeat = _month_value(month_data, "repeat_purchasers")
+                    if m == 3:
+                        st.write(
+                            f"Month 3: {cumulative} personas have now tried the product. "
+                            f"First churn signals emerging ({churned} drop-offs so far)."
+                        )
+                    elif m == 6:
+                        st.write(
+                            f"Month 6: Trial rate reaching {round(cumulative / max(n, 1) * 100)}%. "
+                            f"{repeat} personas repeated this month. {active} still active."
+                        )
+                    elif m == 9:
+                        st.write(
+                            f"Month 9: Habit patterns solidifying. {active} active buyers. "
+                            f"{churned} cumulative lapsed."
+                        )
+                    elif m == 12:
+                        st.write(
+                            f"Month 12: Simulation complete. {cumulative} total adopters across {n} personas."
+                        )
+
         status.update(
-            label=f"✅ Simulation complete — {len(pop.personas)} personas × 365 days",
+            label=f"✅ Simulation complete — {n} personas × 365 days",
             state="complete",
             expanded=False,
         )
@@ -264,6 +294,129 @@ for i, (cid, (label, icon, desc)) in enumerate(cohort_display.items()):
         st.caption(desc)
 
 st.markdown("---")
+
+# Cohort distribution chart
+_cohort_order = [
+    "current_user",
+    "lapsed_user",
+    "first_time_buyer",
+    "aware_not_tried",
+    "never_aware",
+]
+_cohort_display = {
+    "current_user": "Current User ⭐",
+    "lapsed_user": "Lapsed User 💤",
+    "first_time_buyer": "First-Time Buyer 🛒",
+    "aware_not_tried": "Aware, Not Tried 👁️",
+    "never_aware": "Never Aware 🔇",
+}
+_cohort_colors = {
+    "current_user": "#2ECC71",
+    "lapsed_user": "#E67E22",
+    "first_time_buyer": "#3498DB",
+    "aware_not_tried": "#9B59B6",
+    "never_aware": "#95A5A6",
+}
+
+bar_y = [_cohort_display[c] for c in _cohort_order]
+bar_x = [cohorts.summary.get(c, 0) for c in _cohort_order]
+bar_colors = [_cohort_colors[c] for c in _cohort_order]
+
+fig_cohorts = go.Figure(
+    go.Bar(
+        x=bar_x,
+        y=bar_y,
+        orientation="h",
+        marker_color=bar_colors,
+        text=[f"{v} personas ({round(v / max(sum(bar_x), 1) * 100)}%)" for v in bar_x],
+        textposition="outside",
+    )
+)
+fig_cohorts.update_layout(
+    title=f"How {sum(bar_x)} households moved through the product journey",
+    xaxis_title="Number of Personas",
+    plot_bgcolor="#FAFAFA",
+    paper_bgcolor="#FFFFFF",
+    margin=dict(l=10, r=80, t=40, b=10),
+    height=280,
+)
+st.plotly_chart(fig_cohorts, use_container_width=True)
+
+# Funnel visualization
+_total = sum(cohorts.summary.values()) or 1
+_aware = _total - cohorts.summary.get("never_aware", 0)
+_tried = (
+    cohorts.summary.get("first_time_buyer", 0)
+    + cohorts.summary.get("current_user", 0)
+    + cohorts.summary.get("lapsed_user", 0)
+)
+_repeated = cohorts.summary.get("current_user", 0) + cohorts.summary.get("lapsed_user", 0)
+_active = cohorts.summary.get("current_user", 0)
+
+fig_funnel = go.Figure(
+    go.Funnel(
+        y=["Became Aware", "Tried Product", "Repeated Purchase", "Still Active"],
+        x=[_aware, _tried, _repeated, _active],
+        textinfo="value+percent initial",
+        marker_color=["#3498DB", "#2ECC71", "#27AE60", "#1A8A50"],
+    )
+)
+fig_funnel.update_layout(
+    title="Purchase Journey Funnel",
+    margin=dict(l=10, r=10, t=40, b=10),
+    height=300,
+)
+st.plotly_chart(fig_funnel, use_container_width=True)
+
+# Per-cohort summary cards
+st.subheader("Cohort Profiles")
+st.caption("Click any cohort to see the behavioral patterns behind the numbers.")
+
+for cid, (label, icon, desc) in cohort_display.items():
+    count = cohorts.summary.get(cid, 0)
+    if count == 0:
+        continue
+    with st.expander(f"{icon} {label} — {count} personas", expanded=False):
+        st.caption(desc)
+
+        # List 2 representative persona names from this cohort
+        persona_ids = cohorts.cohorts.get(cid, [])[:2]
+        if persona_ids:
+            st.markdown("**Representative personas:**")
+            for pid in persona_ids:
+                try:
+                    p = pop.get_persona(pid)
+                    st.caption(
+                        f"• {p.name}, {p.demographics.city_tier} — "
+                        f"{p.narrative[:80] if p.narrative else 'No narrative'}…"
+                    )
+                except Exception:
+                    st.caption(f"• Persona {pid[:8]}…")
+
+        # Cohort-specific behavioral hint
+        hints = {
+            "never_aware": (
+                "These personas never encountered the product through any channel. "
+                "Brand salience and distribution reach are the levers to address here."
+            ),
+            "aware_not_tried": (
+                "These personas know the product exists but didn't convert. "
+                "Price, trust, and perceived need are the likely barriers."
+            ),
+            "first_time_buyer": (
+                "These personas tried once but didn't come back. "
+                "Something broke between the first experience and the reorder decision."
+            ),
+            "current_user": (
+                "These are your most valuable personas — they've formed a habit. "
+                "Understanding what made them stick tells you how to scale."
+            ),
+            "lapsed_user": (
+                "These personas were active buyers who stopped. "
+                "Identifying their exit signal is the key to retention strategy."
+            ),
+        }
+        st.info(hints.get(cid, ""), icon="💡")
 
 # Key metrics row
 m1, m2, m3, m4 = st.columns(4)

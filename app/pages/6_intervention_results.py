@@ -1,11 +1,8 @@
 # ruff: noqa: N999
-"""Phase 4 — Intervention Simulation Results.
+\"\"\"Phase 4 — Intervention Comparison Dashboard.
 
-Shows the outcome of running a selected intervention against the population:
-- Primary adoption lift (baseline → intervention)
-- Micro-perturbation counterfactual table (intervention + additional tweaks)
-- Segment impacts
-"""
+Full comparison of ALL interventions run in parallel — ranked by adoption lift.
+\"\"\"
 
 from __future__ import annotations
 
@@ -15,252 +12,156 @@ from app.components.system_voice import render_system_voice
 from app.utils.phase_state import render_phase_sidebar
 
 # ── Page config ───────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="Phase 4 — Intervention Results",
-    page_icon="📊",
-    layout="wide",
-)
+st.set_page_config(page_title="Phase 4 — Intervention Results", page_icon="📊", layout="wide")
 render_phase_sidebar()
 st.header("Phase 4 — Intervention Results")
 
 # ── Phase gate ────────────────────────────────────────────────────────────────
 if "intervention_run" not in st.session_state:
-    st.warning(
-        "No intervention simulation has been run yet. "
-        "Go to **Phase 4 — Interventions**, select an intervention, and click Run.",
-        icon="🔒",
-    )
+    st.warning("No simulation results yet. Go to Phase 4 — Interventions and click Run All Simulations.", icon="🔒")
     if st.button("← Back to Interventions"):
         st.switch_page("pages/5_intervention.py")
     st.stop()
 
-# ── Unpack session state ───────────────────────────────────────────────────────
 _run = st.session_state["intervention_run"]
-iv = _run["intervention"]
-scenario_id: str = _run["scenario_id"]
-sim_months: int = _run.get("sim_months", 12)
-primary_result = _run["primary_result"]
-micro_results: list[dict] = _run.get("micro_results", [])
+all_results: list[dict] = _run.get("all_results", [])
+scenario_id: str = _run.get("scenario_id", "")
 baseline_cohorts = _run.get("baseline_cohorts")
 
-# ── System Voice — opening ────────────────────────────────────────────────────
-_abs_lift = primary_result.absolute_lift
-_rel_lift = primary_result.relative_lift_percent
-_direction = "increase" if _abs_lift >= 0 else "decrease"
-_lift_sign = "+" if _abs_lift >= 0 else ""
+if not all_results:
+    st.warning("No simulation results found. Please re-run the simulations.")
+    if st.button("← Back to Interventions"):
+        st.switch_page("pages/5_intervention.py")
+    st.stop()
 
+# Baseline adoption rate (same for all — from first result)
+_baseline_rate = all_results[0]["result"].baseline_adoption_rate if all_results else 0.0
+
+# System Voice
 render_system_voice(
-    f"You simulated <strong>{iv.name}</strong> — a "
-    f"{'general' if iv.scope == 'general' else 'cohort-specific'}, "
-    f"{'one-time' if iv.temporality == 'non_temporal' else f'{sim_months}-month sustained'} intervention. "
-    f"Adoption rate moved from <strong>{primary_result.baseline_adoption_rate:.1%}</strong> to "
-    f"<strong>{primary_result.counterfactual_adoption_rate:.1%}</strong> "
-    f"— a <strong>{_lift_sign}{_abs_lift:.1%}</strong> absolute {_direction} "
-    f"({_lift_sign}{_rel_lift:.1f}% relative lift). "
-    f"Scroll down to see how additional micro-perturbations compound on top of this intervention."
+    f"I simulated all <strong>{len(all_results)} interventions</strong> against your baseline population. "
+    f"Baseline adoption: <strong>{_baseline_rate:.1%}</strong>. "
+    f"The table below ranks every intervention by adoption lift — and flags the best trade-off between impact and execution effort."
 )
 
-# ── Intervention summary card ─────────────────────────────────────────────────
-st.subheader("Intervention Summary")
+def _infer_complexity(iv) -> str:
+    if iv.scope == "cohort_specific" and iv.temporality == "temporal":
+        return "High"
+    if iv.temporality == "temporal":
+        return "Medium"
+    return "Low"
 
-_scope_label = "General (all personas)" if iv.scope == "general" else "Cohort-specific"
-_temp_label = (
-    f"Sustained — {sim_months} months"
-    if iv.temporality == "temporal"
-    else "One-time (permanent policy change)"
-)
-_target_label = (
-    iv.target_cohort_id.replace("_", " ").title() if iv.target_cohort_id else "All personas"
-)
+def _infer_ttm(iv) -> str:
+    if iv.scope == "cohort_specific" and iv.temporality == "temporal":
+        return "3–4 months"
+    if iv.temporality == "temporal":
+        return "4–6 weeks"
+    return "1–2 weeks"
 
-_card_cols = st.columns([2, 1])
-with _card_cols[0]:
-    st.markdown(f"**{iv.name}**")
-    st.caption(iv.description)
-    st.markdown(f"**Expected mechanism:** {iv.expected_mechanism}")
-with _card_cols[1]:
-    st.markdown(f"**Scope:** {_scope_label}")
-    st.markdown(f"**Timing:** {_temp_label}")
-    st.markdown(f"**Target:** {_target_label}")
-    if iv.parameter_modifications:
-        st.markdown("**Parameter changes:**")
-        for _pk, _pv in iv.parameter_modifications.items():
-            _fk = _pk.replace(".", " → ").replace("_", " ").title()
-            if isinstance(_pv, bool):
-                _pv_str = "Enabled" if _pv else "Disabled"
-            elif isinstance(_pv, float) and _pv <= 1.0:
-                _pv_str = f"{_pv:.0%}"
-            else:
-                _pv_str = str(_pv)
-            st.markdown(f"- **{_fk}**: {_pv_str}")
+def _infer_cost(iv) -> str:
+    if iv.scope == "cohort_specific" and iv.temporality == "temporal":
+        return "High"
+    if iv.temporality == "temporal":
+        return "Medium"
+    return "Low"
 
-# ── Primary adoption lift ─────────────────────────────────────────────────────
-st.divider()
-st.subheader("Primary Adoption Lift")
-st.caption("Baseline scenario vs. intervention scenario — static funnel comparison across all personas.")
+_COMPLEXITY_COLOR = {"Low": "#2ECC71", "Medium": "#F39C12", "High": "#E74C3C"}
 
-_lift_cols = st.columns(4)
-_lift_cols[0].metric(
-    "Baseline Adoption",
-    f"{primary_result.baseline_adoption_rate:.1%}",
-    help="Adoption rate under the unmodified baseline scenario.",
-)
-_lift_cols[1].metric(
-    "Intervention Adoption",
-    f"{primary_result.counterfactual_adoption_rate:.1%}",
-    delta=f"{_lift_sign}{_abs_lift:.1%}",
-    delta_color="normal",
-    help="Adoption rate with the intervention applied.",
-)
-_lift_cols[2].metric(
-    "Absolute Lift",
-    f"{_lift_sign}{_abs_lift:.1%}",
-    help="Percentage point change in adoption rate.",
-)
-_lift_cols[3].metric(
-    "Relative Lift",
-    f"{_lift_sign}{_rel_lift:.1f}%",
-    help="Lift relative to the baseline adoption rate.",
-)
+# Comparison table (sort by absolute_lift descending)
+sorted_results = sorted(all_results, key=lambda x: x["result"].absolute_lift, reverse=True)
 
-# Pre-simulation population mix
-if baseline_cohorts is not None:
-    st.markdown("**Population mix at time of simulation** *(Phase 1 baseline cohorts)*")
-    _cs = (
-        baseline_cohorts.summary
-        if hasattr(baseline_cohorts, "summary")
-        else baseline_cohorts.get("summary", {})
+_HEADER_BG = "#1A5276"
+_HEADER_FG = "#FFFFFF"
+_TOP_BG = "#EBF5FB"
+_DEFAULT_BG = "#FFFFFF"
+
+_rows_html = ""
+for _ri, _row in enumerate(sorted_results):
+    _iv = _row["intervention"]
+    _r = _row["result"]
+    _lift = _r.absolute_lift
+    _rel = _r.relative_lift_percent
+    _sign = "+" if _lift >= 0 else ""
+    _lift_color = "#27AE60" if _lift > 0.01 else ("#E74C3C" if _lift < 0 else "#7F8C8D")
+    _row_bg = _TOP_BG if _ri == 0 else _DEFAULT_BG
+    _top_badge = (
+        ' <span style="background:#1A5276;color:#fff;border-radius:4px;padding:1px 5px;font-size:0.72rem;margin-left:6px;">★ Top</span>'
+        if _ri == 0 else ""
     )
-    _cohort_disp = {
-        "never_aware":      ("Never Aware",      "🔇"),
-        "aware_not_tried":  ("Aware, Not Tried",  "👁️"),
-        "first_time_buyer": ("First-Time Buyer",  "🛒"),
-        "current_user":     ("Current User",      "⭐"),
-        "lapsed_user":      ("Lapsed User",       "💤"),
-    }
-    _total_c = sum(_cs.values()) or 1
-    _c_cols = st.columns(len(_cohort_disp))
-    for _ci, (_cid, (_clabel, _cicon)) in enumerate(_cohort_disp.items()):
-        _cnt = _cs.get(_cid, 0)
-        with _c_cols[_ci]:
-            st.metric(f"{_cicon} {_clabel}", _cnt, f"{round(_cnt / _total_c * 100)}%")
+    _cx = _infer_complexity(_iv)
+    _cx_color = _COMPLEXITY_COLOR.get(_cx, "#555")
+    _scope_label = "General" if _iv.scope == "general" else "Cohort"
+    _temp_label = "One-time" if _iv.temporality == "non_temporal" else "Sustained"
 
-# ── Segment impacts ───────────────────────────────────────────────────────────
-if primary_result.most_affected_segments:
-    st.divider()
-    st.subheader("Most Affected Segments")
-    st.caption(
-        "Population sub-groups ranked by how much this intervention shifted their adoption. "
-        "Positive lift = intervention helped; negative = intervention hurt this segment."
-    )
-    for _seg in primary_result.most_affected_segments[:6]:
-        _seg_label = (
-            f"{_seg.segment_attribute.replace('_', ' ').title()}: "
-            f"{_seg.segment_value.replace('_', ' ').title()}"
-        )
-        _seg_lift = _seg.counterfactual_adoption_rate - _seg.baseline_adoption_rate
-        _seg_sign = "+" if _seg_lift >= 0 else ""
-        _bar_cols = st.columns([3, 1, 1, 1])
-        _bar_cols[0].markdown(f"**{_seg_label}**")
-        _bar_cols[1].metric("Baseline", f"{_seg.baseline_adoption_rate:.1%}")
-        _bar_cols[2].metric("With Intervention", f"{_seg.counterfactual_adoption_rate:.1%}")
-        _bar_cols[3].metric("Lift", f"{_seg_sign}{_seg_lift:.1%}")
-
-# ── Counterfactual micro-perturbation analysis ────────────────────────────────
-st.divider()
-st.subheader("Counterfactual Micro-Perturbation Analysis")
-st.caption(
-    "Each row shows what happens when you add one more lever ON TOP of the selected intervention. "
-    "The baseline here is the intervention scenario — so all lifts are compounding gains."
-)
-
-render_system_voice(
-    f"Using <strong>{iv.name}</strong> as your new baseline, I tested "
-    f"<strong>{len(micro_results)} additional levers</strong> — pricing, distribution, messaging, "
-    f"and product tweaks. The table below shows which combinations deliver the greatest "
-    f"incremental gain on top of the intervention."
-)
-
-if micro_results:
-    # Sort by absolute lift descending
-    sorted_micro = sorted(
-        micro_results,
-        key=lambda x: x["result"].absolute_lift,
-        reverse=True,
+    _rows_html += (
+        f'<tr style="background:{_row_bg}; border-bottom:1px solid #E8E8E8;">'
+        f'<td style="padding:9px 12px; font-weight:600; min-width:180px;">{_iv.name}{_top_badge}</td>'
+        f'<td style="padding:9px 12px; text-align:center;">{_scope_label} · {_temp_label}</td>'
+        f'<td style="padding:9px 12px; text-align:right;">{_r.counterfactual_adoption_rate:.1%}</td>'
+        f'<td style="padding:9px 12px; text-align:right; font-weight:700; color:{_lift_color};">{_sign}{_lift:.1%}</td>'
+        f'<td style="padding:9px 12px; text-align:right; color:{_lift_color};">{_sign}{_rel:.1f}%</td>'
+        f'<td style="padding:9px 12px; text-align:center; color:{_cx_color}; font-weight:600;">{_cx}</td>'
+        f'<td style="padding:9px 12px; text-align:center; color:#555;">{_infer_ttm(_iv)}</td>'
+        f'<td style="padding:9px 12px; text-align:center; color:#555;">{_infer_cost(_iv)}</td>'
+        f'</tr>'
     )
 
-    # Build HTML table
-    _HEADER_BG = "#1A5276"
-    _HEADER_FG = "#FFFFFF"
-    _ROW_BG_TOP = "#EBF5FB"
-    _ROW_BG_DEFAULT = "#FFFFFF"
-    _ROW_BG_NEGATIVE = "#FEF9E7"
+_table_html = (
+    '<div style="overflow-x:auto; margin:12px 0;">'
+    '<table style="border-collapse:collapse; width:100%; font-family:sans-serif; font-size:0.88rem;">'
+    f'<thead><tr style="background:{_HEADER_BG}; color:{_HEADER_FG};">'
+    '<th style="padding:10px 12px; text-align:left;">Intervention</th>'
+    '<th style="padding:10px 12px; text-align:center;">Type</th>'
+    '<th style="padding:10px 12px; text-align:right;">Adoption Rate</th>'
+    '<th style="padding:10px 12px; text-align:right;">Lift (pp)</th>'
+    '<th style="padding:10px 12px; text-align:right;">Relative Lift</th>'
+    '<th style="padding:10px 12px; text-align:center;">Complexity</th>'
+    '<th style="padding:10px 12px; text-align:center;">Time to Market</th>'
+    '<th style="padding:10px 12px; text-align:center;">Est. Cost</th>'
+    '</tr></thead>'
+    f'<tbody>{_rows_html}</tbody>'
+    '</table></div>'
+)
 
-    _micro_rows = ""
-    for _mi, _mrow in enumerate(sorted_micro):
-        _mr = _mrow["result"]
-        _m_lift = _mr.absolute_lift
-        _m_rel = _mr.relative_lift_percent
-        _m_sign = "+" if _m_lift >= 0 else ""
-        _m_color = "#27AE60" if _m_lift > 0.005 else ("#E74C3C" if _m_lift < -0.005 else "#7F8C8D")
-        _row_bg = _ROW_BG_TOP if _mi == 0 else (_ROW_BG_NEGATIVE if _m_lift < 0 else _ROW_BG_DEFAULT)
-        _top_badge = (
-            ' <span style="background:#1A5276;color:#fff;border-radius:4px;padding:1px 5px;'
-            'font-size:0.72rem;margin-left:6px;">★ Top</span>'
-            if _mi == 0 else ""
-        )
-        _micro_rows += (
-            f'<tr style="background:{_row_bg}; border-bottom:1px solid #E8E8E8;">'
-            f'<td style="padding:9px 12px; font-weight:600;">{_mrow["label"]}{_top_badge}</td>'
-            f'<td style="padding:9px 12px; text-align:right;">{_mr.baseline_adoption_rate:.1%}</td>'
-            f'<td style="padding:9px 12px; text-align:right;">{_mr.counterfactual_adoption_rate:.1%}</td>'
-            f'<td style="padding:9px 12px; text-align:right; font-weight:700; color:{_m_color};">'
-            f'{_m_sign}{_m_lift:.1%}</td>'
-            f'<td style="padding:9px 12px; text-align:right; color:{_m_color};">'
-            f'{_m_sign}{_m_rel:.1f}%</td>'
-            f'</tr>'
-        )
+st.subheader("Intervention Comparison")
+st.caption(f"Baseline adoption: **{_baseline_rate:.1%}** · All interventions ranked by adoption lift.")
+st.markdown(_table_html, unsafe_allow_html=True)
 
-    _micro_table_html = (
-        '<div style="overflow-x:auto; margin: 12px 0;">'
-        '<table style="border-collapse:collapse; width:100%; font-family:sans-serif; font-size:0.9rem;">'
-        f'<thead><tr style="background:{_HEADER_BG}; color:{_HEADER_FG};">'
-        '<th style="padding:10px 12px; text-align:left;">Additional Lever</th>'
-        '<th style="padding:10px 12px; text-align:right;">Intervention Baseline</th>'
-        '<th style="padding:10px 12px; text-align:right;">Combined Adoption</th>'
-        '<th style="padding:10px 12px; text-align:right;">Incremental Lift (pp)</th>'
-        '<th style="padding:10px 12px; text-align:right;">Relative Lift (%)</th>'
-        f'</tr></thead>'
-        f'<tbody>{_micro_rows}</tbody>'
-        '</table></div>'
+if sorted_results:
+    _top = sorted_results[0]
+    _top_iv = _top["intervention"]
+    _top_r = _top["result"]
+    _top_cx = _infer_complexity(_top_iv)
+    _top_ttm = _infer_ttm(_top_iv)
+
+    # Find best low-complexity option
+    _low_cx = next(
+        (x for x in sorted_results if _infer_complexity(x["intervention"]) == "Low"),
+        sorted_results[-1],
     )
-    st.markdown(_micro_table_html, unsafe_allow_html=True)
 
-    # Highlight top recommendation
-    _top = sorted_micro[0]
-    _top_lift = _top["result"].absolute_lift
-    if _top_lift > 0:
+    _same_as_top = _low_cx["intervention"].id == _top_iv.id
+    if _same_as_top:
         render_system_voice(
-            f"The highest-impact combination is <strong>{iv.name}</strong> + "
-            f"<strong>{_top['label']}</strong>, delivering an additional "
-            f"<strong>+{_top_lift:.1%}</strong> adoption lift on top of the intervention. "
-            f"Combined adoption rate: <strong>{_top['result'].counterfactual_adoption_rate:.1%}</strong>."
+            f"The highest-lift option is <strong>{_top_iv.name}</strong> "
+            f"(+{_top_r.absolute_lift:.1%} adoption lift) and it also has <strong>Low</strong> complexity "
+            f"with a <strong>{_top_ttm}</strong> time to market — an ideal starting point. "
+            f"No trade-off needed: this intervention delivers both impact and speed."
         )
     else:
         render_system_voice(
-            f"None of the micro-perturbations produced meaningful incremental lift beyond "
-            f"<strong>{iv.name}</strong> alone. The intervention is already capturing the "
-            f"primary lever. Consider revisiting the product or audience definition."
+            f"The highest-lift option is <strong>{_top_iv.name}</strong> (+{_top_r.absolute_lift:.1%} adoption), "
+            f"but it carries <strong>{_top_cx}</strong> complexity and a <strong>{_top_ttm}</strong> time to market. "
+            f"For a faster path to impact, start with <strong>{_low_cx['intervention'].name}</strong> "
+            f"(+{_low_cx['result'].absolute_lift:.1%} lift, Low complexity) to validate assumptions "
+            f"before committing to the larger programme."
         )
-else:
-    st.info("No micro-perturbation results available.")
 
-# ── Navigation ────────────────────────────────────────────────────────────────
 st.divider()
-_nav_cols = st.columns([1, 1])
-with _nav_cols[0]:
-    if st.button("← Run Another Intervention", use_container_width=True):
+_nav = st.columns([1, 1])
+with _nav[0]:
+    if st.button("← Re-run Simulations", use_container_width=True):
         st.switch_page("pages/5_intervention.py")
-with _nav_cols[1]:
+with _nav[1]:
     if st.button("→ Interview Deep-Dive", use_container_width=True):
         st.switch_page("pages/7_interviews.py")

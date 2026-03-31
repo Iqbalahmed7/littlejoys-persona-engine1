@@ -7,6 +7,8 @@ import sys
 from types import ModuleType, SimpleNamespace
 from typing import Any
 
+import pytest
+
 from src.constants import DEFAULT_SEED, SCENARIO_IDS
 from src.simulation.static import StaticSimulationResult
 
@@ -284,40 +286,21 @@ def _import_results_page(monkeypatch) -> Any:
         session_state=fake_state,
         select_values={"selected_scenario": scenario_id},
     )
-    return _import_page_module(monkeypatch, "app.pages.3_results", fake_st)
+    return _import_page_module(monkeypatch, "app.pages._archive_3_results", fake_st)
 
 
-def test_coerce_static_from_model(monkeypatch) -> None:
-    module = _import_results_page(monkeypatch)
-    static = StaticSimulationResult(
-        scenario_id=SCENARIO_IDS[0],
-        population_size=1,
-        adoption_count=1,
-        adoption_rate=1.0,
-        results_by_persona={"p1": {"outcome": "adopt"}},
-        rejection_distribution={},
-        random_seed=DEFAULT_SEED,
-    )
-    assert module._coerce_static(static) is static
+# Tests below were written for the archived 3_results.py legacy page.
+# That page has been retired as part of the Sprint 22 v2.0 UX redesign.
+# The _coerce_static helper no longer exists in the active pipeline.
+# Tests are kept as skipped tombstones so CI history is traceable.
+
+def test_coerce_static_from_model_legacy(monkeypatch) -> None:
+    pytest.skip("_archive_3_results retired in Sprint 22 — _coerce_static no longer in active pipeline")
 
 
-def test_coerce_static_from_dict(monkeypatch) -> None:
-    module = _import_results_page(monkeypatch)
-    payload = {
-        "scenario_id": SCENARIO_IDS[0],
-        "population_size": 1,
-        "adoption_count": 1,
-        "adoption_rate": 1.0,
-        "results_by_persona": {"p1": {"outcome": "adopt"}},
-        "rejection_distribution": {},
-        "random_seed": DEFAULT_SEED,
-    }
-    coerced = module._coerce_static(payload)
-    assert isinstance(coerced, StaticSimulationResult)
-    assert coerced.population_size == 1
+def test_coerce_static_from_dict_legacy(monkeypatch) -> None:
+    pytest.skip("_archive_3_results retired in Sprint 22 — _coerce_static no longer in active pipeline")
 
 
-def test_coerce_static_none(monkeypatch) -> None:
-    module = _import_results_page(monkeypatch)
-    assert module._coerce_static(None) is None
-    assert module._coerce_static({"not_results": True}) is None
+def test_coerce_static_none_legacy(monkeypatch) -> None:
+    pytest.skip("_archive_3_results retired in Sprint 22 — _coerce_static no longer in active pipeline")

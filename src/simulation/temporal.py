@@ -28,6 +28,7 @@ from src.decision.repeat import (
     compute_satisfaction,
 )
 from src.simulation.wom import propagate_wom
+from src.taxonomy.schema import PurchaseEvent
 
 if TYPE_CHECKING:
     from src.decision.scenarios import ScenarioConfig
@@ -220,6 +221,18 @@ def _simulate_temporal(
                 adopted_this_month.add(persona.id)
                 sat0 = compute_satisfaction(persona, scenario.product, month)
                 st.satisfaction_trajectory.append(sat0)
+                # Write first-purchase event to persona's purchase_history
+                persona.purchase_history.append(
+                    PurchaseEvent(
+                        product_name=scenario.product.name,
+                        timestamp=f"month_{month}",
+                        price_paid=float(scenario.product.price_inr),
+                        channel="simulation",
+                        trigger="funnel_adopt",
+                        outcome="purchased",
+                        satisfaction=round(float(sat0), 4),
+                    )
+                )
 
         repeat_purchasers = 0
         churned = 0
@@ -252,6 +265,18 @@ def _simulate_temporal(
             if rng.random() < repeat_p:
                 repeat_purchasers += 1
                 total_revenue_estimate += price
+                # Write repeat-purchase event to persona's purchase_history
+                persona.purchase_history.append(
+                    PurchaseEvent(
+                        product_name=scenario.product.name,
+                        timestamp=f"month_{month}",
+                        price_paid=float(price),
+                        channel="simulation",
+                        trigger="repeat_purchase",
+                        outcome="repurchased",
+                        satisfaction=round(float(sat), 4),
+                    )
+                )
             st.consecutive_months += 1
 
         total_revenue_estimate += new_adopters * price

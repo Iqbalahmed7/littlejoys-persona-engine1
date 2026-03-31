@@ -227,11 +227,38 @@ else:
                 # Confidence bar
                 st.progress(min(confidence, 1.0), text=f"Confidence {confidence:.0%}")
 
-                # Evidence snippet
+                # Evidence snippet (from verdict)
                 if evidence_snippet:
-                    st.caption(evidence_snippet)
+                    st.caption(f"**Verdict:** {evidence_snippet}")
 
-                # Effect size / lift chips
+                # Task 1: Probe evidence rows (detailed grounding)
+                _PROBE_TYPE_ICON = {
+                    "ATTRIBUTE": "📊",
+                    "INTERVIEW": "🎤",
+                    "SIMULATION": "🔬",
+                }
+                
+                hyp_probes = [p for p in probes_list if getattr(p, "hypothesis_id", None) == hyp_id and getattr(p, "result", None) is not None]
+                if hyp_probes:
+                    for probe in sorted(hyp_probes, key=lambda p: getattr(p, "order", 0)):
+                        r = probe.result
+                        ptype_str = str(getattr(probe, "probe_type", "PROBE")).upper()
+                        # Extract enum value if possible
+                        if "." in ptype_str:
+                            ptype_str = ptype_str.split(".")[-1]
+                        
+                        icon = _PROBE_TYPE_ICON.get(ptype_str, "🔍")
+                        conf = getattr(r, "confidence", 0.0)
+                        conf_bar = "█" * int(conf * 10) + "░" * (10 - int(conf * 10))
+                        
+                        st.caption(
+                            f"{icon} **{ptype_str.title()}** — {conf:.0%} confidence  "
+                            f"`{conf_bar}`"
+                        )
+                        
+                        ev_summary = getattr(r, "evidence_summary", "")
+                        if ev_summary:
+                            st.caption(f"↳ {ev_summary[:180]}")
                 if effect_parts:
                     chips_html = " ".join(
                         f"<span style='background:#FEF9E7; color:#7D6608; "
@@ -252,6 +279,60 @@ else:
         # Accumulate evidence chain for session state
         if status in ("confirmed", "partially_confirmed"):
             evidence_chain_ids.append(hyp_id)
+
+
+# ---------------------------------------------------------------------------
+# 3.1. QUOTE BANK — Qualitative voices
+# ---------------------------------------------------------------------------
+
+st.divider()
+st.subheader("Representative Voices")
+st.caption(
+    "Persona responses from the investigation, organized by theme. "
+    "These are simulated conversations grounded in each persona's full profile and behavior trajectory."
+)
+
+from src.probing.models import ProbeType
+
+interview_probes = [
+    p for p in probes_list
+    if getattr(p, "probe_type", None) == ProbeType.INTERVIEW and getattr(p, "result", None) is not None
+]
+
+all_clusters = [c for p in interview_probes for c in p.result.response_clusters]
+all_responses = [r for p in interview_probes for r in p.result.interview_responses]
+
+if all_clusters:
+    # Sort by persona count (most common themes first)
+    sorted_clusters = sorted(all_clusters, key=lambda c: getattr(c, "persona_count", 0), reverse=True)
+
+    for cluster in sorted_clusters[:5]:  # Cap at 5 themes
+        theme_label = cluster.theme.replace("_", " ").title()
+        pct_val = getattr(cluster, "percentage", 0.0)
+        pct = f"{pct_val:.0%}" if pct_val <= 1.0 else f"{pct_val:.0f}%"
+
+        with st.expander(f"**{theme_label}** — {getattr(cluster, 'persona_count', 0)} personas ({pct})", expanded=False):
+            st.caption(getattr(cluster, "description", ""))
+            quotes = getattr(cluster, "representative_quotes", [])
+            if quotes:
+                for quote in quotes[:3]:
+                    st.markdown(f"> *{quote[:280]}*")
+                    st.caption("")
+
+elif all_responses:
+    st.caption("Individual persona responses from the investigation:")
+    for resp in all_responses[:6]:
+        outcome_icon = "✅" if getattr(resp, "outcome", "") == "adopt" else "❌"
+        with st.container(border=True):
+            st.caption(f"**{getattr(resp, 'persona_name', 'Persona')}** {outcome_icon}")
+            st.markdown(f"> *{getattr(resp, 'content', '')[:300]}*")
+
+else:
+    st.info(
+        "No interview probes were run during this investigation. "
+        "Interview evidence appears when the probing tree includes interview-type probes.",
+        icon="ℹ️",
+    )
 
 # ---------------------------------------------------------------------------
 # 4. MAGIC MOMENT — green insight callout
@@ -323,6 +404,63 @@ st.download_button(
     data=json.dumps(st.session_state["core_finding"], indent=2),
     file_name=f"{scenario_id}_core_finding.json",
     mime="application/json",
+)
+
+# ---------------------------------------------------------------------------
+# 7.1. TEXT BRIEF EXPORT
+# ---------------------------------------------------------------------------
+
+# Re-sort hypotheses for export (confirmed first)
+sorted_hyps_export = sorted(
+    [h for h in hypotheses_list if verdicts.get(h.id)],
+    key=lambda h: (
+        0 if verdicts[h.id].status == "confirmed" else
+        1 if verdicts[h.id].status == "partially_confirmed" else 2
+    )
+)
+
+_evidence_lines = []
+for hyp in sorted_hyps_export:
+    v = verdicts.get(hyp.id)
+    if v and v.status in ("confirmed", "partially_confirmed"):
+        _evidence_lines.append(f"\n{hyp.title} ({v.status.replace('_', ' ').title()}, {v.confidence:.0%} confidence)")
+        ev_summary = getattr(v, "evidence_summary", "")
+        if ev_summary:
+            _evidence_lines.append(f"  {ev_summary[:300]}")
+
+_top_quotes = []
+if all_clusters:
+    for cluster in sorted(all_clusters, key=lambda c: getattr(c, "persona_count", 0), reverse=True)[:3]:
+        quotes = getattr(cluster, "representative_quotes", [])
+        if quotes:
+            _top_quotes.append(f"\"{quotes[0][:200]}\"")
+elif all_responses:
+    for resp in all_responses[:3]:
+        content = getattr(resp, "content", "")
+        if content:
+             _top_quotes.append(f"\"{content[:200]}\"")
+
+brief_text = f"""CORE FINDING
+{'-' * 60}
+{core_finding_text}
+
+EVIDENCE CHAIN
+{'-' * 60}
+{''.join(_evidence_lines) or 'No detailed evidence found.'}
+
+REPRESENTATIVE VOICES
+{'-' * 60}
+{chr(10).join(_top_quotes) or 'No interview evidence available.'}
+
+Generated by LittleJoys Persona Simulation Engine
+Scenario: {scenario_id}
+"""
+
+st.download_button(
+    label="⬇️ Download Finding Brief (.txt)",
+    data=brief_text,
+    file_name=f"{scenario_id}_core_finding.txt",
+    mime="text/plain",
 )
 
 # ---------------------------------------------------------------------------

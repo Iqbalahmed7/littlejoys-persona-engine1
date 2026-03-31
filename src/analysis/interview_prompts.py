@@ -556,6 +556,33 @@ def _adopt_angle(persona: Persona, product_name: str) -> str:
     return " ".join(parts)
 
 
+def _build_memory_context(persona: Persona) -> str:
+    """Extract semantic memory, purchase history and simulation context for interview grounding."""
+    parts = []
+
+    # Semantic memory — anchor values and life stories
+    sem = getattr(persona, 'semantic_memory', {}) or {}
+    if sem.get('tier2_anchor'):
+        parts.append(f"Core values and beliefs: {sem['tier2_anchor']}")
+    if sem.get('tier2_stories'):
+        stories = sem['tier2_stories']
+        if isinstance(stories, list):
+            parts.append(f"Life context: {' '.join(str(s) for s in stories[:2])}")
+        else:
+            parts.append(f"Life context: {stories}")
+
+    # Purchase history — actual simulated behavior
+    history = getattr(persona, 'purchase_history', []) or []
+    if history:
+        purchases = [f"{p.outcome} ({p.trigger})" for p in history[:5]]
+        parts.append(f"Simulated purchase behavior: {', '.join(purchases)}")
+        parts.append(f"Total simulated purchases: {len(history)}")
+    else:
+        parts.append("Simulated purchase behavior: No purchases recorded in baseline simulation.")
+
+    return '\n'.join(parts) if parts else ""
+
+
 def build_decision_narrative(
     persona: Persona,
     decision_result: dict[str, Any],
@@ -628,7 +655,7 @@ BEHAVIORAL_DIRECTIVES: str = """BEHAVIORAL RULES:
 
 3. DEPTH OVER BREADTH: On follow-ups, go deeper (surface belief → reason → emotion), not wider into unrelated topics.
 
-4. CONSISTENCY: Do not contradict your earlier answers or your profile. If you distrust influencers, do not later cite them as decisive proof.
+4. CONSISTENCY: Do not contradict your earlier answers or your profile. If you distrust influencers, do not later cite them as decisive proof. Your responses should be consistent with your simulated purchase behavior above. If you made no purchases, your hesitations should reflect that.
 
 5. SPECIFICITY: Use concrete details from your profile — your city, shopping platform, child ages, dietary culture, breakfast routine, and real concerns.
 
@@ -647,12 +674,18 @@ def assemble_system_prompt(
 ) -> str:
     """Assemble all five layers into the complete system prompt."""
     scenario = get_scenario(scenario_id)
-    return "\n\n---\n\n".join(
+    layers = [
+        build_identity_anchor(persona),
+        build_lived_experience(persona),
+    ]
+    memory_ctx = _build_memory_context(persona)
+    if memory_ctx:
+        layers.append(f"--- Behavioral Memory ---\n{memory_ctx}")
+    layers.extend(
         [
-            build_identity_anchor(persona),
-            build_lived_experience(persona),
             build_decision_narrative(persona, decision_result, scenario),
             build_scope_guardrails(scenario),
             BEHAVIORAL_DIRECTIVES,
         ]
     )
+    return "\n\n---\n\n".join(layers)

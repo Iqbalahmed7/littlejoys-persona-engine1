@@ -238,7 +238,13 @@ class PersonaInterviewer:
         scenario_id: str,
         decision_result: dict[str, Any],
     ) -> str:
-        """Construct the in-character system prompt from persona and decision context."""
+        """Construct the in-character system prompt from persona and decision context.
+
+        NOTE: The full Persona object is passed here, so assemble_system_prompt (and
+        _build_memory_context within it) has access to persona.semantic_memory,
+        persona.purchase_history, and persona.state. No subset filtering occurs at
+        this call site.
+        """
         return assemble_system_prompt(persona, scenario_id, decision_result)
 
     async def start_session(

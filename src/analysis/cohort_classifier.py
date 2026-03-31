@@ -125,46 +125,37 @@ def classify_population(
 
         for trajectory in event_result.trajectories:
             final_snapshot = trajectory.days[-1] if trajectory.days else None
-            if final_snapshot and final_snapshot.is_active:
+            total_purchases = trajectory.total_purchases or 0
+            is_active = final_snapshot and final_snapshot.is_active
+
+            if is_active and total_purchases >= 2:
+                # Genuinely active repeat buyer
                 cohort_id = "current_user"
-                cohorts[cohort_id].append(trajectory.persona_id)
-                population.get_persona(trajectory.persona_id).product_relationship = cohort_id
-                classifications.append(
-                    CohortClassification(
-                        persona_id=trajectory.persona_id,
-                        cohort_id=cohort_id,
-                        cohort_name=_COHORT_NAMES[cohort_id],
-                        classification_reason="Adopted in month 1 and remained active through final month",
-                    )
-                )
-                continue
-
-            # Use total_purchases to distinguish a one-time buyer from someone
-            # who repeated at least once and then lapsed.
-            # first_time_buyer = exactly 1 purchase (tried once, never came back)
-            # lapsed_user      = 2+ purchases (was a repeat buyer) but no longer active
-            total_purchases = trajectory.total_purchases or 1
-            cohort_id = "first_time_buyer" if total_purchases <= 1 else "lapsed_user"
-            cohorts[cohort_id].append(trajectory.persona_id)
-            population.get_persona(trajectory.persona_id).product_relationship = cohort_id
-
-            churn_day = trajectory.churned_day or duration_days
-            churn_month = max(1, ceil(churn_day / 30))
-            churn_snapshot = trajectory.days[churn_day - 1] if trajectory.days else None
-            driver = _dominant_churn_signal(
-                churn_snapshot.decision_rationale if churn_snapshot else None
-            )
-            purchase_label = f"{total_purchases} purchase{'s' if total_purchases != 1 else ''}"
-            if driver:
                 reason = (
-                    f"{'One-time buyer' if cohort_id == 'first_time_buyer' else 'Repeat buyer'} "
-                    f"({purchase_label}), churned in month {churn_month} due to {driver}"
+                    f"Active repeat buyer ({total_purchases} purchases, still active at end)"
                 )
+            elif is_active and total_purchases <= 1:
+                # Active but never repeated — counts as first-time buyer
+                cohort_id = "first_time_buyer"
+                reason = "One-time buyer (1 purchase, technically active but never repeated)"
             else:
+                # Already churned — use purchase count (not churn timing) for classification
+                # Note: churn-based logic already updated in previous sprint; keep it.
+                total_purchases_for_lapse = trajectory.total_purchases or 1
+                cohort_id = "first_time_buyer" if total_purchases_for_lapse <= 1 else "lapsed_user"
+                churn_day = trajectory.churned_day or duration_days
+                churn_month = max(1, ceil(churn_day / 30))
+                purchase_label = (
+                    f"{total_purchases_for_lapse} purchase"
+                    f"{'s' if total_purchases_for_lapse != 1 else ''}"
+                )
                 reason = (
                     f"{'One-time buyer' if cohort_id == 'first_time_buyer' else 'Repeat buyer'} "
                     f"({purchase_label}), churned in month {churn_month}"
                 )
+
+            cohorts[cohort_id].append(trajectory.persona_id)
+            population.get_persona(trajectory.persona_id).product_relationship = cohort_id
             classifications.append(
                 CohortClassification(
                     persona_id=trajectory.persona_id,
