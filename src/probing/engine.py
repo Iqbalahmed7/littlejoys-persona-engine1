@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import math
 import threading
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 import structlog
 
@@ -76,6 +76,7 @@ class ProbingTreeEngine:
         population: Population,
         scenario_id: str,
         llm_client: LLMClient,
+        on_probe_complete: Callable[[str, ProbeResult], None] | None = None,
     ) -> None:
         self.population = population
         self.scenario = get_scenario(scenario_id)
@@ -85,6 +86,7 @@ class ProbingTreeEngine:
         self._outcomes: dict[str, str] = {}
         self.verdicts: dict[str, HypothesisVerdict] = {}
         self.synthesis: TreeSynthesis | None = None
+        self._on_probe_complete = on_probe_complete
         self._precompute_outcomes()
 
     @property
@@ -118,7 +120,9 @@ class ProbingTreeEngine:
                 key=lambda item: (item.order, item.id),
             )
             for probe in hypothesis_probes:
-                self.execute_probe(probe)
+                probe_result = self.execute_probe(probe)
+                if self._on_probe_complete:
+                    self._on_probe_complete(hypothesis.id, probe_result)
 
             self.verdicts[hypothesis.id] = self._build_hypothesis_verdict(
                 hypothesis,
@@ -130,6 +134,12 @@ class ProbingTreeEngine:
 
     def execute_probe(self, probe: Probe) -> ProbeResult:
         """Dispatch a probe to the appropriate execution path."""
+
+        if probe.status == "complete" and probe.result is not None:
+            log.info("probing_probe_skipped_cached", probe_id=probe.id)
+            if self._on_probe_complete:
+                self._on_probe_complete(probe.hypothesis_id, probe.result)
+            return probe.result
 
         probe.status = "running"
         if probe.probe_type == ProbeType.INTERVIEW:
@@ -143,6 +153,9 @@ class ProbingTreeEngine:
 
         probe.result = result
         probe.status = "complete"
+
+        if self._on_probe_complete:
+            self._on_probe_complete(probe.hypothesis_id, result)
         log.info(
             "probing_probe_complete",
             probe_id=probe.id,

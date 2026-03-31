@@ -29,13 +29,6 @@ st.header("Personas")
 st.caption("Browse your synthetic population. Use filters to explore segments.")
 
 demo_mode = False
-st.sidebar.caption("1️⃣ Personas — Explore synthetic households")
-st.sidebar.caption("2️⃣ Research — Run scenario research")
-st.sidebar.caption("3️⃣ Results — View research results")
-st.sidebar.caption("4️⃣ Diagnose — Phase A problem decomposition")
-st.sidebar.caption("5️⃣ Simulate — Phase C intervention testing")
-st.sidebar.caption("6️⃣ Interviews — Deep dive conversations")
-st.sidebar.caption("7️⃣ Comparison — Compare two scenarios")
 
 if demo_mode:
     ensure_demo_data()

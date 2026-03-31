@@ -19,6 +19,7 @@ from src.probing import (
     Hypothesis,
     HypothesisVerdict,
     Probe,
+    ProbeResult,
     ProbeType,
     ProblemStatement,
     TreeSynthesis,
@@ -89,6 +90,52 @@ def _truncate(text: str, limit: int = 120) -> str:
 
 def _hypothesis_title(hypotheses: list[Hypothesis], hypothesis_id: str) -> str | None:
     return next((h.title for h in hypotheses if h.id == hypothesis_id), None)
+
+
+def render_probing_tree_progress(
+    problem: ProblemStatement,
+    hypotheses: list[Hypothesis],
+    partial_results: dict[str, list[ProbeResult]],
+) -> None:
+    """
+    Render a live-growing tree from partial probe results accumulated so far.
+    Shows completed hypothesis cards; pending hypotheses show a spinner row.
+    """
+
+    st.markdown(f"**Investigating: {problem.title}**")
+
+    for hyp in sorted(hypotheses, key=lambda h: h.order):
+        if not hyp.enabled:
+            continue
+
+        results = partial_results.get(hyp.id, [])
+        if results:
+            last = results[-1]
+            conf = last.confidence
+            if conf >= 0.70:
+                border_color = "#2ECC71"
+                conf_label = "Strong"
+            elif conf >= 0.45:
+                border_color = "#F39C12"
+                conf_label = "Partial"
+            else:
+                border_color = "#E74C3C"
+                conf_label = "Weak"
+
+            with st.container(border=True):
+                st.markdown(
+                    f"<span style='color:{border_color}; font-weight:600;'>{hyp.title}</span>",
+                    unsafe_allow_html=True,
+                )
+                st.caption(
+                    f"{conf_label} signal · {len(results)} probe(s) complete · "
+                    f"confidence {conf:.0%}"
+                )
+                if last.evidence_summary:
+                    st.caption(_truncate(last.evidence_summary, 120))
+        else:
+            st.caption(f"H{hyp.order}. {hyp.title}")
+            st.caption("⏳ Investigating…")
 
 
 def render_tree_root(
@@ -436,3 +483,79 @@ def render_probing_tree_visualization(
         for _, cfg in VERDICT_STYLES.items():
             st.caption(f"{cfg['icon']} {cfg['label']}")
         st.caption("Probe chips: traffic light reflects confidence thresholds.")
+
+
+def render_probing_tree_progress(
+    problem: ProblemStatement,
+    hypotheses: list[Hypothesis],
+    partial_results: dict[str, list[ProbeResult]],
+) -> None:
+    """
+    Render a live-growing tree from partial probe results accumulated so far.
+    Shows completed hypothesis cards; pending hypotheses show a pulsing spinner row.
+    """
+    # 1. Root card placeholder
+    with st.container(border=True):
+        st.markdown(f"### 🌳 {problem.title}")
+        st.caption(f"🔍 Progressive Investigation in progress... ({sum(len(r) for r in partial_results.values())} probes executed)")
+
+    st.subheader("Hypothesis Branches")
+
+    sorted_hyps = sorted(hypotheses, key=lambda h: h.order)
+    enabled_hyps = [h for h in sorted_hyps if h.enabled]
+
+    max_per_row = 4
+    for start in range(0, len(enabled_hyps), max_per_row):
+        row_hyps = enabled_hyps[start : start + max_per_row]
+        cols = st.columns(len(row_hyps))
+        for idx, hyp in enumerate(row_hyps):
+            with cols[idx]:
+                results = partial_results.get(hyp.id, [])
+                if results:
+                    _render_hypothesis_card_progress(hyp, results)
+                else:
+                    _render_hypothesis_placeholder(hyp)
+
+    st.divider()
+    st.caption("🎤 Interview · 🔬 Simulation · 📊 Attribute analysis")
+
+
+def _render_hypothesis_card_progress(hyp: Hypothesis, results: list[ProbeResult]) -> None:
+    """Render a partial hypothesis card for 'growing' view."""
+    avg_conf = sum(r.confidence for r in results) / len(results)
+    
+    st.markdown(
+        """
+        <div style="display:flex; justify-content:center; margin-bottom:6px; color: #8E8E8E;">
+          <div style="font-size:22px;">│</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    with st.container(border=True):
+        st.markdown(f"#### 🟡 {hyp.title}")
+        st.caption(f"Investigated ({len(results)} probes)")
+        st.progress(min(avg_conf, 1.0))
+        st.caption(f"Est. Confidence: {avg_conf:.0%}")
+        
+        # Show truncated snippet of last evidence
+        evidence = results[-1].evidence_summary if results else "Preparing analysis..."
+        st.caption(_truncate(evidence))
+
+
+def _render_hypothesis_placeholder(hyp: Hypothesis) -> None:
+    """Render a placeholder card for a hypothesis that hasn't finished any probes yet."""
+    st.markdown(
+        """
+        <div style="display:flex; justify-content:center; margin-bottom:6px; color: #8E8E8E;">
+          <div style="font-size:22px;">│</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.container(border=True):
+        st.markdown(f"#### ⚪ {hyp.title}")
+        st.caption("Investigating… ⏳")
+        st.divider()
+        st.caption("Awaiting initial probe data")

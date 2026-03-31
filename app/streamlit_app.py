@@ -32,13 +32,6 @@ st.caption("Synthetic persona engine for kids nutrition D2C in India.")
 st.markdown("---")
 
 demo_mode = False
-st.sidebar.caption("1️⃣ Personas — Explore synthetic households")
-st.sidebar.caption("2️⃣ Research — Run scenario research")
-st.sidebar.caption("3️⃣ Results — View research results")
-st.sidebar.caption("4️⃣ Diagnose — Phase A problem decomposition")
-st.sidebar.caption("5️⃣ Simulate — Phase C intervention testing")
-st.sidebar.caption("6️⃣ Interviews — Deep dive conversations")
-st.sidebar.caption("7️⃣ Comparison — Compare two scenarios")
 
 pop_path = Path("data/population")
 
@@ -90,17 +83,17 @@ if "population" in st.session_state:
     st.subheader("Getting Started")
     st.markdown(
         "1. **Browse personas** — Explore your synthetic population\n"
-        "2. **Design research** — Pick a scenario, choose a business question, run the hybrid pipeline\n"
-        "3. **View results** — Quantitative findings, qualitative themes, strategic alternatives\n"
-        "4. **Diagnose** — Phase A problem decomposition: identify root barriers by cohort\n"
-        "5. **Simulate** — Phase C intervention testing: measure lift across the quadrant\n"
-        "6. **Deep-dive interviews** — Read the smart-sampled persona conversations"
+        "2. **Define your problem** — Pick a business question; the engine runs a 12-month simulation\n"
+        "3. **Investigate** — Review hypotheses, run the probing tree, see evidence accumulate\n"
+        "4. **Core Finding** — One synthesised insight with evidence chain\n"
+        "5. **Interventions** — Compare solutions on effort, cost, and projected lift\n"
+        "6. **Deep-dive interviews** — Read smart-sampled persona conversations"
     )
 
     col1, col2, col3 = st.columns(3)
     with col1:
         st.page_link("pages/1_personas.py", label="Browse Personas →", icon="👥")
     with col2:
-        st.page_link("pages/2_research.py", label="Design Research →", icon="🔬")
+        st.page_link("pages/2_problem.py", label="Define Problem →", icon="🎯")
     with col3:
-        st.page_link("pages/2_diagnose.py", label="Diagnose →", icon="🔍")
+        st.page_link("pages/3_decompose.py", label="Investigate →", icon="🔬")
