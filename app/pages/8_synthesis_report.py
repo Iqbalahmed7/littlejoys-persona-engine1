@@ -14,6 +14,7 @@ import streamlit as st
 
 from app.components.system_voice import render_system_voice
 from app.utils.phase_state import render_phase_sidebar
+from src.analysis.pdf_export import export_synthesis_pdf
 
 st.set_page_config(page_title="Synthesis Report", page_icon="📋", layout="wide")
 render_phase_sidebar()
@@ -23,9 +24,10 @@ st.caption("Everything the system found, assembled into a single shareable brief
 # ── Phase gate ────────────────────────────────────────────────────────────────
 if "core_finding" not in st.session_state:
     st.warning(
-        "Complete at least Phase 3 (Core Finding) before generating a report.",
+        "Complete the investigation through Phase 3 first to generate a synthesis report.",
         icon="🔒",
     )
+    st.page_link("pages/4_finding.py", label="→ Go to Phase 3: Core Finding")
     st.stop()
 
 # ── Unpack available session state ────────────────────────────────────────────
@@ -74,8 +76,8 @@ st.subheader("1. Business Problem")
 _problem_labels = {
     "nutrimix_2_6": "Why is repeat purchase low despite high NPS? (Nutrimix 2-6)",
     "nutrimix_7_14": "How do we expand Nutrimix from 2-6 to the 7-14 age group?",
-    "magnesium_gummies": "How do we grow sales of a niche supplement? (Magnesium Gummies)",
-    "protein_mix": "The product requires cooking — how do we overcome the effort barrier? (Protein Mix)",
+    "magnesium_gummies": "How do we grow sales of a Supplement? (Magnesium Gummies)",
+    "protein_mix": "The product requires cooking — how do we overcome the effort barrier?",
 }
 st.markdown(f"**{_problem_labels.get(scenario_id, scenario_id)}**")
 
@@ -154,7 +156,68 @@ if all_iv_results:
             unsafe_allow_html=True,
         )
 else:
-    st.info("Run Phase 4 — Interventions to add simulation results to this report.", icon="💡")
+    st.info("Run Phase 4 — Interventions to include intervention recommendations in this report.", icon="💡")
+
+# ── Professional Memo View ───────────────────────────────────────────────────
+st.divider()
+with st.expander("📄 Preview as Executive Memo", expanded=False):
+    _today = datetime.now().strftime("%B %d, %Y")
+    
+    # Prep intervention list for memo
+    _iv_memo_lines = ""
+    if all_iv_results:
+        _sorted_iv = sorted(all_iv_results, key=lambda x: x["result"].absolute_lift, reverse=True)
+        for _rank, _row in enumerate(_sorted_iv[:5]):
+            _iv_memo_lines += f"<li><strong>{_row['intervention'].name}</strong> — projected +{_row['result'].absolute_lift:+.1%} adoption lift</li>"
+    else:
+        _iv_memo_lines = "<li><em>Intervention simulation results not available.</em></li>"
+
+    # Prep cohort table for memo
+    _cohort_table_rows = ""
+    if cohort_summary:
+        _total = sum(cohort_summary.values()) or 1
+        for _cid, _cnt in cohort_summary.items():
+            _cohort_table_rows += f"<tr><td>{_cid.replace('_', ' ').title()}</td><td>{_cnt:,}</td><td>{_cnt/_total:.1%}</td></tr>"
+
+    st.markdown(
+        f"""
+        <div style="background: white; color: #333; padding: 40px; border: 1px solid #ddd; font-family: 'Helvetica', 'Arial', sans-serif; line-height: 1.5;">
+            <div style="font-family: 'Courier New', Courier, monospace; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+                <h2 style="margin:0; letter-spacing: 2px;">MEMORANDUM</h2>
+                <table style="width:100%; border:none; margin-top:10px;">
+                    <tr><td style="width:15%; font-weight:bold;">To:</td><td>Growth & Product Team</td></tr>
+                    <tr><td style="font-weight:bold;">From:</td><td>LittleJoys Persona Engine</td></tr>
+                    <tr><td style="font-weight:bold;">Re:</td><td>{_problem_labels.get(scenario_id, scenario_id)}</td></tr>
+                    <tr><td style="font-weight:bold;">Date:</td><td>{_today}</td></tr>
+                </table>
+            </div>
+            
+            <h3 style="text-transform: uppercase; font-size: 1.1rem; border-bottom: 1px solid #eee;">Executive Summary</h3>
+            <p>Analysis identifies <strong>{dominant_hypothesis}</strong> as the primary business hurdle at {overall_confidence:.0%} confidence.</p>
+            
+            <h3 style="text-transform: uppercase; font-size: 1.1rem; border-bottom: 1px solid #eee; margin-top: 20px;">Population Baseline</h3>
+            <table style="width:100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem;">
+                <thead>
+                    <tr style="background: #f9f9f9; text-align: left; border-bottom: 1px solid #ddd;">
+                        <th style="padding: 8px;">Cohort</th><th style="padding: 8px;">Count</th><th style="padding: 8px;">%</th>
+                    </tr>
+                </thead>
+                <tbody>{_cohort_table_rows}</tbody>
+            </table>
+
+            <h3 style="text-transform: uppercase; font-size: 1.1rem; border-bottom: 1px solid #eee; margin-top: 20px;">Core Finding</h3>
+            <p>{dominant_hypothesis} was confirmed through {len(_confirmed)} distinct hypothesis tests.</p>
+            
+            <h3 style="text-transform: uppercase; font-size: 1.1rem; border-bottom: 1px solid #eee; margin-top: 20px;">Recommended Interventions</h3>
+            <ul style="margin-top: 10px;">{_iv_memo_lines}</ul>
+            
+            <div style="margin-top: 40px; font-size: 0.8rem; color: #777; border-top: 1px solid #eee; padding-top: 10px;">
+                Generated by LittleJoys Persona Simulation Engine. Methodology incorporates multi-phase investigation and synthetic persona interviewing.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # ── Export ────────────────────────────────────────────────────────────────────
 st.divider()
@@ -233,15 +296,47 @@ if all_iv_results:
 
 _text_lines += ["", "=" * 60, "LittleJoys Persona Simulation Engine", "Simulatte Research Pvt Ltd"]
 
-_dl_cols = st.columns(2)
+# Assemble PDF brief — guarded so a PDF generation error never crashes the page
+_top_5_ivs_for_pdf = [
+    {
+        "name": row["intervention"].name,
+        "adoption_rate": row["result"].counterfactual_adoption_rate,
+        "lift": row["result"].absolute_lift,
+    }
+    for row in sorted(all_iv_results, key=lambda x: x["result"].absolute_lift, reverse=True)[:5]
+]
+
+_pdf_bytes: bytes = b""
+_pdf_error: str = ""
+try:
+    _pdf_bytes = export_synthesis_pdf(
+        core_finding=_export["core_finding"],
+        cohort_summary=cohort_summary,
+        scenario_id=scenario_id,
+        top_interventions=_top_5_ivs_for_pdf,
+    )
+except Exception as _e:
+    _pdf_error = str(_e)
+
+_dl_cols = st.columns(3)
 with _dl_cols[0]:
+    if _pdf_bytes:
+        st.download_button(
+            label="⬇️ Download PDF Brief",
+            data=_pdf_bytes,
+            file_name=f"{scenario_id}_synthesis_report.pdf",
+            mime="application/pdf",
+        )
+    else:
+        st.caption(f"PDF unavailable{': ' + _pdf_error if _pdf_error else '.'}")
+with _dl_cols[1]:
     st.download_button(
         label="⬇️ Download Brief (.txt)",
         data="\n".join(_text_lines),
         file_name=f"{scenario_id}_synthesis_report.txt",
         mime="text/plain",
     )
-with _dl_cols[1]:
+with _dl_cols[2]:
     st.download_button(
         label="⬇️ Download Data (.json)",
         data=json.dumps(_export, indent=2, default=str),
