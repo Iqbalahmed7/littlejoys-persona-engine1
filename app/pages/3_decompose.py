@@ -163,7 +163,7 @@ for hyp in sorted_hypotheses:
 
         with col_body:
             title_style = "" if enabled else "color:#999; text-decoration:line-through;"
-            if hyp.is_custom:
+            if getattr(hyp, "is_custom", False):
                 st.markdown(
                     (
                         "<div style='"
