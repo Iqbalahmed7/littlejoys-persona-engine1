@@ -92,52 +92,6 @@ def _hypothesis_title(hypotheses: list[Hypothesis], hypothesis_id: str) -> str |
     return next((h.title for h in hypotheses if h.id == hypothesis_id), None)
 
 
-def render_probing_tree_progress(
-    problem: ProblemStatement,
-    hypotheses: list[Hypothesis],
-    partial_results: dict[str, list[ProbeResult]],
-) -> None:
-    """
-    Render a live-growing tree from partial probe results accumulated so far.
-    Shows completed hypothesis cards; pending hypotheses show a spinner row.
-    """
-
-    st.markdown(f"**Investigating: {problem.title}**")
-
-    for hyp in sorted(hypotheses, key=lambda h: h.order):
-        if not hyp.enabled:
-            continue
-
-        results = partial_results.get(hyp.id, [])
-        if results:
-            last = results[-1]
-            conf = last.confidence
-            if conf >= 0.70:
-                border_color = "#2ECC71"
-                conf_label = "Strong"
-            elif conf >= 0.45:
-                border_color = "#F39C12"
-                conf_label = "Partial"
-            else:
-                border_color = "#E74C3C"
-                conf_label = "Weak"
-
-            with st.container(border=True):
-                st.markdown(
-                    f"<span style='color:{border_color}; font-weight:600;'>{hyp.title}</span>",
-                    unsafe_allow_html=True,
-                )
-                st.caption(
-                    f"{conf_label} signal · {len(results)} probe(s) complete · "
-                    f"confidence {conf:.0%}"
-                )
-                if last.evidence_summary:
-                    st.caption(_truncate(last.evidence_summary, 120))
-        else:
-            st.caption(f"H{hyp.order}. {hyp.title}")
-            st.caption("⏳ Investigating…")
-
-
 def render_tree_root(
     problem: ProblemStatement,
     synthesis: TreeSynthesis,
