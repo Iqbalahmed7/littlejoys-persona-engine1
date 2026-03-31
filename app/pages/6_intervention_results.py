@@ -1,8 +1,8 @@
 # ruff: noqa: N999
-\"\"\"Phase 4 — Intervention Comparison Dashboard.
+"""Phase 4 — Intervention Comparison Dashboard.
 
 Full comparison of ALL interventions run in parallel — ranked by adoption lift.
-\"\"\"
+"""
 
 from __future__ import annotations
 
@@ -18,7 +18,10 @@ st.header("Phase 4 — Intervention Results")
 
 # ── Phase gate ────────────────────────────────────────────────────────────────
 if "intervention_run" not in st.session_state:
-    st.warning("No simulation results yet. Go to Phase 4 — Interventions and click Run All Simulations.", icon="🔒")
+    st.warning(
+        "No simulation results yet. Go to Phase 4 — Interventions and click Run All Simulations.",
+        icon="🔒",
+    )
     if st.button("← Back to Interventions"):
         st.switch_page("pages/5_intervention.py")
     st.stop()
@@ -44,6 +47,7 @@ render_system_voice(
     f"The table below ranks every intervention by adoption lift — and flags the best trade-off between impact and execution effort."
 )
 
+
 def _infer_complexity(iv) -> str:
     if iv.scope == "cohort_specific" and iv.temporality == "temporal":
         return "High"
@@ -51,12 +55,14 @@ def _infer_complexity(iv) -> str:
         return "Medium"
     return "Low"
 
+
 def _infer_ttm(iv) -> str:
     if iv.scope == "cohort_specific" and iv.temporality == "temporal":
-        return "3–4 months"
+        return "3-4 months"
     if iv.temporality == "temporal":
-        return "4–6 weeks"
-    return "1–2 weeks"
+        return "4-6 weeks"
+    return "1-2 weeks"
+
 
 def _infer_cost(iv) -> str:
     if iv.scope == "cohort_specific" and iv.temporality == "temporal":
@@ -64,6 +70,7 @@ def _infer_cost(iv) -> str:
     if iv.temporality == "temporal":
         return "Medium"
     return "Low"
+
 
 _COMPLEXITY_COLOR = {"Low": "#2ECC71", "Medium": "#F39C12", "High": "#E74C3C"}
 
@@ -86,7 +93,8 @@ for _ri, _row in enumerate(sorted_results):
     _row_bg = _TOP_BG if _ri == 0 else _DEFAULT_BG
     _top_badge = (
         ' <span style="background:#1A5276;color:#fff;border-radius:4px;padding:1px 5px;font-size:0.72rem;margin-left:6px;">★ Top</span>'
-        if _ri == 0 else ""
+        if _ri == 0
+        else ""
     )
     _cx = _infer_complexity(_iv)
     _cx_color = _COMPLEXITY_COLOR.get(_cx, "#555")
@@ -103,7 +111,7 @@ for _ri, _row in enumerate(sorted_results):
         f'<td style="padding:9px 12px; text-align:center; color:{_cx_color}; font-weight:600;">{_cx}</td>'
         f'<td style="padding:9px 12px; text-align:center; color:#555;">{_infer_ttm(_iv)}</td>'
         f'<td style="padding:9px 12px; text-align:center; color:#555;">{_infer_cost(_iv)}</td>'
-        f'</tr>'
+        f"</tr>"
     )
 
 _table_html = (
@@ -118,13 +126,15 @@ _table_html = (
     '<th style="padding:10px 12px; text-align:center;">Complexity</th>'
     '<th style="padding:10px 12px; text-align:center;">Time to Market</th>'
     '<th style="padding:10px 12px; text-align:center;">Est. Cost</th>'
-    '</tr></thead>'
-    f'<tbody>{_rows_html}</tbody>'
-    '</table></div>'
+    "</tr></thead>"
+    f"<tbody>{_rows_html}</tbody>"
+    "</table></div>"
 )
 
 st.subheader("Intervention Comparison")
-st.caption(f"Baseline adoption: **{_baseline_rate:.1%}** · All interventions ranked by adoption lift.")
+st.caption(
+    f"Baseline adoption: **{_baseline_rate:.1%}** · All interventions ranked by adoption lift."
+)
 st.markdown(_table_html, unsafe_allow_html=True)
 
 if sorted_results:

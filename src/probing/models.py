@@ -39,8 +39,10 @@ class Hypothesis(BaseModel):
     problem_id: str
     title: str
     rationale: str
+    signals: list[str] = Field(default_factory=list)
     indicator_attributes: list[str]
     counterfactual_modifications: dict[str, Any] | None = None
+    is_custom: bool = False
     enabled: bool = True
     order: int = 0
 

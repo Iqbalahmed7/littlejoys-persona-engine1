@@ -7,11 +7,11 @@ import streamlit as st
 
 # Keys in st.session_state that mark each phase complete
 _PHASE_KEYS: dict[int, str] = {
-    0: "",                       # always unlocked
-    1: "baseline_cohorts",       # set after baseline simulation completes
-    2: "probe_results",          # set after at least one probe chain completes
-    3: "core_finding",           # set after Core Finding is generated
-    4: "intervention_results",   # set after intervention simulations complete
+    0: "",  # always unlocked
+    1: "baseline_cohorts",  # set after baseline simulation completes
+    2: "probe_results",  # set after at least one probe chain completes
+    3: "core_finding",  # set after Core Finding is generated
+    4: "intervention_results",  # set after intervention simulations complete
 }
 
 _PHASE_LABELS: dict[int, str] = {
@@ -51,20 +51,17 @@ def render_phase_sidebar() -> None:
     """Render the phase navigation sidebar with lock/unlock status icons."""
     st.sidebar.markdown("### Navigation")
     icons = {True: "🟢", False: "🔒"}
-    phase_pages = {
-        0: "pages/1_personas",
-        1: "pages/2_problem",
-        2: "pages/3_decompose",
-        3: "pages/4_finding",
-        4: "pages/5_intervention",
-    }
     for phase, label in _PHASE_LABELS.items():
         unlocked = phase_complete(phase)
         icon = icons[unlocked]
-        if unlocked:
-            st.sidebar.caption(f"{icon} {phase} — {label}")
-        else:
-            prereq = _PHASE_PREREQS.get(phase, "")
-            st.sidebar.caption(f"{icon} {phase} — {label}")
-            if prereq:
-                st.sidebar.caption(f"   ↳ _{prereq}_")
+        prereq = _PHASE_PREREQS.get(phase, "")
+        st.sidebar.caption(f"{icon} {phase} — {label}")
+        if not unlocked and prereq:
+            st.sidebar.caption(f"   ↳ _{prereq}_")
+
+    st.sidebar.divider()
+    st.sidebar.page_link(
+        "pages/9_compare.py",
+        label="⚖️ Compare Scenarios",
+        icon="⚖️",
+    )

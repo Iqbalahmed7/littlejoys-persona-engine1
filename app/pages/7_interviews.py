@@ -105,11 +105,20 @@ for hyp_id, hyp_probes in hyp_to_probes.items():
     st.markdown("---")
 
 # ── Cross-hypothesis theme summary ────────────────────────────────────────────
-all_clusters = [c for p in interview_probes for c in p.result.response_clusters]
-if all_clusters:
+all_clusters_raw = [c for p in interview_probes for c in p.result.response_clusters]
+if all_clusters_raw:
     st.subheader("Cross-Hypothesis Themes")
     st.caption("All response clusters across every interview probe, ranked by frequency.")
 
+    # Deduplicate clusters by theme label, keeping the one with the highest persona_count
+    # (Fix for duplicate theme entries in Phase 7)
+    deduped: dict[str, Any] = {}
+    for cluster in all_clusters_raw:
+        label = cluster.theme.replace("_", " ").title()
+        if label not in deduped or cluster.persona_count > deduped[label].persona_count:
+            deduped[label] = cluster
+    
+    all_clusters = list(deduped.values())
     sorted_clusters = sorted(all_clusters, key=lambda c: c.persona_count, reverse=True)
     for cluster in sorted_clusters[:8]:
         theme_label = cluster.theme.replace("_", " ").title()
@@ -173,3 +182,73 @@ if population is not None and len(all_responses) >= 2:
             st.markdown(f"**{persona_labels[right_id]}**")
             for r in right_responses[:5]:
                 st.markdown(f"> *{r.content[:300]}*")
+
+# ── Single Persona Deep-Dive ──────────────────────────────────────────────────
+if population is not None and persona_ids:
+    st.divider()
+    st.subheader("🔍 Single Persona Deep-Dive")
+    st.caption("Drill into one persona to see every response they gave across the investigation.")
+
+    selected_pid = st.selectbox(
+        "Select a persona to deep-dive",
+        persona_ids,
+        format_func=lambda x: persona_labels[x],
+        key="deep_dive_persona",
+    )
+
+    if selected_pid:
+        persona = population.get_persona(selected_pid)
+        
+        # Profile card
+        with st.container(border=True):
+            col_id, col_meta = st.columns([0.2, 0.8])
+            with col_id:
+                st.markdown(f"### {persona.name}")
+                st.caption(f"ID: `{persona.id}`")
+            with col_meta:
+                # Resolve cohort if possible (look up in classification results)
+                cohort_label = "Unclassified"
+                cohorts_obj = st.session_state.get("baseline_cohorts")
+                if cohorts_obj and hasattr(cohorts_obj, "memberships"):
+                    cid = cohorts_obj.memberships.get(persona.id, "unclassified")
+                    # Emoji mapping from Ph 1
+                    emojis = {"never_aware": "🔇", "aware_not_tried": "👁️", "first_time_buyer": "🛒", "current_user": "⭐", "lapsed_user": "💤"}
+                    cohort_label = f"{emojis.get(cid, '👤')} {cid.replace('_', ' ').title()}"
+
+                st.markdown(
+                    f"**{persona.demographics.city_name}** · "
+                    f"{persona.demographics.household_income_lpa} LPA · "
+                    f"**{cohort_label}**"
+                )
+                narrative = getattr(persona, "narrative", "No narrative available.")
+                st.caption(narrative.split(".")[0][:150] + "...")
+
+        # All responses grouped by hypothesis
+        persona_responses = [r for r in all_responses if r.persona_id == selected_pid]
+        
+        # Find which probes these responses came from to get questions/hypotheses
+        for hyp_id, hyp_probes in hyp_to_probes.items():
+            hyp_title = hyp_titles.get(hyp_id, hyp_id)
+            
+            # Find responses for this persona in this hypothesis's probes
+            matches = []
+            for probe in hyp_probes:
+                for resp in probe.result.interview_responses:
+                    if resp.persona_id == selected_pid:
+                        # Find theme clustering if available
+                        theme = "Unknown Theme"
+                        for cluster in probe.result.response_clusters:
+                            # Heuristic: does the representative quote match?
+                            # Improved: just show the cluster it belongs to if engine provided it
+                            # Since ProbeResult doesn't map resp -> cluster, we use the theme_label
+                            # from the response if present (future sprint) or skip
+                            pass
+                        matches.append((probe, resp))
+            
+            if matches:
+                 with st.expander(f"Hypothesis: {hyp_title}", expanded=True):
+                     for probe, resp in matches:
+                         st.markdown(f"**Probe Q:** _{probe.question_template}_")
+                         st.markdown(f"> {resp.content}")
+                         st.caption(f"Outcome: {resp.outcome.replace('_', ' ').title()}")
+                         st.divider()

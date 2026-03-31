@@ -1,3 +1,4 @@
+# ruff: noqa: N999
 """Phase 2 — Decomposition & Probing.
 
 Presents simulation-grounded hypotheses for the selected problem, lets the user
@@ -8,11 +9,14 @@ results using the existing tree visualization components.
 from __future__ import annotations
 
 import os
+import re
 
 import streamlit as st
 
 from app.components.system_voice import render_system_voice
 from app.utils.phase_state import render_phase_sidebar
+from src.analysis.contradiction_detector import detect_contradictions
+from src.probing.models import Hypothesis
 
 # ---------------------------------------------------------------------------
 # Scenario → problem-tree ID mapping
@@ -42,6 +46,11 @@ _VERDICT_BADGE: dict[str, dict[str, str]] = {
     "rejected": {"icon": "❌", "color": "#E74C3C", "label": "Rejected"},
     "inconclusive": {"icon": "❔", "color": "#95A5A6", "label": "Inconclusive"},
 }
+
+
+def _slug(text: str) -> str:
+    value = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+    return value or "hypothesis"
 
 # ---------------------------------------------------------------------------
 # Page config & sidebar
@@ -132,7 +141,13 @@ st.caption(
 if "hypothesis_enabled" not in st.session_state:
     st.session_state["hypothesis_enabled"] = {h.id: h.enabled for h in all_hypotheses}
 
-sorted_hypotheses = sorted(all_hypotheses, key=lambda h: h.order)
+custom_key = f"custom_hypotheses_{problem_id}"
+if custom_key not in st.session_state:
+    st.session_state[custom_key] = []
+
+custom_hypotheses = [Hypothesis.model_validate(h) for h in st.session_state[custom_key]]
+all_hypotheses = all_hypotheses + custom_hypotheses
+sorted_hypotheses = sorted(all_hypotheses, key=lambda h: (h.order, h.id))
 
 for hyp in sorted_hypotheses:
     with st.container(border=True):
@@ -148,11 +163,24 @@ for hyp in sorted_hypotheses:
 
         with col_body:
             title_style = "" if enabled else "color:#999; text-decoration:line-through;"
-            st.markdown(
-                f"<span style='{title_style}'><strong>H{hyp.order}. {hyp.title}</strong></span>",
-                unsafe_allow_html=True,
-            )
-            st.caption(hyp.rationale)
+            if hyp.is_custom:
+                st.markdown(
+                    (
+                        "<div style='"
+                        "border-left:4px solid #9B59B6; background:#F6F0FA; "
+                        "padding:8px 10px; border-radius:4px;'>"
+                        f"<span style='{title_style}'><strong>🧑 {hyp.title}</strong></span>"
+                        f"<div style='margin-top:4px; font-size:0.9rem;'>{hyp.rationale}</div>"
+                        "</div>"
+                    ),
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f"<span style='{title_style}'><strong>H{hyp.order}. {hyp.title}</strong></span>",
+                    unsafe_allow_html=True,
+                )
+                st.caption(hyp.rationale)
 
             # Indicator attribute chips
             if hyp.indicator_attributes:
@@ -169,6 +197,49 @@ for hyp in sorted_hypotheses:
                     f"<div style='margin-top:4px;'>{chips_html}</div>",
                     unsafe_allow_html=True,
                 )
+
+if "baseline_cohorts" in st.session_state:
+    with st.expander("Add your own hypothesis (optional)", expanded=False):
+        custom_title = st.text_input(
+            "Hypothesis title",
+            placeholder="e.g. Packaging looks cheap at shelf",
+            key="custom_hypothesis_title",
+        )
+        custom_rationale = st.text_area(
+            "Why you believe this",
+            placeholder="Describe the signal you're seeing...",
+            key="custom_hypothesis_rationale",
+        )
+        if st.button("Add hypothesis", key="add_custom_hypothesis"):
+            title = custom_title.strip()
+            rationale = custom_rationale.strip()
+            if not title or not rationale:
+                st.warning("Please provide both title and rationale.")
+            else:
+                new_id = f"custom_{_slug(title)}"
+                if any(h.id == new_id for h in all_hypotheses):
+                    st.warning("A custom hypothesis with a similar title already exists.")
+                else:
+                    custom_h = Hypothesis(
+                        id=new_id,
+                        problem_id=problem.id,
+                        title=title,
+                        rationale=rationale,
+                        signals=[],
+                        indicator_attributes=[],
+                        is_custom=True,
+                        enabled=True,
+                        order=999 + len(custom_hypotheses),
+                    )
+                    st.session_state[custom_key] = [
+                        *st.session_state[custom_key],
+                        custom_h.model_dump(mode="json"),
+                    ]
+                    st.session_state["hypothesis_enabled"][custom_h.id] = True
+                    st.success(
+                        "Hypothesis added — it will be included in the next investigation run."
+                    )
+                    st.rerun()
 
 # Count enabled
 enabled_count = sum(
@@ -263,8 +334,8 @@ if run_clicked:
                 hypotheses=all_hypotheses,
                 probes=all_probes,
             )
-        
-        # Clear the placeholder before showing final results if needed, 
+
+        # Clear the placeholder before showing final results if needed,
         # but here we just proceed to set session_state and rerun to final view
         tree_placeholder.empty()
 
@@ -371,6 +442,38 @@ except Exception as viz_exc:
                 st.caption(f"Confidence: {r.confidence:.0%} — {r.evidence_summary}")
 
 # --- Cross-hypothesis synthesis ---
+contradictions = detect_contradictions(
+    hypotheses=hypotheses_r,
+    verdicts=verdicts,
+    probes=probes_r,
+)
+st.markdown("## ⚡ Cross-Hypothesis Conflicts")
+if contradictions:
+    severity_style = {
+        "high": {"border": "#E74C3C", "icon": "🔴"},
+        "medium": {"border": "#F1C40F", "icon": "🟡"},
+        "low": {"border": "#95A5A6", "icon": "⚪"},
+    }
+    for warning in contradictions:
+        style = severity_style.get(warning.severity, severity_style["low"])
+        st.markdown(
+            (
+                "<div style='"
+                f"border-left:4px solid {style['border']}; "
+                "padding:10px 12px; margin:8px 0; background:#FAFAFA;'>"
+                f"<div><strong>{style['icon']} {warning.hypothesis_a_id} vs {warning.hypothesis_b_id}</strong> "
+                f"<span style='background:#F4F6F7; border:1px solid #D5D8DC; border-radius:8px; "
+                "padding:1px 8px; font-size:0.8rem;'>"
+                f"{warning.contradiction_type}</span></div>"
+                f"<div style='margin-top:4px;'>{warning.description}</div>"
+                "</div>"
+            ),
+            unsafe_allow_html=True,
+        )
+else:
+    st.caption("Cross-hypothesis consistency check")
+    st.success("No cross-hypothesis conflicts detected.")
+
 if synthesis.synthesis_narrative:
     st.subheader("Cross-Hypothesis Synthesis")
     st.write(synthesis.synthesis_narrative)

@@ -1,4 +1,3 @@
-# ruff: noqa: N999
 """Scenario comparison UI.
 
 UI-only front-end for :func:`src.analysis.scenario_comparison.compare_scenarios`.

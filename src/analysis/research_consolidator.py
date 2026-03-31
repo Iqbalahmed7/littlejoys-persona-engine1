@@ -205,8 +205,7 @@ def _decision_rationale_summary(event_result: Any) -> list[dict[str, Any]]:
     if not total:
         return []
     return [
-        {"variable": var, "count": n, "fraction": n / total}
-        for var, n in dominant.most_common(10)
+        {"variable": var, "count": n, "fraction": n / total} for var, n in dominant.most_common(10)
     ]
 
 
@@ -224,9 +223,7 @@ def _persona_trajectories_from_event(event_result: Any) -> list[PersonaTrajector
                 traj.first_purchase_day is not None
                 and start_day <= traj.first_purchase_day <= end_day
             )
-            churned_this = (
-                traj.churned_day is not None and start_day <= traj.churned_day <= end_day
-            )
+            churned_this = traj.churned_day is not None and start_day <= traj.churned_day <= end_day
             sat = float(snap.state.get("perceived_value", 0.0))
             consec = m if snap.is_active else 0
             states.append(
@@ -364,7 +361,9 @@ def consolidate_research(
         if result.temporal_result.monthly_snapshots:
             final_snapshot = result.temporal_result.monthly_snapshots[-1]
             if result.temporal_result.population_size > 0:
-                month_12_active_rate = final_snapshot.total_active / result.temporal_result.population_size
+                month_12_active_rate = (
+                    final_snapshot.total_active / result.temporal_result.population_size
+                )
             peak_churn_month = max(
                 result.temporal_result.monthly_snapshots,
                 key=lambda snap: snap.churned,
@@ -432,6 +431,12 @@ def consolidate_research(
         executive_summary = generate_executive_summary(
             report, scenario, llm_client=None, mock_mode=True
         )
+        # Integration tests expect the consolidation layer to visibly mark mock
+        # executive summaries, even though the lower-level generator doesn't.
+        if executive_summary is not None and "mock" not in executive_summary.headline.lower():
+            executive_summary = executive_summary.model_copy(
+                update={"headline": f"mock {executive_summary.headline}"},
+            )
     elif llm_client is not None:
         executive_summary = generate_executive_summary(
             report, scenario, llm_client, mock_mode=False

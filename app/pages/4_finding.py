@@ -16,6 +16,7 @@ from app.components.system_voice import (
     render_system_voice,
 )
 from app.utils.phase_state import render_phase_sidebar
+from src.analysis.contradiction_detector import detect_contradictions
 
 # ---------------------------------------------------------------------------
 # Verdict badge config (mirrors 3_decompose.py for visual consistency)
@@ -280,6 +281,21 @@ else:
         if status in ("confirmed", "partially_confirmed"):
             evidence_chain_ids.append(hyp_id)
 
+high_conflicts = [
+    warning
+    for warning in detect_contradictions(
+        hypotheses=hypotheses_list,
+        verdicts=verdicts,
+        probes=probes_list,
+    )
+    if warning.severity == "high"
+]
+for warning in high_conflicts:
+    st.warning(
+        f"⚡ Conflict detected: {warning.hypothesis_a_id} and {warning.hypothesis_b_id} "
+        "share evidence but diverge in confidence. "
+        "Review both branches before finalising the core finding."
+    )
 
 # ---------------------------------------------------------------------------
 # 3.1. QUOTE BANK — Qualitative voices

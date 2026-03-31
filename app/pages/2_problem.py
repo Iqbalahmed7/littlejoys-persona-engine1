@@ -441,6 +441,74 @@ m3.metric("Lapse Rate", f"{lapse_rate}%", help="% of buyers who did not remain a
 m4.metric("Simulation Months", "12", help="Day-level simulation across 365 days")
 
 st.markdown("---")
+
+## 🗺️ Persona Journey Map
+st.caption("Click a cohort to see the personas inside and what signal placed them there.")
+
+cohort_names = list(cohort_display.keys())
+cohort_labels = {
+    cid: f"{icon} {label} ({cohorts.summary.get(cid, 0)})"
+    for cid, (label, icon, _) in cohort_display.items()
+}
+selected_cohort = st.radio(
+    "Select cohort",
+    options=cohort_names,
+    format_func=lambda cid: cohort_labels[cid],
+    horizontal=True,
+    key="journey_map_cohort",
+)
+
+if selected_cohort:
+    persona_ids = cohorts.cohorts.get(selected_cohort, [])[:50]
+    if persona_ids:
+        data = []
+        for pid in persona_ids:
+            p = pop.get_persona(pid)
+            reason = next(
+                (c.classification_reason for c in cohorts.classifications if c.persona_id == pid),
+                "Classification reason unavailable",
+            )
+            data.append({
+                "Persona": pid.rsplit('-', maxsplit=1)[0],  # strip UUID if present
+                "City": p.demographics.city_tier,
+                "Income": f"₹{p.demographics.household_income_lpa:.0f}L",
+                "Reason": reason,
+            })
+        df = pd.DataFrame(data)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+        if len(cohorts.cohorts.get(selected_cohort, [])) > 50:
+            st.caption(f"Showing first 50 of {len(cohorts.cohorts[selected_cohort])} personas.")
+
+        # Cohort delta insight
+        _full_pop_df = pop.to_dataframe()
+        _cohort_df = _full_pop_df[_full_pop_df["id"].isin(persona_ids)]
+        _pop_means = _full_pop_df.select_dtypes(include=["float"]).mean()
+        _cohort_means = _cohort_df.select_dtypes(include=["float"]).mean()
+        _diffs = _cohort_means - _pop_means
+        top_diffs = _diffs.abs().nlargest(2)
+        if len(top_diffs) > 0 and len(_cohort_df) >= 5:
+            delta_text = []
+            for attr, diff in top_diffs.items():
+                direction = "higher" if _diffs[attr] > 0 else "lower"
+                delta_text.append(
+                    f"{direction} on {attr} ({_cohort_means[attr]:.2f} vs {_pop_means[attr]:.2f} avg)"
+                )
+            st.info(
+                f"This cohort is {' and '.join(delta_text)} — vs the full 200-persona population.",
+                icon="💡",
+            )
+
+        # System Voice narrative
+        narratives = {
+            "never_aware": f"These {len(persona_ids)} households never encountered the product through any channel. The primary driver is low brand salience — distribution and awareness investment are the unlock.",
+            "aware_not_tried": f"These {len(persona_ids)} households know the product exists but didn't convert. Price, trust, and need clarity are the main blockers.",
+            "first_time_buyer": f"These {len(persona_ids)} households tried once but didn't return. The window between first purchase and habit formation is the critical intervention point.",
+            "current_user": f"These {len(persona_ids)} households are your most valuable segment. Understanding what made them stick is the key to scaling.",
+            "lapsed_user": f"These {len(persona_ids)} households were active buyers who stopped. Identifying their exit signal — often price, child rejection, or routine disruption — is the retention priority.",
+        }
+        render_system_voice(narratives.get(selected_cohort, ""))
+
+st.markdown("---")
 st.success(
     "✅ Phase 1 complete. "
     "Proceed to **Phase 2 — Decomposition & Probing** to investigate why these outcomes occurred."

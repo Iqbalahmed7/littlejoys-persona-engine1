@@ -80,6 +80,14 @@ def render_interview_detail(result: ProbeResult) -> None:
         if cluster.representative_quotes:
             for quote in cluster.representative_quotes[:3]:
                 st.markdown(f"> _{quote[:300]}_")
+                # Task C: Match quote to persona for deep-dive link
+                persona_match = next((r for r in result.interview_responses if quote[:100] in r.content), None)
+                if persona_match:
+                    st.page_link(
+                        "pages/7_interviews.py",
+                        label=f"View {persona_match.persona_name}'s full interview →",
+                        icon="🔍",
+                    )
         if cluster.dominant_attributes:
             attrs = ", ".join(
                 f"{display_name(k)}: {v:.2f}"

@@ -13,12 +13,12 @@ _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-import streamlit as st
+import streamlit as st  # noqa: E402
 
-from src.constants import DEFAULT_SEED, SCENARIO_IDS
-from src.decision.scenarios import get_scenario
-from src.generation.population import Population
-from src.simulation.static import run_static_simulation
+from src.constants import DEFAULT_SEED, SCENARIO_IDS  # noqa: E402
+from src.decision.scenarios import get_scenario  # noqa: E402
+from src.generation.population import Population  # noqa: E402
+from src.simulation.static import run_static_simulation  # noqa: E402
 
 st.set_page_config(
     page_title="LittleJoys Persona Engine",
@@ -103,10 +103,12 @@ if "population" in st.session_state:
         "6. **Deep-dive interviews** — Read smart-sampled persona conversations"
     )
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.page_link("pages/1_personas.py", label="🔍 Explore Population", icon="👥")
-with col2:
-    st.page_link("pages/2_problem.py", label="💡 State a Problem", icon="🎯")
-with col3:
-    st.page_link("pages/4_finding.py", label="📊 View Core Finding", icon="📋")
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.page_link("pages/1_personas.py", label="🔍 Explore Population", icon="👥")
+    with col2:
+        st.page_link("pages/2_problem.py", label="💡 State a Problem", icon="🎯")
+    with col3:
+        st.page_link("pages/4_finding.py", label="📊 View Core Finding", icon="📋")
+    with col4:
+        st.page_link("pages/9_compare.py", label="⚖️ Compare Scenarios", icon="⚖️")
