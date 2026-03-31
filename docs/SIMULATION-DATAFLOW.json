@@ -1,0 +1,473 @@
+{
+  "version": "Sprint 27",
+  "date": "2026-03-31",
+  "description": "Complete dataflow map for LittleJoys persona simulation engine",
+
+  "stage_1_persona_generation": {
+    "description": "Generate synthetic personas from statistical distributions and LLM enrichment",
+    "inputs": {
+      "seed": "int — RNG seed for reproducibility",
+      "population_size": "int — default 200",
+      "deep_persona_count": "int — default 30 (LLM-enriched)",
+      "target_filters": "dict — optional e.g. {city_tier: Tier1, household_income_lpa: [10,20]}"
+    },
+    "internal_steps": [
+      {
+        "step": "demographic_sampling",
+        "method": "Stratified sampling from DistributionTables",
+        "produces": ["city_tier", "city_name", "household_income_lpa", "parent_age", "child_ages", "family_structure", "socioeconomic_class"]
+      },
+      {
+        "step": "psychographic_generation",
+        "method": "Gaussian Copula with conditional correlation rules",
+        "produces": "133 continuous [0,1] attributes across 11 categories",
+        "categories": ["health", "psychology", "cultural", "relationships", "career", "education", "lifestyle", "daily_routine", "values", "emotional", "media"]
+      },
+      {
+        "step": "coherence_rules",
+        "method": "ConditionalRuleEngine",
+        "example_rules": [
+          "if health_anxiety > 0.7 → lift medical_authority_trust",
+          "if family_structure == joint → lift elder_influence",
+          "if education_level == doctorate → lift science_literacy"
+        ]
+      },
+      {
+        "step": "validation",
+        "method": "PersonaValidator",
+        "checks": ["parent_age >= oldest_child_age + 18", "channel_mix sums to 1.0", "all UnitInterval in [0,1]"]
+      },
+      {
+        "step": "tier2_narrative_enrichment",
+        "method": "LLM (claude-sonnet-4-6)",
+        "applies_to": "top 30 personas selected by k-means diversity clustering",
+        "llm_calls": [
+          {
+            "call": "anchor_inference",
+            "input": "demographics + top 10 psychographic extremes (JSON)",
+            "output_schema": {"core_values": "list[str]", "life_attitude": "str", "parent_motivations": "list[str]"}
+          },
+          {
+            "call": "life_story_generation",
+            "input": "anchor + persona attributes (JSON)",
+            "output_schema": {"stories": [{"title": "str", "event": "str", "impact": "str"}]}
+          },
+          {
+            "call": "narrative_generation",
+            "input": "full attributes + anchor + stories",
+            "output": "Free-form 300-500 word biography (string)",
+            "validation": "Must reference >= 10 specific persona attributes"
+          }
+        ]
+      }
+    ],
+    "outputs": {
+      "Population": {
+        "personas": "list[Persona] — 200 personas each with 145 attributes",
+        "metadata": {
+          "generation_timestamp": "ISO datetime",
+          "engine_version": "str",
+          "generation_duration_seconds": "float",
+          "deep_persona_count": "int"
+        }
+      }
+    }
+  },
+
+  "stage_2_gtm_configuration": {
+    "description": "User configures go-to-market strategy before simulation",
+    "inputs_from_user": {
+      "preset": "str — one of: Organic Launch, Paid Blitz, Doctor-Led, Influencer-Heavy, Balanced, Custom",
+      "sim_months": "int — 3, 6, or 12",
+      "awareness_budget": "float [0,1] — overall marketing spend intensity",
+      "channel_mix": {
+        "description": "Per-channel spend weights, auto-normalized to sum to 1.0",
+        "available_channels": ["instagram", "youtube", "whatsapp", "google_ads", "facebook_ads", "pediatrician", "momfluencer", "reddit", "pharmacy_kiosk", "school_activation", "seo_content", "email_marketing"]
+      },
+      "campaigns": {
+        "influencer_campaign": "bool",
+        "pediatrician_endorsement": "bool",
+        "school_partnership": "bool",
+        "sports_club_partnership": "bool"
+      },
+      "referral_program_boost": "float [0,0.30] — additional WoM from incentivized sharing",
+      "discount_available": "float [0,0.30] — launch/introductory discount"
+    },
+    "outputs": {
+      "gtm_scenario_override": "ScenarioConfig — modified marketing config applied to simulation"
+    }
+  },
+
+  "stage_3_temporal_simulation": {
+    "description": "Month-by-month simulation of product adoption, WoM, repeat purchase, and churn",
+    "inputs": {
+      "population": "Population (from Stage 1)",
+      "scenario": "ScenarioConfig (GTM-overridden from Stage 2)",
+      "months": "int — 3, 6, or 12",
+      "seed": "int"
+    },
+    "monthly_loop": {
+      "step_1_awareness_growth": {
+        "formula": "awareness_boost += TEMPORAL_MONTHLY_AWARENESS_INCREMENT (0.02) × awareness_budget",
+        "applies_to": "all non-adopter personas"
+      },
+      "step_2_wom_propagation": {
+        "formula": "boost = transmitter_tendency × 0.15 × 0.85^month × (1 + receiver.social_proof_bias)",
+        "each_adopter_reaches": "3–5 random non-adopters",
+        "cap_per_receiver": 0.3,
+        "decay_per_month": 0.85
+      },
+      "step_3_referral_wom": {
+        "formula": "Additional propagation with transmission_rate = referral_program_boost",
+        "applies_when": "referral_program_boost > 0"
+      },
+      "step_4_new_adoption": {
+        "for_each_non_adopter": "run_funnel(persona, scenario, awareness_boost)",
+        "funnel_stages": {
+          "need_recognition": {
+            "threshold": 0.25,
+            "key_signals": ["health_anxiety (0.20)", "nutrition_gap_awareness (0.25)", "child_health_proactivity (0.20)", "immunity_concern (0.15)", "growth_concern (0.15)"],
+            "age_filter": "score × 1.0 if in target range, × 0.3 if outside"
+          },
+          "awareness": {
+            "threshold": 0.15,
+            "formula": "awareness_budget × channel_persona_match + partnership_boosts + wom_boost",
+            "channel_persona_match": {
+              "instagram": "ad_receptivity × platform_match_factor",
+              "youtube": "wellness_trend_follower × platform_match_factor",
+              "whatsapp": "(0.5 + 0.5 × mommy_group_membership) × wom_receiver_openness"
+            },
+            "partnership_boosts": {
+              "pediatrician_endorsement": "+0.15 if medical_authority_trust > 0.6",
+              "school_partnership": "+0.20 if community_engagement > 0.5",
+              "influencer_campaign": "+0.10 if influencer_trust > 0.5"
+            }
+          },
+          "consideration": {
+            "threshold": 0.35,
+            "formula": "0.30×trust + 0.20×research + 0.15×cultural_fit + 0.20×brand + 0.15×risk",
+            "trust": "(medical_authority_trust + social_proof_bias) / 2",
+            "research": "research_before_purchase × science_literacy",
+            "cultural_fit": "1.0 if compatible, 0.5 if dietary mismatch",
+            "brand": "indie_brand_openness (LittleJoys) or brand_loyalty (others)",
+            "risk": "1.0 − 0.4×(1−risk_tolerance) if unfamiliar brand"
+          },
+          "purchase": {
+            "threshold": 0.30,
+            "price_barrier": "budget_consciousness × (price / price_reference_point) / 2",
+            "effort_barrier": "effort_to_acquire × (1 − online_shopping_comfort)",
+            "value": "(transparency_importance + ingredient_awareness) / 2 × benefit_mix",
+            "emotional": "0.3×emotional_persuasion + 0.3×guilt_driven_spending + 0.4×best_for_my_child_intensity",
+            "final_score": "value + emotional − price_barrier − effort_barrier",
+            "rejection_hints": {
+              "price_too_high": "price_barrier > effort_barrier AND price_barrier > 0.15",
+              "effort_too_high": "effort_barrier >= 0.15",
+              "insufficient_trust": "default"
+            }
+          }
+        },
+        "if_adopt": ["set ever_adopted=True", "set active=True", "append PurchaseEvent to purchase_history"]
+      },
+      "step_5_repeat_and_churn": {
+        "for_each_active_adopter": {
+          "satisfaction": "0.35×taste_alignment + 0.40×perceived_effectiveness + 0.25×price_value",
+          "repeat_probability": "satisfaction × (0.3 + 0.1×consecutive_months) × 1.1_if_lj_pass",
+          "churn_probability": "(1 − mean_last_3_satisfaction) × 0.8_if_lj_pass",
+          "lj_pass_effect": {
+            "repeat_multiplier": 1.1,
+            "churn_multiplier": 0.8,
+            "assigned_to": "20% of population (deterministic hash)"
+          }
+        }
+      },
+      "step_6_snapshot": {
+        "records_per_month": ["new_adopters", "repeat_purchasers", "churned", "total_active", "cumulative_adopters", "awareness_level_mean", "lj_pass_holders"]
+      }
+    },
+    "outputs": {
+      "TemporalSimulationResult": {
+        "scenario_id": "str",
+        "months": "int",
+        "population_size": "int",
+        "monthly_snapshots": "list[MonthlySnapshot]",
+        "final_adoption_rate": "float [0,1]",
+        "final_active_rate": "float [0,1]",
+        "total_revenue_estimate": "float (₹)"
+      }
+    }
+  },
+
+  "stage_4_cohort_classification": {
+    "description": "Classify each persona into one of 5 behavioral cohorts based on simulation trajectory",
+    "inputs": {
+      "population": "Population",
+      "scenario": "ScenarioConfig",
+      "simulation_trajectories": "PersonaTrajectory per persona"
+    },
+    "classification_rules": {
+      "never_aware": "Rejected at need_recognition or awareness stage",
+      "aware_not_tried": "Reached awareness but rejected at consideration or purchase",
+      "first_time_buyer": "Adopted once, total_purchases <= 1 at end",
+      "current_user": "is_active=True AND total_purchases >= 2",
+      "lapsed_user": "churned=True AND total_purchases >= 2"
+    },
+    "delta_analysis": {
+      "method": "cohort_mean(attribute) − population_mean(attribute) for all 145 attributes",
+      "insight": "Top 2–5 attributes with highest absolute delta are the cohort's defining signals"
+    },
+    "outputs": {
+      "PopulationCohorts": {
+        "cohorts": "dict[cohort_id, list[persona_id]]",
+        "classifications": "list[CohortClassification]",
+        "summary": "dict[cohort_id, count]"
+      }
+    }
+  },
+
+  "stage_5_hypothesis_probing": {
+    "description": "Test predefined hypotheses against cohort evidence to find the core business insight",
+    "inputs": {
+      "cohorts": "PopulationCohorts (from Stage 4)",
+      "predefined_hypotheses": "4 per scenario from predefined_trees.py",
+      "population": "Population"
+    },
+    "probe_execution": {
+      "for_each_hypothesis": {
+        "target_cohort": "The cohort most relevant to the hypothesis",
+        "probe_nodes": "Diagnostic questions probing specific persona attributes",
+        "scoring": "% of cohort personas whose attributes support/refute each probe node",
+        "verdict": {
+          "SUPPORTED": "Evidence > 0.65",
+          "PARTIAL": "Evidence 0.35–0.65",
+          "REFUTED": "Evidence < 0.35"
+        }
+      }
+    },
+    "custom_hypotheses": {
+      "description": "User can add custom hypotheses; engine generates probe tree via LLM",
+      "llm_input": "hypothesis_text + product_context + cohort_data",
+      "llm_output": "5–8 probe questions + expected_evidence_attributes"
+    },
+    "outputs": {
+      "ProbeResults": {
+        "hypotheses": "list[HypothesisResult]",
+        "verdicts": "dict[hypothesis_id, {verdict, confidence, top_evidence_nodes}]"
+      }
+    }
+  },
+
+  "stage_6_core_finding": {
+    "description": "Synthesise the highest-confidence hypothesis into an actionable core finding",
+    "inputs": {
+      "probe_results": "ProbeResults (from Stage 5)",
+      "cohorts": "PopulationCohorts",
+      "population": "Population"
+    },
+    "logic": {
+      "winning_hypothesis": "Highest overall_confidence across all hypotheses",
+      "evidence_chain": "Top 5 probe nodes supporting the winning hypothesis",
+      "representative_voices": {
+        "selection": "3 personas from the target cohort closest to the centroid",
+        "llm_call": "Interview simulation — persona responds to core finding question in first-person"
+      }
+    },
+    "outputs": {
+      "CoreFinding": {
+        "title": "str — synthesised finding headline",
+        "overall_confidence": "float [0,1]",
+        "evidence_chain": "list[EvidenceNode]",
+        "representative_voices": "list[{persona_name, quote, attribute_basis}]",
+        "export_formats": ["PDF", "TXT", "JSON"]
+      }
+    }
+  },
+
+  "stage_7_interventions": {
+    "description": "Evaluate 12 candidate interventions and rank by adoption lift vs. effort",
+    "inputs": {
+      "core_finding": "CoreFinding",
+      "cohorts": "PopulationCohorts",
+      "scenario": "ScenarioConfig"
+    },
+    "per_intervention": {
+      "adoption_lift_estimate": "float — projected % improvement in adoption",
+      "complexity": "Low / Medium / High",
+      "cost_tier": "Low / Medium / High",
+      "primary_target_cohort": "str",
+      "mechanism": "str — how this addresses the core finding"
+    },
+    "analysis": {
+      "quadrant_map": "Impact (adoption_lift) vs Effort (complexity) scatter",
+      "counterfactual_analysis": {
+        "description": "9 micro-tweak sensitivity analysis per selected intervention",
+        "method": "Re-run simulation with marginal parameter changes (+/−10%)",
+        "output": "Bar chart of sensitivity to each lever + summary table"
+      }
+    },
+    "outputs": {
+      "InterventionResults": {
+        "ranked_table": "list[Intervention] sorted by adoption_lift",
+        "quadrant_data": "list[{intervention_id, x_effort, y_impact}]",
+        "counterfactual_summary": "dict[intervention_id, sensitivity_results]"
+      }
+    }
+  },
+
+  "llm_call_catalogue": {
+    "description": "All 6 types of LLM calls in the system",
+    "model_routing": {
+      "claude-opus-4-6": "Reasoning tasks — core finding synthesis, complex probe generation",
+      "claude-sonnet-4-6": "Bulk generation — narratives, interview responses, report sections"
+    },
+    "calls": [
+      {
+        "id": "llm_1_anchor_inference",
+        "stage": "Persona Generation",
+        "trigger": "Tier 2 enrichment for each of 30 deep personas",
+        "system_prompt": "You are creating a detailed biographical profile for a synthetic persona.",
+        "user_input": "demographics + top 10 psychographic extremes (JSON)",
+        "output_schema": {"core_values": "list[str]", "life_attitude": "str", "parent_motivations": "list[str]"},
+        "model": "claude-sonnet-4-6",
+        "cached": true
+      },
+      {
+        "id": "llm_2_life_stories",
+        "stage": "Persona Generation",
+        "trigger": "After anchor inference, per deep persona",
+        "user_input": "anchor inference result + full attribute summary",
+        "output_schema": {"stories": [{"title": "str", "event": "str", "impact": "str"}]},
+        "model": "claude-sonnet-4-6",
+        "cached": true
+      },
+      {
+        "id": "llm_3_narrative",
+        "stage": "Persona Generation",
+        "trigger": "Final step of Tier 2 enrichment per deep persona",
+        "user_input": "full persona attributes + anchor + stories",
+        "output": "300–500 word third-person biography",
+        "validation": ">= 10 attribute references",
+        "model": "claude-sonnet-4-6",
+        "cached": true
+      },
+      {
+        "id": "llm_4_probe_generation",
+        "stage": "Hypothesis Probing",
+        "trigger": "When user adds a custom hypothesis",
+        "user_input": "hypothesis_text + product_context + cohort_profile",
+        "output": "5–8 probe questions + expected_evidence_attributes",
+        "model": "claude-opus-4-6",
+        "cached": false
+      },
+      {
+        "id": "llm_5_interview_simulation",
+        "stage": "Core Finding / Interviews",
+        "trigger": "Per persona × per probe question in deep-dive interviews",
+        "system_prompt": "You are roleplaying as {persona.name}, a parent in {city}.",
+        "user_input": "persona narrative + probe question",
+        "output": "First-person interview response 100–200 words",
+        "model": "claude-sonnet-4-6",
+        "cached": true
+      },
+      {
+        "id": "llm_6_synthesis_report",
+        "stage": "Synthesis Report",
+        "trigger": "User clicks Generate Report on Page 8",
+        "user_input": "scenario + cohort_summaries + barrier_analysis + evidence_chains",
+        "output": "Structured executive report with sections: core_finding, key_barriers, top_interventions, confidence",
+        "model": "claude-opus-4-6",
+        "cached": true
+      }
+    ]
+  },
+
+  "perception_engine_design": {
+    "current_implementation": {
+      "type": "Formula-driven weighted funnel",
+      "layers": 4,
+      "determinism": "Deterministic except for WoM sampling (seeded RNG)",
+      "belief_updating": "None — no adaptive belief state",
+      "bias_modelling": "Partial — social_proof_bias and ad_receptivity modulate awareness; no full cognitive bias distortion"
+    },
+    "proposed_simulatte_perception_engine": {
+      "attention_filter": {
+        "description": "Signal only enters perception if it breaks through mental_bandwidth threshold",
+        "inputs": ["signal.salience", "persona.mental_bandwidth", "persona.decision_fatigue_level"],
+        "output": "PerceivedSignal | None"
+      },
+      "cognitive_bias_distortion": {
+        "anchoring_bias": "Distorts price perception relative to first price seen",
+        "social_proof_bias": "Amplifies WoM and review signals",
+        "halo_effect_susceptibility": "Elevates all signals from trusted brand",
+        "loss_aversion": "Makes churn signals stronger than adoption signals",
+        "confirmation_bias_strength": "Filters out signals contradicting existing beliefs"
+      },
+      "emotional_colouring": {
+        "fear_appeal_responsiveness": "Amplifies immunity/risk messaging",
+        "aspirational_messaging_responsiveness": "Amplifies outcome/transformation messaging",
+        "guilt_sensitivity": "Amplifies 'best for your child' messaging"
+      }
+    },
+    "proposed_simulatte_decision_engine": {
+      "belief_state": {
+        "description": "Per-persona per-brand belief dict that evolves with new signals",
+        "fields": ["brand_trust", "category_necessity_belief", "price_fairness_belief", "efficacy_belief"]
+      },
+      "deliberation_paths": {
+        "system_1_heuristic": "Fast, gut-driven — triggered when decision_speed > 0.6 OR decision_fatigue high",
+        "system_2_systematic": "Slow, analytical — triggered when analysis_paralysis > 0.7 AND mental_bandwidth available"
+      },
+      "action_types": ["adopt", "defer", "reject", "seek_more_info", "share_with_peer"],
+      "outcome_updates": {
+        "post_purchase_satisfaction": "Updates efficacy_belief and brand_trust",
+        "wom_transmission": "Triggered when satisfaction > 0.7 AND wom_transmitter_tendency > 0.3",
+        "negative_wom": "Triggered when satisfaction < 0.3 AND negative_wom_amplification > 0.5"
+      }
+    }
+  },
+
+  "key_constants": {
+    "funnel_thresholds": {
+      "need_recognition": 0.25,
+      "awareness": 0.15,
+      "consideration": 0.35,
+      "purchase": 0.30
+    },
+    "funnel_weights": {
+      "need_health_anxiety": 0.20,
+      "need_nutrition_gap": 0.25,
+      "need_child_proactivity": 0.20,
+      "consideration_trust": 0.30,
+      "consideration_research": 0.20,
+      "consideration_cultural": 0.15,
+      "consideration_brand": 0.20,
+      "consideration_risk": 0.15
+    },
+    "awareness_boosts": {
+      "pediatrician_endorsement": 0.15,
+      "school_partnership": 0.20,
+      "influencer_campaign": 0.10
+    },
+    "temporal": {
+      "monthly_awareness_increment": 0.02,
+      "wom_reach_min": 3,
+      "wom_reach_max": 5,
+      "default_wom_transmission_rate": 0.15,
+      "wom_transmission_decay_per_month": 0.85,
+      "max_wom_boost_per_receiver": 0.30
+    },
+    "repeat_churn": {
+      "habit_base": 0.30,
+      "habit_per_month": 0.10,
+      "lj_pass_repeat_multiplier": 1.10,
+      "lj_pass_churn_multiplier": 0.80,
+      "lj_pass_fraction_of_population": 0.20
+    },
+    "lj_pass": {
+      "monthly_price_inr": 299.0,
+      "discount_percent": 15.0,
+      "free_trial_months": 1,
+      "retention_boost": 0.10,
+      "churn_reduction": 0.20
+    }
+  }
+}
