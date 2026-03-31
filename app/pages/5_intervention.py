@@ -190,6 +190,124 @@ table_html = (
 
 st.markdown(table_html, unsafe_allow_html=True)
 
+# ── Simulation CTA ────────────────────────────────────────────────────────────
+st.divider()
+st.subheader("Simulate Interventions")
+st.caption(
+    "Run each intervention as a counterfactual against your baseline population "
+    "to see projected adoption lift."
+)
+
+_population = st.session_state.get("population")
+
+if _population is None:
+    st.warning("No population in session — return to Phase 1 and run the baseline first.", icon="⚠️")
+else:
+    if st.button("▶ Run Counterfactual Simulations", type="primary", use_container_width=True):
+        from src.simulation.counterfactual import run_counterfactual  # noqa: E402
+
+        _sim_rows: list[dict] = []
+        _progress = st.progress(0, text="Simulating…")
+        for _i, _iv in enumerate(interventions):
+            try:
+                _res = run_counterfactual(
+                    population=_population,
+                    baseline_scenario=scenario,
+                    modifications=_iv.parameter_modifications,
+                    counterfactual_name=_iv.name,
+                )
+                _sim_rows.append({
+                    "iv": _iv,
+                    "baseline": _res.baseline_adoption_rate,
+                    "projected": _res.counterfactual_adoption_rate,
+                    "lift": _res.absolute_lift,
+                    "lift_pct": _res.relative_lift_percent,
+                })
+            except Exception as _exc:  # noqa: BLE001
+                _sim_rows.append({
+                    "iv": _iv,
+                    "baseline": None,
+                    "projected": None,
+                    "lift": None,
+                    "lift_pct": None,
+                    "error": str(_exc),
+                })
+            _progress.progress((_i + 1) / len(interventions), text=f"Simulating {_iv.name}…")
+        _progress.empty()
+        st.session_state["intervention_sim_results"] = _sim_rows
+
+    # ── Simulation results table ──────────────────────────────────────────────
+    if "intervention_sim_results" in st.session_state:
+        _rows = sorted(
+            st.session_state["intervention_sim_results"],
+            key=lambda r: r["lift"] if r.get("lift") is not None else -99,
+            reverse=True,
+        )
+
+        # System voice summary
+        _best = next((r for r in _rows if r.get("lift") is not None), None)
+        if _best:
+            render_system_voice(
+                f"Simulations complete. The highest-lift intervention is "
+                f"<strong>{_best['iv'].name}</strong> — projected to lift adoption by "
+                f"<strong>{_best['lift']:+.1%}</strong> "
+                f"({_best['lift_pct']:+.1f}% relative to baseline)."
+            )
+
+        # Build results table
+        _sim_rows_html = ""
+        for _r in _rows:
+            _iv = _r["iv"]
+            _scope_fg, _scope_bg = _SCOPE_COLOURS.get(_iv.scope, ("#555", "#EEE"))
+            _temp_fg, _temp_bg = _TEMP_COLOURS.get(_iv.temporality, ("#555", "#EEE"))
+            _scope_lbl = "General" if _iv.scope == "general" else "Cohort"
+            _temp_lbl = "Sustained" if _iv.temporality == "temporal" else "One-time"
+
+            if _r.get("lift") is not None:
+                _lift_val = _r["lift"]
+                _lift_color = "#27AE60" if _lift_val > 0 else ("#C0392B" if _lift_val < 0 else "#555")
+                _baseline_str = f"{_r['baseline']:.1%}"
+                _projected_str = f"{_r['projected']:.1%}"
+                _lift_str = f"{_lift_val:+.1%}"
+                _lift_pct_str = f"{_r['lift_pct']:+.1f}%"
+                _lift_cell = (
+                    f'<span style="color:{_lift_color};font-weight:700;">{_lift_str}</span> '
+                    f'<span style="color:#888;font-size:0.8rem;">({_lift_pct_str})</span>'
+                )
+            else:
+                _baseline_str = "—"
+                _projected_str = "—"
+                _lift_cell = f'<span style="color:#C0392B;font-size:0.8rem;">{_r.get("error","error")[:60]}</span>'
+
+            _sim_rows_html += (
+                f'<tr style="border-bottom:1px solid #E8E8E8;">'
+                f'<td style="padding:8px 12px;font-weight:600;min-width:180px;">{_iv.name}</td>'
+                f'<td style="padding:8px 12px;">{_chip(_scope_lbl, _scope_fg, _scope_bg)}</td>'
+                f'<td style="padding:8px 12px;">{_chip(_temp_lbl, _temp_fg, _temp_bg)}</td>'
+                f'<td style="padding:8px 12px;color:#555;font-size:0.9rem;">{_baseline_str}</td>'
+                f'<td style="padding:8px 12px;color:#555;font-size:0.9rem;">{_projected_str}</td>'
+                f'<td style="padding:8px 12px;">{_lift_cell}</td>'
+                f'</tr>'
+            )
+
+        _sim_table_html = (
+            '<div style="overflow-x:auto;margin:12px 0;">'
+            '<table style="border-collapse:collapse;width:100%;font-family:sans-serif;font-size:0.9rem;">'
+            f'<thead><tr style="background:{_HEADER_BG};color:{_HEADER_FG};">'
+            '<th style="padding:9px 12px;text-align:left;">Intervention</th>'
+            '<th style="padding:9px 12px;text-align:left;">Scope</th>'
+            '<th style="padding:9px 12px;text-align:left;">Timing</th>'
+            '<th style="padding:9px 12px;text-align:left;">Baseline Adoption</th>'
+            '<th style="padding:9px 12px;text-align:left;">Projected Adoption</th>'
+            '<th style="padding:9px 12px;text-align:left;">Lift</th>'
+            f'</tr></thead>'
+            f'<tbody>{_sim_rows_html}</tbody>'
+            '</table></div>'
+        )
+        st.markdown(_sim_table_html, unsafe_allow_html=True)
+
+st.divider()
+
 # ── System Voice #2 — Staged execution ───────────────────────────────────────
 # starter = lowest-effort entry point: prefer general non_temporal (broadest + immediate)
 # escalate = highest-reach: prefer general temporal (sustained programme)

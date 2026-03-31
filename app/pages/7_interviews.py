@@ -1,130 +1,175 @@
 # ruff: noqa: N999
 """Interview Deep-Dive page.
 
-This page renders qualitative evidence from deep persona interviews.
-It is driven by ``research_result`` stored in ``st.session_state``.
+Renders qualitative evidence from the Phase 2 probing tree interview probes.
+Data source: st.session_state["probe_results"] set by 3_decompose.py.
 """
 
 from __future__ import annotations
 
-from collections import Counter
-from typing import Any
-
 import streamlit as st
 
-from app.components.persona_spider import render_persona_spider
-from app.utils.demo_mode import ensure_demo_data
-from src.probing.clustering import cluster_responses_mock
-from src.utils.display import city_tier_label, interview_reason_label, persona_display_name
+from app.components.system_voice import render_system_voice
+from app.utils.phase_state import render_phase_sidebar
+from src.probing.models import ProbeType
 
+st.set_page_config(page_title="Interview Deep-Dive", page_icon="🎙️", layout="wide")
+render_phase_sidebar()
 st.header("Interview Deep-Dive")
-st.caption("Explore the qualitative evidence from deep persona interviews.")
+st.caption("Qualitative evidence collected during Phase 2 investigation.")
 
-demo_mode = False
-
-if demo_mode:
-    ensure_demo_data()
-
-if "research_result" not in st.session_state:
+# ── Phase gate ────────────────────────────────────────────────────────────────
+if "probe_results" not in st.session_state:
     st.warning(
-        "No research results available. Run a research pipeline from the Research Design page."
+        "No investigation results yet. Complete Phase 2 (Decomposition & Probing) first.",
+        icon="🔒",
     )
-    st.page_link("pages/2_research.py", label="Go to Research Design →")
     st.stop()
 
-result = st.session_state["research_result"]
-pop = st.session_state.population
+# ── Extract data ──────────────────────────────────────────────────────────────
+results = st.session_state["probe_results"]
+probes = results.get("probes", [])
+hypotheses = results.get("hypotheses", [])
+problem = results.get("problem")
+population = st.session_state.get("population")
 
+# Build hypothesis id→title lookup
+hyp_titles: dict[str, str] = {h.id: h.title for h in hypotheses}
 
-st.subheader("Smart Sample")
-st.caption(f"{len(result.smart_sample.selections)} personas selected for deep interviews.")
+# Collect all interview probes that completed successfully
+interview_probes = [
+    p for p in probes
+    if p.probe_type == ProbeType.INTERVIEW and p.result is not None
+]
 
-reason_counts = Counter(s.selection_reason for s in result.smart_sample.selections)
-if reason_counts:
-    reason_cols = st.columns(len(reason_counts))
-    for i, (reason, count) in enumerate(reason_counts.most_common()):
-        label = reason.replace("_", " ").title()
-        reason_cols[i].metric(label, count)
+if not interview_probes:
+    st.info(
+        "No interview probes were run during the investigation. "
+        "Interview probes run automatically when hypotheses require qualitative evidence.",
+        icon="ℹ️",
+    )
+    st.stop()
 
+# Summary counts
+total_responses = sum(len(p.result.interview_responses) for p in interview_probes)
+total_clusters = sum(len(p.result.response_clusters) for p in interview_probes)
 
-st.subheader("Interview Responses")
-for ir in result.interview_results:
-    persona = pop.get_persona(ir.persona_id)
-    decision = result.primary_funnel.results_by_persona.get(ir.persona_id, {})
-    outcome = decision.get("outcome", "unknown")
-    outcome_label = "Would try" if outcome == "adopt" else "Wouldn't try"
+render_system_voice(
+    f"Phase 2 gathered <strong>{total_responses} interview responses</strong> "
+    f"across <strong>{len(interview_probes)} interview probes</strong>, "
+    f"surfacing <strong>{total_clusters} response clusters</strong>. "
+    f"Here is the qualitative evidence organised by hypothesis."
+)
 
-    with st.expander(
-        f"{persona_display_name(persona)} · {outcome_label} · Reason: {interview_reason_label(ir.selection_reason)}",
-        expanded=False,
-    ):
-        p1, p2, p3 = st.columns(3)
-        p1.caption(f"City: {city_tier_label(persona.demographics.city_tier)}")
-        p2.caption(f"Income: ₹{persona.demographics.household_income_lpa:.1f}L")
-        p3.caption(f"Child age: {persona.demographics.youngest_child_age}")
+# ── Per-hypothesis interview evidence ─────────────────────────────────────────
+# Group interview probes by hypothesis
+from collections import defaultdict
+hyp_to_probes: dict[str, list] = defaultdict(list)
+for p in interview_probes:
+    hyp_to_probes[p.hypothesis_id].append(p)
 
-        for qa in ir.responses:
-            st.markdown(f"**Q:** {qa['question']}")
-            st.markdown(f"**A:** {qa['answer']}")
-            st.divider()
+for hyp_id, hyp_probes in hyp_to_probes.items():
+    hyp_title = hyp_titles.get(hyp_id, hyp_id)
+    hyp_responses = [r for p in hyp_probes for r in p.result.interview_responses]
+    hyp_clusters = [c for p in hyp_probes for c in p.result.response_clusters]
 
+    st.subheader(f"📋 {hyp_title}")
+    col_a, col_b, col_c = st.columns(3)
+    col_a.metric("Interview Probes", len(hyp_probes))
+    col_b.metric("Responses", len(hyp_responses))
+    col_c.metric("Themes Identified", len(hyp_clusters))
 
-st.subheader("Response Themes")
-st.caption("Keyword-based clustering of all interview responses.")
+    # Response clusters / themes
+    if hyp_clusters:
+        st.markdown("**Response Themes**")
+        for cluster in hyp_clusters:
+            theme_label = cluster.theme.replace("_", " ").title()
+            pct = f"{cluster.percentage:.0%}" if cluster.percentage <= 1.0 else f"{cluster.percentage:.0f}%"
+            with st.expander(f"{theme_label} — {cluster.persona_count} personas ({pct})"):
+                st.caption(cluster.description)
+                if cluster.representative_quotes:
+                    for quote in cluster.representative_quotes[:3]:
+                        st.markdown(f"> *{quote[:300]}*")
 
-responses: list[tuple[Any, str]] = []
-for ir in result.interview_results:
-    persona = pop.get_persona(ir.persona_id)
-    combined_text = " ".join(r["answer"] for r in ir.responses)
-    responses.append((persona, combined_text))
+    # Individual responses
+    if hyp_responses:
+        with st.expander(f"All {len(hyp_responses)} individual responses", expanded=False):
+            for resp in hyp_responses:
+                outcome_icon = "✅" if resp.outcome == "adopt" else "❌"
+                st.markdown(
+                    f"**{resp.persona_name}** {outcome_icon} _{resp.outcome.replace('_', ' ').title()}_"
+                )
+                st.markdown(f"> {resp.content[:400]}")
+                st.divider()
 
-clusters = cluster_responses_mock(responses)  # type: ignore[arg-type]
+    st.markdown("---")
 
-if clusters:
-    for cluster in clusters:
+# ── Cross-hypothesis theme summary ────────────────────────────────────────────
+all_clusters = [c for p in interview_probes for c in p.result.response_clusters]
+if all_clusters:
+    st.subheader("Cross-Hypothesis Themes")
+    st.caption("All response clusters across every interview probe, ranked by frequency.")
+
+    sorted_clusters = sorted(all_clusters, key=lambda c: c.persona_count, reverse=True)
+    for cluster in sorted_clusters[:8]:
         theme_label = cluster.theme.replace("_", " ").title()
-        st.markdown(
-            f"**{theme_label}** — {cluster.persona_count} personas ({cluster.percentage:.0%})"
-        )
+        pct = f"{cluster.percentage:.0%}" if cluster.percentage <= 1.0 else f"{cluster.percentage:.0f}%"
+        st.markdown(f"**{theme_label}** — {cluster.persona_count} personas ({pct})")
         st.caption(cluster.description)
         if cluster.representative_quotes:
-            for quote in cluster.representative_quotes[:2]:
-                st.markdown(f"> {quote[:250]}")
+            st.markdown(f"> *{cluster.representative_quotes[0][:250]}*")
         st.divider()
-else:
-    st.caption("Not enough interview data for clustering.")
 
-
-if len(result.interview_results) >= 2:
+# ── Persona comparison ────────────────────────────────────────────────────────
+all_responses = [r for p in interview_probes for r in p.result.interview_responses]
+if population is not None and len(all_responses) >= 2:
     st.subheader("Compare Personas")
-    st.caption("Select 2 personas to compare their psychographic profiles side-by-side.")
+    st.caption("Select two personas from the interviews to compare their responses side-by-side.")
 
-    interviewed_ids = [ir.persona_id for ir in result.interview_results]
-    interviewed_labels = {
-        pid: persona_display_name(pop.get_persona(pid)) for pid in interviewed_ids
-    }
+    # Deduplicate persona IDs preserving order
+    seen: set[str] = set()
+    persona_ids: list[str] = []
+    for r in all_responses:
+        if r.persona_id not in seen:
+            persona_ids.append(r.persona_id)
+            seen.add(r.persona_id)
 
-    compare_cols = st.columns(2)
-    with compare_cols[0]:
+    persona_labels: dict[str, str] = {}
+    for pid in persona_ids:
+        try:
+            p = population.get_persona(pid)
+            persona_labels[pid] = f"{p.name} ({p.demographics.city_tier})"
+        except Exception:  # noqa: BLE001
+            persona_labels[pid] = pid
+
+    cmp_cols = st.columns(2)
+    with cmp_cols[0]:
         left_id = st.selectbox(
             "Persona A",
-            interviewed_ids,
-            format_func=lambda x: interviewed_labels[x],
+            persona_ids,
+            format_func=lambda x: persona_labels[x],
             index=0,
-            key="compare_left",
+            key="cmp_left",
         )
-    with compare_cols[1]:
+    with cmp_cols[1]:
         right_id = st.selectbox(
             "Persona B",
-            interviewed_ids,
-            format_func=lambda x: interviewed_labels[x],
-            index=min(1, len(interviewed_ids) - 1),
-            key="compare_right",
+            persona_ids,
+            format_func=lambda x: persona_labels[x],
+            index=min(1, len(persona_ids) - 1),
+            key="cmp_right",
         )
 
     if left_id and right_id:
-        spider_cols = st.columns(2)
-        with spider_cols[0]:
-            render_persona_spider(pop.get_persona(left_id), key="compare_a")
-        with spider_cols[1]:
-            render_persona_spider(pop.get_persona(right_id), key="compare_b")
+        left_responses = [r for r in all_responses if r.persona_id == left_id]
+        right_responses = [r for r in all_responses if r.persona_id == right_id]
+
+        left_col, right_col = st.columns(2)
+        with left_col:
+            st.markdown(f"**{persona_labels[left_id]}**")
+            for r in left_responses[:5]:
+                st.markdown(f"> *{r.content[:300]}*")
+        with right_col:
+            st.markdown(f"**{persona_labels[right_id]}**")
+            for r in right_responses[:5]:
+                st.markdown(f"> *{r.content[:300]}*")
