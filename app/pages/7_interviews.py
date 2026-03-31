@@ -203,7 +203,7 @@ if population is not None and persona_ids:
         with st.container(border=True):
             col_id, col_meta = st.columns([0.2, 0.8])
             with col_id:
-                st.markdown(f"### {persona.name}")
+                st.markdown(f"### {persona.id}")
                 st.caption(f"ID: `{persona.id}`")
             with col_meta:
                 # Resolve cohort if possible (look up in classification results)

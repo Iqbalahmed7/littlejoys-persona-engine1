@@ -515,7 +515,7 @@ for i, (cid, (label, icon, desc)) in enumerate(cohort_display.items()):
     count = cohorts.summary.get(cid, 0)
     pct = round(count / total * 100)
     with cols[i]:
-        st.metric(f"{icon} {label}", f"{count}", f"{pct}% of population")
+        st.metric(f"{icon} {label}", f"{count}", f"{pct}% of population", delta_color="off")
         st.caption(desc)
 
 st.markdown("---")
