@@ -18,6 +18,7 @@ import streamlit as st
 
 from app.components.system_voice import render_system_voice
 from app.utils.phase_state import phase_complete, render_phase_sidebar
+from src.utils.display import city_tier_label
 from src.analysis.cohort_classifier import classify_population
 from src.analysis.problem_templates import PROBLEM_TEMPLATES
 from src.constants import DEFAULT_SEED
@@ -516,7 +517,11 @@ st.caption("Slice the population by demographics and see how cohort distribution
 
 col_f1, col_f2, col_f3, col_f4 = st.columns(4)
 with col_f1:
-    city_filter = st.multiselect("City Tier", ["Metro", "Tier 2 City", "Emerging City"])
+    city_filter = st.multiselect(
+        "City Tier",
+        ["Tier1", "Tier2", "Tier3"],
+        format_func=city_tier_label,
+    )
 with col_f2:
     income_filter = st.select_slider("Household Income (₹L/yr)",
                                       options=[3, 5, 8, 12, 18, 25, 40],
