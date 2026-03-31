@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
