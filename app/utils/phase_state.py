@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import streamlit as st
 
-
 # Keys in st.session_state that mark each phase complete
 _PHASE_KEYS: dict[int, str] = {
     0: "",  # always unlocked
