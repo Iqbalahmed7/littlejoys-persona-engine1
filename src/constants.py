@@ -192,7 +192,7 @@ DEFAULT_SIMULATION_MONTHS = 12
 WOM_TRANSMISSION_DECAY = 0.85
 
 # --- GTM Presets (Sprint 27) ---
-GTM_PRESETS: dict[str, dict] = {
+GTM_PRESETS = {
     "Organic Launch": {
         "awareness_budget": 0.35,
         "channel_mix": {"instagram": 0.25, "youtube": 0.15, "whatsapp": 0.40, "pediatrician": 0.10, "momfluencer": 0.10},
