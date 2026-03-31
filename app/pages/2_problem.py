@@ -140,80 +140,34 @@ def _run_simulation_with_narrative(
             f"(awareness budget: {scenario.marketing.awareness_budget:.0%}, seed {seed})..."
         )
 
-        _prog_bar = st.progress(0.0)
-        _month_label = st.empty()
-
-        def _on_month(current: int, total: int) -> None:
-            _prog_bar.progress(current / total)
-            snap = None
-            if hasattr(_on_month, "_snapshots") and len(_on_month._snapshots) >= current:
-                snap = _on_month._snapshots[current - 1]
-            if snap is not None:
-                _month_label.caption(
-                    f"Month {current}/{total} — "
-                    f"new: {snap.new_adopters} | active: {snap.total_active} | "
-                    f"churn: {snap.churned} | awareness: {snap.awareness_level_mean:.0%}"
-                )
-            else:
-                _month_label.caption(f"Month {current} of {total}…")
-
-        temporal_result = run_temporal_simulation(
-            pop, scenario, months=sim_months, seed=seed, progress_callback=_on_month
-        )
-        # Back-fill the snapshots reference so future callbacks (if any) can read them
-        _on_month._snapshots = temporal_result.monthly_snapshots  # type: ignore[attr-defined]
-        _prog_bar.progress(1.0)
-        _month_label.empty()
+        temporal_result = run_temporal_simulation(pop, scenario, months=sim_months, seed=seed)
 
         st.write("⚙️ Classifying behavioral cohorts...")
         cohorts = classify_population(pop, scenario, seed=seed)
 
-        # Replay narrative from actual monthly data
-        monthly = getattr(temporal_result, "aggregate_monthly", None) or getattr(
-            temporal_result, "monthly_snapshots", None
-        )
-        if not monthly:
-            st.write("Simulation complete — cohorts formed from behavioral trajectories.")
-        else:
-            checkpoints = {3, 6, 9, 12}
-
-            def _month_value(month_data: Any, *keys: str) -> int:
-                if isinstance(month_data, dict):
-                    for key in keys:
-                        if key in month_data:
-                            return int(month_data.get(key, 0) or 0)
-                    return 0
-                for key in keys:
-                    if hasattr(month_data, key):
-                        return int(getattr(month_data, key) or 0)
-                return 0
-
-            for month_data in monthly:
-                m = _month_value(month_data, "month")
-                if m in checkpoints:
-                    cumulative = _month_value(month_data, "cumulative_adopters")
-                    churned = _month_value(month_data, "churned")
-                    active = _month_value(month_data, "active_count", "total_active")
-                    repeat = _month_value(month_data, "repeat_purchasers")
-                    if m == 3:
-                        st.write(
-                            f"Month 3: {cumulative} personas have now tried the product. "
-                            f"First churn signals emerging ({churned} drop-offs so far)."
-                        )
-                    elif m == 6:
-                        st.write(
-                            f"Month 6: Trial rate reaching {round(cumulative / max(n, 1) * 100)}%. "
-                            f"{repeat} personas repeated this month. {active} still active."
-                        )
-                    elif m == 9:
-                        st.write(
-                            f"Month 9: Habit patterns solidifying. {active} active buyers. "
-                            f"{churned} cumulative lapsed."
-                        )
-                    elif m == 12:
-                        st.write(
-                            f"Month 12: Simulation complete. {cumulative} total adopters across {n} personas."
-                        )
+        # Replay narrative from actual monthly snapshots
+        checkpoints = {3, 6, 9, 12}
+        for snap in temporal_result.monthly_snapshots:
+            if snap.month in checkpoints:
+                if snap.month == 3:
+                    st.write(
+                        f"Month 3: {snap.cumulative_adopters} personas have now tried the product. "
+                        f"First churn signals emerging ({snap.churned} drop-offs so far)."
+                    )
+                elif snap.month == 6:
+                    st.write(
+                        f"Month 6: Trial rate reaching {round(snap.cumulative_adopters / max(n, 1) * 100)}%. "
+                        f"{snap.repeat_purchasers} personas repeated this month. {snap.total_active} still active."
+                    )
+                elif snap.month == 9:
+                    st.write(
+                        f"Month 9: Habit patterns solidifying. {snap.total_active} active buyers. "
+                        f"{snap.churned} churned this month."
+                    )
+                elif snap.month == 12:
+                    st.write(
+                        f"Month 12: Simulation complete. {snap.cumulative_adopters} total adopters across {n} personas."
+                    )
 
         status.update(
             label=f"✅ Simulation complete — {n} personas × {sim_months} months",
