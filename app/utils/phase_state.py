@@ -10,7 +10,7 @@ _PHASE_KEYS: dict[int, str] = {
     1: "baseline_cohorts",  # set after baseline simulation completes
     2: "probe_results",  # set after at least one probe chain completes
     3: "core_finding",  # set after Core Finding is generated
-    4: "intervention_results",  # set after intervention simulations complete
+    4: "intervention_run",  # set after intervention simulations complete
 }
 
 _PHASE_LABELS: dict[int, str] = {
@@ -35,6 +35,11 @@ def phase_complete(phase: int) -> bool:
         return True
     if phase == 1:
         return "population" in st.session_state
+    if phase == 4:
+        # Backward-compatible with older runs that stored intervention_results.
+        return ("intervention_run" in st.session_state) or (
+            "intervention_results" in st.session_state
+        )
     key = _PHASE_KEYS.get(phase, "")
     return bool(key and key in st.session_state)
 

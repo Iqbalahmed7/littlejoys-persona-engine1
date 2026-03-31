@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from src.probing.models import (
     Hypothesis,
     Probe,
@@ -78,6 +80,92 @@ def list_problem_ids() -> list[str]:
     """Return all available problem tree IDs."""
 
     return list(_build_catalog().keys())
+
+
+def generate_fallback_probes_for_custom_hypotheses(
+    hypotheses: list[Hypothesis],
+    probes: list[Probe],
+) -> list[Probe]:
+    """Append interview/attribute/simulation fallback probes for custom hypotheses.
+
+    Rules:
+    - Always add 2 interview probes for custom hypotheses.
+    - Add attribute probe only when indicator attributes are present.
+    - Add simulation probe only when counterfactual modifications are present.
+    """
+
+    out = list(probes)
+    seen_ids = {probe.id for probe in out}
+
+    def _title_summary(title: str) -> str:
+        normalized = re.sub(r"\s+", " ", title.strip().lower())
+        return normalized[:60]
+
+    for hypothesis in hypotheses:
+        if not hypothesis.is_custom:
+            continue
+
+        summary = _title_summary(hypothesis.title)
+        existing_for_h = [probe for probe in out if probe.hypothesis_id == hypothesis.id]
+        base_order = max((probe.order for probe in existing_for_h), default=0)
+
+        interview_specs = [
+            (
+                f"{hypothesis.id}_custom_interview_1",
+                f"What has been your experience with {summary}?",
+                "reject",
+                1,
+            ),
+            (
+                f"{hypothesis.id}_custom_interview_2",
+                f"Did {summary} affect your decision to purchase again?",
+                None,
+                2,
+            ),
+        ]
+        for probe_id, question, target_outcome, offset in interview_specs:
+            if probe_id in seen_ids:
+                continue
+            out.append(
+                _interview_probe(
+                    probe_id=probe_id,
+                    hypothesis_id=hypothesis.id,
+                    question=question,
+                    order=base_order + offset,
+                    target_outcome=target_outcome,
+                )
+            )
+            seen_ids.add(probe_id)
+
+        if hypothesis.indicator_attributes:
+            attr_id = f"{hypothesis.id}_custom_attribute"
+            if attr_id not in seen_ids:
+                out.append(
+                    _attribute_probe(
+                        probe_id=attr_id,
+                        hypothesis_id=hypothesis.id,
+                        attributes=hypothesis.indicator_attributes,
+                        split_by="outcome",
+                        order=base_order + 3,
+                    )
+                )
+                seen_ids.add(attr_id)
+
+        if hypothesis.counterfactual_modifications:
+            sim_id = f"{hypothesis.id}_custom_simulation"
+            if sim_id not in seen_ids:
+                out.append(
+                    _simulation_probe(
+                        probe_id=sim_id,
+                        hypothesis_id=hypothesis.id,
+                        modifications=hypothesis.counterfactual_modifications,
+                        comparison_metric="adoption_rate",
+                        order=base_order + 4,
+                    )
+                )
+                seen_ids.add(sim_id)
+
+    return out
 
 
 def _build_catalog() -> dict[str, ProblemTreeDefinition]:

@@ -273,6 +273,7 @@ if run_clicked:
     try:
         from src.config import Config
         from src.probing.engine import ProbingTreeEngine
+        from src.probing.predefined_trees import generate_fallback_probes_for_custom_hypotheses
         from src.utils.api_keys import resolve_api_key
 
         config = Config()
@@ -290,6 +291,8 @@ if run_clicked:
         llm_client = LLMClient(config=config)
 
         population = st.session_state["population"]
+
+        run_probes = generate_fallback_probes_for_custom_hypotheses(all_hypotheses, all_probes)
 
         # Initialise partial results bucket for live tree rendering
         st.session_state["partial_probe_results"] = {}
@@ -332,7 +335,7 @@ if run_clicked:
             synthesis = engine.execute_tree(
                 problem=problem,
                 hypotheses=all_hypotheses,
-                probes=all_probes,
+                probes=run_probes,
             )
 
         # Clear the placeholder before showing final results if needed,
@@ -342,7 +345,7 @@ if run_clicked:
         st.session_state["probe_results"] = {
             "synthesis": synthesis,
             "verdicts": engine.verdicts,
-            "probes": all_probes,
+            "probes": run_probes,
             "problem": problem,
             "hypotheses": all_hypotheses,
         }
@@ -490,3 +493,8 @@ st.success(
     "Phase 2 complete — proceed to **Core Finding** (Phase 3) to generate the strategic narrative.",
     icon="✅",
 )
+
+if st.button("↩ Re-run Investigation", help="Add or remove hypotheses, then re-run"):
+    for key in ("probe_results", "core_finding", "intervention_results", "intervention_run"):
+        st.session_state.pop(key, None)
+    st.rerun()
