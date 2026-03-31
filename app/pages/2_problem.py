@@ -70,17 +70,18 @@ _PROBLEM_META: dict[str, dict[str, str]] = {
 # ── Narrative templates — inject real cohort data after simulation ─────────────
 def _post_sim_narrative(problem_id: str, temporal_result: Any, cohorts: Any) -> str:
     """Build system voice narrative from actual simulation results."""
-    adoption_pct = round(temporal_result.final_adoption_rate * 100)
-    active_pct = round(temporal_result.final_active_rate * 100)
-    pop_size = temporal_result.population_size
+    # Derive all rates from cohort summary so numbers match the cohort tiles exactly.
+    _summary = cohorts.summary
+    pop_size = sum(_summary.values()) or 1
+    lapsed = _summary.get("lapsed_user", 0)
+    first_time = _summary.get("first_time_buyer", 0)
+    current = _summary.get("current_user", 0)
+    never_aware = _summary.get("never_aware", 0)
+    aware_not_tried = _summary.get("aware_not_tried", 0)
+    tried = first_time + current + lapsed
+    adoption_pct = round(tried / pop_size * 100)
+    active_pct = round(current / pop_size * 100)
     repeat_pct = active_pct
-    lapsed = cohorts.summary.get("lapsed_user", 0)
-    first_time = cohorts.summary.get("first_time_buyer", 0)
-    never_aware = cohorts.summary.get("never_aware", 0)
-    aware_not_tried = cohorts.summary.get("aware_not_tried", 0)
-
-    # Leaky bucket: of those who tried, how many didn't repeat?
-    tried = first_time + cohorts.summary.get("current_user", 0) + lapsed
     lapse_pct = round((lapsed / tried * 100) if tried > 0 else 0)
 
     if problem_id == "nutrimix_2_6":
@@ -266,19 +267,24 @@ st.markdown("---")
 
 # Key metrics row
 m1, m2, m3, m4 = st.columns(4)
-adoption_pct = round(temporal_result.final_adoption_rate * 100, 1)
-active_pct = round(temporal_result.final_active_rate * 100, 1)
-tried = (
+
+# All four headline metrics are derived from the cohort summary so they are
+# internally consistent with the cohort tiles above.
+_total_pop = sum(cohorts.summary.values()) or 1
+_tried = (
     cohorts.summary.get("first_time_buyer", 0)
     + cohorts.summary.get("current_user", 0)
     + cohorts.summary.get("lapsed_user", 0)
 )
-lapsed = cohorts.summary.get("lapsed_user", 0)
-lapse_rate = round(lapsed / tried * 100, 1) if tried > 0 else 0.0
+_current = cohorts.summary.get("current_user", 0)
+_lapsed = cohorts.summary.get("lapsed_user", 0)
+adoption_pct = round(_tried / _total_pop * 100, 1)
+active_pct = round(_current / _total_pop * 100, 1)
+lapse_rate = round(_lapsed / _tried * 100, 1) if _tried > 0 else 0.0
 
-m1.metric("Overall Adoption", f"{adoption_pct}%", help="% who purchased at least once")
-m2.metric("Active Repeat Buyers", f"{active_pct}%", help="% still buying at month 12")
-m3.metric("Lapse Rate", f"{lapse_rate}%", help="% of buyers who stopped")
+m1.metric("Overall Adoption", f"{adoption_pct}%", help="% of population who purchased at least once")
+m2.metric("Active Repeat Buyers", f"{active_pct}%", help="% still buying at end of simulation")
+m3.metric("Lapse Rate", f"{lapse_rate}%", help="% of buyers who did not remain active")
 m4.metric("Simulation Months", "12", help="Day-level simulation across 365 days")
 
 st.markdown("---")

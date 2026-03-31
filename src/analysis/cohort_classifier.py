@@ -139,20 +139,32 @@ def classify_population(
                 )
                 continue
 
-            churn_day = trajectory.churned_day or duration_days
-            churn_month = max(1, ceil(churn_day / 30))
-            cohort_id = "first_time_buyer" if churn_month <= 2 else "lapsed_user"
+            # Use total_purchases to distinguish a one-time buyer from someone
+            # who repeated at least once and then lapsed.
+            # first_time_buyer = exactly 1 purchase (tried once, never came back)
+            # lapsed_user      = 2+ purchases (was a repeat buyer) but no longer active
+            total_purchases = trajectory.total_purchases or 1
+            cohort_id = "first_time_buyer" if total_purchases <= 1 else "lapsed_user"
             cohorts[cohort_id].append(trajectory.persona_id)
             population.get_persona(trajectory.persona_id).product_relationship = cohort_id
 
+            churn_day = trajectory.churned_day or duration_days
+            churn_month = max(1, ceil(churn_day / 30))
             churn_snapshot = trajectory.days[churn_day - 1] if trajectory.days else None
             driver = _dominant_churn_signal(
                 churn_snapshot.decision_rationale if churn_snapshot else None
             )
+            purchase_label = f"{total_purchases} purchase{'s' if total_purchases != 1 else ''}"
             if driver:
-                reason = f"Adopted in month 1, churned in month {churn_month} due to {driver}"
+                reason = (
+                    f"{'One-time buyer' if cohort_id == 'first_time_buyer' else 'Repeat buyer'} "
+                    f"({purchase_label}), churned in month {churn_month} due to {driver}"
+                )
             else:
-                reason = f"Adopted in month 1, churned in month {churn_month}"
+                reason = (
+                    f"{'One-time buyer' if cohort_id == 'first_time_buyer' else 'Repeat buyer'} "
+                    f"({purchase_label}), churned in month {churn_month}"
+                )
             classifications.append(
                 CohortClassification(
                     persona_id=trajectory.persona_id,
