@@ -190,124 +190,6 @@ table_html = (
 
 st.markdown(table_html, unsafe_allow_html=True)
 
-# ── Simulation CTA ────────────────────────────────────────────────────────────
-st.divider()
-st.subheader("Simulate Interventions")
-st.caption(
-    "Run each intervention as a counterfactual against your baseline population "
-    "to see projected adoption lift."
-)
-
-_population = st.session_state.get("population")
-
-if _population is None:
-    st.warning("No population in session — return to Phase 1 and run the baseline first.", icon="⚠️")
-else:
-    if st.button("▶ Run Counterfactual Simulations", type="primary", use_container_width=True):
-        from src.simulation.counterfactual import run_counterfactual  # noqa: E402
-
-        _sim_rows: list[dict] = []
-        _progress = st.progress(0, text="Simulating…")
-        for _i, _iv in enumerate(interventions):
-            try:
-                _res = run_counterfactual(
-                    population=_population,
-                    baseline_scenario=scenario,
-                    modifications=_iv.parameter_modifications,
-                    counterfactual_name=_iv.name,
-                )
-                _sim_rows.append({
-                    "iv": _iv,
-                    "baseline": _res.baseline_adoption_rate,
-                    "projected": _res.counterfactual_adoption_rate,
-                    "lift": _res.absolute_lift,
-                    "lift_pct": _res.relative_lift_percent,
-                })
-            except Exception as _exc:  # noqa: BLE001
-                _sim_rows.append({
-                    "iv": _iv,
-                    "baseline": None,
-                    "projected": None,
-                    "lift": None,
-                    "lift_pct": None,
-                    "error": str(_exc),
-                })
-            _progress.progress((_i + 1) / len(interventions), text=f"Simulating {_iv.name}…")
-        _progress.empty()
-        st.session_state["intervention_sim_results"] = _sim_rows
-
-    # ── Simulation results table ──────────────────────────────────────────────
-    if "intervention_sim_results" in st.session_state:
-        _rows = sorted(
-            st.session_state["intervention_sim_results"],
-            key=lambda r: r["lift"] if r.get("lift") is not None else -99,
-            reverse=True,
-        )
-
-        # System voice summary
-        _best = next((r for r in _rows if r.get("lift") is not None), None)
-        if _best:
-            render_system_voice(
-                f"Simulations complete. The highest-lift intervention is "
-                f"<strong>{_best['iv'].name}</strong> — projected to lift adoption by "
-                f"<strong>{_best['lift']:+.1%}</strong> "
-                f"({_best['lift_pct']:+.1f}% relative to baseline)."
-            )
-
-        # Build results table
-        _sim_rows_html = ""
-        for _r in _rows:
-            _iv = _r["iv"]
-            _scope_fg, _scope_bg = _SCOPE_COLOURS.get(_iv.scope, ("#555", "#EEE"))
-            _temp_fg, _temp_bg = _TEMP_COLOURS.get(_iv.temporality, ("#555", "#EEE"))
-            _scope_lbl = "General" if _iv.scope == "general" else "Cohort"
-            _temp_lbl = "Sustained" if _iv.temporality == "temporal" else "One-time"
-
-            if _r.get("lift") is not None:
-                _lift_val = _r["lift"]
-                _lift_color = "#27AE60" if _lift_val > 0 else ("#C0392B" if _lift_val < 0 else "#555")
-                _baseline_str = f"{_r['baseline']:.1%}"
-                _projected_str = f"{_r['projected']:.1%}"
-                _lift_str = f"{_lift_val:+.1%}"
-                _lift_pct_str = f"{_r['lift_pct']:+.1f}%"
-                _lift_cell = (
-                    f'<span style="color:{_lift_color};font-weight:700;">{_lift_str}</span> '
-                    f'<span style="color:#888;font-size:0.8rem;">({_lift_pct_str})</span>'
-                )
-            else:
-                _baseline_str = "—"
-                _projected_str = "—"
-                _lift_cell = f'<span style="color:#C0392B;font-size:0.8rem;">{_r.get("error","error")[:60]}</span>'
-
-            _sim_rows_html += (
-                f'<tr style="border-bottom:1px solid #E8E8E8;">'
-                f'<td style="padding:8px 12px;font-weight:600;min-width:180px;">{_iv.name}</td>'
-                f'<td style="padding:8px 12px;">{_chip(_scope_lbl, _scope_fg, _scope_bg)}</td>'
-                f'<td style="padding:8px 12px;">{_chip(_temp_lbl, _temp_fg, _temp_bg)}</td>'
-                f'<td style="padding:8px 12px;color:#555;font-size:0.9rem;">{_baseline_str}</td>'
-                f'<td style="padding:8px 12px;color:#555;font-size:0.9rem;">{_projected_str}</td>'
-                f'<td style="padding:8px 12px;">{_lift_cell}</td>'
-                f'</tr>'
-            )
-
-        _sim_table_html = (
-            '<div style="overflow-x:auto;margin:12px 0;">'
-            '<table style="border-collapse:collapse;width:100%;font-family:sans-serif;font-size:0.9rem;">'
-            f'<thead><tr style="background:{_HEADER_BG};color:{_HEADER_FG};">'
-            '<th style="padding:9px 12px;text-align:left;">Intervention</th>'
-            '<th style="padding:9px 12px;text-align:left;">Scope</th>'
-            '<th style="padding:9px 12px;text-align:left;">Timing</th>'
-            '<th style="padding:9px 12px;text-align:left;">Baseline Adoption</th>'
-            '<th style="padding:9px 12px;text-align:left;">Projected Adoption</th>'
-            '<th style="padding:9px 12px;text-align:left;">Lift</th>'
-            f'</tr></thead>'
-            f'<tbody>{_sim_rows_html}</tbody>'
-            '</table></div>'
-        )
-        st.markdown(_sim_table_html, unsafe_allow_html=True)
-
-st.divider()
-
 # ── System Voice #2 — Staged execution ───────────────────────────────────────
 # starter = lowest-effort entry point: prefer general non_temporal (broadest + immediate)
 # escalate = highest-reach: prefer general temporal (sustained programme)
@@ -404,6 +286,159 @@ for iv in interventions:
                 else:
                     display_val = str(param_val)
                 st.markdown(f"- **{friendly_key}**: {display_val}")
+
+# ── Configure & Launch Simulation ─────────────────────────────────────────────
+st.divider()
+st.subheader("Configure & Launch Simulation")
+st.caption(
+    "Select an intervention, review your pre-simulation population mix, then run a full "
+    "counterfactual analysis. The system measures adoption lift vs. your baseline — and "
+    "automatically explores micro-perturbations (price, messaging, distribution tweaks) "
+    "on top of the selected intervention to surface compounding opportunities."
+)
+
+if interventions:
+    # ── Intervention selector ──────────────────────────────────────────────────
+    _scope_icon = {"general": "🟢", "cohort_specific": "🔵"}
+    _temp_icon = {"non_temporal": "⚡", "temporal": "⏱"}
+    _iv_label_map = {
+        iv.id: (
+            f"{_scope_icon.get(iv.scope, '⚪')} {_temp_icon.get(iv.temporality, '')}  "
+            f"{iv.name}  "
+            f"({'General' if iv.scope == 'general' else 'Cohort'} · "
+            f"{'One-time' if iv.temporality == 'non_temporal' else 'Sustained'})"
+        )
+        for iv in interventions
+    }
+
+    _default_iv_idx = 0
+    if recommended:
+        _iv_ids = [iv.id for iv in interventions]
+        if recommended.id in _iv_ids:
+            _default_iv_idx = _iv_ids.index(recommended.id)
+
+    _selected_iv_id = st.selectbox(
+        "Choose an intervention to simulate",
+        options=[iv.id for iv in interventions],
+        format_func=lambda x: _iv_label_map[x],
+        index=_default_iv_idx,
+        key="configure_intervention_id",
+    )
+    _selected_iv = next(iv for iv in interventions if iv.id == _selected_iv_id)
+
+    # ── Pre-simulation population snapshot ────────────────────────────────────
+    st.markdown("**Pre-simulation population mix** *(from Phase 1 baseline)*")
+    _cohorts_snap = st.session_state.get("baseline_cohorts")
+    if _cohorts_snap is not None:
+        _cohort_summary_snap: dict = (
+            _cohorts_snap.summary
+            if hasattr(_cohorts_snap, "summary")
+            else _cohorts_snap.get("summary", {})
+        )
+        _cohort_display_map = {
+            "never_aware":      ("Never Aware",      "🔇"),
+            "aware_not_tried":  ("Aware, Not Tried",  "👁️"),
+            "first_time_buyer": ("First-Time Buyer",  "🛒"),
+            "current_user":     ("Current User",      "⭐"),
+            "lapsed_user":      ("Lapsed User",       "💤"),
+        }
+        _total_pop_snap = sum(_cohort_summary_snap.values()) or 1
+        _pop_snap_cols = st.columns(len(_cohort_display_map))
+        for _i_snap, (_cid_snap, (_clabel_snap, _cicon_snap)) in enumerate(_cohort_display_map.items()):
+            _count_snap = _cohort_summary_snap.get(_cid_snap, 0)
+            _pct_snap = round(_count_snap / _total_pop_snap * 100)
+            with _pop_snap_cols[_i_snap]:
+                st.metric(f"{_cicon_snap} {_clabel_snap}", _count_snap, f"{_pct_snap}%")
+    else:
+        st.info("Population mix unavailable — return to Phase 1 to run the baseline simulation.")
+
+    # ── Temporal duration slider ───────────────────────────────────────────────
+    _sim_months = 12
+    if _selected_iv.temporality == "temporal":
+        _sim_months = st.slider(
+            "Simulation duration (months)",
+            min_value=3,
+            max_value=24,
+            value=12,
+            step=3,
+            key="sim_months_slider",
+            help="How many months to model this sustained intervention across the population.",
+        )
+        st.caption(
+            f"A {_sim_months}-month sustained programme — parameters are applied continuously "
+            f"over {_sim_months * 30} simulated days."
+        )
+    else:
+        st.caption(
+            "One-time intervention — applied as a single modification to the population's "
+            "decision environment. Equivalent to a permanent policy change."
+        )
+
+    # ── Run CTA ───────────────────────────────────────────────────────────────
+    _cta_label = (
+        f"▶  Run {_sim_months}-Month Simulation & Counterfactual Analysis"
+        if _selected_iv.temporality == "temporal"
+        else "▶  Run One-Time Simulation & Counterfactual Analysis"
+    )
+
+    if st.button(_cta_label, type="primary", use_container_width=True, key="launch_simulation_btn"):
+        from src.decision.scenarios import get_scenario as _gs
+        from src.simulation.counterfactual import (
+            apply_scenario_modifications as _apply_mods,
+            generate_default_counterfactuals as _gen_defaults,
+            run_counterfactual as _run_cf,
+        )
+
+        _population = st.session_state.get("population")
+        _base_scenario = _gs(scenario_id)
+
+        with st.spinner("Running primary intervention simulation…"):
+            _primary_result = _run_cf(
+                population=_population,
+                baseline_scenario=_base_scenario,
+                modifications=_selected_iv.parameter_modifications,
+                counterfactual_name=_selected_iv.name,
+            )
+
+        # Build intervention scenario (baseline + iv mods applied)
+        _iv_scenario = _apply_mods(_base_scenario, _selected_iv.parameter_modifications)
+
+        # Micro-perturbation analysis ON TOP of the intervention scenario
+        _micro_tweaks = _gen_defaults(_iv_scenario)
+        _micro_results: list[dict] = []
+
+        _prog = st.progress(0.0, text="Analysing micro-perturbations…")
+        for _mi, _tweak in enumerate(_micro_tweaks):
+            try:
+                _tweak_result = _run_cf(
+                    population=_population,
+                    baseline_scenario=_iv_scenario,
+                    modifications=dict(_tweak.parameter_changes),
+                    counterfactual_name=_tweak.label,
+                )
+                _micro_results.append({
+                    "id": _tweak.id,
+                    "label": _tweak.label,
+                    "result": _tweak_result,
+                })
+            except Exception:  # noqa: BLE001
+                pass
+            _prog.progress((_mi + 1) / len(_micro_tweaks))
+
+        _prog.empty()
+
+        st.session_state["intervention_run"] = {
+            "intervention": _selected_iv,
+            "scenario_id": scenario_id,
+            "sim_months": _sim_months,
+            "primary_result": _primary_result,
+            "micro_results": _micro_results,
+            "baseline_cohorts": st.session_state.get("baseline_cohorts"),
+        }
+
+        st.switch_page("pages/6_intervention_results.py")
+else:
+    st.info("No interventions are available to simulate.")
 
 # ── Export ────────────────────────────────────────────────────────────────────
 st.divider()
