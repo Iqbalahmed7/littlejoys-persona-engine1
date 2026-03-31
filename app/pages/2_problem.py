@@ -534,10 +534,11 @@ if st.button("Apply Segment"):
         flat = p.to_flat_dict()
         match_city = not city_filter or flat.get("city_tier") in city_filter
         match_income = income_filter[0] <= flat.get("household_income_lpa", 0) <= income_filter[1]
-        # Persona matches age filter if ANY child falls within the range;
-        # childless personas pass through if the full default range is selected.
-        match_age = (not p.children) or any(
-            age_filter[0] <= c.age_years <= age_filter[1] for c in p.children
+        # Persona matches age filter if ANY child age falls within the range;
+        # childless personas pass through if no ages are recorded.
+        _child_ages = p.demographics.child_ages or []
+        match_age = (not _child_ages) or any(
+            age_filter[0] <= age <= age_filter[1] for age in _child_ages
         )
         match_health = not health_filter or flat.get("health_consciousness") in health_filter
         if match_city and match_income and match_age and match_health:
