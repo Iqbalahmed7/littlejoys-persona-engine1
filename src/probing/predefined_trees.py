@@ -501,9 +501,10 @@ def _tree_magnesium_gummies() -> ProblemTreeDefinition:
         Hypothesis(
             id="h2_supplement_skepticism",
             problem_id=problem.id,
-            title="Parents are skeptical of gummy supplements as real medicine",
+            title="Parents doubt gummy supplements can meaningfully support their child's overall development",
             rationale=(
-                "The gummy format can feel more like a treat than a serious nutrition intervention."
+                "The gummy format feels more like a treat than a credible tool for supporting "
+                "growth, immunity, and cognitive development during formative years."
             ),
             indicator_attributes=[
                 "supplement_necessity_belief",

@@ -644,7 +644,7 @@ hypotheses:
         split_by: outcome
 
   - id: h2_supplement_skepticism
-    title: "Parents are skeptical of gummy supplements as real medicine"
+    title: "Parents doubt gummy supplements can meaningfully support their child's overall development"
     indicator_attributes: [supplement_necessity_belief, natural_vs_synthetic_preference, food_first_belief]
     probes:
       - type: interview
