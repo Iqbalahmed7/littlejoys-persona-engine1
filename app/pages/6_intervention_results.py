@@ -6,10 +6,19 @@ Full comparison of ALL interventions run in parallel — ranked by adoption lift
 
 from __future__ import annotations
 
+from typing import Any
+
+import plotly.graph_objects as go
 import streamlit as st
 
 from app.components.system_voice import render_system_voice
 from app.utils.phase_state import render_phase_sidebar
+from src.decision.scenarios import get_scenario
+from src.simulation.counterfactual import (
+    apply_scenario_modifications,
+    generate_default_counterfactuals,
+    run_counterfactual,
+)
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(page_title="Phase 4 — Intervention Results", page_icon="📊", layout="wide")
@@ -38,7 +47,17 @@ if not all_results:
     st.stop()
 
 # Baseline adoption rate (same for all — from first result)
-_baseline_rate = all_results[0]["result"].baseline_adoption_rate if all_results else 0.0
+if baseline_cohorts is not None and hasattr(baseline_cohorts, "summary"):
+    _summary = baseline_cohorts.summary
+    _total = sum(_summary.values()) or 1
+    _tried = (
+        _summary.get("first_time_buyer", 0)
+        + _summary.get("current_user", 0)
+        + _summary.get("lapsed_user", 0)
+    )
+    _baseline_rate = _tried / _total
+else:
+    _baseline_rate = all_results[0]["result"].baseline_adoption_rate if all_results else 0.0
 
 # System Voice
 render_system_voice(
@@ -73,6 +92,56 @@ def _infer_cost(iv) -> str:
 
 
 _COMPLEXITY_COLOR = {"Low": "#2ECC71", "Medium": "#F39C12", "High": "#E74C3C"}
+
+
+@st.cache_data(show_spinner=False)
+def _run_micro_counterfactuals_cached(
+    scenario_id: str,
+    intervention_id: str,
+    intervention_mods: tuple[tuple[str, Any], ...],
+    _population: Any,
+) -> list[dict[str, Any]]:
+    baseline_scenario = get_scenario(scenario_id)
+    intervention_scenario = apply_scenario_modifications(
+        baseline_scenario,
+        dict(intervention_mods),
+    )
+    tweaks = generate_default_counterfactuals(intervention_scenario)
+    rows: list[dict[str, Any]] = []
+    for tweak in tweaks:
+        cf_result = run_counterfactual(
+            population=_population,
+            baseline_scenario=baseline_scenario,
+            modifications=dict(tweak.parameter_changes),
+            counterfactual_name=tweak.label,
+        )
+        rows.append(
+            {
+                "intervention_id": intervention_id,
+                "tweak_id": tweak.id,
+                "tweak_label": tweak.label,
+                "adoption_rate": cf_result.counterfactual_adoption_rate,
+                "baseline_rate": cf_result.baseline_adoption_rate,
+                "lift_vs_baseline": cf_result.absolute_lift,
+                "lift_vs_intervention": 0.0,  # filled at render-time
+                "parameter_changes": dict(tweak.parameter_changes),
+            }
+        )
+    return rows
+
+
+def _interpretation_from_parameter(changes: dict[str, Any]) -> str:
+    change_blob = " ".join(changes.keys()).lower()
+    if "price" in change_blob:
+        return (
+            "price sensitivity is the primary driver — a discount approach may "
+            "outperform parameter changes alone"
+        )
+    if "pediatrician" in change_blob or "endorsement" in change_blob:
+        return "trust signals are the key unlock for this intervention"
+    if "taste" in change_blob or "recipe" in change_blob:
+        return "child acceptance remains the key friction even with this intervention in place"
+    return "targeted parameter adjustments can further improve this intervention's impact"
 
 # Comparison table (sort by absolute_lift descending)
 sorted_results = sorted(all_results, key=lambda x: x["result"].absolute_lift, reverse=True)
@@ -166,6 +235,95 @@ if sorted_results:
             f"(+{_low_cx['result'].absolute_lift:.1%} lift, Low complexity) to validate assumptions "
             f"before committing to the larger programme."
         )
+
+st.markdown("## 🔬 Counterfactual Analysis")
+_selected_row = None
+if sorted_results:
+    _option_rows = sorted_results
+    _selected_iv_id = st.selectbox(
+        "Select an intervention to analyse",
+        options=[row["intervention"].id for row in _option_rows],
+        format_func=lambda iv_id: next(
+            (row["intervention"].name for row in _option_rows if row["intervention"].id == iv_id),
+            iv_id,
+        ),
+    )
+    _selected_row = next(
+        row for row in _option_rows if row["intervention"].id == _selected_iv_id
+    )
+
+if _selected_row is not None:
+    _population = st.session_state.get("population")
+    _selected_iv = _selected_row["intervention"]
+    _selected_result = _selected_row["result"]
+    _state_key = f"cf_results_{scenario_id}_{_selected_iv.id}"
+    if _state_key not in st.session_state:
+        with st.spinner("Running 9 micro-perturbation scenarios…"):
+            _mods_key = tuple(sorted(_selected_iv.parameter_modifications.items()))
+            st.session_state[_state_key] = _run_micro_counterfactuals_cached(
+                scenario_id=scenario_id,
+                intervention_id=_selected_iv.id,
+                intervention_mods=_mods_key,
+                _population=_population,
+            )
+
+    _cf_rows: list[dict[str, Any]] = st.session_state[_state_key]
+    _intervention_rate = float(_selected_result.counterfactual_adoption_rate)
+    for _row in _cf_rows:
+        _row["lift_vs_intervention"] = float(_row["adoption_rate"]) - _intervention_rate
+
+    _y = [_r["tweak_label"] for _r in _cf_rows]
+    _x = [float(_r["adoption_rate"]) * 100.0 for _r in _cf_rows]
+    _colors = ["#2ECC71" if _r["adoption_rate"] > _baseline_rate else "#E74C3C" for _r in _cf_rows]
+    _baseline_x = _baseline_rate * 100.0
+
+    _fig = go.Figure(
+        go.Bar(
+            x=_x,
+            y=_y,
+            orientation="h",
+            marker_color=_colors,
+            text=[f"{v:.1f}%" for v in _x],
+            textposition="outside",
+        )
+    )
+    _fig.add_vline(
+        x=_baseline_x,
+        line_dash="dash",
+        line_color="#34495E",
+        annotation_text=f"Baseline {_baseline_x:.1f}%",
+        annotation_position="top right",
+    )
+    _fig.update_layout(
+        title=f"{_selected_iv.name}: sensitivity across micro-tweaks",
+        xaxis_title="Adoption Rate (%)",
+        yaxis_title="Micro-tweak",
+        height=420,
+        margin=dict(l=10, r=20, t=50, b=10),
+    )
+    st.plotly_chart(_fig, use_container_width=True)
+
+    _summary_rows = [
+        {
+            "Tweak": r["tweak_label"],
+            "Adoption": f"{float(r['adoption_rate']):.1%}",
+            "Lift vs Baseline": f"{float(r['lift_vs_baseline']):+.1%}",
+            "Lift vs Intervention": f"{float(r['lift_vs_intervention']):+.1%}",
+        }
+        for r in _cf_rows
+    ]
+    st.dataframe(_summary_rows, use_container_width=True, hide_index=True)
+
+    _top_tweak = max(_cf_rows, key=lambda r: float(r["lift_vs_baseline"]))
+    _bottom_tweak = min(_cf_rows, key=lambda r: float(r["lift_vs_baseline"]))
+    _interp = _interpretation_from_parameter(_top_tweak["parameter_changes"])
+    render_system_voice(
+        f"For <strong>{_selected_iv.name}</strong>, the strongest sensitivity is to "
+        f"<strong>{_top_tweak['tweak_label']}</strong> "
+        f"({float(_top_tweak['lift_vs_baseline']):+.1%} vs baseline), and the weakest lever is "
+        f"<strong>{_bottom_tweak['tweak_label']}</strong>. "
+        f"This suggests {_interp}."
+    )
 
 st.divider()
 _nav = st.columns([1, 1])
