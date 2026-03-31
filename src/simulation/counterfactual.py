@@ -301,40 +301,68 @@ def run_counterfactual(
     counterfactual_name: str = "",
     seed: int = DEFAULT_SEED,
 ) -> CounterfactualResult:
-    """Run baseline vs. modified scenario and compare results."""
+    """Run baseline vs. modified scenario and compare results.
+
+    Dispatches to the temporal simulation loop when ``baseline_scenario.mode``
+    is ``"temporal"``; otherwise uses the static single-pass estimator.
+    """
 
     modified_scenario, parameter_changes = _apply_modifications(baseline_scenario, modifications)
-    baseline_result = evaluate_scenario_adoption(
-        population=population,
-        scenario=baseline_scenario,
-        seed=seed,
-    )
-    counterfactual_result = evaluate_scenario_adoption(
-        population=population,
-        scenario=modified_scenario,
-        seed=seed,
-    )
 
-    absolute_lift = counterfactual_result.adoption_rate - baseline_result.adoption_rate
+    if baseline_scenario.mode == "temporal":
+        from src.simulation.temporal import run_temporal_simulation  # noqa: PLC0415
+
+        months = int(baseline_scenario.months or 6)
+        baseline_sim = run_temporal_simulation(
+            population=population,
+            scenario=baseline_scenario,
+            months=months,
+            seed=seed,
+        )
+        cf_sim = run_temporal_simulation(
+            population=population,
+            scenario=modified_scenario,
+            months=months,
+            seed=seed,
+        )
+        baseline_rate = baseline_sim.final_adoption_rate
+        cf_rate = cf_sim.final_adoption_rate
+        segment_impacts: list[SegmentImpact] = []
+    else:
+        baseline_result = evaluate_scenario_adoption(
+            population=population,
+            scenario=baseline_scenario,
+            seed=seed,
+        )
+        counterfactual_result = evaluate_scenario_adoption(
+            population=population,
+            scenario=modified_scenario,
+            seed=seed,
+        )
+        baseline_rate = baseline_result.adoption_rate
+        cf_rate = counterfactual_result.adoption_rate
+        segment_impacts = _segment_impacts(
+            population=population,
+            baseline_results=baseline_result.results_by_persona,
+            counterfactual_results=counterfactual_result.results_by_persona,
+        )
+
+    absolute_lift = cf_rate - baseline_rate
     relative_lift_percent = (
         0.0
-        if baseline_result.adoption_rate <= 0.0
-        else (absolute_lift / baseline_result.adoption_rate) * 100.0
+        if baseline_rate <= 0.0
+        else (absolute_lift / baseline_rate) * 100.0
     )
 
     return CounterfactualResult(
         baseline_scenario_id=baseline_scenario.id,
         counterfactual_name=counterfactual_name or "custom",
         parameter_changes=parameter_changes,
-        baseline_adoption_rate=baseline_result.adoption_rate,
-        counterfactual_adoption_rate=counterfactual_result.adoption_rate,
+        baseline_adoption_rate=baseline_rate,
+        counterfactual_adoption_rate=cf_rate,
         absolute_lift=absolute_lift,
         relative_lift_percent=relative_lift_percent,
-        most_affected_segments=_segment_impacts(
-            population=population,
-            baseline_results=baseline_result.results_by_persona,
-            counterfactual_results=counterfactual_result.results_by_persona,
-        ),
+        most_affected_segments=segment_impacts,
     )
 
 

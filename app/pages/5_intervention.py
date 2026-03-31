@@ -360,15 +360,29 @@ if interventions:
         disabled=not selected_ivs,
     ):
         from src.decision.scenarios import get_scenario as _gs
+        from src.generation.population import PopulationGenerator as _PopGen
         from src.simulation.counterfactual import run_counterfactual as _run_cf
 
-        _population = st.session_state.get("population")
+        # Fresh population for each simulation run — ensures genuine re-sampling
+        _iv_seed = st.session_state.get("sim_run_count", 0) * 7919 + 42
+        _existing_pop = st.session_state.get("population")
+        _pop_size = len(_existing_pop.personas) if _existing_pop else 200
+        with st.spinner(f"Generating fresh {_pop_size}-persona population…"):
+            _population = _PopGen().generate(
+                size=_pop_size,
+                seed=_iv_seed,
+                deep_persona_count=max(3, _pop_size // 20),
+            )
+            st.session_state["population"] = _population
+
         _base_scenario = _gs(scenario_id)
 
         _all_results = []
+        _errors = []
         _prog = st.progress(0.0, text="Running simulations…")
+        _month_status = st.empty()
         for _si, _iv in enumerate(selected_ivs):
-            _prog.progress(_si / _n_sel, text=f"Simulating: {_iv.name}…")
+            _prog.progress(_si / _n_sel, text=f"Simulating [{_si+1}/{_n_sel}]: {_iv.name}…")
             try:
                 _r = _run_cf(
                     population=_population,
@@ -377,10 +391,15 @@ if interventions:
                     counterfactual_name=_iv.name,
                 )
                 _all_results.append({"intervention": _iv, "result": _r})
-            except Exception:  # noqa: BLE001
-                pass
+            except Exception as _exc:  # noqa: BLE001
+                _errors.append(f"**{_iv.name}**: {_exc}")
         _prog.progress(1.0, text="All simulations complete.")
         _prog.empty()
+        if _errors:
+            st.warning(
+                "Some interventions could not be simulated:\n\n" + "\n\n".join(_errors),
+                icon="⚠️",
+            )
 
         st.session_state["intervention_run"] = {
             "all_results": _all_results,

@@ -9,6 +9,7 @@ See ARCHITECTURE.md §9.2.
 from __future__ import annotations
 
 import random
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -105,6 +106,7 @@ def run_temporal_simulation(
     thresholds: dict[str, float] | None = None,
     months: int = 12,
     seed: int = 42,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> TemporalSimulationResult:
     """
     Run a month-by-month simulation with marketing growth, WOM, repeat purchase, and churn.
@@ -115,6 +117,8 @@ def run_temporal_simulation(
         thresholds: Optional funnel threshold overrides.
         months: Number of months to simulate.
         seed: RNG seed for churn/repeat stochastic draws and WOM sampling.
+        progress_callback: Optional ``(current_month, total_months) -> None`` called
+            after each month completes — use for live progress bars in the UI.
 
     Returns:
         ``TemporalSimulationResult`` with per-month snapshots and headline metrics.
@@ -127,6 +131,7 @@ def run_temporal_simulation(
         months=months,
         seed=seed,
         collect_trajectories=False,
+        progress_callback=progress_callback,
     )
 
     n = len(population.personas)
@@ -162,6 +167,7 @@ def _simulate_temporal(
     seed: int,
     *,
     collect_trajectories: bool,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[
     list[MonthlySnapshot],
     float,
@@ -319,6 +325,9 @@ def _simulate_temporal(
                 lj_pass_holders=lj_holders,
             )
         )
+
+        if progress_callback is not None:
+            progress_callback(month, months)
 
         if collect_trajectories:
             for persona in personas:

@@ -300,6 +300,9 @@ def compute_awareness(
     ):
         score += FUNNEL_BOOST_INFLUENCER_CAMPAIGN
 
+    # Organic social momentum / WoM buzz — continuous signal from social_buzz × WoM openness
+    score += marketing.social_buzz * persona.relationships.wom_receiver_openness * 0.20
+
     score += awareness_boost
     return _clip_unit(score)
 
@@ -374,6 +377,7 @@ def compute_purchase(
     """
 
     product = scenario.product
+    marketing = scenario.marketing
     ref = max(persona.daily_routine.price_reference_point, 1.0)
     price_ratio = min(FUNNEL_PURCHASE_PRICE_RATIO_CAP, product.price_inr / ref)
     price_barrier = _clip_unit(persona.daily_routine.budget_consciousness * price_ratio / 2.0)
@@ -396,7 +400,10 @@ def compute_purchase(
         + persona.values.best_for_my_child_intensity * 0.4
     )
 
-    combo = value + emotional - price_barrier - effort_barrier
+    # Discount / cashback sensitivity — reduces effective price barrier at point of purchase
+    deal_boost = marketing.discount_available * persona.daily_routine.cashback_coupon_sensitivity * 0.25
+
+    combo = value + emotional + deal_boost - price_barrier - effort_barrier
     combo = max(FUNNEL_PURCHASE_COMBO_CLIP_MIN, min(FUNNEL_PURCHASE_COMBO_CLIP_MAX, combo))
     purchase_score = _clip_unit(combo)
 

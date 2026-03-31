@@ -23,7 +23,7 @@ from src.analysis.cohort_classifier import classify_population
 from src.analysis.problem_templates import PROBLEM_TEMPLATES
 from src.constants import DEFAULT_SEED, GTM_CHANNELS, GTM_PRESETS
 from src.decision.scenarios import MarketingConfig, get_scenario
-from src.generation.population import Population
+from src.generation.population import Population, PopulationGenerator
 from src.simulation.temporal import run_temporal_simulation
 
 # ── Page config ───────────────────────────────────────────────────────────────
@@ -120,7 +120,9 @@ def _post_sim_narrative(problem_id: str, temporal_result: Any, cohorts: Any) -> 
         )
 
 
-def _run_simulation_with_narrative(pop: Population, scenario_id: str) -> tuple[Any, Any]:
+def _run_simulation_with_narrative(
+    pop: Population, scenario_id: str, seed: int = DEFAULT_SEED
+) -> tuple[Any, Any]:
     """Run simulation first, then narrate checkpoints from real monthly outputs."""
     # Use GTM-configured scenario if available, else fall back to defaults
     scenario = st.session_state.get("gtm_scenario_override") or get_scenario(scenario_id)
@@ -128,15 +130,43 @@ def _run_simulation_with_narrative(pop: Population, scenario_id: str) -> tuple[A
     n = len(pop.personas)
 
     with st.status(f"Running {sim_months}-month baseline simulation...", expanded=True) as status:
-        _ch_names = ", ".join(scenario.marketing.marketing_channels) if scenario.marketing.channel_mix else "default channels"
-        st.write(
-            f"⚙️ Introducing product to {n} personas via {_ch_names} "
-            f"(awareness budget: {scenario.marketing.awareness_budget:.0%})..."
+        _ch_names = (
+            ", ".join(scenario.marketing.channel_mix.keys())
+            if scenario.marketing.channel_mix
+            else "default channels"
         )
-        temporal_result = run_temporal_simulation(pop, scenario, months=sim_months, seed=DEFAULT_SEED)
+        st.write(
+            f"⚙️ Sampling {n} freshly-generated personas via {_ch_names} "
+            f"(awareness budget: {scenario.marketing.awareness_budget:.0%}, seed {seed})..."
+        )
+
+        _prog_bar = st.progress(0.0)
+        _month_label = st.empty()
+
+        def _on_month(current: int, total: int) -> None:
+            _prog_bar.progress(current / total)
+            snap = None
+            if hasattr(_on_month, "_snapshots") and len(_on_month._snapshots) >= current:
+                snap = _on_month._snapshots[current - 1]
+            if snap is not None:
+                _month_label.caption(
+                    f"Month {current}/{total} — "
+                    f"new: {snap.new_adopters} | active: {snap.total_active} | "
+                    f"churn: {snap.churned} | awareness: {snap.awareness_level_mean:.0%}"
+                )
+            else:
+                _month_label.caption(f"Month {current} of {total}…")
+
+        temporal_result = run_temporal_simulation(
+            pop, scenario, months=sim_months, seed=seed, progress_callback=_on_month
+        )
+        # Back-fill the snapshots reference so future callbacks (if any) can read them
+        _on_month._snapshots = temporal_result.monthly_snapshots  # type: ignore[attr-defined]
+        _prog_bar.progress(1.0)
+        _month_label.empty()
 
         st.write("⚙️ Classifying behavioral cohorts...")
-        cohorts = classify_population(pop, scenario, seed=DEFAULT_SEED)
+        cohorts = classify_population(pop, scenario, seed=seed)
 
         # Replay narrative from actual monthly data
         monthly = getattr(temporal_result, "aggregate_monthly", None) or getattr(
@@ -456,15 +486,43 @@ already_run = (
     and st.session_state.get("baseline_problem_id") == selected_problem
 )
 
+def _next_sim_seed() -> int:
+    """Return a unique seed for each simulation run (increments per click)."""
+    count = st.session_state.get("sim_run_count", 0) + 1
+    st.session_state["sim_run_count"] = count
+    # Combine DEFAULT_SEED with the run counter for reproducible-but-varied draws
+    return DEFAULT_SEED + count * 7919
+
+
+def _fresh_population(seed: int) -> Population:
+    """Generate a fresh population using the current population's size."""
+    n = len(st.session_state.population.personas)
+    gen = PopulationGenerator()
+    fresh = gen.generate(size=n, seed=seed, deep_persona_count=max(3, n // 20))
+    st.session_state["population"] = fresh
+    return fresh
+
+
 if already_run:
     st.success("✅ Baseline simulation already complete for this problem.")
     if st.button("Re-run simulation with new GTM strategy", type="secondary"):
+        _seed = _next_sim_seed()
         for k in ["baseline_cohorts", "baseline_temporal"]:
             st.session_state.pop(k, None)
+        with st.spinner(f"Generating fresh population (seed {_seed})…"):
+            _fresh_pop = _fresh_population(_seed)
+        temporal_result, cohorts = _run_simulation_with_narrative(_fresh_pop, selected_problem, seed=_seed)
+        st.session_state["baseline_temporal"] = temporal_result
+        st.session_state["baseline_cohorts"] = cohorts
+        st.session_state["baseline_problem_id"] = selected_problem
+        st.session_state["baseline_scenario_id"] = selected_problem
         st.rerun()
 else:
     if st.button("▶ Run Baseline Simulation", type="primary", use_container_width=True):
-        temporal_result, cohorts = _run_simulation_with_narrative(pop, selected_problem)
+        _seed = _next_sim_seed()
+        with st.spinner(f"Generating fresh population (seed {_seed})…"):
+            _fresh_pop = _fresh_population(_seed)
+        temporal_result, cohorts = _run_simulation_with_narrative(_fresh_pop, selected_problem, seed=_seed)
         st.session_state["baseline_temporal"] = temporal_result
         st.session_state["baseline_cohorts"] = cohorts
         st.session_state["baseline_problem_id"] = selected_problem
