@@ -33,7 +33,7 @@ core_finding: dict = st.session_state["core_finding"]
 scenario_id: str = core_finding.get("scenario_id") or st.session_state.get(
     "baseline_scenario_id", ""
 )
-dominant_hypothesis: str = core_finding.get("dominant_hypothesis", "")
+dominant_hypothesis: str = core_finding.get("dominant_hypothesis_title", "") or core_finding.get("dominant_hypothesis", "")
 overall_confidence: float = float(core_finding.get("overall_confidence", 0.0))
 
 probe_results = st.session_state.get("probe_results", {})
@@ -72,8 +72,8 @@ render_system_voice(
 # ── Section 1: Business Problem ───────────────────────────────────────────────
 st.subheader("1. Business Problem")
 _problem_labels = {
-    "nutrimix_2_6": "Why is repeat purchase low despite high NPS? (Nutrimix 2–6)",
-    "nutrimix_7_14": "How do we expand Nutrimix from 2–6 to the 7–14 age group?",
+    "nutrimix_2_6": "Why is repeat purchase low despite high NPS? (Nutrimix 2-6)",
+    "nutrimix_7_14": "How do we expand Nutrimix from 2-6 to the 7-14 age group?",
     "magnesium_gummies": "How do we grow sales of a niche supplement? (Magnesium Gummies)",
     "protein_mix": "The product requires cooking — how do we overcome the effort barrier? (Protein Mix)",
 }
@@ -193,14 +193,14 @@ _export = {
 
 # Assemble text brief
 _text_lines = [
-    f"LITTLEJOYS PERSONA ENGINE — SYNTHESIS REPORT",
+    "LITTLEJOYS PERSONA ENGINE — SYNTHESIS REPORT",
     f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}",
     f"Scenario: {scenario_id}",
-    f"=" * 60,
-    f"",
+    "=" * 60,
+    "",
     "BUSINESS PROBLEM",
     f"{_problem_labels.get(scenario_id, scenario_id)}",
-    f"",
+    "",
     f"POPULATION BASELINE ({sum(cohort_summary.values())} personas)",
 ]
 for _cid, _cnt in cohort_summary.items():
