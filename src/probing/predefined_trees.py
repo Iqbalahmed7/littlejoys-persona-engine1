@@ -12,6 +12,32 @@ from src.probing.models import (
     ProblemTreeDefinition,
 )
 
+# Default broad attribute set used for custom hypotheses.
+# These are the key funnel-driving flat-dict attribute names that span
+# need recognition, awareness, consideration, and purchase layers.
+_DEFAULT_CUSTOM_PROBE_ATTRIBUTES: list[str] = [
+    # Need recognition layer
+    "health_anxiety",
+    "child_health_proactivity",
+    "nutrition_gap_awareness",
+    # Awareness layer
+    "medical_authority_trust",
+    "influencer_trust",
+    "wom_receiver_openness",
+    # Consideration layer
+    "research_before_purchase",
+    "science_literacy",
+    "risk_tolerance",
+    "indie_brand_openness",
+    "social_proof_bias",
+    # Purchase layer
+    "budget_consciousness",
+    "price_reference_point",
+    "deal_seeking_intensity",
+    "cashback_coupon_sensitivity",
+    "online_shopping_comfort",
+]
+
 
 def _interview_probe(
     probe_id: str,
@@ -137,19 +163,24 @@ def generate_fallback_probes_for_custom_hypotheses(
             )
             seen_ids.add(probe_id)
 
-        if hypothesis.indicator_attributes:
-            attr_id = f"{hypothesis.id}_custom_attribute"
-            if attr_id not in seen_ids:
-                out.append(
-                    _attribute_probe(
-                        probe_id=attr_id,
-                        hypothesis_id=hypothesis.id,
-                        attributes=hypothesis.indicator_attributes,
-                        split_by="outcome",
-                        order=base_order + 3,
-                    )
+        # Always add a full-population attribute probe.
+        # If the hypothesis has specific indicator attributes use those;
+        # otherwise fall back to the default broad funnel-driving set so
+        # the engine always compares adopters vs non-adopters across all
+        # 200 personas — not just the 30-persona interview sample.
+        attr_id = f"{hypothesis.id}_custom_attribute"
+        if attr_id not in seen_ids:
+            attrs = hypothesis.indicator_attributes or _DEFAULT_CUSTOM_PROBE_ATTRIBUTES
+            out.append(
+                _attribute_probe(
+                    probe_id=attr_id,
+                    hypothesis_id=hypothesis.id,
+                    attributes=attrs,
+                    split_by="outcome",
+                    order=base_order + 3,
                 )
-                seen_ids.add(attr_id)
+            )
+            seen_ids.add(attr_id)
 
         if hypothesis.counterfactual_modifications:
             sim_id = f"{hypothesis.id}_custom_simulation"
