@@ -612,7 +612,7 @@ for cid, (label, icon, desc) in cohort_display.items():
                 try:
                     p = pop.get_persona(pid)
                     st.caption(
-                        f"• {p.name}, {p.demographics.city_tier} — "
+                        f"• {p.id}, {p.demographics.city_tier} — "
                         f"{p.narrative[:80] if p.narrative else 'No narrative'}…"
                     )
                 except Exception:
@@ -733,6 +733,119 @@ if selected_cohort:
             "lapsed_user": f"These {len(persona_ids)} households were active buyers who stopped. Identifying their exit signal — often price, child rejection, or routine disruption — is the retention priority.",
         }
         render_system_voice(narratives.get(selected_cohort, ""))
+
+# ── Child Age-Band Breakdown ──────────────────────────────────────────────────
+st.markdown("---")
+st.subheader("Adoption by Child Age Band")
+st.caption(
+    "Same simulation, same marketing mix — sliced by the age of the child in each household. "
+    "Use this to see where the product is gaining traction vs. where the funnel is leaking by age segment."
+)
+
+_AGE_BANDS: list[tuple[str, int, int]] = [
+    ("2–6 yrs  (Toddler / Early)", 2, 6),
+    ("7–10 yrs (Middle Childhood)", 7, 10),
+    ("11–14 yrs (Pre-Teen)", 11, 14),
+]
+_COHORT_ORDER_AB = ["never_aware", "aware_not_tried", "first_time_buyer", "current_user", "lapsed_user"]
+
+# Build per-band counts — a persona falls into a band if their YOUNGEST child is in range.
+_band_rows = []
+for band_label, low, high in _AGE_BANDS:
+    band_counts: dict[str, int] = {c: 0 for c in _COHORT_ORDER_AB}
+    for cid in _COHORT_ORDER_AB:
+        for pid in cohorts.cohorts.get(cid, []):
+            try:
+                _p = pop.get_persona(pid)
+                youngest = _p.demographics.youngest_child_age
+                if youngest is not None and low <= youngest <= high:
+                    band_counts[cid] += 1
+            except Exception:
+                pass
+    band_total = sum(band_counts.values())
+    if band_total == 0:
+        continue
+    band_tried = band_counts["first_time_buyer"] + band_counts["current_user"] + band_counts["lapsed_user"]
+    band_active = band_counts["current_user"]
+    band_repeated = band_counts["current_user"] + band_counts["lapsed_user"]
+    _band_rows.append({
+        "Age Band": band_label,
+        "Personas": band_total,
+        "Never Aware": band_counts["never_aware"],
+        "Aware, Not Tried": band_counts["aware_not_tried"],
+        "First-Time Buyer": band_counts["first_time_buyer"],
+        "Current User": band_counts["current_user"],
+        "Lapsed User": band_counts["lapsed_user"],
+        "Trial Rate": f"{round(band_tried / band_total * 100)}%",
+        "Active Rate": f"{round(band_active / band_total * 100)}%",
+        "Repeat Rate": f"{round(band_repeated / max(band_tried, 1) * 100)}%",
+        "_tried": band_tried,
+        "_active": band_active,
+        "_total": band_total,
+    })
+
+if _band_rows:
+    # Summary table
+    _display_cols = [
+        "Age Band", "Personas", "Never Aware", "Aware, Not Tried",
+        "First-Time Buyer", "Current User", "Lapsed User",
+        "Trial Rate", "Active Rate", "Repeat Rate",
+    ]
+    _df_age = pd.DataFrame(_band_rows)[_display_cols]
+    st.dataframe(_df_age, use_container_width=True, hide_index=True)
+
+    # Visual: trial rate vs active rate per band
+    _ab_labels = [r["Age Band"] for r in _band_rows]
+    _trial_rates = [round(r["_tried"] / r["_total"] * 100) for r in _band_rows]
+    _active_rates = [round(r["_active"] / r["_total"] * 100) for r in _band_rows]
+
+    fig_age = go.Figure()
+    fig_age.add_trace(go.Bar(
+        name="Trial Rate %",
+        x=_ab_labels,
+        y=_trial_rates,
+        marker_color="#3498DB",
+        text=[f"{v}%" for v in _trial_rates],
+        textposition="outside",
+    ))
+    fig_age.add_trace(go.Bar(
+        name="Active Rate %",
+        x=_ab_labels,
+        y=_active_rates,
+        marker_color="#2ECC71",
+        text=[f"{v}%" for v in _active_rates],
+        textposition="outside",
+    ))
+    fig_age.update_layout(
+        title="Trial Rate vs Active Rate by Child Age Band",
+        barmode="group",
+        yaxis_title="% of personas in band",
+        yaxis_range=[0, max(_trial_rates + _active_rates + [5]) + 15],
+        plot_bgcolor="#FAFAFA",
+        paper_bgcolor="#FFFFFF",
+        margin=dict(l=10, r=10, t=40, b=10),
+        height=320,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    )
+    st.plotly_chart(fig_age, use_container_width=True)
+
+    # System voice insight
+    if len(_band_rows) >= 2:
+        _best = max(_band_rows, key=lambda r: r["_tried"] / r["_total"])
+        _worst = min(_band_rows, key=lambda r: r["_tried"] / r["_total"])
+        render_system_voice(
+            f"The <b>{_best['Age Band']}</b> segment has the highest trial rate "
+            f"({_best['Trial Rate']}) — driven by stronger need recognition and channel fit "
+            f"for households with children in this range. "
+            f"The <b>{_worst['Age Band']}</b> segment trails at {_worst['Trial Rate']} trial — "
+            f"the 0.3× age-relevance penalty suppresses need recognition scores for out-of-range children, "
+            f"compounding any existing awareness gap. "
+            f"If your real-world conversion exceeds these numbers for a specific band, "
+            f"calibrate the scenario's <i>awareness_budget</i> and <i>channel_mix</i> upward — "
+            f"the simulation is parameterised conservatively by default."
+        )
+else:
+    st.info("Age band breakdown unavailable — youngest_child_age not populated for this population.")
 
 st.markdown("---")
 
