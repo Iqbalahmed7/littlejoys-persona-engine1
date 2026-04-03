@@ -52,6 +52,10 @@ def load_all_personas() -> dict[str, dict]:
         if SIMULATTE_COHORT_PATH.exists():
             personas = load_simulatte_cohort(SIMULATTE_COHORT_PATH)
             return {p.persona_id: persona_to_display_dict(p) for p in personas}
+    except ModuleNotFoundError:
+        # Persona Generator is a separate local project; not present on cloud deployments.
+        # Silent fallback — this is expected in production.
+        pass
     except Exception as e:
         st.warning(f"Could not load Simulatte cohort: {e}. Falling back to legacy data.")
 
