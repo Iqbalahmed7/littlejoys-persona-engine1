@@ -569,15 +569,33 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
             if log.get("error"):
                 continue
             snaps = log.get("snapshots", []) or []
-            final = log.get("final_decision") or {}
+            # Derive the first decision from snapshots (earliest decision-bearing snapshot)
+            first_dec = "—"
+            reorder_dec = "—"
+            dec_snaps = [
+                s for s in snaps
+                if s.get("decision_result")
+                and isinstance(s.get("decision_result"), dict)
+                and "error" not in s["decision_result"]
+            ]
+            dec_snaps_sorted = sorted(dec_snaps, key=lambda s: s.get("tick", 0))
+            if dec_snaps_sorted:
+                first_dec = str(dec_snaps_sorted[0]["decision_result"].get("decision", "—"))
+            if len(dec_snaps_sorted) > 1:
+                reorder_dec = str(dec_snaps_sorted[-1]["decision_result"].get("decision", "—"))
+            elif len(dec_snaps_sorted) == 1:
+                # Only one decision captured — reorder decision silently errored
+                reorder_dec = "error / not captured"
             last_trust = 0.0
             if snaps:
                 brand_trust = snaps[-1].get("brand_trust", {}) or {}
                 last_trust = max(brand_trust.values()) if brand_trust else 0.0
+            reordered = log.get("reordered", False)
             rows.append({
                 "Persona": log.get("display_name", log.get("persona_id", "?")),
-                "Outcome": "Reordered" if log.get("reordered") else "Lapsed",
-                "Final Decision": final.get("decision", "—"),
+                "Outcome": "✅ Reordered" if reordered else "❌ Lapsed",
+                "Trial Decision": first_dec,
+                "Reorder Decision": reorder_dec,
                 "Brand Trust": round(float(last_trust), 3),
                 "Memories": int((snaps[-1].get("memories_count", 0) if snaps else 0)),
             })
@@ -585,30 +603,19 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
         if rows:
             df = pd.DataFrame(rows)
 
-            def _row_colour(row: pd.Series) -> list[str]:
-                colour = "#D1FAE5" if row["Outcome"] == "Reordered" else "#FEE2E2"
-                return [f"background-color: {colour}"] * len(row)
-
             f1, f2 = st.columns(2)
-            show = f1.selectbox("Filter", ["All", "Reordered", "Lapsed"], key="scenario_outcome_filter")
-            dec_opts = sorted(df["Final Decision"].unique().tolist())
-            dec = f2.selectbox("Final Decision", ["all", *dec_opts], key="scenario_decision_filter")
+            show = f1.selectbox("Filter by outcome", ["All", "✅ Reordered", "❌ Lapsed"], key="scenario_outcome_filter")
+            trial_opts = sorted(df["Trial Decision"].unique().tolist())
+            trial_filter = f2.selectbox("Filter by trial decision", ["all", *trial_opts], key="scenario_decision_filter")
 
-            if show == "Reordered":
-                df = df[df["Outcome"] == "Reordered"]
-            elif show == "Lapsed":
-                df = df[df["Outcome"] == "Lapsed"]
-            if dec != "all":
-                df = df[df["Final Decision"] == dec]
+            if show == "✅ Reordered":
+                df = df[df["Outcome"] == "✅ Reordered"]
+            elif show == "❌ Lapsed":
+                df = df[df["Outcome"] == "❌ Lapsed"]
+            if trial_filter != "all":
+                df = df[df["Trial Decision"] == trial_filter]
 
-            # NOTE: Streamlit row-selection only works on plain DataFrames, not
-            # Styler objects. We pass the raw df for selection and colour-hint the
-            # Outcome column via a display-only styled render above it.
-            st.dataframe(
-                df.style.apply(_row_colour, axis=1),
-                use_container_width=True,
-                hide_index=True,
-            )
+            # Single table with row-selection (Styler + selection_mode is not compatible in Streamlit)
             selection = st.dataframe(
                 df.reset_index(drop=True),
                 use_container_width=True,
@@ -616,8 +623,15 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
                 on_select="rerun",
                 key="persona_table_select",
                 hide_index=True,
+                column_config={
+                    "Outcome": st.column_config.TextColumn("Outcome", width="small"),
+                    "Trial Decision": st.column_config.TextColumn("Trial (1st)", help="What the persona decided at the first purchase moment"),
+                    "Reorder Decision": st.column_config.TextColumn("Reorder (2nd)", help="What the persona decided when given the chance to reorder"),
+                    "Brand Trust": st.column_config.NumberColumn("Brand Trust", format="%.3f"),
+                    "Memories": st.column_config.NumberColumn("Memories", help="Episodic memories accumulated by end of journey"),
+                },
             )
-            st.caption(f"{len(df)} personas shown. Click a row in the lower table to see decision detail.")
+            st.caption(f"{len(df)} personas shown — click a row to see full decision reasoning.")
             sel_rows = (selection.selection or {}).get("rows", [])
             if sel_rows:
                 sel_persona = df.iloc[sel_rows[0]]["Persona"]
