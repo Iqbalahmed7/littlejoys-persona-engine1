@@ -53,6 +53,33 @@ def list_cohorts() -> list[str]:
         return resp.json().get("cohort_ids", [])
 
 
+def _normalise_persona(p: dict) -> dict:
+    """Add compatibility aliases so UI field expectations match API shape.
+
+    The app_adapter returns:
+      - top-level ``name``              → UI reads ``display_name``
+      - ``demographics.age``            → UI reads ``demographics.parent_age``
+      - ``demographics.employment_status`` → UI reads ``career.employment_status``
+
+    We add the missing keys in-place so every consumer works without changes.
+    """
+    # 1. display_name alias
+    if "display_name" not in p:
+        p["display_name"] = p.get("name") or p.get("id", "")
+
+    d = p.get("demographics", {})
+
+    # 2. parent_age alias
+    if "parent_age" not in d and "age" in d:
+        d["parent_age"] = d["age"]
+
+    # 3. career.employment_status alias
+    if "career" not in p and "employment_status" in d:
+        p["career"] = {"employment_status": d["employment_status"]}
+
+    return p
+
+
 def load_personas(cohort_id: str | None = None) -> dict[str, dict]:
     """
     Fetch personas from the Persona Generator API and return them as a
@@ -79,9 +106,9 @@ def load_personas(cohort_id: str | None = None) -> dict[str, dict]:
         data = resp.json()
 
     personas: list[dict] = data.get("personas", [])
-    # Key by persona_id (preferred) or id (legacy field name)
+    # Normalise field names, then key by id
     return {
-        str(p.get("persona_id") or p.get("id") or i): p
+        str(p.get("id") or p.get("persona_id") or i): _normalise_persona(p)
         for i, p in enumerate(personas)
     }
 

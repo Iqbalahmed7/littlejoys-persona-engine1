@@ -767,11 +767,18 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
     with tab_results:
         # Check in-memory run first (from Tweak & Compare tab), then fall back to file
         jid = sc["journey_id"]
+        from_session = bool(st.session_state.get(f"last_run_{jid}"))
         data = (
             st.session_state.get(f"last_run_{jid}")
             or load_journey_results(jid)
         )
         if data:
+            if not from_session:
+                st.info(
+                    "📊 **Pre-loaded results** — these are the base journey results run on "
+                    "the standard stimulus sequence. Head to **Configure & Run** to adjust "
+                    "price, channels, or stimuli and re-run."
+                )
             _render_results_panel(data, jid)
         else:
             st.info(
