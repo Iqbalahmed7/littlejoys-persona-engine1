@@ -23,8 +23,6 @@ import streamlit as st
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-SIMULATTE_COHORT_PATH = Path("/Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/simulatte_cohort_final.json")
-
 from src.simulation.batch_runner import run_batch  # noqa: E402
 from src.simulation.journey_config import (  # noqa: E402
     JourneyConfig,
@@ -44,22 +42,26 @@ from src.taxonomy.schema import Persona  # noqa: E402
 
 @st.cache_data
 def load_all_personas() -> dict[str, dict]:
-    """Load all personas from the Simulatte cohort envelope."""
-    import sys as _sys
-    _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Persona Generator"))
-    try:
-        from pilots.littlejoys.app_adapter import load_simulatte_cohort, persona_to_display_dict
-        if SIMULATTE_COHORT_PATH.exists():
-            personas = load_simulatte_cohort(SIMULATTE_COHORT_PATH)
-            return {p.persona_id: persona_to_display_dict(p) for p in personas}
-    except ModuleNotFoundError:
-        # Persona Generator is a separate local project; not present on cloud deployments.
-        # Silent fallback — this is expected in production.
-        pass
-    except Exception as e:
-        st.warning(f"Could not load Simulatte cohort: {e}. Falling back to legacy data.")
+    """Load all personas via the Simulatte Persona Generator REST API.
 
-    # Fallback: legacy persona loading
+    Primary path  : GET /cohort/{cohort_id}/personas on the deployed API.
+    Local fallback: legacy JSON files in data/population/ (dev only).
+    """
+    import os as _os
+    from src.simulatte_client import SIMULATTE_API_URL, load_personas
+
+    # ── Primary: Persona Generator API ──────────────────────────────────────
+    try:
+        personas = load_personas()
+        if personas:
+            return personas
+    except Exception as e:
+        # Only warn if SIMULATTE_API_URL has been explicitly configured,
+        # so dev machines without connectivity don't get noisy banners.
+        if _os.environ.get("SIMULATTE_API_URL"):
+            st.warning(f"Persona Generator API unavailable ({SIMULATTE_API_URL}): {e}. Using local data.")
+
+    # ── Fallback: legacy local JSON (development / offline) ─────────────────
     candidates = [
         PROJECT_ROOT / "data" / "population" / "personas_generated.json",
         PROJECT_ROOT / "data" / "population" / "personas.json",
@@ -178,17 +180,16 @@ def _filter_by_age_band(
 
 def _render_calibration_status_sidebar(all_personas: dict[str, dict]) -> None:
     """Show calibration status badge in sidebar."""
-    import sys as _sys
-    _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Persona Generator"))
     try:
         from app.components.calibration_badge import render_calibration_badge
-        # Read calibration status from cohort if possible
-        import json as _json
-        if SIMULATTE_COHORT_PATH.exists():
-            cohort_data = _json.loads(SIMULATTE_COHORT_PATH.read_text())
-            cal_status = cohort_data.get("calibration_state", {}).get("status")
-        else:
-            cal_status = None
+        # Read calibration status from API cohort metadata
+        from src.simulatte_client import get_cohort_raw
+        cal_status = None
+        try:
+            cohort_data = get_cohort_raw()
+            cal_status = cohort_data.get("cohort", {}).get("calibration_state", {}).get("status")
+        except Exception:
+            pass
         with st.sidebar:
             st.markdown("**Cohort Status**")
             render_calibration_badge(cal_status)
@@ -1098,23 +1099,14 @@ def page_simulation_builder_inline(
             progress.progress(pct, text=f"[{done}/{total}] {name}")
 
         with st.spinner(f"Running journey {jid} across {len(valid)} personas..."):
-            try:
-                import sys as _sys
-                _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Persona Generator"))
-                from pilots.littlejoys.simulatte_batch_runner import run_simulatte_batch
-                from pilots.littlejoys.app_adapter import load_simulatte_cohort
-                if SIMULATTE_COHORT_PATH.exists():
-                    persona_records = load_simulatte_cohort(SIMULATTE_COHORT_PATH)
-                    result = run_simulatte_batch(persona_records, config, tier=tier_str)
-                else:
-                    raise ImportError("No cohort file")
-            except Exception:
-                result = run_batch(
-                    journey_config=config,
-                    personas=valid,
-                    concurrency=5,
-                    progress_callback=_cb,
-                )
+            # Simulation always runs locally via LittleJoys' own engine.
+            # (Simulatte cognitive loop migration is Phase 2.)
+            result = run_batch(
+                journey_config=config,
+                personas=valid,
+                concurrency=5,
+                progress_callback=_cb,
+            )
 
         progress.progress(1.0, text=f"Done — {result.personas_run} personas in {result.elapsed_seconds:.0f}s")
         result_dict = result.to_dict()

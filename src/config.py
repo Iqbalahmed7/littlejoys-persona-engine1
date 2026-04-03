@@ -39,6 +39,10 @@ class Config(BaseSettings):
     log_level: str = "DEBUG"
     log_format: Literal["json", "console"] = "json"
 
+    # Simulatte Persona Generator API
+    simulatte_api_url: str = "https://simulatte-persona-generator.onrender.com"
+    simulatte_cohort_id: str = "littlejoys-v1"
+
     # Streamlit
     streamlit_server_port: int = 8502
 
