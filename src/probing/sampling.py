@@ -29,7 +29,14 @@ def sample_personas_for_probe(
 
     pool = personas
     if target_outcome:
-        pool = [persona for persona in personas if outcomes.get(persona.id) == target_outcome]
+        # "reject" probes should also include "lapsed" personas (bought once, didn't reorder)
+        # since journey-aware outcomes distinguish lapsed from full rejectors.
+        if target_outcome == "reject":
+            pool = [p for p in personas if outcomes.get(p.id) in ("reject", "lapsed")]
+        elif target_outcome == "adopt":
+            pool = [p for p in personas if outcomes.get(p.id) in ("adopt", "reorder")]
+        else:
+            pool = [p for p in personas if outcomes.get(p.id) == target_outcome]
 
     if len(pool) <= sample_size:
         return list(pool)

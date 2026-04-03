@@ -77,6 +77,7 @@ class ProbingTreeEngine:
         scenario_id: str,
         llm_client: LLMClient,
         on_probe_complete: Callable[[str, ProbeResult], None] | None = None,
+        journey_outcomes: dict[str, str] | None = None,
     ) -> None:
         self.population = population
         self.scenario = get_scenario(scenario_id)
@@ -88,6 +89,10 @@ class ProbingTreeEngine:
         self.synthesis: TreeSynthesis | None = None
         self._on_probe_complete = on_probe_complete
         self._precompute_outcomes()
+        # Override with real journey outcomes where provided — these are richer
+        # than the simplified funnel and represent actual simulation results.
+        if journey_outcomes:
+            self._outcomes.update(journey_outcomes)
 
     @property
     def _personas(self) -> list[Persona]:

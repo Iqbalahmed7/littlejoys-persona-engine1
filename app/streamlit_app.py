@@ -98,6 +98,35 @@ def _save_journey_results(journey_id: str, data: dict[str, Any]) -> None:
     load_journey_results.clear()
 
 
+def _extract_journey_outcomes(result_dict: dict[str, Any]) -> dict[str, str]:
+    """Build {persona_id: outcome} from journey simulation results.
+
+    Outcome values:
+      "adopt"  — bought first pack AND reordered
+      "lapsed" — bought first pack but did NOT reorder
+      "reject" — did not buy at all
+    """
+    outcomes: dict[str, str] = {}
+    for log in result_dict.get("logs", []):
+        if log.get("error"):
+            continue
+        pid = log.get("persona_id", "")
+        if not pid:
+            continue
+        snaps = log.get("snapshots", []) or []
+        first_buy = any(
+            s.get("decision_result", {}).get("decision") in ("buy", "trial")
+            for s in snaps
+            if s.get("decision_result") and "error" not in (s.get("decision_result") or {})
+        )
+        reordered = bool(log.get("reordered", False))
+        if first_buy:
+            outcomes[pid] = "adopt" if reordered else "lapsed"
+        else:
+            outcomes[pid] = "reject"
+    return outcomes
+
+
 @st.cache_data
 def parse_persona(p_dict_json: str) -> Persona | None:
     try:
@@ -780,6 +809,31 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
                     "price, channels, or stimuli and re-run."
                 )
             _render_results_panel(data, jid)
+            # Cross-page bridge → Investigate
+            _problem_map = {
+                "A": "repeat_purchase_low",
+                "B": "magnesium_gummies_growth",
+                "C": "nutrimix_7_14_expansion",
+            }
+            if jid in _problem_map:
+                st.divider()
+                outcomes = _extract_journey_outcomes(data)
+                adopters = sum(1 for v in outcomes.values() if v == "adopt")
+                lapsed = sum(1 for v in outcomes.values() if v == "lapsed")
+                rejectors = sum(1 for v in outcomes.values() if v == "reject")
+                st.caption(
+                    f"Cohort breakdown — {adopters} reordered · {lapsed} lapsed · "
+                    f"{rejectors} didn't buy"
+                )
+                if st.button(
+                    "🔬 Investigate these results →",
+                    key=f"investigate_link_{jid}",
+                    help="Open the Investigate page pre-loaded with this journey's cohort segments",
+                ):
+                    st.session_state["investigate_problem_id"] = _problem_map[jid]
+                    st.session_state["investigate_journey_id"] = jid
+                    st.session_state["nav_page"] = "Investigate"
+                    st.rerun()
         else:
             st.info(
                 "▶️ **No simulation results yet.**\n\n"
@@ -816,7 +870,7 @@ def page_simulation_builder_inline(
         key=f"builder_journey_select_{default_journey_id}",
     )
     base_config = presets[jid]
-    population_size = col_pop.slider("Population size", 10, 200, min(50, len(all_personas)), step=10)
+    population_size = col_pop.slider("Population size", 10, 200, min(200, len(all_personas)), step=10)
 
     st.divider()
     st.subheader("Product & Channels")
@@ -2475,21 +2529,87 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
 
     st.divider()
 
+    # ── Journey context selector ─────────────────────────────────────────────
+    # Determine which journey's segment outcomes to use for targeted probing.
+    _journey_problem_map = {
+        "A": "repeat_purchase_low",
+        "B": "magnesium_gummies_growth",
+        "C": "nutrimix_7_14_expansion",
+    }
+    _available_journeys: dict[str, tuple[str, dict, int]] = {}
+    for _jid, _jlabel in [
+        ("A", "Journey A — Nutrimix Repeat Purchase"),
+        ("B", "Journey B — Magnesium Gummies"),
+        ("C", "Journey C — Nutrimix 7–14 Expansion"),
+    ]:
+        _jdata = load_journey_results(_jid)
+        if _jdata and _jdata.get("logs"):
+            _n = len([l for l in _jdata["logs"] if not l.get("error")])
+            _available_journeys[_jid] = (_jlabel, _jdata, _n)
+
+    _context_labels = ["🌐 Full population (all personas — no journey filter)"] + [
+        f"📊 {v[0]} ({v[2]} personas who ran the journey)"
+        for v in _available_journeys.values()
+    ]
+    _context_keys = [None] + list(_available_journeys.keys())
+
+    # Pre-select the journey that was passed from Run Scenario if available
+    _preselect_jid = st.session_state.get("investigate_journey_id")
+    _default_ctx_idx = 0
+    if _preselect_jid and _preselect_jid in _available_journeys:
+        _default_ctx_idx = _context_keys.index(_preselect_jid)
+
+    _ctx_choice_idx = _context_labels.index(
+        st.selectbox(
+            "Probe context",
+            _context_labels,
+            index=_default_ctx_idx,
+            key="inv_journey_context",
+            help="Choose 'Full population' for broad awareness questions. Choose a Journey cohort to probe only the personas who ran that simulation — their answers are grounded in lived journey memory.",
+        )
+    )
+    _selected_jid = _context_keys[_ctx_choice_idx]
+
+    # Build journey_outcomes + filter probe personas
+    journey_outcomes: dict[str, str] = {}
+    probe_persona_pool: dict[str, dict] = all_personas
+
+    if _selected_jid and _selected_jid in _available_journeys:
+        _jdata = _available_journeys[_selected_jid][1]
+        journey_outcomes = _extract_journey_outcomes(_jdata)
+        # Restrict probe pool to personas who ran the journey
+        probe_persona_pool = {
+            pid: all_personas[pid]
+            for pid in journey_outcomes
+            if pid in all_personas
+        }
+        _adopters = sum(1 for v in journey_outcomes.values() if v == "adopt")
+        _lapsed = sum(1 for v in journey_outcomes.values() if v == "lapsed")
+        _rejectors = sum(1 for v in journey_outcomes.values() if v == "reject")
+        st.caption(
+            f"Journey cohort: **{len(probe_persona_pool)} personas** — "
+            f"{_adopters} reordered · {_lapsed} lapsed · {_rejectors} didn't buy  "
+            f"_(probes target the relevant segment automatically)_"
+        )
+
     # Run button
     enabled_h_ids = {
         h.id for h in top_hyps if st.session_state.get(f"h_enabled_{h.id}", True)
     }
     enabled_probes = [p for p in probes if p.hypothesis_id in enabled_h_ids]
-    n_personas = len(all_personas)
-    run_label = f"Run {len(enabled_probes)} probes across {n_personas} personas"
+    n_personas = len(probe_persona_pool)
+    context_label = (
+        f"Journey {_selected_jid} cohort" if _selected_jid else "full population"
+    )
+    run_label = f"Run {len(enabled_probes)} probes across {n_personas} personas ({context_label})"
 
     _trigger_from_top = st.session_state.pop("_trigger_run_probes", False)
     if st.button(run_label, type="primary", key="inv_run_probes") or _trigger_from_top:
         from src.probing.engine import ProbingTreeEngine
 
-        # Build Persona objects from the app's raw dicts
+        # Build Persona objects from the journey-filtered pool
         persona_objects = []
-        for _pid, p_dict in all_personas.items():
+        for _pid, p_dict in probe_persona_pool.items():
             try:
                 persona_objects.append(Persona.model_validate(p_dict))
             except Exception:
@@ -2531,13 +2651,14 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
                 text=f"Probed {done}/{total_probes}",
             )
 
-        with st.spinner(f"Running {len(enabled_probes)} probes..."):
+        with st.spinner(f"Running {len(enabled_probes)} probes across {n_personas} personas..."):
             try:
                 engine = ProbingTreeEngine(
                     population=pop,
                     scenario_id=problem.scenario_id,
                     llm_client=llm_client,
                     on_probe_complete=_on_probe_done,
+                    journey_outcomes=journey_outcomes if journey_outcomes else None,
                 )
                 # Run probes grouped by hypothesis so we can build verdicts
                 probes_by_h: dict[str, list] = {}
