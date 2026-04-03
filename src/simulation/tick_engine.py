@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -96,9 +97,15 @@ class TickEngine:
         persona: Persona,
         journey: JourneySpec,
     ) -> TickJourneyLog:
-        """Run a complete journey for one persona."""
+        """Run a complete journey for one persona.
+
+        A deep-copy of the persona is made at the start so that brand_memories,
+        episodic_memory, and purchase_history accumulated during this journey do
+        not bleed into subsequent journey runs that share the same Persona object.
+        """
         from src.agents.agent import CognitiveAgent
 
+        persona = copy.deepcopy(persona)   # isolate per-journey state mutations
         agent = CognitiveAgent(persona)
         cumulative_salience = 0.0
         snapshots: list[TickSnapshot] = []
