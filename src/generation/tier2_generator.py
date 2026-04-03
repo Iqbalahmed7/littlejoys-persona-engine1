@@ -1,5 +1,17 @@
 """
 Tier 2 (deep narrative) persona generation via progressive LLM attribute sampling.
+
+Produces five enrichment layers beyond the statistical Tier 1 base:
+  1. Anchor inference  — values, life attitude, parent motivations
+  2. Life story        — 2-3 biographical snippets
+  3. Narrative         — 300-500 word third-person biography
+  4. First-person      — 120-150 word first-person diary-voice summary
+  5. Purchase bullets  — 6-8 skimmable decision-driver bullets
+
+Also derives three deterministic (no-LLM) insight blocks:
+  - ParentTraits    — enum-resolved decision archetype
+  - BudgetProfile   — concrete INR budget figures
+  - DecisionRights  — per-domain authority mapping
 """
 
 from __future__ import annotations
@@ -7,6 +19,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import math
 from typing import TYPE_CHECKING, Any
 
 import structlog
@@ -64,6 +77,266 @@ _TRAIT_PHRASE_OVERRIDES: dict[str, tuple[str, str]] = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Deterministic derivation helpers (no LLM required)
+# ---------------------------------------------------------------------------
+
+def _derive_parent_traits(persona: Persona) -> "ParentTraits":  # noqa: F821
+    """Derive enum-resolved ParentTraits from continuous psychographic attributes."""
+    from src.taxonomy.schema import ParentTraits
+
+    ps = persona.psychology
+    em = persona.emotional
+    val = persona.values
+    rel = persona.relationships
+    lf = persona.lifestyle
+    rt = persona.daily_routine
+    hl = persona.health
+    cr = persona.career
+    dm = persona.demographics
+    ed = persona.education_learning
+
+    # --- decision_style ---
+    emotional_score = (em.emotional_persuasion_susceptibility + em.fear_appeal_responsiveness) / 2
+    analytical_score = (ps.information_need + (1 - ps.analysis_paralysis_tendency)) / 2
+    habitual_score = (ps.status_quo_bias + val.brand_loyalty_tendency) / 2
+    social_score = (ps.social_proof_bias + rel.peer_influence_strength) / 2
+    style_scores = {
+        "emotional": emotional_score,
+        "analytical": analytical_score,
+        "habitual": habitual_score,
+        "social": social_score,
+    }
+    decision_style = max(style_scores, key=style_scores.__getitem__)
+
+    # --- risk_appetite ---
+    rt_val = ps.risk_tolerance
+    risk_appetite = "low" if rt_val < 0.38 else ("high" if rt_val > 0.62 else "medium")
+
+    # --- decision_confidence ---
+    confidence_raw = (ps.decision_speed + (1 - ps.analysis_paralysis_tendency)) / 2
+    decision_confidence = "low" if confidence_raw < 0.38 else ("high" if confidence_raw > 0.62 else "medium")
+
+    # --- primary_value_orientation ---
+    if rt.budget_consciousness > 0.65:
+        primary_value_orientation = "price"
+    elif val.supplement_necessity_belief > 0.60 and hl.nutrition_gap_awareness > 0.60:
+        primary_value_orientation = "nutrition"
+    elif val.brand_loyalty_tendency > 0.65:
+        primary_value_orientation = "brand"
+    elif lf.convenience_food_acceptance > 0.65:
+        primary_value_orientation = "convenience"
+    else:
+        primary_value_orientation = "features"
+
+    # --- outcome_orientation ---
+    prev = val.preventive_vs_reactive_health
+    outcome_orientation = "long_term" if prev > 0.62 else ("immediate" if prev < 0.38 else "balanced")
+
+    # --- value_tradeoff_style ---
+    if rt.budget_consciousness > 0.65:
+        value_tradeoff_style = "price_first"
+    elif val.best_for_my_child_intensity > 0.65:
+        value_tradeoff_style = "quality_first"
+    elif lf.clean_label_importance > 0.62:
+        value_tradeoff_style = "feature_first"
+    else:
+        value_tradeoff_style = "balanced"
+
+    # --- trust_anchor ---
+    if ps.social_proof_bias > 0.60 and rel.wom_receiver_openness > 0.60:
+        trust_anchor = "peer"
+    elif hl.medical_authority_trust > 0.65 and ps.authority_bias > 0.60:
+        trust_anchor = "authority"
+    elif rel.elder_advice_weight > 0.65:
+        trust_anchor = "family"
+    else:
+        trust_anchor = "self"
+
+    # --- coping_mechanism_type + sentence ---
+    if ps.simplicity_preference > 0.62 and lf.meal_planning_habit > 0.58:
+        coping_type = "routine_control"
+        coping_text = (
+            "Sticks firmly to a weekly meal plan and predictable purchase schedule "
+            "to avoid last-minute stress and budget surprises."
+        )
+    elif ps.social_proof_bias > 0.65:
+        coping_type = "social_validation"
+        coping_text = (
+            "Checks in with trusted peers or mom-groups before any new product trial "
+            "to feel reassured the choice is widely accepted."
+        )
+    elif ps.information_need > 0.70 and ed.research_before_purchase > 0.65:
+        coping_type = "research_deep_dive"
+        coping_text = (
+            "Reads reviews, compares labels, and watches YouTube demos before committing "
+            "to an unfamiliar product — thoroughness reduces buyer anxiety."
+        )
+    elif ps.status_quo_bias > 0.65:
+        coping_type = "denial"
+        coping_text = (
+            "Sticks with known brands and familiar routines, avoiding category disruption "
+            "unless a trusted source forces reconsideration."
+        )
+    else:
+        coping_type = "optimism_bias"
+        coping_text = (
+            "Approaches new products with measured optimism, willing to trial based on "
+            "packaging trust and first impressions before deep research."
+        )
+
+    # --- parenting_load ---
+    time_scarce = cr.perceived_time_scarcity
+    youngest = dm.youngest_child_age or min(dm.child_ages)
+    n_children = dm.num_children
+    if (
+        time_scarce > 0.65
+        and (youngest <= 4 or n_children >= 3)
+        and cr.employment_status in ("full_time", "part_time")
+    ):
+        parenting_load = "high"
+    elif time_scarce < 0.38 and n_children == 1 and youngest >= 7:
+        parenting_load = "low"
+    else:
+        parenting_load = "medium"
+
+    # --- child_need_orientation ---
+    growth_signal = (hl.immunity_concern + hl.growth_concern) / 2
+    comfort_signal = em.fear_appeal_responsiveness + val.guilt_driven_spending
+    prev_signal = val.preventive_vs_reactive_health
+    if growth_signal > 0.62:
+        child_need_orientation = "growth_driven"
+    elif comfort_signal > 1.2:
+        child_need_orientation = "comfort_first"
+    elif prev_signal > 0.62:
+        child_need_orientation = "prevention_focused"
+    else:
+        child_need_orientation = "balanced"
+
+    # --- consistency_score (heuristic from internal attribute coherence) ---
+    coherence_signals = [
+        1.0 - abs(ps.risk_tolerance - (1.0 - rt.budget_consciousness)),
+        1.0 - abs(val.brand_loyalty_tendency - (1.0 - val.indie_brand_openness)),
+        1.0 - abs(hl.medical_authority_trust - ps.authority_bias),
+        1.0 - abs(rt.deal_seeking_intensity - rt.budget_consciousness),
+        1.0 - abs(ps.social_proof_bias - rel.peer_influence_strength),
+    ]
+    raw_consistency = sum(coherence_signals) / len(coherence_signals)
+    consistency_score = int(round(40 + raw_consistency * 60))  # maps [0,1] → [40,100]
+    consistency_band = (
+        "low" if consistency_score < 60 else ("high" if consistency_score >= 80 else "medium")
+    )
+
+    return ParentTraits(
+        decision_style=decision_style,
+        risk_appetite=risk_appetite,
+        decision_confidence=decision_confidence,
+        primary_value_orientation=primary_value_orientation,
+        outcome_orientation=outcome_orientation,
+        value_tradeoff_style=value_tradeoff_style,
+        trust_anchor=trust_anchor,
+        coping_mechanism_type=coping_type,
+        coping_mechanism=coping_text,
+        consistency_score=consistency_score,
+        consistency_band=consistency_band,
+        parenting_load=parenting_load,
+        child_need_orientation=child_need_orientation,
+    )
+
+
+def _derive_budget_profile(persona: Persona) -> "BudgetProfile":  # noqa: F821
+    """Derive concrete INR budget figures from income and psychographic attributes."""
+    from src.taxonomy.schema import BudgetProfile
+
+    annual_income_inr = persona.demographics.household_income_lpa * 100_000
+    monthly_income = annual_income_inr / 12
+
+    # Food spend fraction varies by income tier and city tier
+    city_tier = persona.demographics.city_tier
+    if city_tier == "Tier1":
+        food_fraction = 0.22
+    elif city_tier == "Tier2":
+        food_fraction = 0.27
+    else:
+        food_fraction = 0.32
+
+    monthly_food_budget_inr = max(1500, int(monthly_income * food_fraction))
+
+    # Discretionary child nutrition budget: 18-28% of food budget
+    disc_fraction = 0.18 + persona.values.best_for_my_child_intensity * 0.10
+    discretionary_child_nutrition_budget_inr = max(
+        300, int(monthly_food_budget_inr * disc_fraction)
+    )
+
+    # School fee pressure: higher for more children, lower income, and Tier1 costs
+    n_children = persona.demographics.num_children
+    income_ratio = min(1.0, annual_income_inr / 1_200_000)
+    tier_multiplier = {"Tier1": 1.4, "Tier2": 1.0, "Tier3": 0.7}[city_tier]
+    school_fee_pressure_factor = round(
+        min(1.0, (n_children * 0.25 * tier_multiplier) / max(0.5, income_ratio)), 2
+    )
+
+    # Price sensitivity from budget_consciousness
+    bc = persona.daily_routine.budget_consciousness
+    price_sensitivity = "low" if bc < 0.38 else ("high" if bc > 0.62 else "medium")
+
+    # Brand switch tolerance is inverse of brand loyalty
+    bl = persona.values.brand_loyalty_tendency
+    brand_switch_tolerance = "high" if bl < 0.38 else ("low" if bl > 0.62 else "medium")
+
+    return BudgetProfile(
+        monthly_food_budget_inr=monthly_food_budget_inr,
+        discretionary_child_nutrition_budget_inr=discretionary_child_nutrition_budget_inr,
+        school_fee_pressure_factor=school_fee_pressure_factor,
+        price_sensitivity=price_sensitivity,
+        brand_switch_tolerance=brand_switch_tolerance,
+    )
+
+
+def _derive_decision_rights(persona: Persona) -> "DecisionRights":  # noqa: F821
+    """Derive per-domain purchase authority mapping from relationship attributes."""
+    from src.taxonomy.schema import DecisionRights
+
+    dm = persona.relationships.primary_decision_maker
+    elder_weight = persona.relationships.elder_advice_weight
+    med_trust = persona.health.medical_authority_trust
+    partner = persona.relationships.partner_involvement
+
+    # child_nutrition
+    if dm == "elder" or elder_weight > 0.72:
+        child_nutrition = "elder_veto"
+    elif dm == "spouse":
+        child_nutrition = "father_final"
+    elif dm == "joint" or partner > 0.65:
+        child_nutrition = "joint"
+    else:
+        child_nutrition = "mother_final"
+
+    # grocery_shopping — primary caregiver almost always leads
+    if dm == "joint" and partner > 0.60:
+        grocery_shopping = "joint"
+    elif elder_weight > 0.70:
+        grocery_shopping = "household_elder"
+    elif dm == "spouse":
+        grocery_shopping = "father_lead"
+    else:
+        grocery_shopping = "mother_lead"
+
+    # supplements — doctor-gated when high medical trust
+    if med_trust > 0.68:
+        supplements = "doctor_gated"
+    elif dm == "joint":
+        supplements = "joint"
+    else:
+        supplements = "mother_final"
+
+    return DecisionRights(
+        child_nutrition=child_nutrition,
+        grocery_shopping=grocery_shopping,
+        supplements=supplements,
+    )
+
+
 def _stable_variant_index(value: str, modulo: int) -> int:
     digest = hashlib.md5(value.encode("utf-8")).hexdigest()
     return int(digest, 16) % modulo
@@ -109,12 +382,24 @@ def _top_trait_phrases(persona: Persona, limit: int = 5) -> list[str]:
     return [_trait_phrase(field, value, subject, possessive) for field, value in scored[:limit]]
 
 
+class FirstPersonSummary(BaseModel):
+    """Structured output for the first-person diary-voice summary step."""
+
+    summary: str
+
+
+class PurchaseBullets(BaseModel):
+    """Structured output for the purchase decision bullet generation step."""
+
+    bullets: list[str] = Field(min_length=5, max_length=8)
+
+
 class AnchorInference(BaseModel):
     """Structured output for the anchor inference step."""
 
-    core_values: list[str] = Field(min_length=3, max_length=5)
+    core_values: list[str] = Field(min_length=3, max_length=6)
     life_attitude: str
-    parent_motivations: list[str] = Field(min_length=2, max_length=4)
+    parent_motivations: list[str] = Field(min_length=2, max_length=6)
 
 
 class LifeStorySnippet(BaseModel):
@@ -143,17 +428,32 @@ class Tier2NarrativeGenerator:
 
     async def generate_narrative(self, persona: Persona) -> Persona:
         """
-        Enrich a Tier 1 persona with a deep narrative.
+        Enrich a Tier 1 persona with a deep narrative and all derived insight layers.
+
+        Pipeline (deterministic steps run first, LLM steps follow):
+          1. Derive ParentTraits, BudgetProfile, DecisionRights  (no LLM)
+          2. Anchor inference  (LLM)
+          3. Life story        (LLM)
+          4. Third-person narrative  (LLM)
+          5. First-person summary    (LLM)
+          6. Purchase bullets        (LLM)
 
         Args:
             persona: Base Tier 1 persona.
 
         Returns:
-            A copied persona with ``tier="deep"`` and a narrative payload.
+            A copied persona with ``tier="deep"`` and all enrichment fields populated.
         """
 
+        # Step 1: deterministic derived fields (always, regardless of mock mode)
+        parent_traits = _derive_parent_traits(persona)
+        budget_profile = _derive_budget_profile(persona)
+        decision_rights = _derive_decision_rights(persona)
+
         if self.llm.config.llm_mock_enabled:
-            return self._generate_mock_narrative(persona)
+            return self._generate_mock_narrative(
+                persona, parent_traits, budget_profile, decision_rights
+            )
 
         anchor_payload = self._build_anchor_payload(persona)
         anchor_response = await self.llm.generate(
@@ -177,9 +477,26 @@ class Tier2NarrativeGenerator:
             model="bulk",
             response_format="text",
         )
-
         narrative = narrative_response.text.strip()
         self._validate_narrative(persona, narrative)
+
+        fp_response = await self.llm.generate(
+            prompt=self._build_first_person_prompt(persona, anchor, parent_traits, budget_profile),
+            model="bulk",
+            response_format="json",
+            schema=FirstPersonSummary,
+        )
+        first_person_summary = FirstPersonSummary.model_validate_json(fp_response.text).summary
+
+        bullets_response = await self.llm.generate(
+            prompt=self._build_bullets_prompt(persona, parent_traits, budget_profile),
+            model="bulk",
+            response_format="json",
+            schema=PurchaseBullets,
+        )
+        purchase_decision_bullets = PurchaseBullets.model_validate_json(
+            bullets_response.text
+        ).bullets
 
         semantic_memory = dict(persona.semantic_memory)
         semantic_memory["tier2_anchor"] = anchor.model_dump(mode="json")
@@ -190,6 +507,11 @@ class Tier2NarrativeGenerator:
             update={
                 "tier": "deep",
                 "narrative": narrative,
+                "first_person_summary": first_person_summary,
+                "purchase_decision_bullets": purchase_decision_bullets,
+                "parent_traits": parent_traits,
+                "budget_profile": budget_profile,
+                "decision_rights": decision_rights,
                 "semantic_memory": semantic_memory,
             }
         )
@@ -306,6 +628,80 @@ class Tier2NarrativeGenerator:
             "Do not list attributes. Weave them into a flowing biography."
         )
 
+    def _build_first_person_prompt(
+        self,
+        persona: Persona,
+        anchor: AnchorInference,
+        parent_traits: "ParentTraits",  # noqa: F821
+        budget_profile: "BudgetProfile",  # noqa: F821
+    ) -> str:
+        payload = {
+            "city": persona.demographics.city_name,
+            "parent_age": persona.demographics.parent_age,
+            "num_children": persona.demographics.num_children,
+            "child_ages": persona.demographics.child_ages,
+            "employment": persona.career.employment_status,
+            "income_lpa": persona.demographics.household_income_lpa,
+            "monthly_food_budget_inr": budget_profile.monthly_food_budget_inr,
+            "dietary_culture": persona.cultural.dietary_culture,
+            "breakfast_routine": persona.daily_routine.breakfast_routine,
+            "shopping_platform": persona.daily_routine.primary_shopping_platform,
+            "core_values": anchor.core_values,
+            "life_attitude": anchor.life_attitude,
+            "coping_mechanism": parent_traits.coping_mechanism,
+            "trust_anchor": parent_traits.trust_anchor,
+        }
+        serialized = json.dumps(payload, indent=2)
+        return (
+            "Write a first-person diary-voice summary (120-150 words) for this Indian parent.\n"
+            "The summary should:\n"
+            "- Start with a vivid, specific morning scene from their home city\n"
+            "- Naturally weave in their parenting style, daily food decisions, and budget reality\n"
+            "- Use Hindi-English code-mixing where it feels authentic (not forced)\n"
+            "- Read like an intimate self-description, not a résumé\n"
+            "- Avoid listing attributes — make them lived, felt experiences\n\n"
+            f"Profile data:\n{serialized}\n\n"
+            "Return JSON with a single key 'summary' containing the first-person text."
+        )
+
+    def _build_bullets_prompt(
+        self,
+        persona: Persona,
+        parent_traits: "ParentTraits",  # noqa: F821
+        budget_profile: "BudgetProfile",  # noqa: F821
+    ) -> str:
+        payload = {
+            "decision_style": parent_traits.decision_style,
+            "trust_anchor": parent_traits.trust_anchor,
+            "primary_value_orientation": parent_traits.primary_value_orientation,
+            "value_tradeoff_style": parent_traits.value_tradeoff_style,
+            "coping_mechanism": parent_traits.coping_mechanism,
+            "monthly_food_budget_inr": budget_profile.monthly_food_budget_inr,
+            "discretionary_nutrition_budget_inr": budget_profile.discretionary_child_nutrition_budget_inr,
+            "price_sensitivity": budget_profile.price_sensitivity,
+            "brand_switch_tolerance": budget_profile.brand_switch_tolerance,
+            "school_fee_pressure": budget_profile.school_fee_pressure_factor,
+            "child_ages": persona.demographics.child_ages,
+            "child_nutrition_concerns": persona.health.child_nutrition_concerns,
+            "child_dietary_restrictions": persona.health.child_dietary_restrictions,
+            "comparison_anchor": "home_food",
+            "shopping_platform": persona.daily_routine.primary_shopping_platform,
+            "parenting_load": parent_traits.parenting_load,
+        }
+        serialized = json.dumps(payload, indent=2)
+        return (
+            "Generate 6-8 concise purchase-decision bullets for this Indian parent evaluating "
+            "a new child nutrition product.\n"
+            "Each bullet should:\n"
+            "- Be one sentence (max 20 words)\n"
+            "- Describe a specific, actionable behavioral driver or barrier\n"
+            "- Be directly usable by a product manager or brand team\n"
+            "- Cover: budget reality, trust mechanism, child acceptance barrier, "
+            "comparison anchor, purchase occasion, validation source\n\n"
+            f"Profile data:\n{serialized}\n\n"
+            "Return JSON with a single key 'bullets' containing an array of strings."
+        )
+
     def _validate_narrative(self, persona: Persona, narrative: str) -> None:
         candidates = {
             persona.demographics.city_name.lower(),
@@ -333,7 +729,13 @@ class Tier2NarrativeGenerator:
                 "tier2_narrative_validation_low_references", persona_id=persona.id, hits=hits
             )
 
-    def _generate_mock_narrative(self, persona: Persona) -> Persona:
+    def _generate_mock_narrative(
+        self,
+        persona: Persona,
+        parent_traits: "ParentTraits | None" = None,  # noqa: F821
+        budget_profile: "BudgetProfile | None" = None,  # noqa: F821
+        decision_rights: "DecisionRights | None" = None,  # noqa: F821
+    ) -> Persona:
         name = persona.display_name or persona.id
         subject, _, possessive = _pronouns(persona)
         subject_cap = subject.capitalize()
@@ -441,6 +843,49 @@ class Tier2NarrativeGenerator:
         narrative = "\n\n".join([paragraph_1, paragraph_2, paragraph_3, paragraph_4])
         self._validate_narrative(persona, narrative)
 
+        # --- Mock first-person summary ---
+        income_monthly = int(persona.demographics.household_income_lpa * 100_000 / 12)
+        supplement_ref = (
+            f"whether the {milk_routine} is running low"
+            if milk_routine != "none"
+            else "what's in the fridge for tomorrow's lunch"
+        )
+        fp_openings = (
+            f"Every morning I wake up in {persona.demographics.city_name} before the rest of the house, "
+            f"already thinking about what to pack for school and {supplement_ref}.",
+            f"My day in {persona.demographics.city_name} starts with the kitchen — "
+            f"I have a {eldest_age}-year-old to feed, a schedule to keep, and a budget that keeps me honest.",
+            f"I am a {employment} parent of {persona.demographics.num_children} in {persona.demographics.city_name}. "
+            f"Mornings are my planning window — food, school bags, maybe a quick scroll on {social_platform}.",
+        )
+        fp_opening = fp_openings[_stable_variant_index(persona.id, len(fp_openings))]
+
+        # Derive budget if not passed
+        bp = budget_profile or _derive_budget_profile(persona)
+        pt = parent_traits or _derive_parent_traits(persona)
+        dr = decision_rights or _derive_decision_rights(persona)
+
+        first_person_summary = (
+            f"{fp_opening} "
+            f"Our household runs on roughly ₹{bp.monthly_food_budget_inr:,} a month for food — "
+            f"I try not to go over, but when it comes to my child's nutrition I make exceptions. "
+            f"I prefer {dietary_culture} food and mostly shop on {shopping_platform}. "
+            f"New products have to earn my trust; I rely on {pt.trust_anchor.replace('_', ' ')} more than ads. "
+            f"{pt.coping_mechanism}"
+        )
+
+        # --- Mock purchase bullets ---
+        purchase_decision_bullets = [
+            f"Monthly discretionary child nutrition budget is ₹{bp.discretionary_child_nutrition_budget_inr:,} — sets a hard ceiling on trial.",
+            f"Trust anchor is '{pt.trust_anchor}' — product must clear this source before consideration.",
+            f"Decision style is {pt.decision_style} — messaging should match this cognitive mode.",
+            f"Primary value orientation is {pt.primary_value_orientation} — lead with this in copy.",
+            f"Comparison anchor is home-cooked food — product must justify the switch from familiar.",
+            f"Brand switch tolerance is {bp.brand_switch_tolerance} — {('open to trial' if bp.brand_switch_tolerance == 'high' else 'needs strong reason to switch')}.",
+            f"School fee pressure factor {bp.school_fee_pressure_factor:.1f} — {'budget is stretched' if bp.school_fee_pressure_factor > 0.5 else 'some discretionary headroom available'}.",
+            f"Coping mechanism: {pt.coping_mechanism_type.replace('_', ' ')} — align product habit formation with this pattern.",
+        ]
+
         semantic_memory = dict(persona.semantic_memory)
         semantic_memory["tier2_anchor"] = anchor.model_dump(mode="json")
         semantic_memory["tier2_stories"] = stories.model_dump(mode="json")
@@ -449,6 +894,11 @@ class Tier2NarrativeGenerator:
             update={
                 "tier": "deep",
                 "narrative": narrative,
+                "first_person_summary": first_person_summary,
+                "purchase_decision_bullets": purchase_decision_bullets,
+                "parent_traits": pt,
+                "budget_profile": bp,
+                "decision_rights": dr,
                 "semantic_memory": semantic_memory,
             }
         )

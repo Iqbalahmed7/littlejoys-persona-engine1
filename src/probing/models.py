@@ -31,7 +31,16 @@ class ProblemStatement(BaseModel):
 
 
 class Hypothesis(BaseModel):
-    """One testable explanation for a problem statement."""
+    """One testable explanation for a problem statement.
+
+    Supports 5-WHY tree depth via ``why_level`` and ``parent_hypothesis_id``.
+    Each hypothesis carries a Bayesian ``confidence_prior`` (0.0–1.0) that
+    represents how likely this driver is before probing, plus a
+    ``real_world_analogy`` anchoring it to known Indian FMCG market evidence.
+    ``cohort_filter`` restricts probe execution to a specific slice of the
+    population (e.g. lapsed buyers, middle-income tier, specific age band).
+    ``edge_case`` flags low-probability but strategically important hypotheses.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
@@ -42,6 +51,29 @@ class Hypothesis(BaseModel):
     signals: list[str] = Field(default_factory=list)
     indicator_attributes: list[str]
     counterfactual_modifications: dict[str, Any] | None = None
+
+    # ── Sprint 1a additions ────────────────────────────────────────────────
+    confidence_prior: float = Field(default=0.5, ge=0.0, le=1.0)
+    """Bayesian prior: 0.0 = very unlikely driver, 1.0 = almost certainly a driver."""
+
+    real_world_analogy: str = ""
+    """Grounding reference from Indian FMCG market data.
+    E.g. 'Horlicks North India: price sensitivity doubled on reorder vs trial (IRI 2019)'."""
+
+    why_level: int = Field(default=1, ge=1, le=5)
+    """5-WHY depth: 1 = top-level WHY, 2 = sub-WHY, 3 = sub-sub-WHY."""
+
+    parent_hypothesis_id: str | None = None
+    """Links to the parent hypothesis ID for sub-WHY tree structure."""
+
+    cohort_filter: dict[str, Any] = Field(default_factory=dict)
+    """Restrict probe to a population slice.
+    E.g. {'outcome': 'lapsed'} or {'tier': ['tier1']} or {'child_age_band': '7-10'}."""
+
+    edge_case: bool = False
+    """True if this is a low-probability but strategically important hypothesis."""
+    # ── End Sprint 1a additions ────────────────────────────────────────────
+
     is_custom: bool = False
     enabled: bool = True
     order: int = 0

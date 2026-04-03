@@ -1,0 +1,150 @@
+{
+  "generated_at": "2026-04-01T10:16:12.639043+00:00",
+  "reason": "hard constraint violations",
+  "persona_ids": [
+    "Janaki-Nagpur-Mom-34",
+    "Ayesha-Lucknow-Mom-40",
+    "Aparna-Delhi-Mom-36",
+    "Hina-Bhubaneswar-Mom-30",
+    "Smita-Mangalore-Mom-36",
+    "Imran-Chandigarh-Dad-28",
+    "Yasmin-Lucknow-Mom-31",
+    "Harini-Mangalore-Mom-35",
+    "Ramesh-Ahmedabad-Dad-36",
+    "Ayesha-Mysore-Mom-29",
+    "Nirmala-Kochi-Mom-35",
+    "Wasim-Mysore-Dad-40",
+    "Ganga-Bangalore-Mom-33",
+    "Revathi-Chandigarh-Mom-37",
+    "Kusum-Delhi-Mom-33",
+    "Arti-Delhi-Mom-37",
+    "Pankaj-Guwahati-Dad-30",
+    "Lata-Mumbai-Mom-39",
+    "Sana-Ranchi-Mom-30",
+    "Ritu-Lucknow-Mom-32",
+    "Deepa-Chennai-Mom-36",
+    "Varsha-Hyderabad-Mom-31",
+    "Ritu-Pune-Mom-31",
+    "Rina-Lucknow-Mom-29",
+    "Parveen-Pune-Mom-30",
+    "Durga-Jaipur-Mom-33",
+    "Vinod-Mangalore-Dad-25",
+    "Sarita-Visakhapatnam-Mom-34",
+    "Amita-Delhi-Mom-30",
+    "Divya-Chennai-Mom-38",
+    "Amreen-Bangalore-Mom-34",
+    "Priya-Nagpur-Mom-33",
+    "Ritika-Pune-Mom-34",
+    "Radha-Lucknow-Mom-22",
+    "Tabassum-Pune-Mom-35"
+  ],
+  "violations": {
+    "Janaki-Nagpur-Mom-34": [
+      "CAT3-R014"
+    ],
+    "Ayesha-Lucknow-Mom-40": [
+      "CAT5-R027"
+    ],
+    "Aparna-Delhi-Mom-36": [
+      "CAT3-R017"
+    ],
+    "Hina-Bhubaneswar-Mom-30": [
+      "CAT5-R027"
+    ],
+    "Smita-Mangalore-Mom-36": [
+      "CAT3-R014",
+      "CAT5-R030"
+    ],
+    "Imran-Chandigarh-Dad-28": [
+      "CAT4-R020"
+    ],
+    "Yasmin-Lucknow-Mom-31": [
+      "CAT3-R014"
+    ],
+    "Harini-Mangalore-Mom-35": [
+      "CAT3-R014"
+    ],
+    "Ramesh-Ahmedabad-Dad-36": [
+      "CAT3-R014"
+    ],
+    "Ayesha-Mysore-Mom-29": [
+      "CAT3-R014"
+    ],
+    "Nirmala-Kochi-Mom-35": [
+      "CAT5-R030"
+    ],
+    "Wasim-Mysore-Dad-40": [
+      "CAT3-R014"
+    ],
+    "Ganga-Bangalore-Mom-33": [
+      "CAT3-R017"
+    ],
+    "Revathi-Chandigarh-Mom-37": [
+      "CAT5-R030"
+    ],
+    "Kusum-Delhi-Mom-33": [
+      "CAT3-R014"
+    ],
+    "Arti-Delhi-Mom-37": [
+      "CAT3-R014"
+    ],
+    "Pankaj-Guwahati-Dad-30": [
+      "CAT5-R030"
+    ],
+    "Lata-Mumbai-Mom-39": [
+      "CAT3-R014"
+    ],
+    "Sana-Ranchi-Mom-30": [
+      "CAT3-R014"
+    ],
+    "Ritu-Lucknow-Mom-32": [
+      "CAT3-R017"
+    ],
+    "Deepa-Chennai-Mom-36": [
+      "CAT3-R014"
+    ],
+    "Varsha-Hyderabad-Mom-31": [
+      "CAT3-R014"
+    ],
+    "Ritu-Pune-Mom-31": [
+      "CAT3-R017"
+    ],
+    "Rina-Lucknow-Mom-29": [
+      "CAT3-R014"
+    ],
+    "Parveen-Pune-Mom-30": [
+      "CAT3-R014"
+    ],
+    "Durga-Jaipur-Mom-33": [
+      "CAT3-R014"
+    ],
+    "Vinod-Mangalore-Dad-25": [
+      "CAT3-R017"
+    ],
+    "Sarita-Visakhapatnam-Mom-34": [
+      "CAT3-R014"
+    ],
+    "Amita-Delhi-Mom-30": [
+      "CAT4-R020"
+    ],
+    "Divya-Chennai-Mom-38": [
+      "CAT3-R017",
+      "CAT4-R020"
+    ],
+    "Amreen-Bangalore-Mom-34": [
+      "CAT3-R014"
+    ],
+    "Priya-Nagpur-Mom-33": [
+      "CAT5-R027"
+    ],
+    "Ritika-Pune-Mom-34": [
+      "CAT3-R014"
+    ],
+    "Radha-Lucknow-Mom-22": [
+      "CAT3-R014"
+    ],
+    "Tabassum-Pune-Mom-35": [
+      "CAT5-R027"
+    ]
+  }
+}

@@ -69,6 +69,7 @@ def test_zero_awareness_produces_zero_adoption(sample_persona: Persona) -> None:
             pediatrician_endorsement=False,
             influencer_campaign=False,
             school_partnership=False,
+            social_buzz=0.0,
         ),
         target_age_range=(3, 8),
     )

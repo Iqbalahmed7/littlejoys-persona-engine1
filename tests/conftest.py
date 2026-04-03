@@ -10,15 +10,18 @@ import pytest
 
 from src.decision.scenarios import MarketingConfig, ProductConfig, ScenarioConfig
 from src.taxonomy.schema import (
+    BudgetProfile,
     CareerAttributes,
     CulturalAttributes,
     DailyRoutineAttributes,
+    DecisionRights,
     DemographicAttributes,
     EducationLearningAttributes,
     EmotionalAttributes,
     HealthAttributes,
     LifestyleAttributes,
     MediaAttributes,
+    ParentTraits,
     Persona,
     PsychologyAttributes,
     RelationshipAttributes,
@@ -73,6 +76,9 @@ def sample_persona(sample_demographics: DemographicAttributes) -> Persona:
         values=ValueAttributes(),
         emotional=EmotionalAttributes(),
         media=MediaAttributes(),
+        parent_traits=ParentTraits(),
+        budget_profile=BudgetProfile(),
+        decision_rights=DecisionRights(),
     )
 
 
@@ -107,6 +113,9 @@ def high_price_sensitivity_persona(sample_demographics: DemographicAttributes) -
         ),
         emotional=EmotionalAttributes(),
         media=MediaAttributes(),
+        parent_traits=ParentTraits(),
+        budget_profile=BudgetProfile(),
+        decision_rights=DecisionRights(),
     )
 
 
@@ -142,4 +151,48 @@ def sample_scenario() -> ScenarioConfig:
     )
 
 
-pytest_plugins = ("tests.unit.test_research_consolidator",)
+@pytest.fixture
+def minimal_persona():
+    """A coherent, minimal persona for testing. Designed to pass all 30 constraint rules."""
+    return Persona(
+        id="test-persona-001",
+        generation_seed=42,
+        generation_timestamp="2024-01-01T00:00:00Z",
+        tier="statistical",
+        demographics=DemographicAttributes(
+            city_tier="Tier2",
+            city_name="Bhopal",
+            region="West",
+            household_income_lpa=8.0,
+            parent_age=32,
+            parent_gender="female",
+            num_children=1,
+            child_ages=[4],
+            child_genders=["female"],
+            youngest_child_age=4,
+            oldest_child_age=4,
+            family_structure="nuclear",
+        ),
+        psychology=PsychologyAttributes(),
+        health=HealthAttributes(),
+        cultural=CulturalAttributes(),
+        relationships=RelationshipAttributes(),
+        career=CareerAttributes(),
+        education_learning=EducationLearningAttributes(),
+        lifestyle=LifestyleAttributes(),
+        daily_routine=DailyRoutineAttributes(),
+        values=ValueAttributes(),
+        emotional=EmotionalAttributes(),
+        media=MediaAttributes(),
+        parent_traits=ParentTraits(),
+        budget_profile=BudgetProfile(),
+        decision_rights=DecisionRights(),
+    )
+
+
+@pytest.fixture
+def minimal_persona_dict(minimal_persona):
+    """Returns the dictionary representation of the minimal persona."""
+    return minimal_persona.model_dump()
+
+

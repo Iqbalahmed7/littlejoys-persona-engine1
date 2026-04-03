@@ -1,0 +1,265 @@
+{
+  "_meta": {
+    "description": "Full ResearchResult for business question q_nm26_repeat_purchase",
+    "scenario_id": "nutrimix_2_6",
+    "question_id": "q_nm26_repeat_purchase",
+    "population_size": 200,
+    "run_timestamp": "2024-11-20T14:22:07Z"
+  },
+
+  "problem": {
+    "id": "repeat_purchase_low",
+    "title": "How can we improve repeat purchase for NutriMix?",
+    "scenario_id": "nutrimix_2_6",
+    "context": "Nutrimix gets healthy initial adoption but repeat behavior is inconsistent. We need to identify which levers create an enduring household habit.",
+    "success_metric": "repeat_rate",
+    "target_population_filter": {}
+  },
+
+  "funnel_summary": {
+    "population_size": 200,
+    "adoption_count": 31,
+    "adoption_rate": 0.155,
+    "rejection_by_stage": {
+      "need_recognition": 48,
+      "awareness": 22,
+      "consideration": 61,
+      "purchase": 38
+    }
+  },
+
+  "barrier_distributions": [
+    {"stage": "consideration", "barrier": "insufficient_research", "count": 31, "percentage": 0.155},
+    {"stage": "need_recognition", "barrier": "low_need", "count": 28, "percentage": 0.140},
+    {"stage": "purchase", "barrier": "price_too_high", "count": 23, "percentage": 0.115},
+    {"stage": "consideration", "barrier": "insufficient_trust", "count": 18, "percentage": 0.090},
+    {"stage": "need_recognition", "barrier": "age_irrelevant", "count": 20, "percentage": 0.100},
+    {"stage": "awareness", "barrier": "low_awareness", "count": 22, "percentage": 0.110},
+    {"stage": "purchase", "barrier": "effort_too_high", "count": 15, "percentage": 0.075}
+  ],
+
+  "stage_summaries": [
+    {
+      "stage": "consideration",
+      "total_dropped": 61,
+      "percentage_of_rejections": 36.3,
+      "top_reasons": ["insufficient_research", "insufficient_trust", "dietary_incompatible"]
+    },
+    {
+      "stage": "need_recognition",
+      "total_dropped": 48,
+      "percentage_of_rejections": 28.6,
+      "top_reasons": ["low_need", "age_irrelevant"]
+    },
+    {
+      "stage": "purchase",
+      "total_dropped": 38,
+      "percentage_of_rejections": 22.6,
+      "top_reasons": ["price_too_high", "effort_too_high", "insufficient_trust"]
+    },
+    {
+      "stage": "awareness",
+      "total_dropped": 22,
+      "percentage_of_rejections": 13.1,
+      "top_reasons": ["low_awareness"]
+    }
+  ],
+
+  "variable_importance": [
+    {"variable_name": "health_anxiety", "coefficient": 1.82, "shap_mean_abs": 0.142, "direction": "positive", "rank": 1},
+    {"variable_name": "nutrition_gap_awareness", "coefficient": 1.71, "shap_mean_abs": 0.131, "direction": "positive", "rank": 2},
+    {"variable_name": "budget_consciousness", "coefficient": -1.44, "shap_mean_abs": 0.118, "direction": "negative", "rank": 3},
+    {"variable_name": "indie_brand_openness", "coefficient": 1.39, "shap_mean_abs": 0.107, "direction": "positive", "rank": 4},
+    {"variable_name": "medical_authority_trust", "coefficient": 1.28, "shap_mean_abs": 0.098, "direction": "positive", "rank": 5},
+    {"variable_name": "research_before_purchase", "coefficient": 1.14, "shap_mean_abs": 0.089, "direction": "positive", "rank": 6},
+    {"variable_name": "price_reference_point", "coefficient": 0.96, "shap_mean_abs": 0.074, "direction": "positive", "rank": 7},
+    {"variable_name": "child_health_proactivity", "coefficient": 0.87, "shap_mean_abs": 0.067, "direction": "positive", "rank": 8}
+  ],
+
+  "causal_statements": [
+    {
+      "statement": "Personas with Health Worry Level above 0.62 are 2.41x more likely to adopt than those below 0.62, because higher health worry level increases need recognition earlier in the funnel.",
+      "supporting_variables": ["health_anxiety", "nutrition_gap_awareness", "child_health_proactivity"],
+      "evidence_strength": 1.0,
+      "segment": null
+    },
+    {
+      "statement": "Within City Classification = Tier1, personas with Health Worry Level above 0.62 are 3.17x more likely to adopt than peers below 0.62, because higher health worry level increases need recognition earlier in the funnel.",
+      "supporting_variables": ["health_anxiety", "city_tier", "nutrition_gap_awareness"],
+      "evidence_strength": 0.94,
+      "segment": "Tier1"
+    },
+    {
+      "statement": "Personas with Price Sensitivity above 0.55 are 1.87x less likely to adopt than those below 0.55, because higher price sensitivity makes price friction show up faster at purchase.",
+      "supporting_variables": ["budget_consciousness", "health_anxiety", "nutrition_gap_awareness"],
+      "evidence_strength": 0.83,
+      "segment": null
+    },
+    {
+      "statement": "Personas with Open to New Brands above 0.58 are 1.94x more likely to adopt than those below 0.58, because higher open to new brands pushes the modeled decision scores upward.",
+      "supporting_variables": ["indie_brand_openness", "health_anxiety", "medical_authority_trust"],
+      "evidence_strength": 0.75,
+      "segment": null
+    }
+  ],
+
+  "hypothesis_verdicts": [
+    {
+      "hypothesis_id": "h_trial_medical_proof",
+      "confidence": 0.81,
+      "status": "confirmed",
+      "evidence_summary": "Personas with medical_authority_trust > 0.60 adopt at 2.3x the rate of those below the threshold. Pediatrician endorsement produced the largest single awareness boost (+0.15) observed across interventions.",
+      "key_persona_segments": ["high_trust_mothers", "first_time_parents"],
+      "recommended_actions": [
+        "Scale pediatrician co-marketing materials with clinical language",
+        "Create a 'recommended by your doctor' QR-code onboarding flow"
+      ],
+      "consistency_score": 0.78
+    },
+    {
+      "hypothesis_id": "h_trial_low_friction",
+      "confidence": 0.64,
+      "status": "partially_confirmed",
+      "evidence_summary": "Reducing price from ₹599 to ₹499 improved adoption by 4.2pp. Effort reduction (0.3→0.2) added a further 2.1pp. Combined effect is meaningful but secondary to trust signals.",
+      "key_persona_segments": ["price_sensitive_tier2", "time_scarce_working_mothers"],
+      "recommended_actions": [
+        "Test a ₹499 introductory trial pack with single-serve sachets",
+        "Offer same-day delivery via quick commerce for re-order convenience"
+      ],
+      "consistency_score": 0.61
+    }
+  ],
+
+  "tree_synthesis": {
+    "problem_id": "repeat_purchase_low",
+    "hypotheses_tested": 2,
+    "hypotheses_confirmed": 1,
+    "dominant_hypothesis": "h_trial_medical_proof",
+    "confidence_ranking": [
+      ["h_trial_medical_proof", 0.81],
+      ["h_trial_low_friction", 0.64]
+    ],
+    "synthesis_narrative": "The single strongest lever for first-trial conversion is medical authority trust, which activates both awareness and consideration pathways. Price and friction matter but are secondary — they affect purchase-stage drop-offs rather than blocking consideration. The highest-leverage intervention is a pediatrician-led endorsement programme that front-loads clinical credibility before the consideration stage. Price optimisation should be tested in Tier 2 markets specifically, where budget consciousness scores average 0.12 points higher.",
+    "recommended_actions": [
+      "Launch a Paediatrician Partner Programme with co-branded materials",
+      "Introduce a ₹499 trial pack for Tier 2 first-time buyers",
+      "A/B test 'per-day cost' anchor messaging (₹20/day) against standard pricing display"
+    ],
+    "overall_confidence": 0.74,
+    "disabled_hypotheses": [],
+    "confidence_impact_of_disabled": 0.0,
+    "total_cost_estimate": 0.0018
+  },
+
+  "executive_summary": {
+    "headline": "NutriMix trial conversion is gated by trust, not awareness — the paediatrician channel is the highest-leverage unlock.",
+    "trajectory_summary": "Over the 6-month simulation, 15.5% of households adopted NutriMix on first exposure. Consideration-stage drop-off accounts for 36% of all rejections, driven by insufficient research time and brand unfamiliarity. Households that passed consideration converted at 45%.",
+    "key_drivers": [
+      "Health anxiety and immunity concern drive need recognition — high scorers convert at 2.4x average",
+      "Openness to indie brands is the key consideration gate for an unfamiliar brand like LittleJoys",
+      "Budget consciousness caps purchase conversion at the higher Tier 2 price reference point"
+    ],
+    "recommendations": [
+      "Invest in paediatrician co-marketing to move trust-sensitive households through consideration",
+      "Introduce a ₹499 introductory trial pack for Tier 2 price-sensitive cohorts",
+      "Create ingredient-story content (video + label) to satisfy high-research-tendency parents"
+    ],
+    "risk_factors": [
+      "If brand awareness does not scale alongside trust investment, reach caps well below category potential",
+      "Taste rejection from children (child_taste_veto mean 0.53 for 3-6 age band) is a post-trial churn risk"
+    ],
+    "mock_mode": false
+  },
+
+  "probe_tree_excerpt": {
+    "probe_id": "h_trial_medical_proof_i1",
+    "probe_type": "interview",
+    "question_template": "From your perspective, what is the strongest signal for: what drives first-time trial among health-anxious parents?",
+    "status": "completed",
+    "result": {
+      "probe_id": "h_trial_medical_proof_i1",
+      "confidence": 0.78,
+      "evidence_summary": "12 of 15 adopter interviews cited paediatrician recommendation or 'doctor-recommended' labelling as the tipping point for trial. Non-adopters with high health anxiety described needing 'clinical proof, not just Instagram claims'.",
+      "sample_size": 15,
+      "population_size": 200,
+      "clustering_method": "kmeans_3",
+      "interview_responses": [
+        {
+          "persona_id": "MUM-F-34-2C",
+          "persona_name": "Mumbai · Parent's Age 34",
+          "outcome": "adopt",
+          "content": "My paediatrician mentioned clean-label nutrition supplements at our last visit. I wasn't specifically looking for NutriMix but it came up in my Google search right after. The 'paediatrician approved' badge on the pack made me add it to cart immediately."
+        },
+        {
+          "persona_id": "DEL-F-29-1C",
+          "persona_name": "Delhi · Parent's Age 29",
+          "outcome": "reject",
+          "content": "I've seen NutriMix on Instagram but I need to know what actual doctors say before I give anything like this to my daughter. The influencer posts feel paid. If my daughter's paediatrician recommended it at our next appointment, I'd probably try it."
+        }
+      ],
+      "response_clusters": [
+        {
+          "theme": "Medical Validation Seekers",
+          "description": "Parents who require explicit clinical or paediatrician endorsement before trialling any supplement. Trust is a prerequisite, not a bonus.",
+          "persona_count": 7,
+          "percentage": 0.467,
+          "representative_quotes": [
+            "My paediatrician's word matters more than any ad I see",
+            "I only buy what the doctor says is safe"
+          ],
+          "dominant_attributes": {
+            "medical_authority_trust": 0.81,
+            "health_anxiety": 0.79,
+            "risk_tolerance": 0.31
+          }
+        },
+        {
+          "theme": "Research-Led Converters",
+          "description": "Parents who self-research extensively but convert once evidence aligns across multiple sources (reviews, doctors, peers).",
+          "persona_count": 5,
+          "percentage": 0.333,
+          "representative_quotes": [
+            "I read every Amazon review and cross-checked the ingredients list",
+            "Three different sources said the same thing so I felt confident"
+          ],
+          "dominant_attributes": {
+            "research_before_purchase": 0.88,
+            "information_need": 0.84,
+            "social_proof_bias": 0.58
+          }
+        },
+        {
+          "theme": "Anxious Non-Converters",
+          "description": "High health anxiety but low trust in the brand. These parents recognise the need but cannot resolve the trust gap without a stronger authority signal.",
+          "persona_count": 3,
+          "percentage": 0.200,
+          "representative_quotes": [
+            "I worry about what's in these products",
+            "I'd rather give real food than risk an unknown supplement"
+          ],
+          "dominant_attributes": {
+            "health_anxiety": 0.77,
+            "risk_tolerance": 0.27,
+            "indie_brand_openness": 0.34
+          }
+        }
+      ],
+      "attribute_splits": [
+        {
+          "attribute": "medical_authority_trust",
+          "adopter_mean": 0.74,
+          "rejector_mean": 0.51,
+          "effect_size": 0.68,
+          "significant": true
+        },
+        {
+          "attribute": "indie_brand_openness",
+          "adopter_mean": 0.71,
+          "rejector_mean": 0.44,
+          "effect_size": 0.61,
+          "significant": true
+        }
+      ]
+    }
+  }
+}

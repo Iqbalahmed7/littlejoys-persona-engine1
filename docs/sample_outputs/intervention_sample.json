@@ -1,0 +1,161 @@
+{
+  "_meta": {
+    "description": "InterventionRunResult from QuadrantRunResult for scenario nutrimix_2_6",
+    "scenario_id": "nutrimix_2_6",
+    "baseline_adoption_rate": 0.155,
+    "baseline_active_rate": 0.112,
+    "run_timestamp": "2024-11-21T09:14:33Z",
+    "population_size": 200,
+    "seed": 42
+  },
+
+  "quadrant_baseline": {
+    "scenario_id": "nutrimix_2_6",
+    "baseline_adoption_rate": 0.155,
+    "baseline_active_rate": 0.112,
+    "baseline_revenue": 98421.0,
+    "population_size": 200,
+    "seed": 42,
+    "duration_seconds": 18.4
+  },
+
+  "interventions": [
+    {
+      "intervention_id": "nm26_peds_campaign",
+      "intervention_name": "Pediatrician Endorsement Campaign",
+      "scope": "general",
+      "temporality": "non_temporal",
+      "target_cohort_id": null,
+      "adoption_rate": 0.195,
+      "adoption_count": 39,
+      "population_tested": 200,
+      "final_active_rate": null,
+      "total_revenue": null,
+      "monthly_snapshots": null,
+      "rejection_distribution": {
+        "low_need": 26,
+        "age_irrelevant": 18,
+        "insufficient_research": 28,
+        "insufficient_trust": 11,
+        "low_awareness": 14,
+        "price_too_high": 22,
+        "effort_too_high": 13
+      },
+      "_lift": {
+        "adoption_lift_pp": 4.0,
+        "adoption_lift_pct": 25.8,
+        "rank_by_lift": 1
+      }
+    },
+    {
+      "intervention_id": "nm26_discount_returning_15",
+      "intervention_name": "15% Returning Customer Discount",
+      "scope": "general",
+      "temporality": "non_temporal",
+      "target_cohort_id": null,
+      "adoption_rate": 0.175,
+      "adoption_count": 35,
+      "population_tested": 200,
+      "final_active_rate": null,
+      "total_revenue": null,
+      "monthly_snapshots": null,
+      "rejection_distribution": {
+        "low_need": 29,
+        "age_irrelevant": 20,
+        "insufficient_research": 32,
+        "insufficient_trust": 15,
+        "low_awareness": 18,
+        "price_too_high": 19,
+        "effort_too_high": 12
+      },
+      "_lift": {
+        "adoption_lift_pp": 2.0,
+        "adoption_lift_pct": 12.9,
+        "rank_by_lift": 3
+      }
+    },
+    {
+      "intervention_id": "nm26_lj_pass_199_quarter",
+      "intervention_name": "LJ Pass (₹199/quarter)",
+      "scope": "general",
+      "temporality": "temporal",
+      "target_cohort_id": null,
+      "adoption_rate": 0.180,
+      "adoption_count": 36,
+      "population_tested": 200,
+      "final_active_rate": 0.138,
+      "total_revenue": 121844.0,
+      "monthly_snapshots": [
+        {"month": 1, "total_active": 28, "new_adoptions": 28, "churned": 0},
+        {"month": 2, "total_active": 32, "new_adoptions": 6, "churned": 2},
+        {"month": 3, "total_active": 30, "new_adoptions": 3, "churned": 5},
+        {"month": 4, "total_active": 29, "new_adoptions": 2, "churned": 3},
+        {"month": 5, "total_active": 28, "new_adoptions": 2, "churned": 3},
+        {"month": 6, "total_active": 27, "new_adoptions": 1, "churned": 2}
+      ],
+      "rejection_distribution": {
+        "low_need": 28,
+        "age_irrelevant": 19,
+        "insufficient_research": 30,
+        "insufficient_trust": 14,
+        "low_awareness": 17,
+        "price_too_high": 21,
+        "effort_too_high": 11
+      },
+      "_lift": {
+        "adoption_lift_pp": 2.5,
+        "adoption_lift_pct": 16.1,
+        "active_rate_lift_pp": 2.6,
+        "revenue_lift_pct": 23.8,
+        "rank_by_lift": 2
+      }
+    },
+    {
+      "intervention_id": "nm26_lapsed_coupon_100",
+      "intervention_name": "Lapsed Users: 'We Miss You' ₹100 Coupon",
+      "scope": "cohort_specific",
+      "temporality": "non_temporal",
+      "target_cohort_id": "lapsed_user",
+      "adoption_rate": 0.212,
+      "adoption_count": 14,
+      "population_tested": 66,
+      "final_active_rate": null,
+      "total_revenue": null,
+      "monthly_snapshots": null,
+      "rejection_distribution": {
+        "price_too_high": 18,
+        "insufficient_trust": 12,
+        "habit_failure": 22
+      },
+      "_lift": {
+        "adoption_lift_pp": 5.7,
+        "adoption_lift_pct": 36.8,
+        "note": "Lift measured against baseline adoption rate within the lapsed_user cohort (15.5% → 21.2%)",
+        "rank_by_lift": 1
+      }
+    }
+  ],
+
+  "quadrant_grid_summary": {
+    "general_non_temporal": {
+      "best_intervention": "nm26_peds_campaign",
+      "best_lift_pct": 25.8,
+      "mechanism": "Improves trust and reduces post-trial drop-off"
+    },
+    "general_temporal": {
+      "best_intervention": "nm26_lj_pass_199_quarter",
+      "best_lift_pct": 16.1,
+      "mechanism": "Locks in habit via commitment and lower friction"
+    },
+    "cohort_non_temporal": {
+      "best_intervention": "nm26_lapsed_coupon_100",
+      "best_lift_pct": 36.8,
+      "mechanism": "Re-activates lapsed users via immediate value"
+    },
+    "cohort_temporal": {
+      "best_intervention": "nm26_current_loyalty_tiers",
+      "best_lift_pct": 19.4,
+      "mechanism": "Increases switching costs and repeat consistency"
+    }
+  }
+}

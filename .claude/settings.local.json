@@ -17,7 +17,32 @@
       "Bash(sh)",
       "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
       "Bash(uv python:*)",
-      "Bash(uv run:*)"
+      "Bash(uv run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(chmod +x \"/Users/admin/Documents/Simulatte Projects/1. LittleJoys/run_app.sh\")",
+      "Bash(chmod +x /tmp/littlejoys_run.sh)",
+      "Bash(.venv/bin/ruff check:*)",
+      "Bash(.venv/bin/pytest tests/unit/ -q)",
+      "Bash(find . -path './.venv' -prune -o -name '*.pyc' -print -delete)",
+      "Bash(.venv/bin/python -c \"from src.utils.display import city_tier_label, cohort_label, qualitative_level, rejection_reason_label, stage_label, scope_label, temporality_label, interview_reason_label; print\\(''ALL OK''\\)\")",
+      "Bash(find /Users/admin/Documents/Simulatte Projects/1. LittleJoys/src -type f -name *.py)",
+      "Bash(node -e \"require\\(''docx''\\)\")",
+      "Read(//usr/local/bin/**)",
+      "Read(//opt/homebrew/bin/**)",
+      "Bash(python3 -c \"import docx; print\\(''python-docx available''\\)\")",
+      "Bash(/usr/local/bin/node -e \"require\\(''docx''\\); console.log\\(''docx available''\\)\")",
+      "Bash(/usr/local/bin/node -e \"try{require\\(''docx''\\)}catch\\(e\\){}\")",
+      "Bash(npm ls:*)",
+      "Bash(/usr/local/bin/node -e \"console.log\\(require.resolve\\(''docx''\\)\\)\")",
+      "Read(//usr/local/lib/node_modules/**)",
+      "Bash(pkill -f \"streamlit run\")",
+      "Bash(python -m pytest tests/unit/test_page_imports.py tests/unit/test_page_logic.py -q --tb=short)",
+      "Bash(python3 -c \":*)",
+      "Bash(kill -9 34939)",
+      "Bash(python3 -c \"import ast; ast.parse\\(open\\(''app/streamlit_app.py''\\).read\\(\\)\\); print\\(''syntax OK''\\)\")",
+      "Bash(xargs kill:*)",
+      "Bash(.venv/bin/python3 -c \":*)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

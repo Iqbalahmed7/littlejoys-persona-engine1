@@ -1,0 +1,784 @@
+{
+  "generated_at": "2026-04-01T13:11:21.145370+00:00",
+  "n_personas": 10,
+  "seed": 42,
+  "memory_backed": {
+    "metrics": {
+      "approach": "memory_backed",
+      "by_stimulus": {
+        "S1": {
+          "mean_importance": 0.7408,
+          "stdev_importance": 0.1242,
+          "min": 0.4444,
+          "max": 0.8889
+        },
+        "S2": {
+          "mean_importance": 0.7556,
+          "stdev_importance": 0.0468,
+          "min": 0.6667,
+          "max": 0.7778
+        },
+        "S3": {
+          "mean_importance": 0.6543,
+          "stdev_importance": 0.0869,
+          "min": 0.4444,
+          "max": 0.7778
+        },
+        "S4": {
+          "mean_importance": 0.7778,
+          "stdev_importance": 0.0962,
+          "min": 0.5556,
+          "max": 0.8889
+        },
+        "S5": {
+          "mean_importance": 0.7655,
+          "stdev_importance": 0.0668,
+          "min": 0.6667,
+          "max": 0.8889
+        }
+      },
+      "mean_importance_stdev": 0.0842
+    },
+    "raw": [
+      {
+        "persona_id": "Vinod-Kochi-Dad-37",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.8889,
+            "emotional_valence": 0.82,
+            "interpretation": "Vinod sees this as a trustworthy solution addressing his core concern\u2014child nutrition safety\u2014validated by peer evidence and backed by transparent ingredient claims that align with his analytical need for factual assurance."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "Vinod interprets this as credible peer validation of a supplement that improved a child's immunity with no side effects, directly addressing his dual concerns about child wellness and health safety."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "Vinod sees this as a justified opportunity to secure a trusted supplement at a meaningful discount, validating both his belief in supplement necessity and his commitment to providing the best for his child, though his analytical nature makes him mentally verify the value before committing to Subscribe & Save."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.8889,
+            "emotional_valence": 0.85,
+            "interpretation": "Vinod interprets this as credible, actionable health guidance from a trusted authority figure that directly addresses his child's potential nutritional deficiency, combining expert recommendation with specific performance data that satisfies his analytical decision-making style."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.8889,
+            "emotional_valence": 0.65,
+            "interpretation": "Vinod sees this as a critical opportunity to validate his own health concerns about his child's nutrition while gathering peer evidence to make an analytically-informed decision about supplement quality."
+          }
+        ]
+      },
+      {
+        "persona_id": "Rina-Chennai-Mom-30",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.6667,
+            "emotional_valence": 0.72,
+            "interpretation": "Rina sees this as a trustworthy solution to protect her child's health through a clean-label product validated by thousands of other mothers, activating her anxiety about what's safe to consume while being reassured by social proof."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.85,
+            "interpretation": "A trusted friend's personal recommendation about a supplement that improved her child's immunity with no side effects is highly salient to Rina, triggering relief from health concerns and social validation of supplement use."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.72,
+            "interpretation": "Rina perceives this as a time-sensitive opportunity to purchase a necessity at a discount, reinforced by the social proof mechanism (Subscribe & Save popularity), triggering moderate-to-high attention and positive emotion around securing a good deal on something she already believes is important."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.72,
+            "interpretation": "Rina interprets this as credible medical validation that the supplement is both necessary and effective, combining expert authority with social proof that other parents trust this recommendation."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.65,
+            "interpretation": "Rina sees peer validation of health drink choices and interprets this as both reassurance that others share her health concerns and an opportunity to make an informed decision based on what other parents are doing, triggering both relief and motivation to optimize her child's nutrition."
+          }
+        ]
+      },
+      {
+        "persona_id": "Zara-Dehradun-Mom-29",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "Zara sees this as a trustworthy, child-focused nutrition solution that aligns with her belief that supplements are necessary for optimal child health, triggering strong interest despite the social proof element being secondary to her self-directed decision-making style."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "Zara interprets this as credible personal evidence that LittleJoys genuinely improves child immunity without risks, directly addressing her core concern of doing what's best for her child."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "Zara sees this as a practical opportunity to secure a trusted supplement for her child at a meaningful discount, reinforced by the scarcity and subscription incentive that align with her habitual decision-making preference."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.8889,
+            "emotional_valence": 0.85,
+            "interpretation": "Zara interprets this as credible, expert-backed validation that a specific supplement directly addresses a real health need in children, activating her strong drive to optimize her child's wellbeing through proven interventions."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.65,
+            "interpretation": "Zara sees this as a direct relevance to her parenting decisions about her child's nutrition, triggering her strong drive to optimize her child's health while validating her existing concerns about product quality."
+          }
+        ]
+      },
+      {
+        "persona_id": "Rajesh-Ahmedabad-Dad-36",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.72,
+            "interpretation": "Rajesh sees this as a credible, health-conscious choice for his child that addresses safety concerns while providing nutritional assurance, making it memorable and personally relevant."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.72,
+            "interpretation": "Rajesh perceives this as credible social proof from a trusted peer about a product that improved another child's immunity with no side effects, directly activating his concern for his child's health and his belief in supplement efficacy."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.62,
+            "interpretation": "Rajesh sees this as a practical opportunity to secure a trusted supplement for his child at a meaningful discount, reinforced by the limited-time scarcity and subscription option."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.72,
+            "interpretation": "Rajesh interprets this as authoritative, practical guidance from a trusted medical professional about a concrete health solution for his child, activating his strong desire to ensure optimal child health while reducing health-related worry."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.65,
+            "interpretation": "Rajesh sees this as a direct opportunity to gather information about health drink choices from trusted peers while validating his concern for his child's nutrition and potentially addressing his own health-related worries about what's 'clean' and safe."
+          }
+        ]
+      },
+      {
+        "persona_id": "Harini-Bangalore-Mom-27",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.72,
+            "interpretation": "Harini sees this as a trustworthy solution to protect her child's health through clean nutrition, triggering relief from health concerns while validating her belief that specialized supplements are necessary for optimal child development."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.85,
+            "interpretation": "Harini interprets this as reassuring social proof that a supplement genuinely improves child immunity without harm, directly addressing her core anxieties about her child's health and supplement safety."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.72,
+            "interpretation": "Harini sees this as a timely opportunity to secure a health product she already believes in at a lower price, triggering relief (health need met) and mild urgency (limited time), amplified by her high health anxiety making her want to stock up."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.72,
+            "interpretation": "A trusted medical authority validating a specific supplement's superior effectiveness triggers relief about her child's health while reinforcing the necessity of supplementation."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.65,
+            "interpretation": "Harini sees this as a direct question about child health and nutrition where she can gather real-world peer experiences, triggering both her concern for optimal child care and her need to validate her own supplement choices against what others are doing."
+          }
+        ]
+      },
+      {
+        "persona_id": "Salma-Coimbatore-Mom-44",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "Salma sees this as a trusted, socially-validated solution that aligns with her belief that nutritional supplements are necessary for child health, making it memorable and persuasive despite her low child-wellness intensity."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "A trusted peer's personal recommendation about a supplement that improved her child's immunity with no side effects strongly validates Salma's belief in supplement necessity and provides the social proof she relies on for decisions."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "Salma sees this as a justified price reduction on a trusted supplement she already uses habitually, reinforced by the scarcity framing and convenience of Subscribe & Save, making it feel like a practical decision rather than a deliberate choice."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "A trusted medical authority endorsing a specific supplement brand with performance claims validates Salma's belief that supplements are necessary and activates her tendency to trust peer/expert recommendations, making this highly memorable and persuasive."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.65,
+            "interpretation": "Salma sees peer validation of health drink concerns and interprets this as collective reassurance that supplement choices matter, triggering her habitual reliance on what others in her trusted circle are doing."
+          }
+        ]
+      },
+      {
+        "persona_id": "Sunita-Indore-Mom-31",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.4444,
+            "emotional_valence": 0.35,
+            "interpretation": "Sunita notices the product information and social proof (50,000 moms) which appeals to her high information need, but the weak 'best-for-my-child' intensity and low supplement necessity belief limit her engagement, making this mildly interesting rather than compelling."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.6667,
+            "emotional_valence": 0.72,
+            "interpretation": "Sunita values peer recommendations and concrete health outcomes, and this friend endorsement provides both social validation and practical information about a product's effectiveness, triggering genuine interest despite her low health anxiety."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.4444,
+            "emotional_valence": 0.35,
+            "interpretation": "Sunita notices the discount and urgency signals, but the stimulus has modest impact because her low supplement necessity belief and low child-focused intensity mean product category relevance is limited; however, her high information need and emotional decision style make her responsive to the value proposition and time pressure."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.5556,
+            "emotional_valence": 0.45,
+            "interpretation": "Sunita notes the pediatrician's technical credibility about absorption rates, which satisfies her high information need, but her low child-concern intensity and weak supplement necessity belief limit how much this will drive her behavior change."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.6667,
+            "emotional_valence": 0.35,
+            "interpretation": "Sunita sees this as a practical question from relatable peers that offers crowd-sourced insights into health decisions, triggering her high information-seeking drive while the social context provides mild reassurance without aligning strongly with her child-focused values."
+          }
+        ]
+      },
+      {
+        "persona_id": "Ramesh-Ahmedabad-Dad-36",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.78,
+            "interpretation": "Ramesh sees a trusted solution to protect his child's health with proof from other parents, triggering relief from health concerns while validating his belief that premium nutrition is necessary."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.78,
+            "interpretation": "Ramesh sees a trusted friend's personal recommendation about a supplement that improved her child's immunity with no side effects, which directly addresses his deep concerns about his own child's health and safety."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.7778,
+            "emotional_valence": 0.78,
+            "interpretation": "Ramesh sees this as a time-sensitive opportunity to secure a health supplement at a discount, triggering both relief (lower cost for something he believes is necessary) and mild urgency-driven anxiety about missing the limited offer."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "Ramesh interprets this as credible medical reassurance that a supplement can effectively address a potential child health concern, triggering both relief about having a trusted solution and motivation to protect his child's wellbeing."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.65,
+            "interpretation": "Ramesh interprets this as validation that other parents share his concern about finding the 'right' health drink, triggering both worry about his child's nutrition and relief that he's not alone in questioning current choices."
+          }
+        ]
+      },
+      {
+        "persona_id": "Preeti-Chennai-Mom-37",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.78,
+            "interpretation": "Preeti sees this as a trusted solution that prioritizes her child's health and safety, validated by a large peer community of mothers she can relate to."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.78,
+            "interpretation": "A trusted peer's personal endorsement of a child immunity product with reported positive results and safety reassurance strongly activates Preeti's desire to do what's best for her child while simultaneously leveraging her high social proof bias and moderate health anxiety."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "Preeti sees this price reduction as a practical opportunity to provide quality nutrition for her child at better value, reinforced by the limited-time urgency and peer-friendly Subscribe & Save option that signals smart parenting choices."
+          },
+          {
+            "stimulus_id": "S4",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd71bTZed4qSNq1fuRV7'}"
+          },
+          {
+            "stimulus_id": "S5",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd71qXeWKK4KbKQzjWYH'}"
+          }
+        ]
+      },
+      {
+        "persona_id": "Hema-Surat-Mom-31",
+        "approach": "memory_backed",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd726fjABqkpiRFytk1k'}"
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "Hema processes this as credible peer validation of a child health product from a trusted friend, triggering her desire to ensure optimal child wellness while satisfying her information-seeking tendency through a relatable real-world example."
+          },
+          {
+            "stimulus_id": "S3",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd72SU6jCNuZcbbPnpnp'}"
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.65,
+            "interpretation": "Hema perceives this as credible, actionable information from a trusted authority figure that directly addresses her child's health needs, triggering both relief and motivation to act on the recommendation."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.6667,
+            "emotional_valence": 0.35,
+            "interpretation": "Hema sees this as a practical parenting decision requiring research into healthier alternatives, while simultaneously being reassured by peer validation of her concern about product quality."
+          }
+        ]
+      }
+    ]
+  },
+  "naive_baseline": {
+    "metrics": {
+      "approach": "naive_baseline",
+      "by_stimulus": {
+        "S1": {
+          "mean_importance": 0.7778,
+          "stdev_importance": 0.0,
+          "min": 0.7778,
+          "max": 0.7778
+        },
+        "S2": {
+          "mean_importance": 0.7778,
+          "stdev_importance": 0.0,
+          "min": 0.7778,
+          "max": 0.7778
+        },
+        "S3": {
+          "mean_importance": 0.6667,
+          "stdev_importance": 0.0,
+          "min": 0.6667,
+          "max": 0.6667
+        },
+        "S4": {
+          "mean_importance": 0.7778,
+          "stdev_importance": 0.0,
+          "min": 0.7778,
+          "max": 0.7778
+        },
+        "S5": {
+          "mean_importance": 0.7223,
+          "stdev_importance": 0.0594,
+          "min": 0.6667,
+          "max": 0.7778
+        }
+      },
+      "mean_importance_stdev": 0.0119
+    },
+    "raw": [
+      {
+        "persona_id": "Vinod-Kochi-Dad-37",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "This resonates strongly because the 'clean-label' messaging addresses my core concern about what goes into my child's body, and the social proof of 50,000 moms validates that other parents trust this brand."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "I'd take this seriously because it comes from a trusted friend with a relatable child, triggering both hope and curiosity about a product that claims real health benefits without risks."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.6,
+            "interpretation": "I'd be moderately interested as the 19% discount is meaningful for household budgeting, but I'd first verify LittleJoys' nutritional quality and ingredients before committing, especially with the Subscribe & Save pressure tactic."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "As a parent concerned about my child's health, a pediatrician's personal recommendation about a product with proven iron absorption gives me confidence to consider this seriously, especially since iron deficiency is common in Indian children."
+          },
+          {
+            "stimulus_id": "S5",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd73mwf41u9AVHQGckRN'}"
+          }
+        ]
+      },
+      {
+        "persona_id": "Rina-Chennai-Mom-30",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "This resonates strongly as a parent concerned about my child's health, the 'clean-label' claim and social proof from 50,000 moms makes me trust it enough to research further or try it."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "I'd feel encouraged and curious about LittleJoys since Ritu is a trusted friend sharing a genuine personal experience with measurable health results for her child, making me seriously consider trying it for my own kid."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "I'd be moderately interested since child nutrition products are essential, the 19% discount is meaningful for my budget, but I'd first verify LittleJoys' nutritional credibility and ingredient quality before committing to a subscription."
+          },
+          {
+            "stimulus_id": "S4",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd74WQYGMs5fNBvCunRf'}"
+          },
+          {
+            "stimulus_id": "S5",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd74jKRYRG26z1ZWHrnV'}"
+          }
+        ]
+      },
+      {
+        "persona_id": "Zara-Dehradun-Mom-29",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "This resonates strongly as a parent concerned about my child's health; the 'clean-label' positioning and social proof from 50,000 moms addresses my anxieties about artificial additives while the trusted community angle makes it feel safer to try."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "I'd feel encouraged and curious about LittleJoys since Ritu is a trusted friend whose child's health improvement I can observe, making this personal recommendation more credible than typical advertisements."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.6,
+            "interpretation": "I'd be moderately interested in the 19% discount and Subscribe & Save option, but would first verify the product's nutritional quality and compare it with trusted brands I currently use for my child before making a purchase decision."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "A pediatrician's direct recommendation about iron absorption efficiency would make me seriously consider LittleJoys for my child, as anemia is a common concern in Indian households and expert validation from a trusted medical source carries significant weight in my decision-making."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.6667,
+            "emotional_valence": 0.3,
+            "interpretation": "This triggers mild interest and reassurance\u2014hearing that other children also have preferences validates my own parenting struggles, while the mention of 'cleaner' alternatives creates slight concern about whether I'm making the right nutritional choices for my child."
+          }
+        ]
+      },
+      {
+        "persona_id": "Rajesh-Ahmedabad-Dad-36",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd76LzZP8CDxi31YJiVy'}"
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "I'd feel encouraged and curious since this comes from a trusted friend with a proven result on their child, making me likely to research LittleJoys and consider trying it for my own child's immunity."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "I'd be moderately interested since child nutrition products deserve scrutiny, but the 19% discount seems reasonable enough to compare with competitors and check ingredient quality before committing to a subscription."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "This recommendation from a trusted medical professional about a specific product addressing a common childhood concern (iron deficiency) would make me seriously consider LittleJoys, as it combines expert credibility with a concrete health benefit claim."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.6667,
+            "emotional_valence": 0.3,
+            "interpretation": "This is moderately important as it addresses a common parenting challenge around child nutrition and health drinks, triggering mild curiosity and reassurance-seeking since my own child likely has similar preferences."
+          }
+        ]
+      },
+      {
+        "persona_id": "Harini-Bangalore-Mom-27",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "The 'clean-label' and 'no artificial' messaging resonates strongly with my health concerns for my child, and the social proof of 50,000 moms makes me feel this is a trusted, validated choice worth considering."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "I'd be very interested since it's a trusted friend's personal recommendation about her child's real health improvement, making me want to learn more about LittleJoys despite the casual medium."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "I'd be moderately interested since child nutrition products are essential expenses, the 19% discount is meaningful for my budget, but I'd first verify the product quality and ingredients before committing to a subscription."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "A pediatrician's direct recommendation based on scientific evidence (absorption rates) about addressing a common childhood concern (low iron) would make me seriously consider this product as a trusted, medically-backed solution for my child."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.3,
+            "interpretation": "This hits home as I face similar daily battles with my child's nutrition; the mention of 'cleaner' alternatives makes me both curious about options and slightly anxious about whether I'm making the right choices."
+          }
+        ]
+      },
+      {
+        "persona_id": "Salma-Coimbatore-Mom-44",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "This resonates strongly as a parent concerned about my child's health, the 'clean-label' claim and social proof from 50,000 moms makes me feel confident this is a trustworthy choice worth considering for my family."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "I would seriously consider this recommendation since it comes from a trusted friend with a relatable child (Aarav), the mention of immunity improvement addresses a key parental concern, and the reassurance about no side effects reduces hesitation, making me likely to research or try the product."
+          },
+          {
+            "stimulus_id": "S3",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd78VQNh8hi6XjKnCEPQ'}"
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "I would seriously consider this recommendation since it comes from my child's trusted pediatrician and addresses a common health concern with a science-backed solution, giving me confidence in making a purchasing decision."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.3,
+            "interpretation": "This resonates deeply as a relatable parenting concern about child nutrition and health drink choices, triggering mild curiosity and reassurance-seeking about whether my current decisions are adequate."
+          }
+        ]
+      },
+      {
+        "persona_id": "Sunita-Indore-Mom-31",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "The 'clean-label' and 'no artificial' messaging strongly resonates with my health-conscious parenting values, though the social proof of 50,000 moms feels slightly generic and makes me want to verify independent reviews before purchasing."
+          },
+          {
+            "stimulus_id": "S2",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd795cvLmJeSBfAVk4m8'}"
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "This catches my attention as a meaningful 19% discount on a trusted brand, and the Subscribe & Save option appeals to my desire to save money on regular child nutrition purchases while ensuring consistent supply."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "A pediatrician's direct recommendation about iron absorption based on clinical experience carries significant weight, making me more inclined to consider LittleJoys as a trustworthy solution for my child's nutritional needs."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.6667,
+            "emotional_valence": 0.3,
+            "interpretation": "This resonates as a relatable parenting concern about nutrition and child preferences, triggering mild anxiety about whether current choices are adequate while appreciating peer validation and practical alternatives."
+          }
+        ]
+      },
+      {
+        "persona_id": "Ramesh-Ahmedabad-Dad-36",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "This resonates strongly because it addresses my core concern about children's health with credible reassurance (clean ingredients, peer validation from 50,000 moms), making me likely to research and consider this product for my child."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "I'd take this seriously because it's a trusted friend's personal experience with proven results on her child, making me want to learn more about LittleJoys despite the informal channel, though I'd still verify with a pediatrician before deciding."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "I'd be interested in this offer since child nutrition products are important to me, but I'd verify the product quality and ingredients before committing, especially with the Subscribe & Save pressure tactic."
+          },
+          {
+            "stimulus_id": "S4",
+            "error": "Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': \"This request would exceed your organization's rate limit of 50 requests per minute (org: eb7a20b7-a8ce-46d3-b969-3cc0c123dec5, model: claude-haiku-4-5-20251001). For details, refer to: https://docs.claude.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://claude.com/contact-sales to discuss your options for a rate limit increase.\"}, 'request_id': 'req_011CZd7AFk9i4BSQx7LnXfom'}"
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.6667,
+            "emotional_valence": 0.3,
+            "interpretation": "This resonates as a relatable parenting challenge about child nutrition and product choices, triggering mild curiosity and validation that other parents face similar picky eating situations, while also creating subtle concern about whether my current choices are adequate."
+          }
+        ]
+      },
+      {
+        "persona_id": "Preeti-Chennai-Mom-37",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "This ad resonates strongly because it addresses my core concern about children's health with specific credibility markers (clean-label, no artificial additives, trusted by many mothers) that feel reassuring and align with my values as a parent."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.75,
+            "interpretation": "I'd feel encouraged and trust this recommendation highly since it comes from a close friend with a real child example, but I'd still want to verify the product details and consult my pediatrician before making a purchase decision."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.65,
+            "interpretation": "I'd be interested in this discount since child nutrition products are a regular expense, but I'd first check the ingredient quality and expiry date before committing to a subscription."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "A pediatrician's direct recommendation based on scientific evidence (absorption rate) carries high credibility and would make me seriously consider LittleJoys for my child if iron deficiency were a concern, as this addresses a common health issue in Indian children."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.35,
+            "interpretation": "This resonates strongly as a relatable parenting challenge about child nutrition, triggering mild anxiety mixed with curiosity about alternatives that might work better for my child's health."
+          }
+        ]
+      },
+      {
+        "persona_id": "Hema-Surat-Mom-31",
+        "approach": "naive_baseline",
+        "stimuli": [
+          {
+            "stimulus_id": "S1",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "This resonates strongly as a parent concerned about my child's health, though the '50,000 moms' claim feels like social proof that makes me want to verify independently before purchasing."
+          },
+          {
+            "stimulus_id": "S2",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "I'd take this seriously since it's from a trusted friend with a relatable child, triggering optimism about immunity benefits, though I'd still want to verify ingredients and consult my pediatrician before buying."
+          },
+          {
+            "stimulus_id": "S3",
+            "importance": 0.6667,
+            "emotional_valence": 0.7,
+            "interpretation": "This catches my attention as a meaningful 19% discount on a trusted brand with subscription savings, making quality nutrition more affordable for my child, though I'd verify the product quality and ingredients before committing."
+          },
+          {
+            "stimulus_id": "S4",
+            "importance": 0.7778,
+            "emotional_valence": 0.7,
+            "interpretation": "As a parent concerned about my child's health, a pediatrician's direct recommendation based on clinical efficacy (better iron absorption) significantly increases my trust and likelihood to consider LittleJoys, especially given iron deficiency concerns are common in Indian children."
+          },
+          {
+            "stimulus_id": "S5",
+            "importance": 0.7778,
+            "emotional_valence": 0.3,
+            "interpretation": "This triggers moderate attention and mild concern because it validates my own parenting challenges around child nutrition while creating subtle pressure to reconsider whether my current choices are 'clean' enough compared to what other parents are doing."
+          }
+        ]
+      }
+    ]
+  },
+  "verdict": "PASS"
+}

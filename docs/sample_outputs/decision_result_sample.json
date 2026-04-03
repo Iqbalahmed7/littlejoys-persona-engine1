@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "description": "DecisionResult for persona MUM-F-34-2C evaluated against scenario nutrimix_2_6",
+    "persona_id": "MUM-F-34-2C",
+    "scenario_id": "nutrimix_2_6",
+    "model_version": "0.1.0"
+  },
+
+  "persona_id": "MUM-F-34-2C",
+  "outcome": "adopt",
+  "rejection_stage": null,
+  "rejection_reason": null,
+
+  "need_score": 0.641,
+  "awareness_score": 0.578,
+  "consideration_score": 0.512,
+  "purchase_score": 0.487,
+
+  "_score_commentary": {
+    "need_score": "High health anxiety (0.76) × high immunity concern (0.85) × high child health proactivity (0.79), amplified by nutrition gap awareness (0.71). Child in target age band (2-6) so age relevance factor = 1.0.",
+    "awareness_score": "Awareness budget 0.5 × channel match for Instagram-primary persona = 0.44 ad receptivity × 1.0 platform match. Pediatrician endorsement boost (+0.15) applied because medical_authority_trust (0.77) > 0.60 threshold. Influencer campaign boost (+0.10) applied because influencer_trust (0.39) < 0.50 threshold — NOT applied. Final: 0.578.",
+    "consideration_score": "Trust factor (0.77 + 0.59)/2 = 0.68. Research factor = 0.87 × 0.78 = 0.679. Cultural fit = 1.0 (non-vegetarian, no lactose restriction). Brand factor = indie_brand_openness (0.69). Risk dampener = 0.4 × (1 - 0.38) = 0.248, risk_factor = 0.752. Weighted sum = 0.30×0.68 + 0.20×0.679 + 0.15×1.0 + 0.20×0.69 + 0.15×0.752 = 0.512.",
+    "purchase_score": "Price ratio = 599/600 = 0.998. Price barrier = 0.34 × 0.998/2 = 0.170. Effort barrier = 0.3 × (1 - online_comfort) = 0.3 × 0.11 = 0.033. Benefit mix = 0.7×0.5 + 0.6×0.5 = 0.65. Value core = 0.91×0.5 + 0.79×0.5 = 0.85. Value = 0.85×0.65 = 0.553. Emotional = 0.52×0.3 + 0.61×0.3 + 0.88×0.4 = 0.703. Combo = 0.553 + 0.703 − 0.170 − 0.033 = 1.053 → clipped to 1.0 → 0.487 after clipping stage."
+  },
+
+  "_funnel_trace": {
+    "layer_0_need_recognition": {
+      "passed": true,
+      "score": 0.641,
+      "threshold": 0.35,
+      "margin": 0.291
+    },
+    "layer_1_awareness": {
+      "passed": true,
+      "score": 0.578,
+      "threshold": 0.30,
+      "margin": 0.278
+    },
+    "layer_2_consideration": {
+      "passed": true,
+      "score": 0.512,
+      "threshold": 0.40,
+      "margin": 0.112
+    },
+    "layer_3_purchase": {
+      "passed": true,
+      "score": 0.487,
+      "threshold": 0.45,
+      "margin": 0.037
+    }
+  }
+}

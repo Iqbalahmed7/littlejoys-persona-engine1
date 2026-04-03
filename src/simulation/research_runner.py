@@ -222,7 +222,9 @@ class ResearchRunner:
         )
         event_primary: EventSimulationResult | None = None
         temporal_primary: TemporalSimulationResult | None = None
-        if self.scenario.mode == "temporal":
+        if self.scenario.mode == "temporal" and (
+            self.sample_size > 0 or self.alternative_count > 0
+        ):
             duration_days = max(1, int(self.scenario.months) * 30)
 
             def _event_progress(p: float) -> None:
@@ -444,10 +446,9 @@ class ResearchRunner:
 
         self._progress("Compiling results...", 1.0)
         elapsed = time.monotonic() - started
-        estimated_cost = (
-            (total_input_tokens / 1000) * INTERVIEW_COST_PER_1K_INPUT_USD
-            + (total_output_tokens / 1000) * INTERVIEW_COST_PER_1K_OUTPUT_USD
-        )
+        estimated_cost = (total_input_tokens / 1000) * INTERVIEW_COST_PER_1K_INPUT_USD + (
+            total_output_tokens / 1000
+        ) * INTERVIEW_COST_PER_1K_OUTPUT_USD
         metadata = ResearchMetadata(
             timestamp=_iso_timestamp(),
             duration_seconds=round(elapsed, 2),

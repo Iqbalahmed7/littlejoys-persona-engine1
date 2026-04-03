@@ -1,0 +1,67 @@
+{
+  "id": "nutrimix_2_6",
+  "name": "Nutrimix for 2-6 year olds",
+  "description": "Existing core product — repeat purchase and LJ Pass modeling",
+  "mode": "temporal",
+  "months": 6,
+
+  "product": {
+    "name": "Nutrimix",
+    "category": "nutrition_powder",
+    "price_inr": 599.0,
+    "age_range": [2, 6],
+    "key_benefits": ["immunity", "growth", "brain_development"],
+    "form_factor": "powder_mix",
+    "taste_appeal": 0.7,
+    "effort_to_acquire": 0.3,
+    "category_need_baseline": 0.65,
+    "clean_label_score": 0.85,
+    "health_relevance": 0.75,
+    "complexity": 0.1,
+    "cooking_required": 0.0,
+    "premium_positioning": 0.60,
+    "superfood_score": 0.70,
+    "subscription_available": true,
+    "addresses_concerns": ["low_immunity", "underweight", "picky_eater", "low_energy"]
+  },
+
+  "marketing": {
+    "awareness_budget": 0.5,
+    "channel_mix": {
+      "instagram": 0.40,
+      "youtube": 0.30,
+      "whatsapp": 0.30
+    },
+    "trust_signals": ["pediatrician_approved", "clean_label", "no_added_sugar"],
+    "pediatrician_endorsement": true,
+    "school_partnership": false,
+    "influencer_campaign": true,
+    "sports_club_partnership": false,
+    "perceived_quality": 0.75,
+    "trust_signal": 0.70,
+    "expert_endorsement": 0.50,
+    "social_proof": 0.70,
+    "influencer_signal": 0.50,
+    "awareness_level": 0.60,
+    "social_buzz": 0.50,
+    "discount_available": 0.07
+  },
+
+  "target_age_range": [2, 6],
+
+  "lj_pass_available": true,
+  "lj_pass": {
+    "monthly_price_inr": 299.0,
+    "discount_percent": 15.0,
+    "free_trial_months": 1,
+    "retention_boost": 0.10,
+    "churn_reduction": 0.20
+  },
+
+  "thresholds": {
+    "need_recognition": 0.35,
+    "awareness": 0.30,
+    "consideration": 0.40,
+    "purchase": 0.45
+  }
+}

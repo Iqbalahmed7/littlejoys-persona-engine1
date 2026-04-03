@@ -1,0 +1,213 @@
+{
+  "_meta": {
+    "description": "Aggregate population statistics over 200 synthetic personas",
+    "population_size": 200,
+    "generation_seed": 42,
+    "generated_at": "2024-11-15T06:00:00Z",
+    "engine_version": "0.1.0"
+  },
+
+  "demographic_distributions": {
+    "city_tier": {
+      "Tier1": {"count": 90, "pct": 0.450},
+      "Tier2": {"count": 70, "pct": 0.350},
+      "Tier3": {"count": 40, "pct": 0.200}
+    },
+    "region": {
+      "North": {"count": 56, "pct": 0.280},
+      "South": {"count": 52, "pct": 0.260},
+      "West": {"count": 50, "pct": 0.250},
+      "East": {"count": 28, "pct": 0.140},
+      "NE": {"count": 14, "pct": 0.070}
+    },
+    "income_bracket": {
+      "low_income": {"count": 58, "threshold_lpa": "< 8", "pct": 0.290},
+      "middle_income": {"count": 84, "threshold_lpa": "8–15", "pct": 0.420},
+      "high_income": {"count": 58, "threshold_lpa": "> 15", "pct": 0.290}
+    },
+    "socioeconomic_class": {
+      "A1": {"count": 22, "pct": 0.110},
+      "A2": {"count": 38, "pct": 0.190},
+      "B1": {"count": 62, "pct": 0.310},
+      "B2": {"count": 44, "pct": 0.220},
+      "C1": {"count": 22, "pct": 0.110},
+      "C2": {"count": 12, "pct": 0.060}
+    },
+    "parent_gender": {
+      "female": {"count": 162, "pct": 0.810},
+      "male": {"count": 38, "pct": 0.190}
+    },
+    "parent_age": {
+      "mean": 32.4,
+      "median": 32,
+      "std": 4.1,
+      "min": 22,
+      "max": 45,
+      "band_25_30": {"count": 72, "pct": 0.360},
+      "band_31_36": {"count": 88, "pct": 0.440},
+      "band_37_45": {"count": 40, "pct": 0.200}
+    },
+    "family_structure": {
+      "nuclear": {"count": 134, "pct": 0.670},
+      "joint": {"count": 52, "pct": 0.260},
+      "single_parent": {"count": 14, "pct": 0.070}
+    },
+    "employment_status": {
+      "homemaker": {"count": 60, "pct": 0.300},
+      "full_time": {"count": 70, "pct": 0.350},
+      "part_time": {"count": 30, "pct": 0.150},
+      "self_employed": {"count": 28, "pct": 0.140},
+      "freelance": {"count": 12, "pct": 0.060}
+    },
+    "education_level": {
+      "high_school": {"count": 18, "pct": 0.090},
+      "bachelors": {"count": 74, "pct": 0.370},
+      "masters": {"count": 76, "pct": 0.380},
+      "doctorate": {"count": 18, "pct": 0.090},
+      "professional": {"count": 14, "pct": 0.070}
+    },
+    "num_children": {
+      "1": {"count": 70, "pct": 0.350},
+      "2": {"count": 90, "pct": 0.450},
+      "3": {"count": 30, "pct": 0.150},
+      "4+": {"count": 10, "pct": 0.050}
+    },
+    "child_age_group": {
+      "early_0_6": {"count": 108, "pct": 0.540},
+      "middle_7_10": {"count": 56, "pct": 0.280},
+      "older_11_14": {"count": 36, "pct": 0.180}
+    }
+  },
+
+  "psychographic_means": {
+    "health_anxiety": 0.584,
+    "nutrition_gap_awareness": 0.561,
+    "immunity_concern": 0.598,
+    "growth_concern": 0.527,
+    "child_health_proactivity": 0.571,
+    "medical_authority_trust": 0.556,
+    "self_research_tendency": 0.523,
+    "budget_consciousness": 0.519,
+    "deal_seeking_intensity": 0.488,
+    "indie_brand_openness": 0.512,
+    "brand_loyalty_tendency": 0.491,
+    "risk_tolerance": 0.468,
+    "information_need": 0.558,
+    "decision_speed": 0.501,
+    "social_proof_bias": 0.533,
+    "transparency_importance": 0.602,
+    "best_for_my_child_intensity": 0.641,
+    "guilt_driven_spending": 0.519,
+    "digital_payment_comfort": 0.614,
+    "online_vs_offline_preference": 0.572,
+    "wellness_trend_follower": 0.518,
+    "supplement_necessity_belief": 0.483,
+    "ayurveda_affinity": 0.467,
+    "western_brand_trust": 0.504,
+    "community_orientation": 0.511,
+    "peer_influence_strength": 0.527,
+    "perceived_time_scarcity": 0.548,
+    "ad_receptivity": 0.462
+  },
+
+  "adoption_rates_by_scenario": {
+    "nutrimix_2_6": {
+      "adoption_count": 31,
+      "adoption_rate": 0.155,
+      "rejection_by_stage": {
+        "need_recognition": 48,
+        "awareness": 22,
+        "consideration": 61,
+        "purchase": 38
+      }
+    },
+    "nutrimix_7_14": {
+      "adoption_count": 24,
+      "adoption_rate": 0.120,
+      "rejection_by_stage": {
+        "need_recognition": 52,
+        "awareness": 28,
+        "consideration": 58,
+        "purchase": 38
+      }
+    },
+    "magnesium_gummies": {
+      "adoption_count": 19,
+      "adoption_rate": 0.095,
+      "rejection_by_stage": {
+        "need_recognition": 66,
+        "awareness": 44,
+        "consideration": 46,
+        "purchase": 25
+      }
+    },
+    "protein_mix": {
+      "adoption_count": 16,
+      "adoption_rate": 0.080,
+      "rejection_by_stage": {
+        "need_recognition": 58,
+        "awareness": 34,
+        "consideration": 52,
+        "purchase": 40
+      }
+    }
+  },
+
+  "adoption_rates_by_segment": {
+    "by_city_tier": {
+      "nutrimix_2_6": {
+        "Tier1": 0.222,
+        "Tier2": 0.114,
+        "Tier3": 0.075
+      },
+      "nutrimix_7_14": {
+        "Tier1": 0.178,
+        "Tier2": 0.086,
+        "Tier3": 0.050
+      }
+    },
+    "by_income_bracket": {
+      "nutrimix_2_6": {
+        "low_income": 0.069,
+        "middle_income": 0.143,
+        "high_income": 0.241
+      }
+    },
+    "by_employment": {
+      "nutrimix_2_6": {
+        "full_time": 0.186,
+        "homemaker": 0.133,
+        "part_time": 0.167,
+        "self_employed": 0.143,
+        "freelance": 0.083
+      }
+    }
+  },
+
+  "top_health_concerns": {
+    "picky_eater": {"count": 112, "pct": 0.560},
+    "low_immunity": {"count": 94, "pct": 0.470},
+    "underweight": {"count": 62, "pct": 0.310},
+    "low_energy": {"count": 74, "pct": 0.370},
+    "focus_issues": {"count": 48, "pct": 0.240}
+  },
+
+  "primary_shopping_platforms": {
+    "amazon": {"count": 78, "pct": 0.390},
+    "bigbasket": {"count": 42, "pct": 0.210},
+    "flipkart": {"count": 30, "pct": 0.150},
+    "quick_commerce": {"count": 24, "pct": 0.120},
+    "local_store": {"count": 16, "pct": 0.080},
+    "dmart": {"count": 8, "pct": 0.040},
+    "brand_website": {"count": 2, "pct": 0.010}
+  },
+
+  "current_supplement_usage": {
+    "none": {"count": 108, "pct": 0.540},
+    "horlicks": {"count": 38, "pct": 0.190},
+    "bournvita": {"count": 22, "pct": 0.110},
+    "pediasure": {"count": 16, "pct": 0.080},
+    "complan": {"count": 10, "pct": 0.050},
+    "other": {"count": 6, "pct": 0.030}
+  }
+}

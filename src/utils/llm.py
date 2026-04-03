@@ -179,7 +179,10 @@ class LLMClient:
                 )
                 if attempt + 1 == LLM_MAX_RETRIES:
                     break
-                await asyncio.sleep(LLM_RETRY_BASE_DELAY * (2**attempt))
+                # Rate-limit errors need a much longer cooldown
+                is_rate_limit = "429" in str(exc) or "rate_limit" in str(exc).lower()
+                delay = 65.0 if is_rate_limit else LLM_RETRY_BASE_DELAY * (2**attempt)
+                await asyncio.sleep(delay)
 
         raise LLMError(str(last_error), model_name, LLM_MAX_RETRIES)
 
@@ -294,6 +297,21 @@ class LLMClient:
             "output_tokens": int(getattr(message.usage, "output_tokens", 0)),
         }
 
+    @staticmethod
+    def _strip_markdown_fences(text: str) -> str:
+        """Remove markdown code fences Claude sometimes wraps JSON responses in."""
+        import re
+
+        # Match ```json ... ``` or ``` ... ``` (with optional language tag)
+        match = re.search(r"```(?:json)?\s*\n([\s\S]*?)\n```", text)
+        if match:
+            return match.group(1).strip()
+        # Also handle inline ` ... ` fences without newlines
+        match = re.search(r"```(?:json)?\s*([\s\S]+?)\s*```", text)
+        if match:
+            return match.group(1).strip()
+        return text
+
     def _normalize_response_text(
         self,
         raw_text: str,
@@ -303,7 +321,8 @@ class LLMClient:
         if response_format == "text" and schema is None:
             return raw_text
 
-        parsed = json.loads(raw_text)
+        cleaned = self._strip_markdown_fences(raw_text)
+        parsed = json.loads(cleaned)
         if schema is None:
             return json.dumps(parsed, sort_keys=True)
 

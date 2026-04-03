@@ -1,0 +1,770 @@
+{
+  "generated_at": "2026-04-01T14:09:41.743137+00:00",
+  "total_personas": 200,
+  "hard_only_mode": false,
+  "summary": {
+    "clean": 161,
+    "hard_violations": 0,
+    "soft_violations": 39,
+    "pct_clean": 80.5,
+    "pct_hard": 0.0,
+    "top_violated_rule": "CAT2-R010"
+  },
+  "rule_hit_counts": {
+    "CAT2-R010": 11,
+    "CAT3-R015": 8,
+    "CAT1-R004": 7,
+    "CAT3-R013": 5,
+    "CAT1-R002": 4,
+    "CAT5-R029": 4,
+    "CAT1-R003": 2,
+    "CAT1-R001": 1
+  },
+  "personas_with_hard_violations": [],
+  "personas_with_soft_violations": [
+    "Zara-Dehradun-Mom-29",
+    "Sunita-Ahmedabad-Mom-32",
+    "Devi-Mangalore-Mom-38",
+    "Seema-Kolkata-Mom-37",
+    "Smita-Mangalore-Mom-36",
+    "Rina-Chennai-Mom-30",
+    "Lavanya-Hyderabad-Mom-28",
+    "Bhavani-Chandigarh-Mom-32",
+    "Ayesha-Mysore-Mom-29",
+    "Nisha-Mysore-Mom-29",
+    "Sunita-Indore-Mom-31",
+    "Revathi-Dehradun-Mom-27",
+    "Rohit-Mangalore-Dad-31",
+    "Harini-Bangalore-Mom-27",
+    "Amreen-Ranchi-Mom-31",
+    "Rashmi-Dehradun-Mom-26",
+    "Padma-Jaipur-Mom-42",
+    "Archana-Bangalore-Mom-37",
+    "Arti-Delhi-Mom-37",
+    "Pankaj-Guwahati-Dad-30",
+    "Sana-Ranchi-Mom-30",
+    "Aishwarya-Delhi-Mom-28",
+    "Rina-Hyderabad-Mom-34",
+    "Gurpreet-Pune-Dad-29",
+    "Girish-Mumbai-Dad-34",
+    "Farhan-Bhubaneswar-Dad-26",
+    "Baldev-Bhubaneswar-Dad-33",
+    "Abhishek-Indore-Dad-29",
+    "Yasmin-Pune-Mom-33",
+    "Anjali-Bhopal-Mom-33",
+    "Jai-Bangalore-Dad-36",
+    "Manju-Pune-Mom-34",
+    "Janaki-Indore-Mom-26",
+    "Sunita-Bhopal-Mom-32",
+    "Priya-Jaipur-Mom-29",
+    "Shahnaz-Kolkata-Mom-26",
+    "Amreen-Hyderabad-Mom-38",
+    "Champa-Mysore-Mom-35",
+    "Shweta-Chennai-Mom-28"
+  ],
+  "personas_clean": [
+    "Janaki-Nagpur-Mom-34",
+    "Ayesha-Lucknow-Mom-40",
+    "Nasreen-Ahmedabad-Mom-31",
+    "Sunita-Bhopal-Mom-27",
+    "Smita-Kolkata-Mom-30",
+    "Irfan-Hyderabad-Dad-31",
+    "Tushar-Pune-Dad-28",
+    "Yamini-Ahmedabad-Mom-31",
+    "Aparna-Delhi-Mom-36",
+    "Hina-Bhubaneswar-Mom-30",
+    "Chitra-Mangalore-Mom-29",
+    "Sneha-Hyderabad-Mom-36",
+    "Manisha-Bhubaneswar-Mom-40",
+    "Zainab-Kolkata-Mom-31",
+    "Varsha-Nagpur-Mom-34",
+    "Kriti-Kolkata-Mom-27",
+    "Rashmi-Ahmedabad-Mom-30",
+    "Swati-Ahmedabad-Mom-34",
+    "Nasreen-Surat-Mom-26",
+    "Sakshi-Bhopal-Mom-28",
+    "Imran-Chandigarh-Dad-28",
+    "Hema-Surat-Mom-31",
+    "Yasmin-Lucknow-Mom-31",
+    "Dinesh-Coimbatore-Dad-33",
+    "Bhavna-Coimbatore-Mom-31",
+    "Aditi-Mumbai-Mom-33",
+    "Karthik-Raipur-Dad-35",
+    "Harini-Mangalore-Mom-35",
+    "Ramesh-Ahmedabad-Dad-36",
+    "Kiran-Mangalore-Mom-27",
+    "Tara-Bangalore-Mom-26",
+    "Priya-Chandigarh-Mom-30",
+    "Preeti-Delhi-Mom-27",
+    "Hina-Kochi-Mom-38",
+    "Vandana-Chandigarh-Mom-23",
+    "Tabassum-Pune-Mom-25",
+    "Umesh-Lucknow-Dad-24",
+    "Shweta-Kolkata-Mom-37",
+    "Nirmala-Kochi-Mom-35",
+    "Anjali-Bangalore-Mom-31",
+    "Lakshmi-Raipur-Mom-29",
+    "Wasim-Mysore-Dad-40",
+    "Himanshu-Jaipur-Dad-38",
+    "Lata-Coimbatore-Mom-28",
+    "Bhavani-Dehradun-Mom-26",
+    "Ganga-Bangalore-Mom-33",
+    "Paramjit-Hyderabad-Dad-37",
+    "Suman-Delhi-Mom-37",
+    "Umesh-Delhi-Dad-30",
+    "Aishwarya-Bangalore-Mom-31",
+    "Harini-Delhi-Mom-33",
+    "Salma-Coimbatore-Mom-44",
+    "Nisha-Hyderabad-Mom-29",
+    "Kusum-Kolkata-Mom-32",
+    "Preeti-Chennai-Mom-32",
+    "Revathi-Chandigarh-Mom-37",
+    "Arun-Hyderabad-Dad-30",
+    "Kiran-Visakhapatnam-Mom-30",
+    "Parveen-Udaipur-Mom-38",
+    "Ramesh-Jaipur-Dad-35",
+    "Nadeem-Hyderabad-Dad-32",
+    "Dhruv-Delhi-Dad-39",
+    "Ravi-Kolkata-Dad-39",
+    "Sneha-Coimbatore-Mom-31",
+    "Zara-Delhi-Mom-38",
+    "Owais-Indore-Dad-33",
+    "Smita-Bangalore-Mom-28",
+    "Pooja-Chennai-Mom-30",
+    "Hina-Kochi-Mom-24",
+    "Kusum-Delhi-Mom-33",
+    "Ayesha-Bhubaneswar-Mom-33",
+    "Bhavani-Coimbatore-Mom-34",
+    "Trisha-Dehradun-Mom-29",
+    "Rekha-Visakhapatnam-Mom-33",
+    "Darshan-Nagpur-Dad-27",
+    "Lavanya-Ahmedabad-Mom-36",
+    "Lata-Mumbai-Mom-39",
+    "Fatima-Chandigarh-Mom-33",
+    "Asha-Nagpur-Mom-32",
+    "Sakshi-Bhopal-Mom-27",
+    "Ritu-Lucknow-Mom-32",
+    "Shalini-Hyderabad-Mom-30",
+    "Deepa-Chennai-Mom-36",
+    "Zara-Mangalore-Mom-31",
+    "Varsha-Hyderabad-Mom-31",
+    "Kiran-Kolkata-Mom-31",
+    "Shweta-Lucknow-Mom-36",
+    "Ishita-Chennai-Mom-29",
+    "Vijaya-Kochi-Mom-28",
+    "Ritu-Pune-Mom-31",
+    "Arjun-Bhopal-Dad-40",
+    "Shabnam-Jaipur-Mom-38",
+    "Kriti-Chennai-Mom-34",
+    "Rina-Lucknow-Mom-29",
+    "Parveen-Pune-Mom-30",
+    "Zubaida-Lucknow-Mom-35",
+    "Nisha-Kolkata-Mom-35",
+    "Deepa-Bhopal-Mom-38",
+    "Tara-Mumbai-Mom-29",
+    "Padma-Bhubaneswar-Mom-29",
+    "Jyoti-Bangalore-Mom-34",
+    "Tabassum-Ahmedabad-Mom-28",
+    "Shruti-Coimbatore-Mom-36",
+    "Shweta-Bangalore-Mom-36",
+    "Rubina-Coimbatore-Mom-31",
+    "Smita-Chennai-Mom-41",
+    "Radha-Visakhapatnam-Mom-34",
+    "Durga-Jaipur-Mom-33",
+    "Lavanya-Delhi-Mom-32",
+    "Vinod-Mangalore-Dad-25",
+    "Neha-Dehradun-Mom-33",
+    "Asha-Hyderabad-Mom-25",
+    "Javed-Indore-Dad-33",
+    "Karthik-Nagpur-Dad-34",
+    "Shalini-Kolkata-Mom-32",
+    "Sarita-Visakhapatnam-Mom-34",
+    "Sneha-Delhi-Mom-37",
+    "Rashid-Nagpur-Dad-29",
+    "Smita-Ahmedabad-Mom-28",
+    "Nandini-Bangalore-Mom-35",
+    "Jyoti-Bhopal-Mom-34",
+    "Amita-Surat-Mom-29",
+    "Janaki-Mangalore-Mom-31",
+    "Indira-Nagpur-Mom-25",
+    "Revathi-Bhopal-Mom-32",
+    "Usha-Kolkata-Mom-27",
+    "Amita-Delhi-Mom-30",
+    "Divya-Chennai-Mom-38",
+    "Amreen-Bangalore-Mom-34",
+    "Malini-Coimbatore-Mom-32",
+    "Vinod-Kochi-Dad-37",
+    "Seema-Pune-Mom-26",
+    "Madhavi-Bhopal-Mom-35",
+    "Asha-Mumbai-Mom-31",
+    "Pooja-Coimbatore-Mom-23",
+    "Priya-Nagpur-Mom-33",
+    "Sana-Mysore-Mom-36",
+    "Aparna-Mysore-Mom-39",
+    "Ritika-Pune-Mom-34",
+    "Sneha-Udaipur-Mom-37",
+    "Radha-Lucknow-Mom-22",
+    "Kiran-Chennai-Mom-38",
+    "Yamini-Ahmedabad-Mom-30",
+    "Revathi-Bangalore-Mom-28",
+    "Mehreen-Guwahati-Mom-30",
+    "Shabnam-Dehradun-Mom-33",
+    "Aditi-Pune-Mom-33",
+    "Aditi-Raipur-Mom-31",
+    "Tabassum-Pune-Mom-35",
+    "Lalit-Bhopal-Dad-30",
+    "Usha-Delhi-Mom-33",
+    "Preeti-Chennai-Mom-37",
+    "Rajesh-Ahmedabad-Dad-36",
+    "Sakshi-Pune-Mom-30",
+    "Arun-Hyderabad-Dad-36",
+    "Rina-Surat-Mom-36",
+    "Jyoti-Ranchi-Mom-41",
+    "Yasmin-Hyderabad-Mom-26",
+    "Radha-Jaipur-Mom-27",
+    "Bharat-Coimbatore-Dad-35",
+    "Zara-Bhubaneswar-Mom-29"
+  ],
+  "violations_by_persona": {
+    "Zara-Dehradun-Mom-29": [
+      {
+        "rule_id": "CAT1-R001",
+        "severity": "soft",
+        "message": "Income 2.817768535073586L but best_for_my_child=0.93. Incoherent spending narrative.",
+        "attribute_a": "household_income_lpa",
+        "attribute_b": "best_for_my_child_intensity",
+        "values": {
+          "household_income_lpa": 2.817768535073586,
+          "best_for_my_child_intensity": 0.9264444548059092
+        }
+      }
+    ],
+    "Sunita-Ahmedabad-Mom-32": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.93. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.9294915279620943
+        }
+      }
+    ],
+    "Devi-Mangalore-Mom-38": [
+      {
+        "rule_id": "CAT1-R002",
+        "severity": "soft",
+        "message": "Tier3 city but digital_payment_comfort=0.89. Infrastructure implausibility.",
+        "attribute_a": "city_tier",
+        "attribute_b": "digital_payment_comfort",
+        "values": {
+          "city_tier": "Tier3",
+          "digital_payment_comfort": 0.89221296477578
+        }
+      }
+    ],
+    "Seema-Kolkata-Mom-37": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.92. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.91942081126799
+        }
+      }
+    ],
+    "Smita-Mangalore-Mom-36": [
+      {
+        "rule_id": "CAT5-R029",
+        "severity": "soft",
+        "message": "ayurveda_affinity=0.95 AND western_brand_trust=0.99. Both extremes together are implausible.",
+        "attribute_a": "ayurveda_affinity",
+        "attribute_b": "western_brand_trust",
+        "values": {
+          "ayurveda_affinity": 0.9496533069978753,
+          "western_brand_trust": 0.9860791427218557
+        }
+      }
+    ],
+    "Rina-Chennai-Mom-30": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.95. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.951278271880135
+        }
+      }
+    ],
+    "Lavanya-Hyderabad-Mom-28": [
+      {
+        "rule_id": "CAT3-R013",
+        "severity": "soft",
+        "message": "information_need=0.83 but label_reading=0.08.",
+        "attribute_a": "information_need",
+        "attribute_b": "label_reading_habit",
+        "values": {
+          "information_need": 0.8334092320595609,
+          "label_reading_habit": 0.08440410914121982
+        }
+      }
+    ],
+    "Bhavani-Chandigarh-Mom-32": [
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.08 but pediatrician_influence=0.85. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.08233683246843226,
+          "pediatrician_influence": 0.8536174033196318
+        }
+      }
+    ],
+    "Ayesha-Mysore-Mom-29": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.99. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.9907590939507301
+        }
+      }
+    ],
+    "Nisha-Mysore-Mom-29": [
+      {
+        "rule_id": "CAT5-R029",
+        "severity": "soft",
+        "message": "ayurveda_affinity=0.95 AND western_brand_trust=0.96. Both extremes together are implausible.",
+        "attribute_a": "ayurveda_affinity",
+        "attribute_b": "western_brand_trust",
+        "values": {
+          "ayurveda_affinity": 0.9513863249229524,
+          "western_brand_trust": 0.9600793259086164
+        }
+      }
+    ],
+    "Sunita-Indore-Mom-31": [
+      {
+        "rule_id": "CAT1-R004",
+        "severity": "soft",
+        "message": "Homemaker with time_scarcity=0.82. Requires narrative justification.",
+        "attribute_a": "employment_status",
+        "attribute_b": "perceived_time_scarcity",
+        "values": {
+          "employment_status": "homemaker",
+          "perceived_time_scarcity": 0.8231017576818496
+        }
+      },
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.07 but pediatrician_influence=0.98. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.06844520297280125,
+          "pediatrician_influence": 0.9758853883894266
+        }
+      }
+    ],
+    "Revathi-Dehradun-Mom-27": [
+      {
+        "rule_id": "CAT1-R002",
+        "severity": "soft",
+        "message": "Tier3 city but digital_payment_comfort=0.86. Infrastructure implausibility.",
+        "attribute_a": "city_tier",
+        "attribute_b": "digital_payment_comfort",
+        "values": {
+          "city_tier": "Tier3",
+          "digital_payment_comfort": 0.8596390515807886
+        }
+      }
+    ],
+    "Rohit-Mangalore-Dad-31": [
+      {
+        "rule_id": "CAT1-R002",
+        "severity": "soft",
+        "message": "Tier3 city but digital_payment_comfort=0.88. Infrastructure implausibility.",
+        "attribute_a": "city_tier",
+        "attribute_b": "digital_payment_comfort",
+        "values": {
+          "city_tier": "Tier3",
+          "digital_payment_comfort": 0.8821149052805412
+        }
+      },
+      {
+        "rule_id": "CAT3-R013",
+        "severity": "soft",
+        "message": "information_need=0.87 but label_reading=0.13.",
+        "attribute_a": "information_need",
+        "attribute_b": "label_reading_habit",
+        "values": {
+          "information_need": 0.8742785525741401,
+          "label_reading_habit": 0.1265618408624121
+        }
+      }
+    ],
+    "Harini-Bangalore-Mom-27": [
+      {
+        "rule_id": "CAT5-R029",
+        "severity": "soft",
+        "message": "ayurveda_affinity=0.98 AND western_brand_trust=0.98. Both extremes together are implausible.",
+        "attribute_a": "ayurveda_affinity",
+        "attribute_b": "western_brand_trust",
+        "values": {
+          "ayurveda_affinity": 0.9814956110663289,
+          "western_brand_trust": 0.9803958093002704
+        }
+      }
+    ],
+    "Amreen-Ranchi-Mom-31": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.97. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.9704427587849415
+        }
+      }
+    ],
+    "Rashmi-Dehradun-Mom-26": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.95. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.9483644464515546
+        }
+      }
+    ],
+    "Padma-Jaipur-Mom-42": [
+      {
+        "rule_id": "CAT3-R013",
+        "severity": "soft",
+        "message": "information_need=0.85 but label_reading=0.01.",
+        "attribute_a": "information_need",
+        "attribute_b": "label_reading_habit",
+        "values": {
+          "information_need": 0.8529726854922433,
+          "label_reading_habit": 0.014920360469266501
+        }
+      }
+    ],
+    "Archana-Bangalore-Mom-37": [
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.00 but pediatrician_influence=0.89. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.0013422603143552318,
+          "pediatrician_influence": 0.8913691931227907
+        }
+      }
+    ],
+    "Arti-Delhi-Mom-37": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.93. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.9344637746881198
+        }
+      }
+    ],
+    "Pankaj-Guwahati-Dad-30": [
+      {
+        "rule_id": "CAT1-R004",
+        "severity": "soft",
+        "message": "Homemaker with time_scarcity=0.83. Requires narrative justification.",
+        "attribute_a": "employment_status",
+        "attribute_b": "perceived_time_scarcity",
+        "values": {
+          "employment_status": "homemaker",
+          "perceived_time_scarcity": 0.8254738956644232
+        }
+      }
+    ],
+    "Sana-Ranchi-Mom-30": [
+      {
+        "rule_id": "CAT3-R013",
+        "severity": "soft",
+        "message": "information_need=0.95 but label_reading=0.12.",
+        "attribute_a": "information_need",
+        "attribute_b": "label_reading_habit",
+        "values": {
+          "information_need": 0.9467092601172238,
+          "label_reading_habit": 0.1212881582319707
+        }
+      }
+    ],
+    "Aishwarya-Delhi-Mom-28": [
+      {
+        "rule_id": "CAT1-R004",
+        "severity": "soft",
+        "message": "Homemaker with time_scarcity=0.81. Requires narrative justification.",
+        "attribute_a": "employment_status",
+        "attribute_b": "perceived_time_scarcity",
+        "values": {
+          "employment_status": "homemaker",
+          "perceived_time_scarcity": 0.8138182449398355
+        }
+      }
+    ],
+    "Rina-Hyderabad-Mom-34": [
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.03 but pediatrician_influence=0.85. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.03254370868739672,
+          "pediatrician_influence": 0.8494763483053989
+        }
+      }
+    ],
+    "Gurpreet-Pune-Dad-29": [
+      {
+        "rule_id": "CAT5-R029",
+        "severity": "soft",
+        "message": "ayurveda_affinity=0.99 AND western_brand_trust=0.86. Both extremes together are implausible.",
+        "attribute_a": "ayurveda_affinity",
+        "attribute_b": "western_brand_trust",
+        "values": {
+          "ayurveda_affinity": 0.9888399813622203,
+          "western_brand_trust": 0.8620631262510101
+        }
+      }
+    ],
+    "Girish-Mumbai-Dad-34": [
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.03 but pediatrician_influence=0.89. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.034225076527948754,
+          "pediatrician_influence": 0.8894606520381532
+        }
+      }
+    ],
+    "Farhan-Bhubaneswar-Dad-26": [
+      {
+        "rule_id": "CAT1-R003",
+        "severity": "soft",
+        "message": "health_anxiety=0.18 but supplement_necessity=0.82.",
+        "attribute_a": "health_anxiety",
+        "attribute_b": "supplement_necessity_belief",
+        "values": {
+          "health_anxiety": 0.18359522248519966,
+          "supplement_necessity_belief": 0.8172954393332876
+        }
+      }
+    ],
+    "Baldev-Bhubaneswar-Dad-33": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.89. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.8881247208718275
+        }
+      }
+    ],
+    "Abhishek-Indore-Dad-29": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.97. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.9682886522157896
+        }
+      }
+    ],
+    "Yasmin-Pune-Mom-33": [
+      {
+        "rule_id": "CAT1-R003",
+        "severity": "soft",
+        "message": "health_anxiety=0.10 but supplement_necessity=0.82.",
+        "attribute_a": "health_anxiety",
+        "attribute_b": "supplement_necessity_belief",
+        "values": {
+          "health_anxiety": 0.09940478271913726,
+          "supplement_necessity_belief": 0.8155074775128985
+        }
+      }
+    ],
+    "Anjali-Bhopal-Mom-33": [
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.85. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.8547992788018046
+        }
+      }
+    ],
+    "Jai-Bangalore-Dad-36": [
+      {
+        "rule_id": "CAT3-R013",
+        "severity": "soft",
+        "message": "information_need=0.90 but label_reading=0.05.",
+        "attribute_a": "information_need",
+        "attribute_b": "label_reading_habit",
+        "values": {
+          "information_need": 0.9038536741580896,
+          "label_reading_habit": 0.04929339157632129
+        }
+      }
+    ],
+    "Manju-Pune-Mom-34": [
+      {
+        "rule_id": "CAT1-R004",
+        "severity": "soft",
+        "message": "Homemaker with time_scarcity=0.92. Requires narrative justification.",
+        "attribute_a": "employment_status",
+        "attribute_b": "perceived_time_scarcity",
+        "values": {
+          "employment_status": "homemaker",
+          "perceived_time_scarcity": 0.9161207680133079
+        }
+      }
+    ],
+    "Janaki-Indore-Mom-26": [
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.09 but pediatrician_influence=0.87. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.08591110876918145,
+          "pediatrician_influence": 0.8723691665464789
+        }
+      }
+    ],
+    "Sunita-Bhopal-Mom-32": [
+      {
+        "rule_id": "CAT1-R004",
+        "severity": "soft",
+        "message": "Homemaker with time_scarcity=0.86. Requires narrative justification.",
+        "attribute_a": "employment_status",
+        "attribute_b": "perceived_time_scarcity",
+        "values": {
+          "employment_status": "homemaker",
+          "perceived_time_scarcity": 0.8647168271669383
+        }
+      },
+      {
+        "rule_id": "CAT2-R010",
+        "severity": "soft",
+        "message": "Homemaker with career_ambition=0.86. Requires re-entry narrative.",
+        "attribute_a": "employment_status",
+        "attribute_b": "career_ambition",
+        "values": {
+          "employment_status": "homemaker",
+          "career_ambition": 0.8566479461964205
+        }
+      }
+    ],
+    "Priya-Jaipur-Mom-29": [
+      {
+        "rule_id": "CAT1-R004",
+        "severity": "soft",
+        "message": "Homemaker with time_scarcity=0.97. Requires narrative justification.",
+        "attribute_a": "employment_status",
+        "attribute_b": "perceived_time_scarcity",
+        "values": {
+          "employment_status": "homemaker",
+          "perceived_time_scarcity": 0.9710926919934976
+        }
+      }
+    ],
+    "Shahnaz-Kolkata-Mom-26": [
+      {
+        "rule_id": "CAT1-R004",
+        "severity": "soft",
+        "message": "Homemaker with time_scarcity=0.82. Requires narrative justification.",
+        "attribute_a": "employment_status",
+        "attribute_b": "perceived_time_scarcity",
+        "values": {
+          "employment_status": "homemaker",
+          "perceived_time_scarcity": 0.8214216528198361
+        }
+      }
+    ],
+    "Amreen-Hyderabad-Mom-38": [
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.07 but pediatrician_influence=0.81. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.06686314430120338,
+          "pediatrician_influence": 0.8076293042668493
+        }
+      }
+    ],
+    "Champa-Mysore-Mom-35": [
+      {
+        "rule_id": "CAT1-R002",
+        "severity": "soft",
+        "message": "Tier3 city but digital_payment_comfort=0.89. Infrastructure implausibility.",
+        "attribute_a": "city_tier",
+        "attribute_b": "digital_payment_comfort",
+        "values": {
+          "city_tier": "Tier3",
+          "digital_payment_comfort": 0.889520837860924
+        }
+      }
+    ],
+    "Shweta-Chennai-Mom-28": [
+      {
+        "rule_id": "CAT3-R015",
+        "severity": "soft",
+        "message": "authority_bias=0.01 but pediatrician_influence=0.82. Pediatrician IS authority.",
+        "attribute_a": "authority_bias",
+        "attribute_b": "pediatrician_influence",
+        "values": {
+          "authority_bias": 0.010912762428366392,
+          "pediatrician_influence": 0.8187916218765091
+        }
+      }
+    ]
+  }
+}

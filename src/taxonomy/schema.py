@@ -23,6 +23,20 @@ from src.constants import (
     PARENT_AGE_MIN,
 )
 
+# ---------------------------------------------------------------------------
+# Derived insight type aliases (used by ParentTraits, BudgetProfile, etc.)
+# ---------------------------------------------------------------------------
+DecisionStyle = Literal["emotional", "analytical", "habitual", "social"]
+RiskAppetiteLevel = Literal["low", "medium", "high"]
+ConfidenceLevel = Literal["low", "medium", "high"]
+ValueOrientation = Literal["price", "features", "brand", "nutrition", "convenience"]
+OutcomeOrientation = Literal["immediate", "long_term", "balanced"]
+TradeoffStyle = Literal["price_first", "quality_first", "balanced", "feature_first"]
+TrustAnchorType = Literal["self", "peer", "authority", "family"]
+CopingMechanismType = Literal[
+    "routine_control", "social_validation", "research_deep_dive", "denial", "optimism_bias"
+]
+
 UnitInterval = Annotated[float, Field(ge=ATTRIBUTE_MIN, le=ATTRIBUTE_MAX)]
 SignedUnitInterval = Annotated[float, Field(ge=-1.0, le=1.0)]
 ChildAge = Annotated[int, Field(ge=CHILD_AGE_MIN, le=CHILD_AGE_MAX)]
@@ -364,6 +378,67 @@ class MediaAttributes(BaseModel):
     digital_payment_comfort: UnitInterval = 0.5
 
 
+class ParentTraits(BaseModel):
+    """Derived enum-resolved decision traits.
+
+    Computed from continuous psychographic attributes after generation.
+    Provides simulation-ready categorical signals without requiring callers to
+    threshold raw floats at runtime.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    decision_style: DecisionStyle = "analytical"
+    risk_appetite: RiskAppetiteLevel = "medium"
+    decision_confidence: ConfidenceLevel = "medium"
+    primary_value_orientation: ValueOrientation = "features"
+    outcome_orientation: OutcomeOrientation = "balanced"
+    value_tradeoff_style: TradeoffStyle = "balanced"
+    trust_anchor: TrustAnchorType = "self"
+    coping_mechanism_type: CopingMechanismType = "routine_control"
+    coping_mechanism: str = ""
+    consistency_score: int = Field(ge=0, le=100, default=75)
+    consistency_band: Literal["low", "medium", "high"] = "medium"
+    parenting_load: Literal["low", "medium", "high"] = "medium"
+    child_need_orientation: Literal[
+        "growth_driven", "comfort_first", "balanced", "prevention_focused"
+    ] = "balanced"
+
+
+class BudgetProfile(BaseModel):
+    """Derived concrete household budget figures for the food/nutrition category.
+
+    Computed from income, city tier, and psychographic budget consciousness.
+    These figures are directly comparable to product ticket sizes in simulation.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    monthly_food_budget_inr: int = Field(ge=0, default=3000)
+    discretionary_child_nutrition_budget_inr: int = Field(ge=0, default=600)
+    school_fee_pressure_factor: float = Field(ge=0.0, le=1.0, default=0.4)
+    price_sensitivity: Literal["low", "medium", "high"] = "medium"
+    brand_switch_tolerance: Literal["low", "medium", "high"] = "medium"
+
+
+class DecisionRights(BaseModel):
+    """Per-domain purchase authority mapping.
+
+    Makes explicit who holds final say for each decision type in the household,
+    enabling branching simulation logic for multi-stakeholder families.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    child_nutrition: Literal["mother_final", "father_final", "joint", "elder_veto"] = (
+        "mother_final"
+    )
+    grocery_shopping: Literal[
+        "mother_lead", "father_lead", "joint", "household_elder"
+    ] = "mother_lead"
+    supplements: Literal["mother_final", "joint", "doctor_gated"] = "mother_final"
+
+
 class MemoryEntry(BaseModel):
     """A single episodic or semantic memory."""
 
@@ -466,6 +541,18 @@ class Persona(BaseModel):
 
     # Human-readable name generated post-construction for UX purposes.
     display_name: str | None = None
+
+    # --- Derived insight layer (populated by Tier2NarrativeGenerator) ---
+    # Enum-resolved decision traits derived from continuous psychographics.
+    parent_traits: ParentTraits | None = None
+    # Concrete household budget figures for the nutrition category.
+    budget_profile: BudgetProfile | None = None
+    # Per-domain purchase authority mapping.
+    decision_rights: DecisionRights | None = None
+    # First-person diary-voice summary (more immersive than third-person narrative).
+    first_person_summary: str | None = None
+    # Skimmable purchase-driver bullets for product/UX team consumption.
+    purchase_decision_bullets: list[str] = Field(default_factory=list)
 
     episodic_memory: list[MemoryEntry] = Field(default_factory=list)
     semantic_memory: dict[str, Any] = Field(default_factory=dict)

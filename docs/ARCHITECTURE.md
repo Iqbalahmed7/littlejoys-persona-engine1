@@ -1,9 +1,9 @@
 # LittleJoys Persona Simulation Engine — Architecture Document
 
 > **Owner**: Technical Lead (Claude Opus)
-> **Version**: 2.0
-> **Date**: 2026-03-29
-> **Status**: Active — Phase 1 complete, Phase 2 in progress (Sprint 16)
+> **Version**: 3.0
+> **Date**: 2026-04-03
+> **Status**: Active — Sprint 32 complete. Research Intelligence Platform live.
 
 ---
 
@@ -595,14 +595,59 @@ docs/
 
 ---
 
-## 16. Current Status
+## 16. Navigation & Page Map (current)
+
+The app is a single-file Streamlit app (`app/streamlit_app.py`) with sidebar radio navigation:
+
+| Nav Item | Function | Description |
+|---|---|---|
+| Business Problems | `page_home()` | Landing page — 3 scenario cards, quick-access buttons |
+| Run Scenario | `page_run_scenario()` | Results tab + Tweak & Compare simulation builder |
+| Investigate | `page_investigate()` | 3-tab probing tree: Problem Selection → Hypothesis Tree → Findings |
+| Ask the Population | `page_ask_population()` | Free-text question engine across 200 personas |
+| Population | `page_persona_explorer()` | Population Snapshot + Persona Profiles + How We Built Them |
+
+---
+
+## 17. Probing Tree Architecture
+
+The research intelligence layer lives in `src/probing/`:
+
+```
+src/probing/
+├── models.py             # ProblemStatement, Hypothesis, Probe, ProbeResult, TreeSynthesis
+├── predefined_trees.py   # 4 predefined trees (repeat_purchase_low, nutrimix_7_14_expansion,
+│                         #   magnesium_gummies_growth, protein_mix_launch)
+│                         #   Each tree: 5 top-level + 10 sub-hypotheses (why_level 1-2)
+│                         #   All hypotheses have: confidence_prior, real_world_analogy,
+│                         #   cohort_filter, edge_case flag
+├── dynamic_generator.py  # Claude Sonnet generates a full tree for any custom problem
+├── engine.py             # ProbingTreeEngine: execute_probe(), _build_tree_synthesis()
+├── clustering.py         # Response clustering
+├── confidence.py         # Confidence scoring
+├── sampling.py           # Stratified persona sampling
+└── smart_sample.py       # 5-bucket sampling strategy
+```
+
+### Hypothesis model fields (Sprint 1a additions):
+- `confidence_prior: float` — Bayesian prior 0.0–1.0
+- `real_world_analogy: str` — Indian FMCG brand evidence (Horlicks, PediaSure, Dabur, etc.)
+- `why_level: int` — 1 = top-level, 2 = sub-WHY (5-WHY framework)
+- `parent_hypothesis_id: str | None` — links sub-hypotheses to parents
+- `cohort_filter: dict` — e.g. `{"outcome": "lapsed"}` or `{"trust_anchor": "doctor"}`
+- `edge_case: bool` — flags low-probability but strategically important hypotheses
+
+---
+
+## 18. Current Status
 
 | Metric | Value |
 |--------|-------|
-| **Tests** | 532 passed, 2 skipped |
-| **Lint** | Clean (ruff) |
-| **Deployment** | Streamlit Cloud (live) |
-| **GitHub** | Private repo |
-| **Phase** | Phase 2, Sprint 16 in progress |
-| **Priority Scenario** | Nutrimix Repeat Purchase (temporal) |
-| **Next Milestone** | Sprint 17 — Event-driven simulation with Canonical State Model |
+| **Sprint** | 32 complete |
+| **Personas** | 200 generated, 3 journeys run (A, B, C) |
+| **Nav Pages** | 5 (Business Problems, Run Scenario, Investigate, Ask the Population, Population) |
+| **Journeys** | A: Nutrimix Repeat (tick 20/60), B: Gummies (tick 35/45), C: Nutrimix 7-14 (tick 28/45) |
+| **Probing Trees** | 4 predefined + dynamic generator (Claude Sonnet) |
+| **App Entry** | `./run_app.sh` or `.venv/bin/streamlit run app/streamlit_app.py` |
+| **Key Fix** | Anthropic client created fresh per LLM call (httpx 0.28+ thread-safety) |
+| **Next** | Sprint 33 — Intervention simulation, run queue, counterfactual agent |

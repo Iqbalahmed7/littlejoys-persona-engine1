@@ -8,6 +8,13 @@ from src.simulation.consolidation import (
     ParameterSensitivity,
     VariantResult,
 )
+from src.simulation.tick_engine import (
+    JOURNEY_A,
+    JOURNEY_B,
+    JourneySpec,
+    TickEngine,
+    TickJourneyLog,
+)
 
 __all__ = [
     "BatchSimulationRunner",
@@ -16,4 +23,9 @@ __all__ = [
     "MissedInsight",
     "ParameterSensitivity",
     "VariantResult",
+    "TickEngine",
+    "TickJourneyLog",
+    "JourneySpec",
+    "JOURNEY_A",
+    "JOURNEY_B",
 ]
