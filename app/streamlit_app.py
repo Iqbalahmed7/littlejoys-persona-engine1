@@ -23,6 +23,8 @@ import streamlit as st
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+SIMULATTE_COHORT_PATH = Path("/Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/simulatte_cohort_final.json")
+
 from src.simulation.batch_runner import run_batch  # noqa: E402
 from src.simulation.journey_config import (  # noqa: E402
     JourneyConfig,
@@ -42,7 +44,18 @@ from src.taxonomy.schema import Persona  # noqa: E402
 
 @st.cache_data
 def load_all_personas() -> dict[str, dict]:
-    """Load all personas as raw dicts, keyed by id."""
+    """Load all personas from the Simulatte cohort envelope."""
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Persona Generator"))
+    try:
+        from pilots.littlejoys.app_adapter import load_simulatte_cohort, persona_to_display_dict
+        if SIMULATTE_COHORT_PATH.exists():
+            personas = load_simulatte_cohort(SIMULATTE_COHORT_PATH)
+            return {p.persona_id: persona_to_display_dict(p) for p in personas}
+    except Exception as e:
+        st.warning(f"Could not load Simulatte cohort: {e}. Falling back to legacy data.")
+
+    # Fallback: legacy persona loading
     candidates = [
         PROJECT_ROOT / "data" / "population" / "personas_generated.json",
         PROJECT_ROOT / "data" / "population" / "personas.json",
@@ -153,6 +166,30 @@ def _filter_by_age_band(
         if any(lo <= a <= hi for a in ages):
             result[pid] = p
     return result
+
+
+# ---------------------------------------------------------------------------
+# Calibration status badge (sidebar)
+# ---------------------------------------------------------------------------
+
+def _render_calibration_status_sidebar(all_personas: dict[str, dict]) -> None:
+    """Show calibration status badge in sidebar."""
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Persona Generator"))
+    try:
+        from app.components.calibration_badge import render_calibration_badge
+        # Read calibration status from cohort if possible
+        import json as _json
+        if SIMULATTE_COHORT_PATH.exists():
+            cohort_data = _json.loads(SIMULATTE_COHORT_PATH.read_text())
+            cal_status = cohort_data.get("calibration_state", {}).get("status")
+        else:
+            cal_status = None
+        with st.sidebar:
+            st.markdown("**Cohort Status**")
+            render_calibration_badge(cal_status)
+    except Exception:
+        pass  # Silent fail — badge is informational only
 
 
 # ---------------------------------------------------------------------------
@@ -1017,6 +1054,14 @@ def page_simulation_builder_inline(
         )
 
     st.divider()
+    tier = st.radio(
+        "Simulation tier",
+        options=["SIGNAL", "DEEP", "VOLUME"],
+        index=0,
+        horizontal=True,
+        help="DEEP: full cognitive loop (most accurate, slowest) | SIGNAL: balanced | VOLUME: fast screening",
+    )
+    tier_str = tier.lower()
     col_run, col_sa, col_sb = st.columns([2, 1, 1])
     run_clicked = col_run.button("Run Simulation", type="primary", use_container_width=True)
     save_a = col_sa.button("Save as Scenario A", use_container_width=True)
@@ -1049,12 +1094,23 @@ def page_simulation_builder_inline(
             progress.progress(pct, text=f"[{done}/{total}] {name}")
 
         with st.spinner(f"Running journey {jid} across {len(valid)} personas..."):
-            result = run_batch(
-                journey_config=config,
-                personas=valid,
-                concurrency=5,
-                progress_callback=_cb,
-            )
+            try:
+                import sys as _sys
+                _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Persona Generator"))
+                from pilots.littlejoys.simulatte_batch_runner import run_simulatte_batch
+                from pilots.littlejoys.app_adapter import load_simulatte_cohort
+                if SIMULATTE_COHORT_PATH.exists():
+                    persona_records = load_simulatte_cohort(SIMULATTE_COHORT_PATH)
+                    result = run_simulatte_batch(persona_records, config, tier=tier_str)
+                else:
+                    raise ImportError("No cohort file")
+            except Exception:
+                result = run_batch(
+                    journey_config=config,
+                    personas=valid,
+                    concurrency=5,
+                    progress_callback=_cb,
+                )
 
         progress.progress(1.0, text=f"Done — {result.personas_run} personas in {result.elapsed_seconds:.0f}s")
         result_dict = result.to_dict()
@@ -3057,6 +3113,8 @@ def main() -> None:
             pct = int(100 * clean / max(clean + hard, 1))
             st.caption(f"Population quality: {pct}% clean")
         st.divider()
+
+    _render_calibration_status_sidebar(all_personas)
 
     # ── Route ────────────────────────────────────────────────────────────────
     nav = st.session_state["nav_page"]
