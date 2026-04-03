@@ -370,7 +370,7 @@ class CognitiveAgent:
                 response=httpx.Response(status_code=401),
                 body={"error": "missing_api_key"},
             )
-        return anthropic.Anthropic(api_key=api_key)
+        return anthropic.Anthropic(api_key=api_key, max_retries=5)
 
     def _llm_call(self, prompt: str, model: str = "claude-haiku-4-5", max_tokens: int = 512) -> str:
         client = self._get_client()
