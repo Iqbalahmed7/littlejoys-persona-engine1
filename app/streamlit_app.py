@@ -462,67 +462,114 @@ def page_home(all_personas: dict[str, dict]) -> None:
 # Reason thematizer — collapses LLM-generated reason variants into themes
 # ---------------------------------------------------------------------------
 
-def _thematize_reasons(raw: dict[str, int], label: str, cache_key: str) -> tuple[dict[str, int], bool]:
-    """Collapse semantically similar reason strings into clean themes via Claude Haiku.
+def _pre_cluster_reasons(raw: dict[str, int]) -> dict[str, int]:
+    """Python-only prefix clustering — collapses obvious snake_case variants before LLM.
 
-    Returns (thematized_dict, used_llm). Falls back to raw dict on any error.
-    Caches result in session_state so repeated renders don't re-call the API.
+    Groups entries that share the same first 3 significant words (after normalising
+    snake_case → space-separated). Keeps the shortest label per cluster.
+    This handles the common case where the LLM emits e.g.
+      no_discount_this_time / no_discount_this_time_slight_hesitation /
+      no_discount_this_time_slightly_disappointing  →  all become one entry.
+    """
+    from collections import defaultdict
+
+    def _sig_words(s: str, n: int = 3) -> str:
+        tokens = s.lower().replace("_", " ").split()
+        # Skip filler tokens so "a_bit_expensive" and "slightly_expensive" share "expensive"
+        _skip = {"a", "an", "the", "this", "that", "slightly", "slight", "bit", "little",
+                 "very", "quite", "some", "somewhat", "but", "not", "is", "its", "of"}
+        sig = [t for t in tokens if t not in _skip]
+        return " ".join(sig[:n])
+
+    clusters: dict[str, int] = defaultdict(int)      # prefix_key → total count
+    labels: dict[str, str] = {}                       # prefix_key → best label
+
+    for key, count in raw.items():
+        pk = _sig_words(key)
+        clusters[pk] += count
+        # Prefer the shortest / cleanest label (no trailing qualifier noise)
+        if pk not in labels or len(key) < len(labels[pk]):
+            labels[pk] = key
+
+    return {labels[pk]: count for pk, count in clusters.items()}
+
+
+def _humanise_reason(s: str) -> str:
+    """Convert a snake_case or short reason string to a human-readable label."""
+    return s.replace("_", " ").strip().capitalize()
+
+
+def _thematize_reasons(raw: dict[str, int], label: str, cache_key: str) -> tuple[dict[str, int], bool]:
+    """Collapse semantically similar reason strings into clean themes.
+
+    Two-stage pipeline:
+      1. Python prefix clustering — collapses obvious snake_case duplicates instantly.
+      2. Claude Haiku LLM call — produces clean 2–4 word Title Case theme names
+         from the pre-clustered entries (only called when ≥3 distinct clusters remain).
+
+    Returns (thematized_dict, used_llm). Falls back to pre-clustered or raw on error.
+    Caches in session_state so repeated renders don't re-call the API.
     """
     if not raw:
         return raw, False
 
-    # v3 prefix busts old caches that used the lenient prompt
-    state_key = f"_thematized_v3_{cache_key}_{hash(frozenset(raw.items()))}"
+    # Stage 1: Python prefix clustering (no API call needed)
+    pre = _pre_cluster_reasons(raw)
+
+    # v4 prefix busts caches from earlier prompt versions
+    state_key = f"_thematized_v4_{cache_key}_{hash(frozenset(pre.items()))}"
     if state_key in st.session_state:
         return st.session_state[state_key], True
 
-    # If already 2 or fewer items, nothing to collapse
-    if len(raw) <= 2:
-        return raw, False
+    # If pre-clustering already reduced to ≤2 distinct themes, humanise labels and done
+    if len(pre) <= 2:
+        result = {_humanise_reason(k): v for k, v in sorted(pre.items(), key=lambda x: -x[1])}
+        st.session_state[state_key] = result
+        return result, False
 
+    # Stage 2: LLM collapse of remaining clusters into ≤4 clean themes
     try:
         import os, re as _re
         import anthropic as _anthropic
 
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if not api_key:
-            return raw, False
+            result = {_humanise_reason(k): v for k, v in sorted(pre.items(), key=lambda x: -x[1])}
+            return result, False
 
         items_text = "\n".join(
-            f'- "{k}": {v} personas'
-            for k, v in sorted(raw.items(), key=lambda x: -x[1])
+            f'- "{_humanise_reason(k)}": {v} personas'
+            for k, v in sorted(pre.items(), key=lambda x: -x[1])
         )
         prompt = (
             f"You are collating consumer research output. Collapse these {label} into at most 4 distinct themes.\n\n"
             "STRICT RULES — follow exactly:\n"
-            "1. Be AGGRESSIVE about merging. If two entries express the same underlying concern or driver "
-            "(even with different adjectives like 'slight' vs 'mild', or 'actual' vs 'real'), "
-            "they are ONE theme — merge them.\n"
+            "1. Be AGGRESSIVE about merging. Same underlying concern = ONE theme — regardless of wording.\n"
             "2. Sum the persona counts of merged entries.\n"
-            "3. Use short, plain theme names: 2–4 words, Title Case (e.g. 'Placebo Uncertainty', 'Doctor Endorsement').\n"
-            "4. Maximum 4 themes in output. If all entries are variants of the same idea, return 1 theme.\n"
-            "5. Return ONLY a JSON object: {\"Theme Name\": count, ...} — no markdown, no extra text.\n\n"
-            f"Entries to collapse:\n{items_text}\n\n"
-            "Remember: merge aggressively. Fewer, cleaner themes is always better."
+            "3. Use short, plain theme names: 2–4 words, Title Case (e.g. 'Price Too High', 'No Visible Results').\n"
+            "4. Maximum 4 themes. If all entries are variants of the same idea, return exactly 1 theme.\n"
+            "5. Return ONLY a JSON object: {\"Theme Name\": count, ...} — no markdown, no explanation.\n\n"
+            f"Entries:\n{items_text}\n\nMerge aggressively. Fewer themes is better."
         )
 
         client = _anthropic.Anthropic(api_key=api_key)
         msg = client.messages.create(
-            model="claude-haiku-4-5",
+            model="claude-haiku-4-5-20251001",
             max_tokens=256,
             messages=[{"role": "user", "content": prompt}],
         )
         text = msg.content[0].text.strip()
         text = _re.sub(r"^```[a-z]*\n?", "", text)
         text = _re.sub(r"\n?```$", "", text)
-        result: dict[str, int] = json.loads(text)
-        # Sort by count descending
-        result = dict(sorted(result.items(), key=lambda x: -x[1]))
+        result = dict(sorted(json.loads(text).items(), key=lambda x: -x[1]))
         st.session_state[state_key] = result
         return result, True
 
     except Exception:
-        return raw, False
+        # LLM failed — return humanised pre-clustered result (still much better than raw)
+        result = {_humanise_reason(k): v for k, v in sorted(pre.items(), key=lambda x: -x[1])}
+        st.session_state[state_key] = result
+        return result, False
 
 
 # ---------------------------------------------------------------------------
