@@ -500,10 +500,19 @@ def _format_hypothesis_summary(
         return f"{hypothesis_title} remains untested."
 
     strongest = max(results, key=lambda result: result.confidence)
-    status_text = status.replace("_", " ")
+    pct = int(round(confidence * 100))
+
+    # Business-language framing: action signal rather than academic status
+    if status == "confirmed":
+        signal = "This is a real, actionable pattern"
+    elif status == "inconclusive":
+        signal = "The signal is present but mixed — worth a focused follow-up"
+    else:
+        signal = "The data does not support this as a primary driver"
+
     return (
-        f"{hypothesis_title} is {status_text} at {confidence:.0%} confidence. "
-        f"Strongest evidence: {strongest.evidence_summary}"
+        f"{pct}% of the population shows a signal consistent with this pattern. "
+        f"{signal}. {strongest.evidence_summary}"
     )
 
 

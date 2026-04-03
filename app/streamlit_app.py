@@ -321,7 +321,11 @@ def page_home(all_personas: dict[str, dict]) -> None:
     for col, (sid, sc) in zip(cols, SCENARIOS.items()):
         with col:
             has_results = bool(load_journey_results(sc["journey_id"]))
-            status_badge = "Results ready" if has_results else "Not yet run"
+            status_badge = (
+                "📊 200 personas already simulated — results load instantly"
+                if has_results
+                else "▶️ Not yet run — click to configure and run"
+            )
             status_color = "#059669" if has_results else "#D97706"
 
             st.markdown(
@@ -340,7 +344,8 @@ def page_home(all_personas: dict[str, dict]) -> None:
                 </div>""",
                 unsafe_allow_html=True,
             )
-            if st.button(f"Simulate {sc['emoji']}", key=f"home_run_{sid}", use_container_width=True):
+            _btn_label = "See Results →" if has_results else "Run This →"
+            if st.button(_btn_label, key=f"home_run_{sid}", use_container_width=True):
                 st.session_state["nav_page"] = "Run Scenario"
                 st.session_state["active_scenario"] = sid
                 st.rerun()
@@ -471,7 +476,7 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
     r1.metric("Personas Simulated", data.get("total_personas", len(logs)))
     r2.metric("Engagement Rate", f"{lp_pass_pct:.1f}%", help="Personas who trialled, bought, or wanted to research further — did not immediately reject or defer")
     r3.metric("First Purchase", f"{buy_pct:.1f}%", help="Buy + trial at the first decision point")
-    drop_delta = f"−{drop_off:.1f}pp" if drop_off > 0 else f"+{abs(drop_off):.1f}pp"
+    drop_delta = f"−{drop_off:.1f}pp vs baseline" if drop_off > 0 else f"+{abs(drop_off):.1f}pp vs baseline"
     r4.metric(
         "Reorder Rate",
         f"{reorder_pct:.1f}%",
@@ -701,7 +706,7 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
         st.session_state.get(f"last_run_{_jid}") or load_journey_results(_jid)
     )
 
-    tab_results, tab_builder = st.tabs(["Results", "Tweak & Compare"])
+    tab_results, tab_builder = st.tabs(["Results", "Configure & Run"])
 
     with tab_results:
         # Check in-memory run first (from Tweak & Compare tab), then fall back to file
@@ -715,7 +720,7 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
         else:
             st.info(
                 "▶️ **No simulation results yet.**\n\n"
-                "Switch to the **Tweak & Compare** tab to configure the stimulus sequence, "
+                "Switch to the **Configure & Run** tab to configure the stimulus sequence, "
                 "set a price, choose your channels, and click **Run Simulation**."
             )
 
@@ -1113,6 +1118,25 @@ def page_simulation_builder_inline(
         st.subheader("Scenario Comparison")
         st.dataframe(comp_df, use_container_width=True)
 
+        # AI-generated comparison headline (rule-based)
+        sc_a = result_a
+        sc_b = result_b
+        if sc_a and sc_b:
+            buy_a = buy_pct_a
+            buy_b = buy_pct_b
+            reorder_a = float(agg_a.get("reorder_rate_pct", 0) or 0)
+            reorder_b = float(agg_b.get("reorder_rate_pct", 0) or 0)
+            buy_diff = buy_b - buy_a
+            reorder_diff = reorder_b - reorder_a
+            direction = "improved" if buy_diff > 0 else "reduced"
+            headline = (
+                f"Scenario B {direction} first purchase by **{abs(buy_diff):.1f}pp** "
+                f"({'↑' if buy_diff > 0 else '↓'}) and "
+                f"{'increased' if reorder_diff > 0 else 'decreased'} reorder rate by **{abs(reorder_diff):.1f}pp** "
+                f"({'↑' if reorder_diff > 0 else '↓'}) vs Scenario A."
+            )
+            st.info(f"📊 **What changed:** {headline}")
+
 
 # ---------------------------------------------------------------------------
 # Page: Ask the Population
@@ -1303,7 +1327,7 @@ def _bar_html(value: float, colour: str = "#3B82F6") -> str:
 
 
 def page_persona_explorer(all_personas: dict[str, dict]) -> None:
-    st.title("Population Intelligence")
+    st.title("Meet Your Consumers")
     if not all_personas:
         st.error("No personas found in data/population/.")
         return
@@ -2032,7 +2056,7 @@ def page_data_quality(report: dict[str, Any]) -> None:
     selected_pid = st.selectbox("Persona to inspect", persona_ids)
     if st.button("Inspect selected persona"):
         st.session_state["selected_persona_id"] = selected_pid
-        st.session_state["nav_page"] = "Population"
+        st.session_state["nav_page"] = "Meet Your Consumers"
         st.rerun()
     st.dataframe(df[["persona_id", "rule_id", "severity", "attribute_a", "attribute_b", "message"]],
                  use_container_width=True)
@@ -2936,6 +2960,7 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
                     )
 
                 # Input
+                st.caption("💡 Try asking: \"Why didn't you reorder after the first pack?\" · \"What would have made you try it sooner?\" · \"What did you tell your family about this product?\"")
                 with st.form(key=f"conv_form_{_conv_key}", clear_on_submit=True):
                     _q = st.text_input(
                         "Ask a question",
@@ -2985,13 +3010,13 @@ def main() -> None:
 
         page = st.radio(
             "Navigate",
-            ["Business Problems", "Run Scenario", "Investigate", "Ask the Population", "Population"],
+            ["Business Problems", "Run Scenario", "Investigate", "Ask the Population", "Meet Your Consumers"],
             index={
                 "Business Problems": 0,
                 "Run Scenario": 1,
                 "Investigate": 2,
                 "Ask the Population": 3,
-                "Population": 4,
+                "Meet Your Consumers": 4,
             }.get(st.session_state["nav_page"], 0),
         )
         if page != st.session_state["nav_page"]:
@@ -3030,7 +3055,7 @@ def main() -> None:
         page_investigate(all_personas)
     elif nav == "Ask the Population":
         page_ask_population(all_personas)
-    elif nav == "Population":
+    elif nav == "Meet Your Consumers":
         page_persona_explorer(all_personas)
     elif nav == "_quality":
         page_data_quality(violations_report)
