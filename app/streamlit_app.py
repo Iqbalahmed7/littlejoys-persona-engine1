@@ -307,7 +307,7 @@ SCENARIOS = {
         "emoji": "🎯",
         "problem": "Strong in 2–6. Invisible in 7–14.",
         "question": "How does the same Nutrimix product land with parents of older kids?",
-        "population": "133 personas with children aged 7–14",
+        "population": "Personas with children aged 7–14",
         "age_filter": (7, 14),
         "journey_id": "C",
         "color": "#3B82F6",
@@ -828,12 +828,25 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
     # Population filter for this scenario
     age_min, age_max = sc["age_filter"]
     filtered_personas = _filter_by_age_band(all_personas, age_min, age_max)
+    n_filtered = len(filtered_personas)
 
-    st.info(
-        f"Running against **{len(filtered_personas)} personas** "
-        f"({sc['population']})",
-        icon="👥",
-    )
+    if age_min is not None or age_max is not None:
+        if n_filtered == 0:
+            st.warning(
+                "⚠️ No personas matched the age filter for this scenario. "
+                "Child age data may still be loading — try refreshing in a moment.",
+                icon="⚠️",
+            )
+        else:
+            st.info(
+                f"Running against **{n_filtered} personas** with children aged {age_min}–{age_max}",
+                icon="👥",
+            )
+    else:
+        st.info(
+            f"Running against **{n_filtered} personas** ({sc['population']})",
+            icon="👥",
+        )
 
     _jid = sc["journey_id"]
     _has_results = bool(
