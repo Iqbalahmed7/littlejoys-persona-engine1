@@ -320,7 +320,7 @@ class CognitiveAgent:
             scenario_description=scenario.get("description", ""),
         )
 
-        raw = self._llm_call(prompt, model="claude-haiku-4-5-20251001", max_tokens=2048)
+        raw = self._llm_call(prompt, model="claude-sonnet-4-5", max_tokens=2048)
 
         try:
             parsed = json.loads(raw)
