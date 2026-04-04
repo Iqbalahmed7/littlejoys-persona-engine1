@@ -16,6 +16,7 @@ class DecisionResult:
         willingness_to_pay_inr: int | None,  # None if rejecting
         follow_up_action: str,               # what they do next
         persona_id: str,                     # for logging
+        implied_purchase: bool = False,      # research_more/defer + genuine near-term buy commitment
     ):
         self.decision = decision
         self.confidence = confidence
@@ -25,6 +26,7 @@ class DecisionResult:
         self.willingness_to_pay_inr = willingness_to_pay_inr
         self.follow_up_action = follow_up_action
         self.persona_id = persona_id
+        self.implied_purchase = implied_purchase
 
     def to_dict(self) -> dict:
         return {
@@ -36,4 +38,5 @@ class DecisionResult:
             "objections": self.objections,
             "willingness_to_pay_inr": self.willingness_to_pay_inr,
             "follow_up_action": self.follow_up_action,
+            "implied_purchase": self.implied_purchase,
         }

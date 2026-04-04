@@ -159,6 +159,20 @@ class TickEngine:
                             brand = journey.primary_brand
                             if brand in persona.brand_memories:
                                 persona.brand_memories[brand].purchase_count += 1
+                        elif dr.implied_purchase:
+                            # research_more/defer where follow_up_action is a genuine
+                            # purchase commitment — count as an implicit trial so the
+                            # next decision tick sees it in memory and reordered is correct.
+                            brand = journey.primary_brand
+                            if brand in persona.brand_memories:
+                                persona.brand_memories[brand].purchase_count += 1
+                            agent.update_memory({
+                                "event_type": "purchase",
+                                "content": f"Ordered a trial pack of {brand} as planned after research decision. {dr.follow_up_action[:150]}",
+                                "emotional_valence": 0.3,
+                                "salience": 0.8,
+                                "simulation_tick": tick,
+                            })
                     except Exception as e:  # noqa: BLE001
                         tick_decision = {"error": str(e)}
 

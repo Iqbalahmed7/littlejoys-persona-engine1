@@ -110,8 +110,16 @@ Return valid JSON:
   "key_drivers": ["driver1", "driver2"],
   "objections": ["objection1"],
   "willingness_to_pay_inr": <int or null>,
-  "follow_up_action": "short description of what they do next"
+  "follow_up_action": "short description of what they do next",
+  "implied_purchase": <true | false>
 }}
+
+IMPORTANT — implied_purchase:
+Set true ONLY when decision is "research_more" or "defer" AND follow_up_action describes
+the persona actually buying or ordering the product in the near term (e.g. "orders a trial
+pack tonight", "adds to cart", "buys one pack to try"). Set false in all other cases —
+including "buy" and "trial" decisions (already tracked), genuine deferral without purchase
+intent, and rejection.
 """
 
 
@@ -337,6 +345,7 @@ class CognitiveAgent:
             objections=parsed.get("objections", []),
             willingness_to_pay_inr=parsed.get("willingness_to_pay_inr"),
             follow_up_action=parsed.get("follow_up_action", ""),
+            implied_purchase=bool(parsed.get("implied_purchase", False)),
             persona_id=self.persona.display_name or self.persona.id,
         )
 
