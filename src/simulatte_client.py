@@ -77,7 +77,54 @@ def _normalise_persona(p: dict) -> dict:
     if "career" not in p and "employment_status" in d:
         p["career"] = {"employment_status": d["employment_status"]}
 
+    # 4. child_ages reconstruction — if the API omits it but provides
+    #    youngest/oldest/num_children, reconstruct a plausible list so
+    #    the Child Ages column and child-age-band metrics work correctly.
+    if not d.get("child_ages"):
+        youngest = d.get("youngest_child_age")
+        oldest = d.get("oldest_child_age")
+        num = d.get("num_children")
+        if youngest is not None and oldest is not None and isinstance(num, int) and num >= 1:
+            if num == 1:
+                d["child_ages"] = [youngest]
+            else:
+                age_span = max(int(oldest) - int(youngest), 0)
+                if age_span == 0:
+                    d["child_ages"] = [int(youngest)] * num
+                else:
+                    step = age_span / max(num - 1, 1)
+                    d["child_ages"] = [round(int(youngest) + step * i) for i in range(num)]
+
     return p
+
+
+def _load_local_child_ages() -> dict[str, list[int]]:
+    """Load a mapping of persona_id → child_ages from the local personas_generated.json.
+
+    Used to backfill child age data that the API omits.
+    Returns empty dict if file is not found or unreadable.
+    """
+    import json
+    import pathlib
+
+    candidates = [
+        pathlib.Path(__file__).parent.parent / "data" / "population" / "personas_generated.json",
+        pathlib.Path(__file__).parent.parent / "data" / "population" / "personas.json",
+    ]
+    for path in candidates:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            personas = data if isinstance(data, list) else list(data.values())
+            result: dict[str, list[int]] = {}
+            for p in personas:
+                pid = str(p.get("id") or p.get("persona_id") or "")
+                ages = p.get("demographics", {}).get("child_ages") or []
+                if pid and ages:
+                    result[pid] = ages
+            return result
+        except Exception:
+            continue
+    return {}
 
 
 def load_personas(cohort_id: str | None = None) -> dict[str, dict]:
@@ -107,10 +154,29 @@ def load_personas(cohort_id: str | None = None) -> dict[str, dict]:
 
     personas: list[dict] = data.get("personas", [])
     # Normalise field names, then key by id
-    return {
+    result = {
         str(p.get("id") or p.get("persona_id") or i): _normalise_persona(p)
         for i, p in enumerate(personas)
     }
+
+    # Backfill child_ages from local file when API returns empty lists.
+    # The API adapter strips this field; local personas_generated.json has the truth.
+    local_ages = _load_local_child_ages()
+    if local_ages:
+        for pid, persona in result.items():
+            d = persona.get("demographics", {})
+            if not d.get("child_ages"):
+                if pid in local_ages:
+                    d["child_ages"] = local_ages[pid]
+                else:
+                    # Try matching by display_name prefix (e.g. "Janaki-Nagpur-Mom-34")
+                    display = persona.get("display_name", "")
+                    for local_pid, ages in local_ages.items():
+                        if local_pid.startswith(display.split("-")[0] + "-"):
+                            d["child_ages"] = ages
+                            break
+
+    return result
 
 
 def get_cohort_raw(cohort_id: str | None = None) -> dict[str, Any]:

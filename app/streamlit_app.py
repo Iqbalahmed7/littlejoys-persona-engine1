@@ -372,7 +372,7 @@ def page_home(all_personas: dict[str, dict]) -> None:
 
     # Show top trust type as a short readable label with % breakdown in tooltip
     short_labels = {"self": "Self-directed", "authority": "Doctor-driven", "peer": "Peer-led", "family": "Family-led"}
-    if trust_sorted and total > 0:
+    if trust_sorted and total > 0 and len(trust_sorted[0]) >= 2:
         top_key = trust_sorted[0][0]
         top_pct = round(100 * trust_sorted[0][1] / total)
         g3.metric(
@@ -676,6 +676,8 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
         )
         st.line_chart(trust_df.set_index("Day"), use_container_width=True)
         st.caption("Population mean brand trust — 0.0 (none) to 1.0 (full). Tracks across all 200 simulation days.")
+    else:
+        st.info("Brand trust trajectory not available for this journey.")
 
     st.divider()
 
@@ -1779,27 +1781,27 @@ def _render_persona_deep_dive(all_personas: dict[str, dict], persona_id: str) ->
                 f"Price sensitivity: **{price_sens_val.title()}**",
                 f"Brand switch tolerance: **{(bp.brand_switch_tolerance or '—').title() if bp else '—'}**",
                 f"Primary value driver: **{(pt.primary_value_orientation or '—').replace('_',' ').title() if pt else '—'}**",
-                f"Shopping platform: **{persona.daily_routine.primary_shopping_platform.replace('_',' ').title()}**",
+                f"Shopping platform: **{(lambda v: v.replace('_',' ').title() if v and v != '—' else '—')(getattr(getattr(persona, 'daily_routine', None), 'primary_shopping_platform', '—') or '—')}**",
             ],
         },
         {
             "icon": "❤️",
             "title": "Parenting Lens",
             "lines": [
-                f"Parenting style: **{persona.lifestyle.parenting_philosophy.replace('_',' ').title()}**",
+                f"Parenting style: **{(lambda v: v.replace('_',' ').title() if v and v != '—' else '—')(getattr(getattr(persona, 'lifestyle', None), 'parenting_philosophy', '—') or '—')}**",
                 f"Child need focus: **{(pt.child_need_orientation or '—').replace('_',' ').title() if pt else '—'}**",
-                f"Child pester power: **{persona.relationships.child_pester_power:.0%}**",
-                f"Health proactivity: **{persona.health.child_health_proactivity:.0%}**",
+                f"Child pester power: **{f'{_v:.0%}' if (_v := getattr(getattr(persona, 'relationships', None), 'child_pester_power', None)) is not None else '—'}**",
+                f"Health proactivity: **{f'{_v:.0%}' if (_v := getattr(getattr(persona, 'health', None), 'child_health_proactivity', None)) is not None else '—'}**",
             ],
         },
         {
             "icon": "📱",
             "title": "Media & Influence",
             "lines": [
-                f"Platform: **{persona.media.primary_social_platform.replace('_',' ').title()}**",
-                f"Influencer trust: **{persona.relationships.influencer_trust:.0%}**",
-                f"Pediatrician influence: **{persona.relationships.pediatrician_influence:.0%}**",
-                f"WOM openness: **{persona.relationships.wom_receiver_openness:.0%}**",
+                f"Platform: **{(lambda v: v.replace('_',' ').title() if v and v != '—' else '—')(getattr(getattr(persona, 'media', None), 'primary_social_platform', '—') or '—')}**",
+                f"Influencer trust: **{f'{_v:.0%}' if (_v := getattr(getattr(persona, 'relationships', None), 'influencer_trust', None)) is not None else '—'}**",
+                f"Pediatrician influence: **{f'{_v:.0%}' if (_v := getattr(getattr(persona, 'relationships', None), 'pediatrician_influence', None)) is not None else '—'}**",
+                f"WOM openness: **{f'{_v:.0%}' if (_v := getattr(getattr(persona, 'relationships', None), 'wom_receiver_openness', None)) is not None else '—'}**",
             ],
         },
     ]
@@ -2382,11 +2384,30 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
         if tree_key not in st.session_state:
             with st.spinner("Building hypothesis tree..."):
                 try:
+                    import threading as _threading
                     from src.probing.dynamic_generator import generate_hypothesis_tree  # type: ignore
-                    tree_def = generate_hypothesis_tree(custom_text_val)
+
+                    _tree_result: list[Any] = []
+                    _tree_error: list[Exception] = []
+
+                    def _run_tree() -> None:
+                        try:
+                            _tree_result.append(generate_hypothesis_tree(custom_text_val))
+                        except Exception as _e:
+                            _tree_error.append(_e)
+
+                    _t = _threading.Thread(target=_run_tree, daemon=True)
+                    _t.start()
+                    _t.join(timeout=60)
+                    if _t.is_alive():
+                        st.error("Failed to generate hypothesis tree. Please try again.")
+                        return
+                    if _tree_error:
+                        raise _tree_error[0]
+                    tree_def = _tree_result[0]
                     st.session_state[tree_key] = tree_def
                 except Exception as exc:
-                    st.error(f"Could not generate hypothesis tree: {exc}")
+                    st.error("Failed to generate hypothesis tree. Please try again.")
                     return
         tree_def = st.session_state[tree_key]
         problem = tree_def.problem
@@ -2555,10 +2576,19 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
                             }
                             for s in attribute_splits[:6]
                         ]
-                        st.bar_chart(
-                            pd.DataFrame(split_rows).set_index("Attribute"),
-                            use_container_width=True,
-                        )
+                        if len(split_rows) == 1:
+                            row = split_rows[0]
+                            st.markdown(
+                                f"**{row['Attribute']}** — Adopters: {row['Adopters']}, "
+                                f"Rejectors: {row['Rejectors']}"
+                            )
+                        else:
+                            st.bar_chart(
+                                pd.DataFrame(split_rows).set_index("Attribute"),
+                                use_container_width=True,
+                            )
+                    else:
+                        st.info("No data available")
 
                     # Simulation result
                     baseline = getattr(res, "baseline_metric", None)
@@ -2650,107 +2680,114 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
     )
     run_label = f"Run {len(enabled_probes)} probes across {n_personas} personas ({context_label})"
 
-    _trigger_from_top = st.session_state.pop("_trigger_run_probes", False)
-    if st.button(run_label, type="primary", key="inv_run_probes") or _trigger_from_top:
-        from src.probing.engine import ProbingTreeEngine
+    if n_personas == 0:
+        st.warning(
+            "No personas available for this journey context. "
+            "Select a different journey or use 'Full population'."
+        )
+        # do not render the run button
+    else:
+        _trigger_from_top = st.session_state.pop("_trigger_run_probes", False)
+        if st.button(run_label, type="primary", key="inv_run_probes") or _trigger_from_top:
+            from src.probing.engine import ProbingTreeEngine
 
-        # Build Persona objects from the journey-filtered pool
-        persona_objects = []
-        for _pid, p_dict in probe_persona_pool.items():
+            # Build Persona objects from the journey-filtered pool
+            persona_objects = []
+            for _pid, p_dict in probe_persona_pool.items():
+                try:
+                    persona_objects.append(Persona.model_validate(p_dict))
+                except Exception:
+                    pass
+
+            if not persona_objects:
+                st.error("No valid personas available to probe.")
+                return
+
+            # Lightweight duck-typed population — ProbingTreeEngine only calls .personas
+            class _PopWrapper:
+                def __init__(self, ps: list) -> None:
+                    self.personas = ps
+                    self.tier1_personas = ps  # engine may also access this directly
+            pop = _PopWrapper(persona_objects)
+
+            # Initialise LLM client
             try:
-                persona_objects.append(Persona.model_validate(p_dict))
+                import os as _os
+                from src.config import Config as _Config
+                from src.utils.llm import LLMClient
+                _cfg = _Config(anthropic_api_key=_os.environ.get("ANTHROPIC_API_KEY", ""), llm_mock_enabled=False)
+                llm_client = LLMClient(config=_cfg)
+            except Exception as llm_exc:
+                st.error(f"Could not initialise LLM client: {llm_exc}")
+                return
+
+            results: dict[str, Any] = {}
+            progress_bar = st.progress(0, text="Starting probes...")
+            _probe_done_count: list[int] = [0]  # mutable counter accessible inside closure
+
+            def _on_probe_done(hyp_id: str, probe_result: Any) -> None:
+                # Increment first — the callback fires before results dict is updated
+                _probe_done_count[0] += 1
+                done = _probe_done_count[0]
+                total_probes = max(len(enabled_probes), 1)
+                progress_bar.progress(
+                    min(done / total_probes, 1.0),
+                    text=f"Probed {done}/{total_probes}",
+                )
+
+            with st.spinner(f"Running {len(enabled_probes)} probes across {n_personas} personas..."):
+                try:
+                    engine = ProbingTreeEngine(
+                        population=pop,
+                        scenario_id=problem.scenario_id,
+                        llm_client=llm_client,
+                        on_probe_complete=_on_probe_done,
+                        journey_outcomes=journey_outcomes if journey_outcomes else None,
+                    )
+                    # Run probes grouped by hypothesis so we can build verdicts
+                    probes_by_h: dict[str, list] = {}
+                    for probe in enabled_probes:
+                        probes_by_h.setdefault(probe.hypothesis_id, []).append(probe)
+
+                    for h in top_hyps:
+                        if not st.session_state.get(f"h_enabled_{h.id}", True):
+                            continue
+                        h_probes = probes_by_h.get(h.id, [])
+                        for probe in h_probes:
+                            try:
+                                res = engine.execute_probe(probe)
+                                results[probe.id] = res
+                            except Exception as probe_exc:
+                                st.warning(f"Probe {probe.id} failed: {probe_exc}")
+                        # Build verdict for this hypothesis so synthesis has data
+                        if h_probes:
+                            try:
+                                engine.verdicts[h.id] = engine._build_hypothesis_verdict(h, h_probes)
+                            except Exception:
+                                pass
+
+                except Exception as engine_exc:
+                    st.error(f"Engine error: {engine_exc}")
+                    import traceback
+                    st.code(traceback.format_exc())
+                    return
+
+            progress_bar.progress(1.0, text="Done")
+            st.session_state[f"probe_results_{problem_id}"] = results
+            # Invalidate stale report cache so findings rebuild from fresh probe results
+            st.session_state.pop(f"report_data_{problem_id}", None)
+
+            # Build synthesis now that verdicts are populated
+            try:
+                # Pass the enabled hypotheses so synthesis only covers what was run
+                enabled_hyps = [h for h in top_hyps if st.session_state.get(f"h_enabled_{h.id}", True)]
+                synthesis = engine._build_tree_synthesis(problem, enabled_hyps, probes)
+                st.session_state[f"synthesis_{problem_id}"] = synthesis
             except Exception:
                 pass
 
-        if not persona_objects:
-            st.error("No valid personas available to probe.")
-            return
-
-        # Lightweight duck-typed population — ProbingTreeEngine only calls .personas
-        class _PopWrapper:
-            def __init__(self, ps: list) -> None:
-                self.personas = ps
-                self.tier1_personas = ps  # engine may also access this directly
-        pop = _PopWrapper(persona_objects)
-
-        # Initialise LLM client
-        try:
-            import os as _os
-            from src.config import Config as _Config
-            from src.utils.llm import LLMClient
-            _cfg = _Config(anthropic_api_key=_os.environ.get("ANTHROPIC_API_KEY", ""), llm_mock_enabled=False)
-            llm_client = LLMClient(config=_cfg)
-        except Exception as llm_exc:
-            st.error(f"Could not initialise LLM client: {llm_exc}")
-            return
-
-        results: dict[str, Any] = {}
-        progress_bar = st.progress(0, text="Starting probes...")
-        _probe_done_count: list[int] = [0]  # mutable counter accessible inside closure
-
-        def _on_probe_done(hyp_id: str, probe_result: Any) -> None:
-            # Increment first — the callback fires before results dict is updated
-            _probe_done_count[0] += 1
-            done = _probe_done_count[0]
-            total_probes = max(len(enabled_probes), 1)
-            progress_bar.progress(
-                min(done / total_probes, 1.0),
-                text=f"Probed {done}/{total_probes}",
-            )
-
-        with st.spinner(f"Running {len(enabled_probes)} probes across {n_personas} personas..."):
-            try:
-                engine = ProbingTreeEngine(
-                    population=pop,
-                    scenario_id=problem.scenario_id,
-                    llm_client=llm_client,
-                    on_probe_complete=_on_probe_done,
-                    journey_outcomes=journey_outcomes if journey_outcomes else None,
-                )
-                # Run probes grouped by hypothesis so we can build verdicts
-                probes_by_h: dict[str, list] = {}
-                for probe in enabled_probes:
-                    probes_by_h.setdefault(probe.hypothesis_id, []).append(probe)
-
-                for h in top_hyps:
-                    if not st.session_state.get(f"h_enabled_{h.id}", True):
-                        continue
-                    h_probes = probes_by_h.get(h.id, [])
-                    for probe in h_probes:
-                        try:
-                            res = engine.execute_probe(probe)
-                            results[probe.id] = res
-                        except Exception as probe_exc:
-                            st.warning(f"Probe {probe.id} failed: {probe_exc}")
-                    # Build verdict for this hypothesis so synthesis has data
-                    if h_probes:
-                        try:
-                            engine.verdicts[h.id] = engine._build_hypothesis_verdict(h, h_probes)
-                        except Exception:
-                            pass
-
-            except Exception as engine_exc:
-                st.error(f"Engine error: {engine_exc}")
-                import traceback
-                st.code(traceback.format_exc())
-                return
-
-        progress_bar.progress(1.0, text="Done")
-        st.session_state[f"probe_results_{problem_id}"] = results
-        # Invalidate stale report cache so findings rebuild from fresh probe results
-        st.session_state.pop(f"report_data_{problem_id}", None)
-
-        # Build synthesis now that verdicts are populated
-        try:
-            # Pass the enabled hypotheses so synthesis only covers what was run
-            enabled_hyps = [h for h in top_hyps if st.session_state.get(f"h_enabled_{h.id}", True)]
-            synthesis = engine._build_tree_synthesis(problem, enabled_hyps, probes)
-            st.session_state[f"synthesis_{problem_id}"] = synthesis
-        except Exception:
-            pass
-
-        st.success(f"Completed {len(results)} probes.")
-        st.rerun()
+            st.success(f"Completed {len(results)} probes.")
+            st.rerun()
 
     # ── Section C: Findings + Downloads + Interventions + Conversations ────────
     results_key = f"probe_results_{problem_id}"
@@ -2882,13 +2919,23 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
 
                 if hr.attribute_splits:
                     st.markdown("**Adopters vs lapsers:**")
-                    split_df = pd.DataFrame([
+                    split_rows_hr = [
                         {"Attribute": s["attribute"].replace("_", " ").title(),
                          "Adopters": round(s["adopter"], 3),
                          "Rejectors": round(s["rejector"], 3)}
                         for s in hr.attribute_splits[:5]
-                    ]).set_index("Attribute")
-                    st.bar_chart(split_df, use_container_width=True)
+                    ]
+                    if len(split_rows_hr) == 1:
+                        row = split_rows_hr[0]
+                        st.markdown(
+                            f"**{row['Attribute']}** — Adopters: {row['Adopters']}, "
+                            f"Rejectors: {row['Rejectors']}"
+                        )
+                    else:
+                        split_df = pd.DataFrame(split_rows_hr).set_index("Attribute")
+                        st.bar_chart(split_df, use_container_width=True)
+                else:
+                    st.info("No data available")
 
                 st.markdown(
                     f"<div style='background:#EFF6FF;border:1px solid #BFDBFE;"
@@ -3058,8 +3105,14 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
                         delta_color = "normal" if lift >= 0 else "inverse"
                         st.metric("Observed Lift", f"+{lift:.1f}%", delta=f"{lift:.1f}pp", delta_color=delta_color)
                         st.caption(f"{run.personas_run} personas")
+                        if st.button("🔄 Re-run", key=f"iv_rerun_{prop.id}", type="secondary"):
+                            st.session_state[iv_runs_key].pop(prop.id, None)
+                            st.rerun()
                     elif run.status == "failed":
                         st.error(f"Failed: {run.error or 'unknown'}")
+                        if st.button("🔄 Re-run", key=f"iv_rerun_{prop.id}", type="secondary"):
+                            st.session_state[iv_runs_key].pop(prop.id, None)
+                            st.rerun()
 
         # Download results PDF if any runs are complete
         _complete_runs = [r for r in st.session_state.get(iv_runs_key, {}).values()
