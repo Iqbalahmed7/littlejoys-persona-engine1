@@ -40,7 +40,7 @@ from src.taxonomy.schema import Persona  # noqa: E402
 # Data loading
 # ---------------------------------------------------------------------------
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def load_all_personas() -> dict[str, dict]:
     """Load all personas via the Simulatte Persona Generator REST API.
 
