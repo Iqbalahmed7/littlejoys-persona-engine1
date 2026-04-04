@@ -704,8 +704,8 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
             if len(dec_snaps_sorted) > 1:
                 reorder_dec = str(dec_snaps_sorted[-1]["decision_result"].get("decision", "—"))
             elif len(dec_snaps_sorted) == 1:
-                # Only one decision captured — reorder decision silently errored
-                reorder_dec = "error / not captured"
+                # Only one scheduled decision tick — no second decision
+                reorder_dec = "—"
             last_trust = 0.0
             if snaps:
                 brand_trust = snaps[-1].get("brand_trust", {}) or {}
@@ -713,9 +713,9 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
             reordered = log.get("reordered", False)
             rows.append({
                 "Persona": log.get("display_name", log.get("persona_id", "?")),
-                "Outcome": "✅ Reordered" if reordered else "❌ Lapsed",
-                "Trial Decision": first_dec,
-                "Reorder Decision": reorder_dec,
+                "Outcome": "✅ Reordered" if reordered else "❌ No Reorder",
+                "Decision 1": first_dec,
+                "Decision 2": reorder_dec,
                 "Brand Trust": round(float(last_trust), 3),
                 "Memories": int((snaps[-1].get("memories_count", 0) if snaps else 0)),
             })
@@ -724,16 +724,16 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
             df = pd.DataFrame(rows)
 
             f1, f2 = st.columns(2)
-            show = f1.selectbox("Filter by outcome", ["All", "✅ Reordered", "❌ Lapsed"], key="scenario_outcome_filter")
-            trial_opts = sorted(df["Trial Decision"].unique().tolist())
-            trial_filter = f2.selectbox("Filter by trial decision", ["all", *trial_opts], key="scenario_decision_filter")
+            show = f1.selectbox("Filter by outcome", ["All", "✅ Reordered", "❌ No Reorder"], key="scenario_outcome_filter")
+            trial_opts = sorted(df["Decision 1"].unique().tolist())
+            trial_filter = f2.selectbox("Filter by first decision", ["all", *trial_opts], key="scenario_decision_filter")
 
             if show == "✅ Reordered":
                 df = df[df["Outcome"] == "✅ Reordered"]
-            elif show == "❌ Lapsed":
-                df = df[df["Outcome"] == "❌ Lapsed"]
+            elif show == "❌ No Reorder":
+                df = df[df["Outcome"] == "❌ No Reorder"]
             if trial_filter != "all":
-                df = df[df["Trial Decision"] == trial_filter]
+                df = df[df["Decision 1"] == trial_filter]
 
             # Single table with row-selection (Styler + selection_mode is not compatible in Streamlit)
             selection = st.dataframe(
@@ -745,8 +745,8 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
                 hide_index=True,
                 column_config={
                     "Outcome": st.column_config.TextColumn("Outcome", width="small"),
-                    "Trial Decision": st.column_config.TextColumn("Trial (1st)", help="What the persona decided at the first purchase moment"),
-                    "Reorder Decision": st.column_config.TextColumn("Reorder (2nd)", help="What the persona decided when given the chance to reorder"),
+                    "Decision 1": st.column_config.TextColumn("Decision 1", help="What the persona decided at the first scheduled decision tick (may be research_more, trial, buy, or reject)"),
+                    "Decision 2": st.column_config.TextColumn("Decision 2", help="What the persona decided at the second scheduled decision tick — only counts as a reorder if Decision 1 was a purchase"),
                     "Brand Trust": st.column_config.NumberColumn("Brand Trust", format="%.3f"),
                     "Memories": st.column_config.NumberColumn("Memories", help="Episodic memories accumulated by end of journey"),
                 },
@@ -884,7 +884,7 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
                 lapsed = sum(1 for v in outcomes.values() if v == "lapsed")
                 rejectors = sum(1 for v in outcomes.values() if v == "reject")
                 st.caption(
-                    f"Cohort breakdown — {adopters} reordered · {lapsed} lapsed · "
+                    f"Cohort breakdown — {adopters} reordered · {lapsed} no reorder · "
                     f"{rejectors} didn't buy"
                 )
                 if st.button(
@@ -2678,7 +2678,7 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
         _rejectors = sum(1 for v in journey_outcomes.values() if v == "reject")
         st.caption(
             f"Journey cohort: **{len(probe_persona_pool)} personas** — "
-            f"{_adopters} reordered · {_lapsed} lapsed · {_rejectors} didn't buy  "
+            f"{_adopters} reordered · {_lapsed} no reorder · {_rejectors} didn't buy  "
             f"_(probes target the relevant segment automatically)_"
         )
 
