@@ -80,12 +80,12 @@ def _get_decision_at_tick(log_dict: dict[str, Any], tick: int) -> dict[str, Any]
 def _get_second_decision(log_dict: dict[str, Any], journey_id: str) -> dict[str, Any]:
     if "second_decision" in log_dict and isinstance(log_dict["second_decision"], dict):
         return log_dict["second_decision"]
-    key = "tick60_decision" if journey_id == "A" else "tick45_decision"
+    # All journeys (A, B, C) now have their reorder decision at tick 60
+    key = "tick60_decision"
     if key in log_dict and isinstance(log_dict[key], dict):
         return log_dict[key]
-    # Fallback: scan snapshots
-    tick = 60 if journey_id == "A" else 45
-    return _get_decision_at_tick(log_dict, tick)
+    # Fallback: scan snapshots for the last decision tick in the journey
+    return _get_decision_at_tick(log_dict, 60)
 
 
 def _print_summary(journey_id: str, logs: list[dict[str, Any]], aggregate) -> None:
@@ -202,10 +202,9 @@ def main() -> int:
         second = _get_second_decision(log_dict, journey_id)
         second_decision = _decision_label(second)
         reordered = log_dict.get("reordered") or second_decision in {"buy", "trial", "reorder"}
-        tick_label = "tick60_decision" if journey_id == "A" else "tick45_decision"
         print(
             f"  [{done:>3}/{total}] {name:<28} journey={journey_id}  "
-            f"{tick_label}={second_decision:<6} reordered={bool(reordered)}"
+            f"tick60={second_decision:<14} reordered={bool(reordered)}"
         )
 
     result: BatchResult = run_batch(

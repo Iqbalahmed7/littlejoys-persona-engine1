@@ -128,9 +128,36 @@ def _extract_journey_outcomes(result_dict: dict[str, Any]) -> dict[str, str]:
 
 
 @st.cache_data
+def _load_local_personas_index() -> dict[str, dict]:
+    """Load the full-schema local personas_generated.json keyed by id."""
+    candidates = [
+        PROJECT_ROOT / "data" / "population" / "personas_generated.json",
+        PROJECT_ROOT / "data" / "population" / "personas.json",
+    ]
+    for path in candidates:
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            records = data if isinstance(data, list) else list(data.values())
+            return {str(r.get("id", i)): r for i, r in enumerate(records)}
+    return {}
+
+
+@st.cache_data
 def parse_persona(p_dict_json: str) -> Persona | None:
+    p = json.loads(p_dict_json)
+    # If the dict is missing required schema fields (e.g. came from the
+    # trimmed API adapter), merge it with the local full-schema record.
+    required_fields = {"psychology", "health", "values", "cultural"}
+    if not required_fields.issubset(p.keys()):
+        local_index = _load_local_personas_index()
+        pid = str(p.get("id") or p.get("persona_id") or "")
+        local = local_index.get(pid, {})
+        if local:
+            # Local record is base; API record overlays display-level fields
+            merged = {**local, **{k: v for k, v in p.items() if v is not None}}
+            p = merged
     try:
-        return Persona.model_validate(json.loads(p_dict_json))
+        return Persona.model_validate(p)
     except Exception:
         return None
 

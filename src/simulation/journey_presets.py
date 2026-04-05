@@ -66,7 +66,10 @@ PRESET_JOURNEY_A = JourneyConfig(
             tick=23,
             type="product",
             source="home",
-            content="First week using Nutrimix: child accepts the taste; mixes easily with milk.",
+            content=(
+                "First week using Nutrimix: child takes it on most days but pushed the "
+                "cup away twice. Not a clear refusal — just inconsistent."
+            ),
             brand="littlejoys",
         ),
         StimulusConfig(
@@ -75,8 +78,9 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="social_event",
             source="parent_observation",
             content=(
-                "Two weeks of daily Nutrimix use. Child continues to take it without "
-                "complaints. Parent observing — no clear change noted yet."
+                "Three weeks in. Some days child takes Nutrimix without issue, other days "
+                "pushes it away or asks for plain milk. Routine feels patchy, not "
+                "established. No visible change in energy or appetite yet."
             ),
             brand="littlejoys",
         ),
@@ -89,26 +93,41 @@ PRESET_JOURNEY_A = JourneyConfig(
             brand="horlicks",
         ),
         StimulusConfig(
+            id="A-S36",
+            tick=36,
+            type="wom",
+            source="school_mom_negative",
+            content=(
+                "School mom who started Nutrimix the same week mentions her child took it "
+                "fine for three weeks then started refusing it every other day. She's "
+                "undecided about reordering — 'not sure if it's a phase or if he's just "
+                "bored of the taste.'"
+            ),
+            brand="littlejoys",
+        ),
+        StimulusConfig(
             id="A-S38",
             tick=38,
             type="social_event",
             source="internal",
             content=(
-                "Noticing the LittleJoys Nutrimix pack is running low; due for replenishment "
-                "this week."
+                "The Nutrimix pack is running low. Child has been taking it inconsistently "
+                "this past week — accepted it 4 out of 7 days."
             ),
             brand="littlejoys",
         ),
         StimulusConfig(
-            id="A-S42",
-            tick=42,
-            type="wom",
-            source="school_mom",
+            id="A-S44",
+            tick=44,
+            type="social_event",
+            source="pharmacy",
             content=(
-                "Another mom at school pickup mentions she's been looking at Nutrimix — "
-                "asks if you've tried it yet and what made you pick it."
+                "At the pharmacy, overheard a parent telling the pharmacist they're "
+                "switching back from a newer drink mix to Horlicks — said their child got "
+                "bored of it after a month and now refuses it. Pharmacist nodded and said "
+                "'it happens with the newer brands, kids go off them.'"
             ),
-            brand="littlejoys",
+            brand="complan",
         ),
         StimulusConfig(
             id="A-S48",
@@ -117,7 +136,7 @@ PRESET_JOURNEY_A = JourneyConfig(
             source="bigbasket",
             content=(
                 "Check BigBasket: LittleJoys Nutrimix still Rs 649; no active discount "
-                "this week."
+                "this week. Horlicks Growth Plus 500g is Rs 449."
             ),
             brand="littlejoys",
         ),
@@ -125,12 +144,14 @@ PRESET_JOURNEY_A = JourneyConfig(
             id="A-S55",
             tick=55,
             type="social_event",
-            source="pharmacy",
+            source="parent_observation",
             content=(
-                "Pharmacist casually suggests Complan as a 'safe default' if you're "
-                "unsure about newer brands."
+                "Pack is nearly finished. Looking back over the last five weeks: child "
+                "accepted Nutrimix about 60–65% of days. No clear improvement in appetite "
+                "or energy visible. It hasn't been a failure — but it hasn't been a clear "
+                "win either."
             ),
-            brand="complan",
+            brand="littlejoys",
         ),
     ],
     decisions=[
