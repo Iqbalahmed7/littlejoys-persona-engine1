@@ -67,8 +67,8 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="product",
             source="home",
             content=(
-                "First week using Nutrimix: child takes it on most days but pushed the "
-                "cup away twice. Not a clear refusal — just inconsistent."
+                "First week using Nutrimix: child takes it on most mornings without fuss. "
+                "Mixes well with milk. One refusal mid-week but generally cooperative."
             ),
             brand="littlejoys",
         ),
@@ -78,9 +78,9 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="social_event",
             source="parent_observation",
             content=(
-                "Three weeks in. Some days child takes Nutrimix without issue, other days "
-                "pushes it away or asks for plain milk. Routine feels patchy, not "
-                "established. No visible change in energy or appetite yet."
+                "Four weeks in. Child acceptance is mixed — takes it about 5 out of 7 "
+                "days without complaint, but asks for plain milk the other two. "
+                "No visible change in appetite or energy yet. Can't tell if it's working."
             ),
             brand="littlejoys",
         ),
@@ -96,12 +96,12 @@ PRESET_JOURNEY_A = JourneyConfig(
             id="A-S36",
             tick=36,
             type="wom",
-            source="school_mom_negative",
+            source="school_mom_mixed",
             content=(
-                "School mom who started Nutrimix the same week mentions her child took it "
-                "fine for three weeks then started refusing it every other day. She's "
-                "undecided about reordering — 'not sure if it's a phase or if he's just "
-                "bored of the taste.'"
+                "School mom who also started Nutrimix says her child is 'okay with it' — "
+                "takes it most days, no strong complaints, but she hasn't noticed any "
+                "clear improvement either. She's on the fence about reordering: "
+                "'I'll probably try one more pack and see.'"
             ),
             brand="littlejoys",
         ),
@@ -111,23 +111,10 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="social_event",
             source="internal",
             content=(
-                "The Nutrimix pack is running low. Child has been taking it inconsistently "
-                "this past week — accepted it 4 out of 7 days."
+                "Nutrimix pack is running low — about a week left. "
+                "No discount visible on BigBasket right now."
             ),
             brand="littlejoys",
-        ),
-        StimulusConfig(
-            id="A-S44",
-            tick=44,
-            type="social_event",
-            source="pharmacy",
-            content=(
-                "At the pharmacy, overheard a parent telling the pharmacist they're "
-                "switching back from a newer drink mix to Horlicks — said their child got "
-                "bored of it after a month and now refuses it. Pharmacist nodded and said "
-                "'it happens with the newer brands, kids go off them.'"
-            ),
-            brand="complan",
         ),
         StimulusConfig(
             id="A-S48",
@@ -135,8 +122,9 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="price_change",
             source="bigbasket",
             content=(
-                "Check BigBasket: LittleJoys Nutrimix still Rs 649; no active discount "
-                "this week. Horlicks Growth Plus 500g is Rs 449."
+                "Browsing BigBasket: LittleJoys Nutrimix Rs 649, no discount. "
+                "Horlicks Growth Plus 500g is Rs 449 on the same page. "
+                "Bournvita 500g is Rs 389."
             ),
             brand="littlejoys",
         ),
@@ -146,10 +134,11 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="social_event",
             source="parent_observation",
             content=(
-                "Pack is nearly finished. Looking back over the last five weeks: child "
-                "accepted Nutrimix about 60–65% of days. No clear improvement in appetite "
-                "or energy visible. It hasn't been a failure — but it hasn't been a clear "
-                "win either."
+                "Five weeks done. Child has taken Nutrimix on most days — "
+                "roughly 5 out of 7. No dramatic improvement visible, but no "
+                "rejection pattern either. Pediatrician's iron concern is still "
+                "in the back of mind. Not sure if the product is 'working' "
+                "but the child hasn't refused it consistently."
             ),
             brand="littlejoys",
         ),

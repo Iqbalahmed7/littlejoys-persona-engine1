@@ -112,20 +112,15 @@ def _extract_decision(payload: dict[str, Any], decision_number: int) -> dict[str
     else:
         candidates = [
             "second_decision",
-            "final_decision",   # TickJourneyLog stores last decision here
+            "final_decision",   # TickJourneyLog stores last decision here (tick 60 for all journeys)
             "tick60_decision",
-            "tick45_decision",
             "decision_tick_60",
-            "decision_tick_45",
         ]
-        snapshot_ticks = {60, 45}
+        snapshot_ticks = {60}
 
-    # "final_decision" in the payload is always the last decision made —
-    # reliable fallback for TickEngine output where no per-tick keys exist.
-    if "final_decision" in payload and decision_number == 1:
-        fd = _to_dict(payload.get("final_decision"))
-        if fd and "error" not in fd:
-            return fd
+    # NOTE: "final_decision" in the TickJourneyLog is always the LAST decision
+    # made (e.g. tick 60), so it must NOT be used as a fallback for the first
+    # decision. The snapshot scan below handles the correct tick lookup.
 
     for key in candidates:
         if key in payload:
@@ -206,9 +201,10 @@ def _decision_trust(
 
 
 def _journey_ticks(journey_id: str) -> tuple[int, int]:
-    if journey_id.upper() == "B":
-        return 35, 45
-    return 20, 60
+    # All journeys now have their reorder decision at tick 60.
+    # First-buy ticks: A=20, B=35, C=28
+    first_tick = 35 if journey_id.upper() == "B" else (28 if journey_id.upper() == "C" else 20)
+    return first_tick, 60
 
 
 def _distribution(counter: Counter[str], denominator: int) -> dict[str, dict]:
