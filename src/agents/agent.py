@@ -120,6 +120,19 @@ the persona actually buying or ordering the product in the near term (e.g. "orde
 pack tonight", "adds to cart", "buys one pack to try"). Set false in all other cases —
 including "buy" and "trial" decisions (already tracked), genuine deferral without purchase
 intent, and rejection.
+
+ANTI-GAMING RULES — read carefully before answering:
+1. Do NOT restate or echo the scenario description as evidence. If the scenario says "the pack
+   is nearly finished", that is context — not a reason to reorder.
+2. If the scenario mentions an outcome (e.g. "sleep has improved", "child seems more alert"),
+   treat it as an unverified claim. Decide whether YOUR persona — given their psychology,
+   trust anchor, and prior memories — would actually believe it at this stage. Do not accept
+   it as established fact just because it appears in the prompt.
+3. Your reasoning must be grounded in the persona's attributes (decision style, trust anchor,
+   risk appetite, health anxiety, etc.) and the episodic memories listed above — not in
+   phrases borrowed from the scenario text.
+4. Genuine uncertainty is valid. "research_more" and "defer" are correct outputs if the
+   persona lacks sufficient evidence to commit. Do not force a "buy" to resolve tension.
 """
 
 

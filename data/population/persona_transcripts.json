@@ -1,0 +1,722 @@
+{
+  "A_reorderer": {
+    "persona_id": "Ayesha-Delhi-Mom-37",
+    "display_name": "Ayesha",
+    "reordered": true,
+    "profile": {
+      "age": 37,
+      "city": "Delhi",
+      "gender": null,
+      "children": [],
+      "income_band": null,
+      "decision_style": "analytical",
+      "trust_anchor": "family",
+      "risk_appetite": "high",
+      "primary_value": "convenience",
+      "health_anxiety": 0.2762059104835589,
+      "social_proof_bias": 0.24486517491286863,
+      "information_need": 0.3608214442144817,
+      "best_for_child": 0.30601275139916384
+    },
+    "decisions": [
+      {
+        "tick": 20,
+        "decision": "trial",
+        "confidence": 0.78,
+        "reasoning_trace": [
+          "Step 1: Gut feeling is cautiously positive \u2014 the price drop feels like good timing, and multiple trusted touchpoints (pediatrician, close friend, school parents) are converging around the same product. This feels less like a random\u8a66 and more like something worth trying.",
+          "Step 2: As an analytical decision-maker, I'm weighing: (a) Pediatrician's mention of low iron + product's iron emphasis = relevant to my 12-year-old's needs, (b) Close friend's positive experience with appetite improvement = trusted family/friend validation, (c) Rs 649 down from Rs 799 = 19% discount makes trial lower-risk, (d) School WhatsApp discussion positions it as 'cleaner' vs Horlicks = aligns with wanting better options. The packaging and first impressions from the Instagram reel looked professional enough to merit trust.",
+          "Step 3: Budget check: Rs 649 for 500g trial fits comfortably within my Rs 7,567/month child nutrition budget, especially with 4 kids \u2014 if even 2-3 of them take to it, the per-serving cost is reasonable. No hard constraints violated. As a non-vegetarian household, no dietary restrictions. Medium price sensitivity means I'm okay paying for quality, especially at the discounted rate.",
+          "Step 4: Trust network signals are strong: (1) Pediatrician mentioned it in context of iron deficiency \u2014 medical validation, (2) Close WhatsApp friend reported appetite improvement in her child \u2014 peer success story, (3) School parents discussing it as an alternative to Horlicks \u2014 social proof from my community. Family trust anchor is satisfied through friend's recommendation. No negative signals detected.",
+          "Step 5: Decision is to buy one pack as a trial. The convergence of pediatrician mention, friend endorsement, price drop, and my measured optimism toward new products tips this into 'worth trying now' territory. I'll order on BigBasket during today's quick commerce run, test with my 12-year-old first (the one with demanding school routine), and assess taste acceptance and any visible changes over 2-3 weeks before deciding on repeat purchase."
+        ],
+        "key_drivers": [
+          "Pediatrician endorsement aligned with child's iron needs",
+          "Close friend's positive word-of-mouth on appetite improvement",
+          "Price drop from Rs 799 to Rs 649 reduces trial risk",
+          "School parent community validation as cleaner alternative"
+        ],
+        "objections": [
+          "Untested brand \u2014 need to verify if kids will actually drink it consistently",
+          "Need to check ingredient list more carefully despite initial packaging trust"
+        ],
+        "follow_up_action": "Orders one 500g pack on BigBasket today, will introduce to 12-year-old at breakfast tomorrow and monitor taste acceptance and energy levels over next 2-3 weeks before considering bulk purchase or expanding to other children",
+        "wtp": 649
+      },
+      {
+        "tick": 60,
+        "decision": "buy",
+        "confidence": 0.82,
+        "reasoning_trace": [
+          "Step 1: My gut says continue \u2014 the product is working, my child accepts it, and I've already seen the results I was hoping for. No reason to disrupt what's working.",
+          "Step 2: I focus on the tangible outcomes: child's energy improved after two weeks, taste acceptance is good, mixes easily (convenience matters to me), close friend validated it, and pediatrician's iron concern is being addressed. Price is Rs 649 \u2014 higher than the Rs 649 discount I got before, but wait, it says 'was Rs 799', so this IS still discounted. Within my Rs 7,567 monthly nutrition budget.",
+          "Step 3: Budget check: Rs 649 fits comfortably within my Rs 7,567/month allocation. Trust check: Already established through 5 weeks of use plus friend endorsement. Convenience check: BigBasket quick commerce, familiar ordering. No hard constraints violated.",
+          "Step 4: My close friend is already using it successfully. My child likes it. The pediatrician validated the iron need (though suggested 'a' drink, not this specific one). Family would likely support continuing something that's showing results rather than switching to an unknown. No negative signals from my trust network.",
+          "Step 5: I reorder. The product has earned continued trust through demonstrated results, my analytical side is satisfied with the performance data over 5 weeks, and there's no compelling reason to experiment with alternatives when this is working. The convenience of reordering on BigBasket vs researching new options also aligns with my values."
+        ],
+        "key_drivers": [
+          "proven_results_over_5_weeks",
+          "child_acceptance_and_taste",
+          "convenience_of_repurchase",
+          "friend_validation",
+          "addressing_pediatrician_iron_concern"
+        ],
+        "objections": [
+          "slight_concern_about_ongoing_price_vs_initial_discount"
+        ],
+        "follow_up_action": "Adds LittleJoys Nutrimix 500g to BigBasket cart and completes the order, possibly adding a second pack to avoid running out again",
+        "wtp": 649
+      }
+    ],
+    "trust_trajectory": {
+      "1": 0.24,
+      "2": 0.24,
+      "3": 0.24,
+      "4": 0.24,
+      "5": 0.4155,
+      "6": 0.4155,
+      "7": 0.4155,
+      "8": 0.5383,
+      "9": 0.5383,
+      "10": 0.5383,
+      "11": 0.5383,
+      "12": 0.6093,
+      "13": 0.6093,
+      "14": 0.6093,
+      "15": 0.644,
+      "16": 0.644,
+      "17": 0.644,
+      "18": 0.644,
+      "19": 0.644,
+      "20": 0.644,
+      "21": 0.644,
+      "22": 0.644,
+      "23": 0.7088,
+      "24": 0.7088,
+      "25": 0.7088,
+      "26": 0.7088,
+      "27": 0.7088,
+      "28": 0.7632,
+      "29": 0.7632,
+      "30": 0.7632,
+      "31": 0.7632,
+      "32": 0.7632,
+      "33": 0.7632,
+      "34": 0.7632,
+      "35": 0.7632,
+      "36": 0.7632,
+      "37": 0.7632,
+      "38": 0.7517,
+      "39": 0.7517,
+      "40": 0.7517,
+      "41": 0.7517,
+      "42": 0.7287,
+      "43": 0.7287,
+      "44": 0.7287,
+      "45": 0.7287,
+      "46": 0.7287,
+      "47": 0.7287,
+      "48": 0.6376,
+      "49": 0.6376,
+      "50": 0.6376,
+      "51": 0.6376,
+      "52": 0.6376,
+      "53": 0.6376,
+      "54": 0.6376,
+      "55": 0.6376,
+      "56": 0.6376,
+      "57": 0.6376,
+      "58": 0.6376,
+      "59": 0.6376,
+      "60": 0.6376
+    }
+  },
+  "A_non_reorderer": {
+    "persona_id": "Mohan-Indore-Dad-27",
+    "display_name": "Mohan",
+    "reordered": false,
+    "profile": {
+      "age": 27,
+      "city": "Indore",
+      "gender": null,
+      "children": [],
+      "income_band": null,
+      "decision_style": "habitual",
+      "trust_anchor": "self",
+      "risk_appetite": "low",
+      "primary_value": "price",
+      "health_anxiety": 0.037833645858304024,
+      "social_proof_bias": 0.12838240290084008,
+      "information_need": 0.10973933562586768,
+      "best_for_child": 0.17420332973631186
+    },
+    "decisions": [
+      {
+        "tick": 20,
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My gut says this is interesting because of the price drop and my friend's recommendation, but I'm hesitant because LittleJoys is completely new to me and I don't switch products easily. \u20b9649 is still a significant amount for something untested.",
+          "Step 2: I'm zeroing in on three things: (1) The price drop from \u20b9799 to \u20b9649 is substantial - \u20b9150 savings matters to me; (2) My close friend saw appetite improvement in her child, which is concrete; (3) The pediatrician mentioned iron deficiency, giving this medical weight. But I'm also noticing this is a brand I've never used before, and the ads feel too new and promotional.",
+          "Step 3: Budget check: \u20b9649 for 500g fits within my \u20b94,379/month nutrition budget, but only if it replaces something else or proves worth it. Trust check: This brand has NOT earned my trust yet through long-term use. I need more validation before committing. My high price sensitivity means I can't afford to waste \u20b9649 on something my kids might reject.",
+          "Step 4: My close friend is positive (strong signal), the pediatrician indirectly endorsed the category (medium signal), and the school WhatsApp shows other parents are considering it as a 'cleaner' alternative to Horlicks (weak but present signal). However, these aren't enough to override my habitual preference for known brands. I need to verify this more carefully or see more people I trust using it successfully.",
+          "Step 5: I will not buy right now. Instead, I'll do two things: ask my friend more specific questions about how long she's been using it and whether her kids actually finish it consistently, and check what my current nutrition product (likely Horlicks or Bournvita) costs per gram to compare value. If my friend gives strong confirmation and the math works out better than my current option, I might try one pack next month."
+        ],
+        "key_drivers": [
+          "brand_unfamiliarity_blocking_habitual_buyer",
+          "friend_wom_creating_consideration",
+          "price_drop_attractive_but_not_decisive",
+          "pediatrician_iron_mention_adding_credibility"
+        ],
+        "objections": [
+          "completely_new_brand_no_personal_history",
+          "risk_of_child_rejection_wasting_money",
+          "need_more_validation_from_trusted_sources",
+          "unclear_if_better_value_than_current_product"
+        ],
+        "follow_up_action": "Messages friend on WhatsApp asking detailed questions about usage duration, child's actual consumption patterns, and taste acceptance; also checks current Horlicks/Bournvita price per gram for comparison",
+        "wtp": 550
+      },
+      {
+        "tick": 60,
+        "decision": "buy",
+        "confidence": 0.88,
+        "reasoning_trace": [
+          "Step 1: Mohan's gut feeling is relief and confirmation \u2014 the product has become part of his routine, his child accepts it, and he's noticed positive signs. There's no reason to disrupt what's working.",
+          "Step 2: He focuses on: (a) the child has been accepting it consistently for 5 weeks without fuss, (b) he observed increased morning energy after 2 weeks, (c) it mixes easily with milk - fitting his morning routine, (d) the price is Rs 649, same as when he first bought it at discount (Rs 799 \u2192 Rs 649), so it feels 'normal' not expensive, (e) his close WhatsApp friend validated the choice. As a habitual decision-maker with self-trust anchor, his own 5-week experience outweighs everything else.",
+          "Step 3: Budget check: Rs 649 fits well within his Rs 4,379/month child nutrition budget (14.8% of monthly allocation). No hard constraints violated. The product has earned his trust through direct experience \u2014 his primary requirement for continued purchase. Non-negotiable met: child acceptance and observable benefit.",
+          "Step 4: His close friend on WhatsApp endorsed LittleJoys and saw appetite improvement \u2014 aligns with his own observation. The pediatrician mentioned iron deficiency as common (LittleJoys addresses this). Even the pharmacist's Complan suggestion doesn't shake him \u2014 he's past the exploration phase. His self-trust anchor means his own positive experience trumps external suggestions to switch.",
+          "Step 5: Mohan reorders LittleJoys Nutrimix at Rs 649. This has transitioned from trial to habit \u2014 exactly his decision-making pattern. The product proved itself in daily use, fits his budget, and maintains household routine. No disruption needed."
+        ],
+        "key_drivers": [
+          "5 weeks of successful daily use and routine integration",
+          "Child acceptance and observed energy improvement",
+          "Price within comfortable budget range",
+          "Self-validated trust through direct experience",
+          "Habitual preference to continue what works"
+        ],
+        "objections": [
+          "No discount this time (minor, but noted given price sensitivity)"
+        ],
+        "follow_up_action": "Adds LittleJoys Nutrimix 500g to BigBasket cart and completes the order to maintain uninterrupted supply",
+        "wtp": 649
+      }
+    ],
+    "trust_trajectory": {
+      "1": 0.195,
+      "2": 0.195,
+      "3": 0.195,
+      "4": 0.195,
+      "5": 0.339,
+      "6": 0.339,
+      "7": 0.339,
+      "8": 0.4848,
+      "9": 0.4848,
+      "10": 0.4848,
+      "11": 0.4848,
+      "12": 0.5419,
+      "13": 0.5419,
+      "14": 0.5419,
+      "15": 0.5518,
+      "16": 0.5518,
+      "17": 0.5518,
+      "18": 0.5518,
+      "19": 0.5518,
+      "20": 0.5518,
+      "21": 0.5518,
+      "22": 0.5518,
+      "23": 0.6338,
+      "24": 0.6338,
+      "25": 0.6338,
+      "26": 0.6338,
+      "27": 0.6338,
+      "28": 0.6912,
+      "29": 0.6912,
+      "30": 0.6912,
+      "31": 0.6912,
+      "32": 0.6912,
+      "33": 0.6912,
+      "34": 0.6912,
+      "35": 0.6912,
+      "36": 0.6912,
+      "37": 0.6912,
+      "38": 0.6788,
+      "39": 0.6788,
+      "40": 0.6788,
+      "41": 0.6788,
+      "42": 0.6477,
+      "43": 0.6477,
+      "44": 0.6477,
+      "45": 0.6477,
+      "46": 0.6477,
+      "47": 0.6477,
+      "48": 0.5809,
+      "49": 0.5809,
+      "50": 0.5809,
+      "51": 0.5809,
+      "52": 0.5809,
+      "53": 0.5809,
+      "54": 0.5809,
+      "55": 0.5809,
+      "56": 0.5809,
+      "57": 0.5809,
+      "58": 0.5809,
+      "59": 0.5809,
+      "60": 0.5809
+    }
+  },
+  "B_reorderer": {
+    "persona_id": "Ayesha-Delhi-Mom-37",
+    "display_name": "Ayesha",
+    "reordered": true,
+    "profile": {
+      "age": 37,
+      "city": "Delhi",
+      "gender": null,
+      "children": [],
+      "income_band": null,
+      "decision_style": "analytical",
+      "trust_anchor": "family",
+      "risk_appetite": "high",
+      "primary_value": "convenience",
+      "health_anxiety": 0.2762059104835589,
+      "social_proof_bias": 0.24486517491286863,
+      "information_need": 0.3608214442144817,
+      "best_for_child": 0.30601275139916384
+    },
+    "decisions": [
+      {
+        "tick": 35,
+        "decision": "trial",
+        "confidence": 0.78,
+        "reasoning_trace": [
+          "Step 1: My gut says this is worth trying \u2014 the pediatrician mentioned magnesium, I've seen it multiple times on Instagram, and Rs 499 for a month isn't breaking the bank. The gummy format is a huge plus since getting my kids to take anything is usually a battle.",
+          "Step 2: I'm focusing on: (1) Pediatrician validation \u2014 he said supplementation is generally fine if the product is reputable, (2) Price point \u2014 Rs 499 fits comfortably within my Rs 7,567 monthly nutrition budget, (3) Format \u2014 gummies my child will actually eat vs. tablets they'll refuse, (4) The influencer's claim about sleep improvement in two weeks gives me a measurable timeline to assess if it works, (5) Multiple exposures (ad, reel, influencer) suggest this is an established product, not some random brand.",
+          "Step 3: Budget check: Rs 499/month = well under my ceiling and I make exceptions for nutrition anyway. Trust requirement: Pediatrician gave conditional approval ('if product is reputable'), multiple Instagram mentions suggest it's known, LittleJoys appears to be a recognized brand name. No hard blockers \u2014 this isn't experimental, it's addressing a specific concern (sleep/magnesium) flagged by a medical professional.",
+          "Step 4: My pediatrician already greenlit magnesium supplementation in principle. If I mentioned this to my sister or mother-in-law, they'd probably ask 'did the doctor say it's okay?' \u2014 which he did. The mom influencer showing her child taking it provides social proof that other parents trust this. No one in my circle would object to trying a Rs 499 supplement that a doctor mentioned and other moms are using.",
+          "Step 5: I'm going to trial this. It checks all my boxes: pediatrician-mentioned, affordable, convenient format, and I've seen enough about it to feel it's legitimate. I'll buy one 30-day pack and assess after two weeks like the influencer mentioned. If I see improvement in my 12-year-old's sleep or overall energy, I'll continue; if not, it's a manageable one-time expense."
+        ],
+        "key_drivers": [
+          "Pediatrician endorsement of magnesium supplementation",
+          "Affordable price point within nutrition budget",
+          "Gummy format ensures child compliance",
+          "Multiple positive exposures building familiarity and trust"
+        ],
+        "objections": [
+          "Need to verify LittleJoys is actually a reputable brand as pediatrician specified"
+        ],
+        "follow_up_action": "Purchase one 30-day pack via quick commerce, possibly do a quick Google search for 'LittleJoys brand review' while waiting for delivery, monitor child's sleep patterns over the next two weeks",
+        "wtp": 499
+      },
+      {
+        "tick": 45,
+        "decision": "buy",
+        "confidence": 0.82,
+        "reasoning_trace": [
+          "Step 1: My gut says this is working \u2014 the sleep improvement feels real, even if I'm not 100% certain. For Rs 499, continuing makes sense since we're already seeing results and my child likes taking them.",
+          "Step 2: I'm focusing on three data points: (1) the pediatrician's endorsement and follow-up approval, (2) the observed sleep improvement over 10 days, and (3) my child's acceptance of the product (taste, no stomach issues). The analytical side of me notes the timeline aligns with when benefits might start showing. The price point of Rs 499 per month fits comfortably within my Rs 7,567 nutrition budget.",
+          "Step 3: Budget check: Rs 499/month = ~6.6% of my nutrition budget \u2014 well within limits. The pediatrician approved it, which meets my trust requirement for supplements. My child tolerates it well, which is non-negotiable for continuation. No hard constraints violated.",
+          "Step 4: The pediatrician mentioned it initially and approved continuation \u2014 that's my primary trust anchor met. If I mentioned the sleep improvement to family, they'd likely support continuing something that seems to be working, especially at this price point. There's social validation from the parent forums I scanned earlier showing others using magnesium for similar issues.",
+          "Step 5: I'm reordering before the pack runs out. The combination of pediatrician backing, observed improvement, child acceptance, and affordable price point makes this an easy continuation decision. I'll order in the next day or two to ensure no gap in supplementation."
+        ],
+        "key_drivers": [
+          "Observed sleep improvement after 10 days",
+          "Pediatrician endorsement and approval",
+          "Child accepts product without issues",
+          "Fits comfortably within nutrition budget"
+        ],
+        "objections": [
+          "Slight uncertainty whether improvement is placebo effect or genuinely the magnesium"
+        ],
+        "follow_up_action": "Reorders the 30-day pack within 1-2 days to avoid running out, likely through the same quick commerce platform",
+        "wtp": 499
+      }
+    ],
+    "trust_trajectory": {
+      "22": 0.2475,
+      "23": 0.2475,
+      "24": 0.2475,
+      "25": 0.2475,
+      "26": 0.2475,
+      "27": 0.3758,
+      "28": 0.3758,
+      "29": 0.3758,
+      "30": 0.3758,
+      "31": 0.3758,
+      "32": 0.5211,
+      "33": 0.5211,
+      "34": 0.5211,
+      "35": 0.5211,
+      "36": 0.5211,
+      "37": 0.5211,
+      "38": 0.6228,
+      "39": 0.6228,
+      "40": 0.6228,
+      "41": 0.6228,
+      "42": 0.6535,
+      "43": 0.6535,
+      "44": 0.6535,
+      "45": 0.6535
+    }
+  },
+  "B_non_reorderer": {
+    "persona_id": "Hina-Ranchi-Mom-28",
+    "display_name": "Hina",
+    "reordered": false,
+    "profile": {
+      "age": 28,
+      "city": "Ranchi",
+      "gender": null,
+      "children": [],
+      "income_band": null,
+      "decision_style": "social",
+      "trust_anchor": "self",
+      "risk_appetite": "high",
+      "primary_value": "price",
+      "health_anxiety": 0.6037942421944287,
+      "social_proof_bias": 0.7467113811073648,
+      "information_need": 0.5024002937316547,
+      "best_for_child": 0.6477048244592112
+    },
+    "decisions": [
+      {
+        "tick": 35,
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: Gut reaction is cautiously positive \u2014 the pediatrician mentioned it, the price fits my budget, and it's in gummy format which my kids will actually take. But I can't just buy it without checking what other moms say first.",
+          "Step 2: I focus on: (a) Rs 499 for 30 days is within my Rs 5,586 monthly nutrition budget, (b) pediatrician validation gives initial credibility, (c) gummy format solves the compliance issue I always face, (d) saw it on Instagram from an influencer which planted the seed, but (e) I need real mom feedback, not just sponsored content.",
+          "Step 3: Budget is not a barrier \u2014 Rs 499 is well within limits. My hard constraint is social validation: I cannot try a new nutrition product without checking my mom-group WhatsApp or getting at least 2-3 peer endorsements. My trust anchor is self, but my coping mechanism requires peer reassurance before new product trials.",
+          "Step 4: I need to post in my mom WhatsApp group asking 'Has anyone tried LittleJoys Magnesium Gummies for their kids?' I'll also search parent forums and Amazon reviews for real feedback. If even 2-3 moms say positive things, or if I see good reviews mentioning actual results, I'll feel confident. Without this social proof, the pediatrician's generic approval isn't enough.",
+          "Step 5: I will actively research by checking mom groups, reading Amazon reviews, and maybe DM-ing that Instagram influencer to ask follow-up questions. Once I get 2-3 positive signals from trusted sources, I'll buy it within the next few days."
+        ],
+        "key_drivers": [
+          "Pediatrician validation provides medical credibility",
+          "Price point Rs 499 fits comfortably within monthly nutrition budget",
+          "Gummy format addresses child compliance issue",
+          "Need for peer validation before trial purchase"
+        ],
+        "objections": [
+          "Lack of direct peer endorsement from trusted mom network",
+          "Influencer content feels sponsored rather than authentic",
+          "Need to verify real parent experiences before committing"
+        ],
+        "follow_up_action": "Posts in WhatsApp mom group asking about LittleJoys Magnesium Gummies, reads Amazon reviews, checks parent forums. If 2-3 positive responses come within 24-48 hours, orders one pack from Amazon to try",
+        "wtp": 499
+      },
+      {
+        "tick": 45,
+        "decision": "defer",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says it's working \u2014 the sleep seems better \u2014 but I'm not 100% sure if it's really the gummies or just coincidence. I want to believe it's helping, but \u20b9499 feels like a lot to commit to without being certain.",
+          "Step 2: I'm focusing on: (a) the perceived sleep improvement after 10 days, though I noted it might be placebo; (b) the price of \u20b9499 recurring monthly adds up to nearly my entire child nutrition budget (\u20b95,586/month); (c) I haven't yet gotten feedback from my mom-group WhatsApp after posting about LittleJoys; (d) pediatrician said magnesium is 'generally fine' but didn't strongly endorse it; (e) the product is safe (no stomach issues) and child likes it.",
+          "Step 3: Budget check: \u20b9499/month is ~9% of my child nutrition budget \u2014 not prohibitive but significant if I'm not certain of efficacy. I have high price sensitivity, so I need validation this is worth it. Trust requirement: I rely on self-judgment AND social validation \u2014 I posted in the mom-group but haven't gotten enough responses yet. Non-negotiable: child's safety (passed) and genuine benefit (still uncertain).",
+          "Step 4: I posted in my WhatsApp mom-group asking about LittleJoys but need to check what responses came in. Before committing to a recurring purchase, I want to hear if other moms have seen real results, or if there are cheaper alternatives they recommend. The influencer claimed results in two weeks \u2014 I'm only at 10 days. My trusted network would probably say 'wait a bit longer to be sure' or 'ask the pediatrician again with more specific questions.'",
+          "Step 5: I'm going to defer the immediate reorder. I'll check my mom-group for feedback, continue the current pack for 5 more days to complete the full cycle, and observe more carefully whether the sleep improvement is real or my imagination. If after the full month I'm convinced AND get positive validation from my network, I'll reorder. I might also ask the pediatrician more directly about magnesium benefits when I see her next."
+        ],
+        "key_drivers": [
+          "Need for social validation from mom-group before recurring purchase",
+          "Uncertainty whether sleep improvement is real or placebo",
+          "Price sensitivity requiring clear value demonstration"
+        ],
+        "objections": [
+          "Not yet convinced the benefit is real vs. placebo effect",
+          "Haven't received sufficient peer validation from mom-group",
+          "\u20b9499/month is significant without certainty of results"
+        ],
+        "follow_up_action": "Checks WhatsApp mom-group for responses about LittleJoys, continues current pack for remaining 5 days while observing sleep patterns more carefully, and prepares specific questions about magnesium for next pediatrician visit. Will likely reorder if social feedback is positive and sleep improvement persists through day 30.",
+        "wtp": 499
+      }
+    ],
+    "trust_trajectory": {
+      "22": 0.258,
+      "23": 0.258,
+      "24": 0.258,
+      "25": 0.258,
+      "26": 0.258,
+      "27": 0.4431,
+      "28": 0.4431,
+      "29": 0.4431,
+      "30": 0.4431,
+      "31": 0.4431,
+      "32": 0.5727,
+      "33": 0.5727,
+      "34": 0.5727,
+      "35": 0.5727,
+      "36": 0.5727,
+      "37": 0.5727,
+      "38": 0.6784,
+      "39": 0.6784,
+      "40": 0.6784,
+      "41": 0.6784,
+      "42": 0.7224,
+      "43": 0.7224,
+      "44": 0.7224,
+      "45": 0.7224
+    }
+  },
+  "C_reorderer": {
+    "persona_id": "Om-Nagpur-Dad-34",
+    "display_name": "Om",
+    "reordered": true,
+    "profile": {
+      "age": 34,
+      "city": "Nagpur",
+      "gender": null,
+      "children": [],
+      "income_band": null,
+      "decision_style": "analytical",
+      "trust_anchor": "authority",
+      "risk_appetite": "high",
+      "primary_value": "price",
+      "health_anxiety": 0.4466684958385527,
+      "social_proof_bias": 0.2740696032584463,
+      "information_need": 0.8104072351107664,
+      "best_for_child": 0.8839308373745346
+    },
+    "decisions": [
+      {
+        "tick": 28,
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: Initial gut feeling is cautiously positive \u2014 the pediatrician's mention of nutrition needs for school-age children resonates, and the product seems targeted. However, the \u20b9649 price point versus \u20b9399 for Bournvita triggers immediate price sensitivity. The packaging and authority signals (pediatrician, specific formulation) create measured optimism.",
+          "Step 2: As an analytical decision-maker anchored in authority, I focus on: (a) Pediatrician's comment about iron and B12 deficiencies in school-age children \u2014 this is authoritative medical advice; (b) School parent's specific testimony about switching from Bournvita to Nutrimix two months ago with positive results \u2014 concrete peer evidence; (c) Price differential of \u20b9250 (62% premium) needs justification; (d) Product specificity for school-age kids versus general nutrition drinks. The influencer content is noted but carries less weight than pediatrician and direct parent experience.",
+          "Step 3: Monthly child nutrition budget is \u20b95,582. One 500g pack at \u20b9649 is roughly 11.6% of monthly budget. If it lasts ~2 weeks (typical for one child), monthly cost would be ~\u20b91,300 \u2014 well within budget ceiling. High price sensitivity means I need to justify the premium, but budget constraint is not violated. Trust requirement: pediatrician mention + school parent testimony provides sufficient authority anchor for trial.",
+          "Step 4: Trust network signals are mixed but leaning positive: Pediatrician (highest authority) flagged nutritional gaps, school parent (peer authority) reported positive switch experience, school WhatsApp group discussing child fatigue indicates shared concern. No negative signals detected. In joint household setting, would need to justify premium to family, but medical authority and targeted formulation provide that justification. The fact that it's more expensive 'for a reason' (school-age specific) helps rationalize the cost.",
+          "Step 5: Decision is to trial one pack. The convergence of pediatrician concern, peer testimony, and product specificity outweighs price sensitivity for an initial trial. My coping mechanism of 'measured optimism based on packaging trust and first impressions' is activated \u2014 the authority signals are strong enough. Will purchase one 500g pack from BigBasket (preferred platform for comparison) to evaluate over 2 weeks with my 7-year-old before committing to repeat purchase."
+        ],
+        "key_drivers": [
+          "Pediatrician's authority signal about iron and B12 needs",
+          "School parent's direct testimony about positive switch from Bournvita",
+          "Product specificity for school-age children matching my 7-year-old's needs",
+          "Budget permits trial without exceeding ceiling"
+        ],
+        "objections": [
+          "62% price premium over Bournvita requires clear benefit demonstration",
+          "Need to observe tangible improvement in child's energy/focus to justify repeat purchase"
+        ],
+        "follow_up_action": "Orders one 500g pack from BigBasket to trial for 2 weeks, will monitor child's energy levels and appetite, and compare value against current nutrition spend before deciding on repeat purchase",
+        "wtp": 649
+      },
+      {
+        "tick": 60,
+        "decision": "buy",
+        "confidence": 0.78,
+        "reasoning_trace": [
+          "Step 1: Gut reaction is mixed \u2014 I've seen real improvements in my child's alertness and they're actually asking for it, which rarely happens. But Rs 649 versus Rs 399 for Bournvita makes my budget-conscious mind pause. The price difference is significant, nearly Rs 250.",
+          "Step 2: I focus on the tangible outcomes I've observed: clean mixing (no waste), child acceptance without complaints, the noticeable alertness during homework, and most importantly the pediatrician's recent mention of iron and B12 needs for school-age children. The school parent's testimonial about her 8-year-old's improvement on Nutrimix also carries weight. I compare this against Bournvita's familiar brand authority but less specific nutritional positioning.",
+          "Step 3: My budget is Rs 5,582/month for child nutrition \u2014 Rs 649 is about 11.6% of that, well within bounds. The product has proven functional efficacy in week one and continued through week four. My constraint isn't the absolute price, it's value justification. The child's response (asking for 'the brown milk drink') and observable alertness meet my non-negotiable requirement for proof of benefit.",
+          "Step 4: The pediatrician's authority signal about iron and B12 deficiencies aligns with Nutrimix's positioning. The school parent's positive experience (2 months of sustained use) validates longevity. My joint household family would likely question the price premium, but the visible homework alertness improvement gives me concrete defense. The influencer reel and school WhatsApp discussion about child exhaustion create ambient validation for focusing on better nutrition.",
+          "Step 5: I reorder Nutrimix at Rs 649. The analytical case is clear: observed functional outcomes (alertness, acceptance), authority validation (pediatrician's nutritional guidance), and budget feasibility outweigh the Rs 250 savings from Bournvita. My high risk appetite supports paying more for demonstrated results. I may look for bulk discounts or subscription options for future orders to optimize price."
+        ],
+        "key_drivers": [
+          "Observable child improvement (homework alertness)",
+          "Pediatrician authority signal on iron/B12 needs",
+          "Child's voluntary acceptance and request for product",
+          "Budget accommodation within allocated Rs 5,582/month"
+        ],
+        "objections": [
+          "Rs 250 price premium over Bournvita with no discount",
+          "Potential family questioning about price choice"
+        ],
+        "follow_up_action": "Orders Nutrimix at Rs 649, then searches Flipkart for subscription or bulk purchase options to reduce future per-unit cost",
+        "wtp": 649
+      }
+    ],
+    "trust_trajectory": {
+      "2": 0.2025,
+      "3": 0.2025,
+      "4": 0.2025,
+      "5": 0.2025,
+      "6": 0.2025,
+      "7": 0.2025,
+      "8": 0.2025,
+      "9": 0.2025,
+      "10": 0.2025,
+      "11": 0.2025,
+      "12": 0.3742,
+      "13": 0.3742,
+      "14": 0.3742,
+      "15": 0.3742,
+      "16": 0.3742,
+      "17": 0.3742,
+      "18": 0.3742,
+      "19": 0.3742,
+      "20": 0.3742,
+      "21": 0.3742,
+      "22": 0.4644,
+      "23": 0.4644,
+      "24": 0.4644,
+      "25": 0.4644,
+      "26": 0.4644,
+      "27": 0.5651,
+      "28": 0.5651,
+      "29": 0.5651,
+      "30": 0.5651,
+      "31": 0.5651,
+      "32": 0.5651,
+      "33": 0.5651,
+      "34": 0.5651,
+      "35": 0.6686,
+      "36": 0.6686,
+      "37": 0.6686,
+      "38": 0.6686,
+      "39": 0.6686,
+      "40": 0.6686,
+      "41": 0.6686,
+      "42": 0.726,
+      "43": 0.726,
+      "44": 0.726,
+      "45": 0.726,
+      "46": 0.726,
+      "47": 0.726,
+      "48": 0.726,
+      "49": 0.726,
+      "50": 0.726,
+      "51": 0.726,
+      "52": 0.726,
+      "53": 0.726,
+      "54": 0.726,
+      "55": 0.7557,
+      "56": 0.7557,
+      "57": 0.7557,
+      "58": 0.7557,
+      "59": 0.7557,
+      "60": 0.7557
+    }
+  },
+  "C_non_reorderer": {
+    "persona_id": "Zara-Delhi-Mom-28",
+    "display_name": "Zara",
+    "reordered": false,
+    "profile": {
+      "age": 28,
+      "city": "Delhi",
+      "gender": null,
+      "children": [],
+      "income_band": null,
+      "decision_style": "habitual",
+      "trust_anchor": "self",
+      "risk_appetite": "low",
+      "primary_value": "price",
+      "health_anxiety": 0.7473530837541994,
+      "social_proof_bias": 0.25390010771443483,
+      "information_need": 0.5203938390271163,
+      "best_for_child": 0.9264444548059092
+    },
+    "decisions": [
+      {
+        "tick": 28,
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My gut says this is expensive \u2014 Rs 649 versus Rs 399 for Bournvita, which I already know works. I don't like switching things up unless I'm really convinced, and this feels like a big jump in price for something unproven in my household.",
+          "Step 2: I'm focusing on the price difference (63% more expensive), the fact that it's not a brand I've used before, and that only one parent at school pickup mentioned it \u2014 not exactly a wave of endorsement. The pediatrician mentioned iron and B12 generally, not this specific product. The influencer reel feels like an ad, not real advice. I trust my own judgment more than marketing.",
+          "Step 3: Budget-wise, Rs 649 is within my Rs 6,266 monthly nutrition budget, but it's at the high end for a single product. My hard limit is that I need to see real proof it's better before paying 63% more. I have high price sensitivity \u2014 I won't pay premium without clear justification. Non-negotiable: it has to be worth the extra money.",
+          "Step 4: Only one school parent mentioned it, and she's not someone I consider a close or trusted source \u2014 just casual pickup conversation. The WhatsApp group talked about exhaustion generally, not Nutrimix specifically. My pediatrician didn't endorse any brand. There's no strong social proof from my trusted circle pushing me toward this.",
+          "Step 5: I'm going to wait and observe more. I'll keep using Bournvita for now and watch if more parents start talking about Nutrimix at school or in the WhatsApp group. If I hear 2-3 more real parents say it made a difference, or if my pediatrician specifically recommends it, I'll reconsider. For now, the price premium isn't justified by the weak social proof."
+        ],
+        "key_drivers": [
+          "Price premium of 63% over familiar Bournvita",
+          "Weak social proof from trust network",
+          "Habitual preference for known brands"
+        ],
+        "objections": [
+          "Too expensive compared to current option",
+          "Unfamiliar brand without strong endorsement from trusted sources",
+          "Insufficient evidence it's meaningfully better than Bournvita"
+        ],
+        "follow_up_action": "Continues buying Bournvita while actively listening for more parent feedback about Nutrimix at school pickup and in WhatsApp group over next 2-3 weeks",
+        "wtp": 450
+      },
+      {
+        "tick": 60,
+        "decision": "buy",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says stick with what's working. The child is asking for it by name ('the brown milk drink'), there's no morning battle, and I've noticed real changes in homework time. That's worth something.",
+          "Step 2: I'm focusing on: (a) Rs 250 price difference - that's significant but still within my \u20b96,266 child nutrition budget, (b) visible results - child more alert, no complaints about tiredness, (c) the pediatrician's recent mention of iron and B12 for school-age kids, (d) habit formation - we've done four weeks, disrupting now means starting over, (e) the school parent's testimony about her 8-year-old thriving on it for two months. The functional performance is documented through my own observation, not just marketing.",
+          "Step 3: Budget ceiling check: \u20b9649 is high but within my \u20b96,266 monthly allocation. No discount hurts, but I'm not over budget. Non-negotiables: the product must show results (it does), child must accept it (they're asking for more), and I need evidence it works (I have four weeks of behavioral data). Trust requirement: I've validated this myself through direct observation - my primary trust anchor. All constraints satisfied.",
+          "Step 4: My trust network has given positive signals: the pediatrician indirectly validated the nutritional need, the school parent shared a successful two-month experience with an older child, and most importantly, my own observation confirms improvement. I don't need external validation when I've seen it myself, but having it reinforces the decision. No one in my network would question continuing something that's visibly working.",
+          "Step 5: I'm reordering Nutrimix at \u20b9649. The \u20b9250 difference matters, but switching back to Bournvita now would mean losing the established routine and the observable benefits. Four weeks of consistent use has created a new 'known brand' status for Nutrimix in my household - it's no longer the disruptor, it's the incumbent. The child's request for 'more' and the homework alertness are functional proof points that justify the premium. I'll look for bulk purchase options or subscription discounts for future orders to manage the price gap."
+        ],
+        "key_drivers": [
+          "Observable functional benefits (child alertness, homework performance)",
+          "Child acceptance and active request for product",
+          "Habit formation over four weeks reduces switching cost",
+          "Self-validated trust through direct observation",
+          "Within budget despite premium pricing"
+        ],
+        "objections": [
+          "Rs 250 price premium over Bournvita with no discount available",
+          "Concern about ongoing affordability at full price"
+        ],
+        "follow_up_action": "Reorders Nutrimix at \u20b9649 and searches Flipkart for bulk pack options or subscription discounts to reduce per-unit cost for future purchases",
+        "wtp": 649
+      }
+    ],
+    "trust_trajectory": {
+      "2": 0.258,
+      "3": 0.258,
+      "4": 0.258,
+      "5": 0.258,
+      "6": 0.258,
+      "7": 0.258,
+      "8": 0.258,
+      "9": 0.258,
+      "10": 0.258,
+      "11": 0.258,
+      "12": 0.4386,
+      "13": 0.4386,
+      "14": 0.4386,
+      "15": 0.4386,
+      "16": 0.4386,
+      "17": 0.4386,
+      "18": 0.4386,
+      "19": 0.4386,
+      "20": 0.4386,
+      "21": 0.4386,
+      "22": 0.5545,
+      "23": 0.5545,
+      "24": 0.5545,
+      "25": 0.5545,
+      "26": 0.5545,
+      "27": 0.6462,
+      "28": 0.6462,
+      "29": 0.6462,
+      "30": 0.6462,
+      "31": 0.6462,
+      "32": 0.6462,
+      "33": 0.6462,
+      "34": 0.6462,
+      "35": 0.7298,
+      "36": 0.7298,
+      "37": 0.7298,
+      "38": 0.7298,
+      "39": 0.7298,
+      "40": 0.7298,
+      "41": 0.7298,
+      "42": 0.7839,
+      "43": 0.7839,
+      "44": 0.7839,
+      "45": 0.7839,
+      "46": 0.7839,
+      "47": 0.7839,
+      "48": 0.7839,
+      "49": 0.7839,
+      "50": 0.7839,
+      "51": 0.7839,
+      "52": 0.7839,
+      "53": 0.7839,
+      "54": 0.7839,
+      "55": 0.8112,
+      "56": 0.8112,
+      "57": 0.8112,
+      "58": 0.8112,
+      "59": 0.8112,
+      "60": 0.8112
+    }
+  }
+}

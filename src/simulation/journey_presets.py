@@ -75,8 +75,8 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="social_event",
             source="parent_observation",
             content=(
-                "Parent notices child seems a bit more energetic in the mornings "
-                "after two weeks of daily use."
+                "Two weeks of daily Nutrimix use. Child continues to take it without "
+                "complaints. Parent observing — no clear change noted yet."
             ),
             brand="littlejoys",
         ),
@@ -105,8 +105,8 @@ PRESET_JOURNEY_A = JourneyConfig(
             type="wom",
             source="school_mom",
             content=(
-                "Another mom at pickup asks how Nutrimix is going — you've been honest "
-                "that it's working okay."
+                "Another mom at school pickup mentions she's been looking at Nutrimix — "
+                "asks if you've tried it yet and what made you pick it."
             ),
             brand="littlejoys",
         ),
@@ -151,9 +151,8 @@ PRESET_JOURNEY_A = JourneyConfig(
             price_inr=649,
             channel="bigbasket",
             description=(
-                "Your LittleJoys Nutrimix pack is nearly finished. Your child has been "
-                "having it for 5 weeks. You're on BigBasket — it's Rs 649, no discount "
-                "this time. Do you reorder?"
+                "Your LittleJoys Nutrimix pack is nearly finished. You're on BigBasket — "
+                "it's Rs 649, no discount this time. Do you reorder?"
             ),
         ),
     ],
@@ -161,7 +160,7 @@ PRESET_JOURNEY_A = JourneyConfig(
 
 PRESET_JOURNEY_B = JourneyConfig(
     journey_id="B",
-    total_ticks=46,
+    total_ticks=61,
     primary_brand="littlejoys",
     stimuli=[
         StimulusConfig(
@@ -240,7 +239,32 @@ PRESET_JOURNEY_B = JourneyConfig(
             tick=42,
             type="social_event",
             source="parent_observation",
-            content="After ~10 days, parent believes sleep has improved slightly — not sure if placebo.",
+            content=(
+                "About two weeks into the 30-day pack. Child takes the gummy each evening "
+                "without resistance. No particular changes observed yet."
+            ),
+            brand="littlejoys",
+        ),
+        StimulusConfig(
+            id="B-S50",
+            tick=50,
+            type="ad",
+            source="instagram",
+            content=(
+                "Retargeting ad: LittleJoys Magnesium Gummies — 'Most parents reorder. "
+                "See why.' No discount shown."
+            ),
+            brand="littlejoys",
+        ),
+        StimulusConfig(
+            id="B-S55",
+            tick=55,
+            type="social_event",
+            source="internal",
+            content=(
+                "30-day pack of LittleJoys Magnesium Gummies is running low — about 5 days "
+                "remaining. No active discount visible on FirstCry."
+            ),
             brand="littlejoys",
         ),
     ],
@@ -257,14 +281,13 @@ PRESET_JOURNEY_B = JourneyConfig(
             ),
         ),
         DecisionScenarioConfig(
-            tick=45,
+            tick=60,
             product="LittleJoys Magnesium Gummies 30-day pack",
             price_inr=499,
             channel="firstcry_online",
             description=(
-                "You've been giving your child LittleJoys Magnesium Gummies for 10 days. "
-                "You've noticed some improvement in sleep. The pack will run out in 5 days. "
-                "Rs 499 to reorder. Do you continue?"
+                "Your 30-day pack of LittleJoys Magnesium Gummies is nearly finished. "
+                "Rs 499 to reorder. Do you continue with another pack?"
             ),
         ),
     ],
@@ -358,9 +381,8 @@ PRESET_JOURNEY_C = JourneyConfig(
             type="social_event",
             source="parent_observation",
             content=(
-                "Parent notices child seems more alert during homework time — "
-                "less complaining about tiredness after school. Hard to isolate the cause, "
-                "but the pattern feels consistent."
+                "Four weeks in: child takes Nutrimix in milk each morning without complaints. "
+                "Routine is established. No specific changes clearly attributable to the product."
             ),
             brand="littlejoys",
         ),
@@ -406,10 +428,9 @@ PRESET_JOURNEY_C = JourneyConfig(
             price_inr=649,
             channel="bigbasket",
             description=(
-                "Your child has been using Nutrimix for about four weeks. "
-                "They seem more alert and the pack is nearly finished. "
+                "Your Nutrimix pack is nearly finished. "
                 "Rs 649 to reorder — no discount this time. "
-                "Bournvita is Rs 250 cheaper. Do you stick with Nutrimix?"
+                "Bournvita is Rs 250 cheaper on the same shelf. Do you stick with Nutrimix?"
             ),
         ),
     ],

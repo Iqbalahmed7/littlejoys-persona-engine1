@@ -155,6 +155,43 @@ class DistributionTables:
     }
     PARENT_GENDER: ClassVar[dict[str, float]] = {"female": 0.82, "male": 0.18}
 
+    # Bug 2 fix: work hours by employment status (lo, hi inclusive)
+    WORK_HOURS_BY_STATUS: ClassVar[dict[str, tuple[int, int]]] = {
+        "homemaker":      (0,   0),
+        "part_time":     (15,  25),
+        "full_time":     (40,  55),
+        "self_employed": (45,  70),
+        "freelance":     (20,  40),
+    }
+
+    # Bug 1 fix: primary shopping platform weights by city tier
+    SHOPPING_PLATFORM_BY_TIER: ClassVar[dict[str, dict[str, float]]] = {
+        "Tier1": {
+            "amazon":         0.30,
+            "bigbasket":      0.25,
+            "quick_commerce": 0.20,
+            "brand_website":  0.10,
+            "flipkart":       0.10,
+            "local_store":    0.05,
+        },
+        "Tier2": {
+            "amazon":         0.35,
+            "flipkart":       0.20,
+            "bigbasket":      0.15,
+            "local_store":    0.15,
+            "quick_commerce": 0.10,
+            "brand_website":  0.05,
+        },
+        "Tier3": {
+            "amazon":         0.30,
+            "flipkart":       0.25,
+            "local_store":    0.30,
+            "bigbasket":      0.08,
+            "quick_commerce": 0.04,
+            "brand_website":  0.03,
+        },
+    }
+
     def sample_demographics(self, n: int, seed: int) -> pd.DataFrame:
         """
         Sample baseline persona demographics.
@@ -175,52 +212,79 @@ class DistributionTables:
 
         rng = np.random.default_rng(seed)
         rows: list[dict[str, object]] = []
+        # Bug 3 fix: enforce uniqueness on (city_name, parent_age, num_children)
+        seen_signatures: set[tuple[str, int, int]] = set()
 
         for _ in range(n):
-            city_tier = self._weighted_choice(rng, self.CITY_TIER)
-            city_name = self._sample_city_name(rng, city_tier)
-            region = self.CITY_REGION[city_name]
-            num_children = self._weighted_choice(rng, self.NUM_CHILDREN)
-            parent_age = self._sample_parent_age(rng)
-            child_ages = self._sample_child_ages(rng, parent_age, int(num_children))
-            employment_status = self._weighted_choice(rng, self.EMPLOYMENT)
-            family_structure = self._weighted_choice(rng, self.FAMILY_STRUCTURE[city_tier])
-            household_income_lpa = self._sample_income(rng, city_tier)
-
-            row = {
-                "city_tier": city_tier,
-                "city_name": city_name,
-                "region": region,
-                "urban_vs_periurban": self._sample_urbanicity(rng, city_tier),
-                "household_income_lpa": household_income_lpa,
-                "parent_age": parent_age,
-                "parent_gender": self._weighted_choice(rng, self.PARENT_GENDER),
-                "marital_status": self._sample_marital_status(rng, family_structure),
-                "birth_order": self._sample_birth_order(rng),
-                "num_children": int(num_children),
-                "child_ages": child_ages,
-                "child_genders": self._sample_child_genders(rng, int(num_children)),
-                "youngest_child_age": min(child_ages),
-                "oldest_child_age": max(child_ages),
-                "education_level": self._weighted_choice(rng, self.EDUCATION[city_tier]),
-                "employment_status": employment_status,
-                "family_structure": family_structure,
-                "dietary_culture": self._weighted_choice(rng, self.DIETARY[city_tier]),
-                "elder_influence": self._sample_elder_influence(rng, family_structure),
-                "spouse_involvement_in_purchases": self._sample_spouse_involvement(
-                    rng, family_structure
-                ),
-                "income_stability": self._sample_income_stability(rng, employment_status),
-                "socioeconomic_class": self._derive_sec_class(household_income_lpa),
-                "dual_income_household": self._sample_dual_income_household(
-                    rng, employment_status, family_structure
-                ),
-            }
-            rows.append(row)
+            for attempt in range(11):  # 1 initial attempt + 10 retries
+                row = self._sample_one_row(rng)
+                sig = (str(row["city_name"]), int(row["parent_age"]), int(row["num_children"]))
+                if sig not in seen_signatures or attempt == 10:
+                    if attempt == 10 and sig in seen_signatures:
+                        logger.warning(
+                            "demographic_uniqueness_fallback",
+                            signature=sig,
+                        )
+                    seen_signatures.add(sig)
+                    rows.append(row)
+                    break
 
         demographics = pd.DataFrame(rows)
         logger.info("sampled_demographics", count=n, seed=seed)
         return demographics
+
+    def _sample_one_row(self, rng: np.random.Generator) -> dict[str, object]:
+        """Sample one complete demographic row from the current RNG state."""
+        city_tier = str(self._weighted_choice(rng, self.CITY_TIER))
+        city_name = str(self._sample_city_name(rng, city_tier))
+        region = self.CITY_REGION[city_name]
+        num_children = self._weighted_choice(rng, self.NUM_CHILDREN)
+        parent_age = self._sample_parent_age(rng)
+        child_ages = self._sample_child_ages(rng, parent_age, int(num_children))
+        employment_status = str(self._weighted_choice(rng, self.EMPLOYMENT))
+        family_structure = str(self._weighted_choice(rng, self.FAMILY_STRUCTURE[city_tier]))
+        household_income_lpa = self._sample_income(rng, city_tier)
+
+        # Bug 2 fix: sample realistic work hours based on employment status
+        wh_lo, wh_hi = self.WORK_HOURS_BY_STATUS[employment_status]
+        work_hours_per_week = int(rng.integers(wh_lo, wh_hi + 1))
+
+        # Bug 1 fix: sample primary shopping platform from tier-weighted distribution
+        primary_shopping_platform = str(
+            self._weighted_choice(rng, self.SHOPPING_PLATFORM_BY_TIER[city_tier])
+        )
+
+        return {
+            "city_tier": city_tier,
+            "city_name": city_name,
+            "region": region,
+            "urban_vs_periurban": self._sample_urbanicity(rng, city_tier),
+            "household_income_lpa": household_income_lpa,
+            "parent_age": parent_age,
+            "parent_gender": self._weighted_choice(rng, self.PARENT_GENDER),
+            "marital_status": self._sample_marital_status(rng, family_structure),
+            "birth_order": self._sample_birth_order(rng),
+            "num_children": int(num_children),
+            "child_ages": child_ages,
+            "child_genders": self._sample_child_genders(rng, int(num_children)),
+            "youngest_child_age": min(child_ages),
+            "oldest_child_age": max(child_ages),
+            "education_level": self._weighted_choice(rng, self.EDUCATION[city_tier]),
+            "employment_status": employment_status,
+            "work_hours_per_week": work_hours_per_week,
+            "primary_shopping_platform": primary_shopping_platform,
+            "family_structure": family_structure,
+            "dietary_culture": self._weighted_choice(rng, self.DIETARY[city_tier]),
+            "elder_influence": self._sample_elder_influence(rng, family_structure),
+            "spouse_involvement_in_purchases": self._sample_spouse_involvement(
+                rng, family_structure
+            ),
+            "income_stability": self._sample_income_stability(rng, employment_status),
+            "socioeconomic_class": self._derive_sec_class(household_income_lpa),
+            "dual_income_household": self._sample_dual_income_household(
+                rng, employment_status, family_structure
+            ),
+        }
 
     def _weighted_choice(self, rng: np.random.Generator, weights: dict[object, float]) -> object:
         labels = tuple(weights.keys())
