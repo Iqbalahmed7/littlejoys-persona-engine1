@@ -3383,5 +3383,1697 @@
         ]
       ]
     }
+  },
+  "A-P5a": {
+    "hypothesis": "H1+H2: LJ Pass addresses price friction (cashback+free delivery) AND outcome uncertainty (expert consultation) \u2014 but requires D2C channel switch from BigBasket",
+    "scenario": {
+      "description": "Your first Nutrimix pack is finished. You've seen some possible improvement but can't be certain. You receive a push notification from the LittleJoys app: 'Reorder with LJ Pass \u2014 5% cashback on every order (Rs 32 back on Rs 649), zero delivery charges, a free surprise gift, and one FREE 10-minute nutritionist consultation to track your child's progress. 90-day pass, exclusive to ourlittlejoys.com (not available on BigBasket). Add to your next order.' Effective net price with cashback + saved delivery: ~Rs 540\u2013557 for this order. However, you'd need to switch from BigBasket to the LittleJoys website/app. Do you reorder Nutrimix with LJ Pass on the D2C site?",
+      "product": "LittleJoys Nutrimix 500g + LJ Pass",
+      "price_inr": 649,
+      "simulation_tick": 65
+    },
+    "results": [
+      {
+        "persona_id": "Ayesha-Delhi-Mom-37",
+        "display_name": "Ayesha",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: The offer looks attractive on paper \u2014 cashback, free delivery, nutritionist consultation \u2014 but I'm hesitant about switching away from BigBasket where I already shop. The 'possible improvement but can't be certain' part bothers me; I need clearer evidence before committing to a subscription model.",
+          "Step 2: As an analytical decision-maker, I'm focused on: (a) the actual net savings (Rs 92-109 this order), (b) the nutritionist consultation which could help validate whether the 'possible improvement' is real or wishful thinking, (c) the 90-day lock-in to a new platform when I'm used to quick commerce convenience on BigBasket, and (d) whether the 'surprise gift' and other perks signal genuine value or just marketing tactics. The lack of certainty about results makes me want more data before platform-switching.",
+          "Step 3: Budget-wise, Rs 540-557 is well within my Rs 7,567/month child nutrition allocation and medium price sensitivity. No hard constraint there. The real constraint is trust \u2014 I need validation from my family anchor. Has my husband noticed the improvement? Have the kids said anything? Without that external confirmation, 'possible improvement' isn't enough to justify changing my shopping routine and committing to a 90-day pass.",
+          "Step 4: My family (trust anchor) would likely ask: 'Are you sure it's working?' and 'Why switch from BigBasket when it's already so convenient?' I can hear my husband questioning whether the savings justify the hassle of managing another app. Without being able to point to definite improvements my family has observed, I'd feel defensive about this decision.",
+          "Step 5: I'm going to hold off on the LJ Pass for now. Instead, I want to do two things: first, actually have a conversation with my husband and maybe my older kids about whether they've noticed any changes. Second, I might reorder one more pack through BigBasket (my current comfort zone) and specifically use that free nutritionist consultation offer \u2014 but only if I can access it without committing to the full pass first. If the consultation confirms progress and my family validates the improvement, then the platform switch and pass make sense. Right now, it feels premature."
+        ],
+        "key_drivers": [
+          "Need for family validation before committing to new platform",
+          "Analytical need for clearer evidence of product efficacy",
+          "Convenience preference conflicts with platform switching"
+        ],
+        "objections": [
+          "Uncertain about actual product effectiveness after one pack",
+          "Reluctant to switch from familiar BigBasket to new D2C platform",
+          "90-day pass commitment feels premature without confirmed results"
+        ],
+        "follow_up_action": "Discusses with husband whether he's noticed any changes in the child, then likely reorders one more pack via BigBasket at regular price to continue observation before deciding on the subscription pass",
+        "error": null
+      },
+      {
+        "persona_id": "Sunita-Lucknow-Mom-33",
+        "display_name": "Sunita",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: My gut reaction is cautious interest mixed with skepticism. The cashback and savings are attractive to my budget-conscious mindset, but switching platforms feels risky and the 'possible improvement but can't be certain' bothers me \u2014 I need clearer proof before committing to a subscription model.",
+          "Step 2: As an analytical decision-maker, I focus on: (a) actual net savings: Rs 540-557 vs the usual Rs 649 is significant (~17% off), (b) the 90-day pass commitment \u2014 that's roughly 3 months of being locked into one platform, (c) the nutritionist consultation could help me assess whether the 'possible improvement' is real or placebo, (d) loss of BigBasket convenience where I already shop for other items, (e) 'exclusive to D2C site' raises a red flag \u2014 why can't I get this deal on BigBasket where I have purchase history and trust?",
+          "Step 3: Budget check: Rs 540-557 fits within my Rs 8,223/month child nutrition budget. But the 90-day pass implies repeat purchases \u2014 approximately Rs 1,620-1,671 over 3 months if I reorder monthly. That's still within budget. Hard constraint: I need family validation before switching platforms entirely, and I need certainty about the product's effectiveness. My coping mechanism is 'predictable purchase schedule' \u2014 switching platforms disrupts my established routine on BigBasket.",
+          "Step 4: My trust anchor is family. Before committing to a 90-day subscription on a new platform, I would consult: (a) my mother or sister about whether they've noticed actual changes in my child, (b) possibly my husband about platform switching and whether LittleJoys is reputable. The nutritionist consultation is interesting because it's expert validation, but it's provided by the brand itself \u2014 not an independent source my family would recommend. I need external confirmation.",
+          "Step 5: I will use the FREE nutritionist consultation first to get objective feedback on whether the 'possible improvement' is measurable, then ask 2-3 family members if they've noticed any real changes in my child's health, energy, or appetite. Only after these two validation steps will I consider the LJ Pass. In the meantime, I'll research LittleJoys platform reviews on trustworthy forums and compare the total 90-day cost commitment."
+        ],
+        "key_drivers": [
+          "Need for measurable proof before subscription commitment",
+          "Family validation required before platform switch",
+          "Analytical need to assess 90-day total cost vs benefit",
+          "Disruption to established BigBasket routine"
+        ],
+        "objections": [
+          "Cannot confirm if improvement is real or placebo after just one pack",
+          "90-day pass locks me into unfamiliar D2C platform",
+          "No family endorsement yet for platform switch",
+          "Loss of BigBasket integration with regular groceries"
+        ],
+        "follow_up_action": "Schedules the free nutritionist consultation to assess child's actual progress, discusses observed changes with mother and sister over the next 2-3 days, and researches LittleJoys platform reliability on community forums before deciding on the pass",
+        "error": null
+      },
+      {
+        "persona_id": "Sunita-Kochi-Mom-38",
+        "display_name": "Sunita",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: My analytical mind is immediately skeptical. 'Some possible improvement but can't be certain' means I don't have concrete data yet. The cashback and perks sound appealing for my budget-conscious planning, but switching platforms disrupts my established purchase routine on Amazon/BigBasket.",
+          "Step 2: I focus on three things: (1) The effective price drop to ~\u20b9540-557 is significant\u2014that's \u20b990-110 savings, which fits my price-first value system. (2) The FREE nutritionist consultation is actually valuable\u2014I rely on myself for decisions, and expert input would help me assess whether those vague improvements are real or placebo. (3) Platform switch risk\u2014I don't know this LittleJoys site's reliability, delivery consistency, or return policy. As someone who sticks to predictable purchase schedules, this uncertainty is friction.",
+          "Step 3: Budget check: \u20b9540-557 is well within my \u20b95,290/month allocation. But my coping mechanism demands predictability\u2014switching platforms mid-routine creates stress I actively avoid. Trust requirement: I need proof this D2C site won't disrupt my weekly meal planning with delayed deliveries or poor service. The product itself hasn't yet earned full trust\u2014'can't be certain' means I'm still in validation mode.",
+          "Step 4: My trust anchor is self, not social network, so others' opinions matter less. But I'd mentally audit: would other systematic planners approve of switching platforms for savings without testing reliability first? Probably not without due diligence. The free nutritionist call, though\u2014that's concrete value I can use to make my own informed decision.",
+          "Step 5: I schedule the FREE nutritionist consultation first through whatever channel allows it, to get expert assessment of the vague improvements I've noticed. While waiting for that appointment, I research LittleJoys.com\u2014delivery reviews, return policy, app reliability on my preferred research channels. If the nutritionist validates progress AND the platform checks out in 2-3 days, I'll activate the LJ Pass and reorder. Otherwise, I revert to my standard BigBasket routine with a different product. I'm deferring the platform switch, not the nutrition decision."
+        ],
+        "key_drivers": [
+          "Need for concrete data before committing to subscription model",
+          "Significant price savings align with primary value",
+          "Free nutritionist consultation offers self-driven validation opportunity",
+          "Platform reliability concerns threaten predictable purchase routine"
+        ],
+        "objections": [
+          "Insufficient evidence of product efficacy after one pack",
+          "Switching from familiar BigBasket/Amazon disrupts established routine",
+          "Unknown reliability of LittleJoys D2C platform for delivery consistency",
+          "90-day pass commitment feels premature without validated results"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation immediately to get expert assessment of child's progress, while simultaneously researching LittleJoys platform reviews and delivery reliability over next 2-3 days before committing to platform switch",
+        "error": null
+      },
+      {
+        "persona_id": "Kriti-Mumbai-Mom-38",
+        "display_name": "Kriti",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: The offer sounds good on paper \u2014 cashback, free delivery, a consultation \u2014 but I'm being asked to change my shopping habit and move to a new platform. My gut says 'wait, let me think about this' rather than jump in immediately.",
+          "Step 2: As someone who trusts myself over marketing, I'm focusing on: (a) the actual benefit I've seen so far \u2014 which is unclear ('possible improvement but can't be certain'), (b) the platform switch from Flipkart/BigBasket to their D2C site, which breaks my established routine, (c) the 90-day commitment for the pass, and (d) whether the savings justify the hassle. The free nutritionist call is interesting but feels like a sales tactic rather than genuine value at this stage.",
+          "Step 3: Budget-wise, Rs 540-557 is well within my Rs 5,455/month allocation, so cost isn't the barrier. The hard limit here is trust \u2014 I haven't seen enough clear results to justify switching platforms and locking into a subscription model. My habitual decision style means I don't make platform changes lightly, and I prefer consistency in where I shop (Flipkart preference noted).",
+          "Step 4: In my network, other parents would likely say: 'Are you sure it's actually working?' and 'Why switch from BigBasket if you're already comfortable there?' The joint household setting means platform changes affect more than just me \u2014 shared shopping lists, payment methods, delivery coordination all matter.",
+          "Step 5: I need one more purchase cycle to see if the improvements are real before committing to their platform and a 90-day pass. I'll reorder from BigBasket at regular price to maintain my routine and give the product more time to prove itself. If results become clearer, I can consider the LJ Pass later."
+        ],
+        "key_drivers": [
+          "Habitual decision style resists platform switching",
+          "Insufficient evidence of product efficacy to justify routine disruption",
+          "Self-trust anchor requires personal validation before commitment"
+        ],
+        "objections": [
+          "Uncertain about actual product benefits after first pack",
+          "Platform switch breaks established shopping routine",
+          "90-day pass feels like premature commitment",
+          "Offer seems sales-driven rather than value-driven at this stage"
+        ],
+        "follow_up_action": "Reorders one pack of Nutrimix from BigBasket at regular price to continue evaluation for another cycle before deciding on platform switch or subscription commitment",
+        "error": null
+      },
+      {
+        "persona_id": "Sneha-Bangalore-Mom-37",
+        "display_name": "Sneha",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My gut feeling is cautious optimism mixed with hesitation. The cashback and free consultation sound appealing, but switching platforms makes me uneasy. I've seen 'some possible improvement' but I'm not certain enough to commit to a subscription model yet.",
+          "Step 2: I focus primarily on the price breakdown (Rs 540-557 effective vs Rs 649 regular - that's good savings), but I'm immediately concerned about exclusivity to their D2C site. I trust Amazon/BigBasket because I've used them for years. The 'not available on BigBasket' clause is a yellow flag. The free nutritionist consultation is interesting - that could help me verify if the improvement I think I'm seeing is real. The 90-day pass commitment feels long when I'm still uncertain about results.",
+          "Step 3: Budget-wise, Rs 540-557 fits within my Rs 19,480/month allocation comfortably. But my low risk appetite and social decision style mean I have a non-negotiable trust requirement: I need validation before switching platforms and committing to a 90-day pass. My trust anchor is 'self' - I rely on my own judgment - but I've only completed ONE pack with uncertain results. That's not enough data for me to feel confident.",
+          "Step 4: My coping mechanism is to check with mom-groups before trying new things. I haven't done that yet for platform switching or subscription commitments. I can already hear the questions they'd ask: 'Have you used their website before? Is it reliable? What if you want to return it? Does the 90-day pass lock you in?' I need to consult my trusted peers about both the D2C platform reliability AND whether others have seen real results after one pack.",
+          "Step 5: I will post in my mom WhatsApp groups asking: (1) Has anyone used the LittleJoys D2C website - is it trustworthy and reliable? (2) For those who've used Nutrimix, when did you see definite results? (3) Is the LJ Pass worth it or should I just buy one more pack separately? I'll also use that free consultation offer as a decision tool - maybe I can ask the nutritionist questions before committing to the pass. I want to order one more pack to truly verify results, but I'll wait 24-48 hours for peer input before deciding which platform and whether to take the pass."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch (social decision style + coping mechanism)",
+          "Insufficient evidence after one pack to commit to 90-day subscription (trust anchor: self, low risk appetite)",
+          "Price sensitivity appreciates the savings but not enough to override trust concerns"
+        ],
+        "objections": [
+          "Uncertainty about actual product effectiveness after only one pack",
+          "Platform switch from trusted Amazon/BigBasket to unfamiliar D2C site",
+          "90-day pass commitment feels premature without verified results",
+          "Haven't consulted mom-groups yet (violates her coping mechanism)"
+        ],
+        "follow_up_action": "Posts in 2-3 trusted mom WhatsApp groups asking about LittleJoys website reliability and when others saw real Nutrimix results, while simultaneously exploring if she can book just the free consultation first without committing to the pass",
+        "error": null
+      },
+      {
+        "persona_id": "Manisha-Bhopal-Mom-39",
+        "display_name": "Manisha",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: The offer is attractive on paper \u2014 cashback, free delivery, and a nutritionist consultation \u2014 but switching platforms for an uncertain benefit makes me pause. I need to calculate if this actually saves money and whether I trust moving away from BigBasket.",
+          "Step 2: As an analytical decision-maker focused on features, I'm immediately drawn to the nutritionist consultation (real value for tracking progress) and the cashback structure. I calculate: Rs 649 - Rs 32 cashback - roughly Rs 60 delivery savings = ~Rs 557 effective price vs my usual BigBasket price. The 90-day pass commitment concerns me \u2014 I need to know the pass cost itself, whether I can use it for other products, and if I'm locked in. The 'possible improvement but can't be certain' status means I haven't verified efficacy yet through my own analysis.",
+          "Step 3: Budget-wise, Rs 540-557 per pack fits comfortably within my Rs 5,545/month child nutrition budget (medium price sensitivity allows this). No hard budget constraint violated. However, my trust anchor is 'self' \u2014 I rely on my own judgment more than promotional offers. The platform switch is a friction point: I trust BigBasket's delivery and return policies from experience. The LittleJoys D2C site is unproven to me. I need to verify their service quality, return policy, and whether this pass has hidden terms.",
+          "Step 4: My nuclear household means fewer immediate opinions to consult, but I'd mentally check: Would other mothers in my network see value in the nutritionist consultation? Yes, likely. Would they warn me about subscription-style passes? Possibly \u2014 these can be sticky commitments. Since I trust myself more than external validation, this is a secondary consideration, but the nutritionist consultation adds social proof (professional guidance).",
+          "Step 5: I'm not ready to commit yet. I need to: (a) verify the exact LJ Pass terms and total cost, (b) check LittleJoys app reviews and delivery reliability in Bhopal, (c) assess whether the nutritionist consultation is truly valuable or just a sales tactic, and (d) give Nutrimix another 1-2 weeks to see if the 'possible improvement' becomes measurable. My measured optimism means I'm open to this, but my analytical nature demands I validate the math and service quality before switching platforms. I'll spend tonight researching the app and pass structure."
+        ],
+        "key_drivers": [
+          "Nutritionist consultation offers tangible tracking value for analytical approach",
+          "Need to verify LittleJoys platform reliability before switching from trusted BigBasket",
+          "Uncertain product efficacy \u2014 'possible improvement' insufficient for self-trust anchor",
+          "90-day pass commitment requires understanding full terms and lock-in"
+        ],
+        "objections": [
+          "Haven't personally verified Nutrimix effectiveness yet to justify reorder",
+          "Platform switch from BigBasket introduces service quality risk",
+          "LJ Pass terms unclear \u2014 total cost, other product applicability, cancellation policy unknown",
+          "Measured optimism requires validation before subscription-style commitment"
+        ],
+        "follow_up_action": "Spends evening researching LittleJoys app reviews, delivery coverage in Bhopal, and LJ Pass full terms. Continues monitoring child for another 10-14 days to establish clearer efficacy baseline before committing to platform switch and pass purchase.",
+        "error": null
+      },
+      {
+        "persona_id": "Rashmi-Jaipur-Mom-32",
+        "display_name": "Rashmi",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My gut says I'm being pushed to change my routine too quickly. I've only finished one pack, I shop on Amazon habitually, and now they want me to switch platforms entirely? The offer sounds good, but this feels like pressure to commit before I'm ready.",
+          "Step 2: I focus on: (1) 'Some possible improvement but can't be certain' - this is exactly my problem, I don't have enough proof yet that this works; (2) The savings are real (\u20b932 cashback + delivery saved = ~\u20b990-110 off), which is attractive given my budget consciousness; (3) BUT it requires switching from Amazon to their D2C site - this disrupts my familiar shopping routine; (4) '90-day pass' means I'm committing to a subscription model when I haven't even decided if this product works; (5) The nutritionist consultation is interesting but feels like a sales tactic more than genuine support.",
+          "Step 3: Budget-wise, \u20b9540-557 is well within my \u20b92,828 monthly allocation. But my hard limit is my trust anchor - I trust MYSELF to evaluate, and I simply don't have enough data yet. One pack with uncertain results isn't enough for me to commit to a 90-day subscription AND change my shopping platform. My coping mechanism is 'sticking with known brands and familiar routines' - Amazon IS my routine, and switching platforms is exactly the kind of disruption I avoid.",
+          "Step 4: If I asked myself (my trust anchor), I'd say: 'One pack isn't enough to know. Why are they pushing so hard to get you off Amazon? What's the rush? If it's really good, you can always get the pass later.' My practical side would question why I need to switch platforms to save \u20b9100 when I'm already comfortable on Amazon.",
+          "Step 5: I'm going to wait. I need at least one more purchase cycle on Amazon to see if the improvements become clearer and more certain. If after 2-3 packs I'm convinced Nutrimix works, THEN I might consider the D2C switch and subscription. Right now, this feels like too much commitment for too little proof. I'll reorder one more pack on Amazon at regular price to continue evaluating."
+        ],
+        "key_drivers": [
+          "Insufficient proof of efficacy after only one pack",
+          "Platform switch disrupts established Amazon shopping routine",
+          "90-day subscription feels premature without clear results",
+          "Self-trust anchor requires more personal evidence"
+        ],
+        "objections": [
+          "Only 'some possible improvement' - not enough certainty to commit",
+          "Requires abandoning familiar Amazon platform",
+          "90-day pass locks me into a brand I'm still evaluating",
+          "Feels like sales pressure rather than genuine value"
+        ],
+        "follow_up_action": "Reorders one more pack of Nutrimix on Amazon at regular price (\u20b9649) to continue the trial period and gather more evidence before considering platform switch or subscription commitment",
+        "error": null
+      },
+      {
+        "persona_id": "Nasreen-Bhubaneswar-Mom-28",
+        "display_name": "Nasreen",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut reaction is cautious interest mixed with hesitation. A subscription pass on a new platform feels like a bigger commitment than just reordering. The cashback sounds good, but I need to check with my mom-group first before switching platforms entirely.",
+          "Step 2: I focus on: (a) the need to switch from BigBasket (familiar, trusted) to LittleJoys D2C site (less familiar), (b) the 90-day pass commitment feels long, (c) 'some possible improvement but can't be certain' means I don't have strong proof yet, (d) the nutritionist consultation is appealing as an authority figure who could validate if this is working, (e) effective price ~Rs 540-557 is within my budget of Rs 2776/month.",
+          "Step 3: Budget check: Rs 540-557 fits comfortably within my Rs 2776 monthly budget. Trust check: I haven't consulted my mom-group about this pass or switching platforms. The 'can't be certain' about improvement means I don't have solid evidence to justify a 90-day commitment yet. Platform switch is a non-negotiable concern - I trust BigBasket's delivery and quality checks.",
+          "Step 4: My mom-group would likely ask: 'Are you sure it's working?', 'Is the LittleJoys website reliable?', 'What if delivery is late or quality issues happen?', 'Why leave BigBasket where we all shop?' Without being able to confirm results or vouch for the D2C platform reliability, I'd feel exposed making this switch alone.",
+          "Step 5: I will defer the LJ Pass for now. Instead, I'll reorder one pack through BigBasket (my familiar channel) to continue the trial, and simultaneously post in my mom-group asking if anyone has used LittleJoys D2C site and whether the pass is worth it. I'll also try to understand from other moms if they've seen real improvements with Nutrimix. Once I get validation from my trusted network AND see clearer results myself, I'll consider the pass."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Insufficient evidence of product effectiveness to commit to 90-day pass",
+          "Trust in familiar BigBasket over new D2C platform"
+        ],
+        "objections": [
+          "Switching from trusted BigBasket to unfamiliar LittleJoys D2C site",
+          "90-day commitment feels too long without clear proof of results",
+          "Haven't consulted mom-group about this decision"
+        ],
+        "follow_up_action": "Reorders one pack of Nutrimix through BigBasket at regular price, posts in mom-group WhatsApp asking about LittleJoys D2C reliability and whether others have seen results with Nutrimix, waits for peer feedback before considering the pass",
+        "error": null
+      },
+      {
+        "persona_id": "Arti-Hyderabad-Mom-36",
+        "display_name": "Arti",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: The cashback and free consultation sound attractive from a value perspective, but switching from BigBasket to a new app feels like a commitment. I'm uncertain about the product results and hesitant to lock into something unfamiliar.",
+          "Step 2: Focusing on the price value \u2014 Rs 540-557 effective price is significantly lower than Rs 649, which aligns with my budget sensitivity. The nutritionist consultation is appealing to validate if there's actual progress. However, the 90-day pass commitment and platform switch are concerning since I'm comfortable with BigBasket's reliability. I haven't clearly seen improvements yet \u2014 'some possible improvement but can't be certain' means I don't have concrete evidence this is working.",
+          "Step 3: Budget-wise, Rs 540-557 is within my Rs 6,735/month child nutrition budget. However, my trust requirement isn't met \u2014 I need peer validation before committing to a subscription model on a D2C platform I haven't used before. The 90-day pass is a medium-term commitment without proven results.",
+          "Step 4: Before switching platforms and subscribing, I need to check with my mom-group. Questions I'd ask: Has anyone used the LittleJoys app directly? Is the pass worth it? Have their kids shown real improvements with Nutrimix? I wouldn't make this switch without hearing positive experiences from trusted peers first, especially since it involves leaving my familiar BigBasket routine.",
+          "Step 5: I defer the decision and immediately reach out to my WhatsApp mom-group to ask about LittleJoys app experience and whether anyone has the LJ Pass. I'll also ask if anyone has continued Nutrimix beyond the first pack and seen concrete results. Only after getting peer validation will I consider switching platforms and subscribing."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Uncertainty about product efficacy after first pack",
+          "Price sensitivity making the offer attractive but insufficient alone"
+        ],
+        "objections": [
+          "No clear evidence of improvement yet to justify continued investment",
+          "Switching from trusted BigBasket to unfamiliar D2C platform",
+          "90-day subscription commitment without peer endorsement"
+        ],
+        "follow_up_action": "Posts in mom-group WhatsApp asking who has used LittleJoys app and LJ Pass, and whether anyone has seen real results continuing Nutrimix beyond first month. Will decide based on peer feedback within 2-3 days.",
+        "error": null
+      },
+      {
+        "persona_id": "Yasmin-Mumbai-Mom-31",
+        "display_name": "Yasmin",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: The offer sounds appealing with cashback and nutritionist consultation, but I'm hesitant about leaving BigBasket where I'm comfortable. I need to think about whether the savings justify switching platforms and whether this is something other moms are doing.",
+          "Step 2: I'm focusing on: the 90-day commitment period (that's 3 months locked in), the nutritionist consultation (which could help me understand if the product is actually working), the cashback and delivery savings (~Rs 92-109 this order), and most importantly - switching away from my usual Amazon/BigBasket routine to an unfamiliar D2C platform. The 'possible improvement but can't be certain' is concerning - I haven't seen clear results yet.",
+          "Step 3: Budget-wise, Rs 540-557 is well within my Rs 6,914/month child nutrition budget. The hard constraint is my trust requirement - I don't know enough about the LittleJoys platform yet, and I have no validation from my network. Switching platforms for a 90-day commitment feels risky when I'm not even sure the product is working.",
+          "Step 4: My mom-group would probably ask: 'Have you asked other moms if they've used the LJ Pass?' and 'Are you sure it's safe to give your payment details to a new website?' They'd want to know if the platform is reliable, if others have had good experiences, and whether the 90-day lock-in is worth it. Without that validation, they'd likely suggest I be cautious. My family would question why I'm leaving BigBasket's reliability for an unknown site.",
+          "Step 5: I need to check with my mom-groups first about whether they've used the LittleJoys D2C site and the LJ Pass subscription. I also want clearer evidence that Nutrimix is actually helping before I commit to 90 days. I'll defer this decision and reach out to my trusted network for their experience with both the product results and the platform switch."
+        ],
+        "key_drivers": [
+          "Need for social validation before platform switch",
+          "Uncertainty about product efficacy after first pack",
+          "Trust concerns about unfamiliar D2C platform"
+        ],
+        "objections": [
+          "Haven't seen definitive results yet to justify 90-day commitment",
+          "No validation from mom-groups about LittleJoys platform reliability",
+          "Leaving comfortable BigBasket ecosystem feels risky",
+          "90-day lock-in period is long without proven results"
+        ],
+        "follow_up_action": "Posts in WhatsApp mom-group asking if anyone has used LittleJoys D2C site and LJ Pass, and whether they've seen real results from Nutrimix. Will decide based on their feedback over the next few days.",
+        "error": null
+      },
+      {
+        "persona_id": "Naveen-Nagpur-Dad-32",
+        "display_name": "Naveen",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: The offer looks attractive on paper \u2014 cashback, free consultation, and saved delivery fees bring the price down meaningfully. But switching platforms feels like a commitment, and I'm not entirely sure the first pack made a real difference yet. My gut says I need to check what other parents are doing before I lock into this.",
+          "Step 2: I'm focusing on three things: (1) The effective price reduction is significant \u2014 \u20b9540-557 versus \u20b9649 fits better within my \u20b95,395 monthly nutrition budget. (2) The nutritionist consultation could help me figure out if the 'possible improvement' I saw was real or imagined. (3) But this requires switching away from BigBasket, my familiar quick commerce platform, to a D2C site I haven't fully vetted yet. That platform switch creates friction.",
+          "Step 3: Budget-wise, I'm fine \u2014 \u20b9540-557 is well within my allocation and my low price sensitivity means the savings aren't the primary driver. The hard constraint here is trust: I need to know this LittleJoys platform is reliable and that other parents are actually using it successfully. Switching from BigBasket (familiar, trusted) to a new platform is a non-trivial commitment for me.",
+          "Step 4: Before I switch platforms and subscribe to a 90-day pass, I need validation from my mom-groups. Are other parents using the LittleJoys D2C site? Is the pass worth it? Did anyone else see real improvements after the first pack? My coping mechanism demands I check in with trusted peers before making this move \u2014 especially since it involves both a subscription commitment and platform migration.",
+          "Step 5: I will post in my trusted mom-group WhatsApp chat asking if anyone has tried the LJ Pass and whether they saw genuine results with Nutrimix after the first month. I'll also ask about their experience with the LittleJoys platform versus quick commerce. If I get positive feedback within a day or two, I'll subscribe and reorder. For now, I'm deferring until I get that social proof."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch and subscription commitment",
+          "Uncertainty about whether first pack's results were real",
+          "Trust anchor in self requires more evidence, but social decision style demands group consensus"
+        ],
+        "objections": [
+          "Switching from familiar BigBasket to new D2C platform feels risky without peer endorsement",
+          "90-day pass is a longer commitment than a single reorder",
+          "Cannot confirm if 'possible improvement' from first pack was genuine or coincidence"
+        ],
+        "follow_up_action": "Posts in mom-group WhatsApp asking about LJ Pass experience and Nutrimix results; will likely subscribe and order within 48 hours if feedback is positive",
+        "error": null
+      },
+      {
+        "persona_id": "Nikhil-Raipur-Dad-35",
+        "display_name": "Nikhil",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.45,
+        "reasoning_trace": [
+          "Step 1: The offer sounds attractive\u2014cashback, free delivery, a consultation\u2014but I'm hesitant. I've only used one pack and I'm not really sure if it worked. Switching apps feels like a commitment I'm not ready for without checking with others first.",
+          "Step 2: I'm drawn to the Rs 32 cashback and the effective price drop to ~Rs 540-557\u2014that's significant savings and fits my price focus. But the '5% on every order' and '90-day pass' suggests a subscription-like commitment. The nutritionist consultation is interesting, but I don't know if this brand is trustworthy enough yet. The 'possible improvement but can't be certain' bothers me\u2014I need validation that this actually works before I lock into their platform.",
+          "Step 3: Budget-wise, Rs 540-557 is well within my Rs 2,802/month allocation. No hard budget constraint here. But my trust requirement is critical: I need peer validation before switching platforms and committing to a 90-day pass. I haven't consulted my mom-groups or trusted peers about whether Nutrimix actually delivers results or whether the LJ Pass is worth it.",
+          "Step 4: My mom-groups would likely ask: 'Did you really see results?' and 'Is anyone else using this LJ Pass thing?' I don't have answers yet. Some might say the savings are good, but others would caution against switching from BigBasket (a known, trusted platform) to a brand-specific app without proof it's better. Without their reassurance, I feel exposed making this move alone.",
+          "Step 5: I need to check in with my trusted peers first. I'll post in my mom-group asking if anyone has used Nutrimix longer-term and whether they've tried the LJ Pass. If I get positive feedback about real results and the platform switch being safe/convenient, I'll reorder with the pass. For now, I'll hold off and gather social proof."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Uncertainty about product effectiveness after one pack",
+          "Price sensitivity makes the offer tempting but not decisive alone"
+        ],
+        "objections": [
+          "Cannot confirm if Nutrimix actually worked after one pack",
+          "Switching from trusted BigBasket to unknown brand app feels risky",
+          "No peer feedback yet on LJ Pass value or long-term product results",
+          "90-day commitment feels premature without social proof"
+        ],
+        "follow_up_action": "Posts in trusted mom-group WhatsApp asking if anyone has continued using Nutrimix beyond first pack and whether the LJ Pass subscription is worth switching platforms for. Will reorder based on their responses within 2-3 days.",
+        "error": null
+      },
+      {
+        "persona_id": "Rina-Kochi-Mom-31",
+        "display_name": "Rina",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: The cashback and free consultation sound appealing, but I'm hesitant about leaving BigBasket where I already shop comfortably. The 'possible improvement but can't be certain' nags at me \u2014 I need to feel more sure before committing to a subscription model.",
+          "Step 2: I focus on the price mathematics first \u2014 Rs 540-557 net versus Rs 649 is significant savings (around Rs 100). The free nutritionist consultation catches my attention because it might help me figure out if the product is actually working. But switching platforms means breaking my routine on Amazon/BigBasket, which I trust. The 90-day pass feels like a bigger commitment than just reordering one pack.",
+          "Step 3: At Rs 540-557 effective price, this fits within my Rs 3,688/month budget comfortably. However, my trust anchor is 'self' \u2014 I need to believe in the results myself before locking into their platform. I don't have enough certainty yet about whether Nutrimix is actually delivering improvement. The budget allows it, but my confidence doesn't.",
+          "Step 4: My trust network is myself. I don't rely on ads or platforms pushing me. The notification feels salesy \u2014 'exclusive', 'surprise gift', all the marketing language. If I were advising myself, I'd say: one pack isn't enough data. Either buy one more pack the normal way to confirm results, or skip it. Don't get locked into their ecosystem until you're certain.",
+          "Step 5: I'll wait a few more days to observe my child more carefully and see if I can identify concrete improvements. If I do decide to reorder, I'll probably buy one more single pack from BigBasket first before committing to their D2C platform and subscription model. The offer might be good, but I need proof first, not promises."
+        ],
+        "key_drivers": [
+          "Need for self-verified results before platform commitment",
+          "Price consciousness appreciates the savings but won't override trust requirements",
+          "Reluctance to leave familiar shopping platform without concrete proof"
+        ],
+        "objections": [
+          "Insufficient certainty about product efficacy after one pack",
+          "Platform switching requires more trust than currently established",
+          "90-day pass feels like premature lock-in"
+        ],
+        "follow_up_action": "Observes child for 3-5 more days, then likely reorders a single pack from BigBasket to gather more evidence before considering the D2C subscription offer",
+        "error": null
+      },
+      {
+        "persona_id": "Tara-Delhi-Mom-32",
+        "display_name": "Tara",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut reaction is mixed \u2014 the cashback and free consultation sound appealing, but I'm not certain the product is actually working yet. And switching platforms makes me hesitant.",
+          "Step 2: I focus on: (a) the uncertainty about whether I've seen real improvement ('possible improvement but can't be certain'), (b) the platform switch from familiar BigBasket to a new D2C site, (c) the savings are modest (\u20b992-109 effectively), and (d) the free nutritionist consultation could help me figure out if this is actually working. The brand aspect matters to me, but I haven't verified this is truly trusted yet.",
+          "Step 3: Budget-wise, \u20b9540-557 is well within my \u20b910,456/month allocation and I have low price sensitivity, so money isn't the hard limit. The real constraint is trust \u2014 I haven't validated this product with my peer network yet, and I can't be sure it's delivering results. Switching platforms adds another layer of unfamiliarity.",
+          "Step 4: This is critical for me. I haven't checked with my mom-group about Nutrimix yet, and that's my coping mechanism. Would they approve of me subscribing to a D2C platform pass for a product I'm unsure about? They'd probably tell me to (1) verify the results first, (2) ask if anyone else uses LittleJoys D2C, and (3) not rush into a subscription model before I'm confident. I need that peer validation before committing to a platform switch and a pass.",
+          "Step 5: I defer the LJ Pass decision and take it to my trusted mom-group first. I'll ask if anyone has used the LittleJoys D2C site, whether they've seen real results with Nutrimix, and if the subscription pass is worth it. I might also use that free nutritionist consultation offer as a trial \u2014 but only after getting peer input. If the group gives positive feedback, I'll feel reassured enough to make the switch."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Uncertainty about product effectiveness",
+          "Trust anchor requires mom-group consultation"
+        ],
+        "objections": [
+          "Haven't consulted trusted peers/mom-group yet",
+          "Uncertain if product is actually working",
+          "Unfamiliar with LittleJoys D2C platform",
+          "Subscription commitment feels premature"
+        ],
+        "follow_up_action": "Reaches out to her mom-group WhatsApp to ask if anyone has used LittleJoys D2C platform and Nutrimix, and whether they've seen real results. Will wait for peer feedback before deciding on the LJ Pass.",
+        "error": null
+      },
+      {
+        "persona_id": "Bhavani-Hyderabad-Mom-24",
+        "display_name": "Bhavani",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: The offer sounds attractive with cashback and free consultation, but I'm hesitant about switching platforms. I've seen 'some possible improvement' but I'm not certain if it's really working - that uncertainty makes me pause before committing to another purchase.",
+          "Step 2: As someone who focuses on features and relies on self-judgment, I'm drawn to the nutritionist consultation - that could help me verify if the improvements are real. The 5% cashback (Rs 32) and saved delivery charges bringing it to Rs 540-557 is within my budget. But I notice this requires leaving BigBasket where I 'mostly shop' - that's a behavioral shift. The LJ Pass is a 90-day commitment, which feels like locking in before I'm fully convinced.",
+          "Step 3: Budget-wise, Rs 540-557 per order is well within my Rs 15,969/month allocation. No hard budget constraint violated. However, my trust requirement is not met - I can't be certain about the improvements yet, and my trust anchor is 'self' which means I need to be personally convinced, not persuaded by an app notification. The platform switch is also a soft barrier since BigBasket is my established routine.",
+          "Step 4: Before making this decision, my coping mechanism tells me I need to check with my mom-group or trusted peers. Have they tried the LJ Pass? What do they think about switching from BigBasket to a D2C site? Are other moms seeing real results with Nutrimix? I haven't done this social validation yet, and that's critical for me before trying something new or making a commitment like a 90-day pass.",
+          "Step 5: I need to consult my mom-group first about their experience with both Nutrimix results and the LJ Pass offer. I also want to use that free nutritionist consultation mentioned in the offer to get objective feedback on whether the 'possible improvement' is real before I commit to reordering. I'll reach out to my trusted network today and make a decision after hearing their feedback."
+        ],
+        "key_drivers": [
+          "Need for social validation from mom-group before platform switch",
+          "Uncertainty about product effectiveness despite 'possible improvement'",
+          "Desire to use free nutritionist consultation to verify results before commitment"
+        ],
+        "objections": [
+          "Not certain if improvements are real or coincidental",
+          "Requires switching from familiar BigBasket platform to unfamiliar D2C site",
+          "90-day LJ Pass feels like premature commitment without social validation"
+        ],
+        "follow_up_action": "Immediately posts in mom-group WhatsApp asking about others' experience with Nutrimix results and LJ Pass, while also researching how to access the free nutritionist consultation to get professional validation of the improvements before reordering",
+        "error": null
+      },
+      {
+        "persona_id": "Rohit-Mysore-Dad-32",
+        "display_name": "Rohit",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My gut says this is a lot to change at once \u2014 switching away from BigBasket feels risky, even with the savings. I'm uncertain if the product is actually working, which makes committing to a subscription program uncomfortable.",
+          "Step 2: I'm focusing on the price benefits (\u20b9540-557 vs \u20b9649 is meaningful savings), but also noticing I'd have to leave BigBasket where I do all my shopping. The 'possible improvement but can't be certain' reality means I don't have solid proof this is worth it. The nutritionist consultation is interesting but I trust my own judgment more than promotional consultations. The LJ Pass feels like they're trying to lock me into their platform.",
+          "Step 3: Budget-wise, \u20b9540-557 is well within my \u20b94,230 monthly allocation. However, my non-negotiable is sticking with known routines \u2014 BigBasket is my trusted platform. The persona explicitly states I avoid category disruption unless forced by a trusted source. A push notification isn't a trusted source forcing reconsideration. I need more certainty the product works before I disrupt my shopping routine.",
+          "Step 4: I don't have a trusted source pushing me to make this switch. If other parents I knew personally were raving about LittleJoys or if I had concrete evidence of improvement in my child, that would be different. Right now this feels like a marketing tactic, not a genuine recommendation.",
+          "Step 5: I'll hold off on reordering for now. I need to observe my 13-year-old more carefully over the next week or two to determine if there's real improvement. If I see genuine results, I might consider the platform switch. But right now, uncertainty about effectiveness plus platform disruption is too much change without solid proof."
+        ],
+        "key_drivers": [
+          "Uncertainty about product effectiveness",
+          "Resistance to platform switching away from familiar BigBasket routine",
+          "Lack of trusted external validation"
+        ],
+        "objections": [
+          "Can't confirm if Nutrimix is actually working yet",
+          "Requires abandoning BigBasket shopping routine",
+          "Push notification isn't a trusted source for major changes",
+          "LJ Pass feels like a lock-in tactic"
+        ],
+        "follow_up_action": "Observes child closely for 1-2 weeks to see if any improvements become more obvious; if clear benefits emerge, will reconsider and might reorder from BigBasket first before contemplating platform switch",
+        "error": null
+      },
+      {
+        "persona_id": "Nisha-Ranchi-Mom-34",
+        "display_name": "Nisha",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: My analytical mind is immediately drawn to the numbers \u2014 \u20b932 cashback and free delivery sounds attractive \u2014 but I'm cautious about committing to a 90-day pass when I'm still uncertain about actual results. The mention of 'possible improvement but can't be certain' reflects exactly where I am mentally.",
+          "Step 2: I focus on: (1) The net price reduction to \u20b9540-557 is meaningful savings, (2) The free nutritionist consultation could help me objectively assess whether the improvements I've seen are real or placebo, (3) Switching platforms means leaving my familiar Flipkart/BigBasket routine, (4) A 90-day commitment feels premature when I haven't validated efficacy yet. The consultation is actually the most valuable element here \u2014 it addresses my core need for self-verified data.",
+          "Step 3: Budget-wise, \u20b9540-557 is well within my \u20b94,310/month allocation and my low price sensitivity means cost isn't the barrier. The hard limit is trust: I rely on self-validation, and I don't have enough data points yet to confirm this product works. A 90-day pass before I'm certain violates my analytical approach to decision-making.",
+          "Step 4: Since I trust myself more than others, external opinions matter less. But I recognize other parents in my position would likely want more proof too. The nutritionist consultation could provide the objective third-party data I need to validate my observations \u2014 that aligns with my analytical style.",
+          "Step 5: I will take the nutritionist consultation first to objectively assess whether the improvements are real. If the nutritionist confirms measurable progress, I'll commit to the LJ Pass and reorder. I need that professional validation to convert my uncertainty into confidence. I'll schedule the consultation immediately and make the reorder decision within the next 2-3 days based on that input."
+        ],
+        "key_drivers": [
+          "Need for objective validation before committing to 90-day subscription",
+          "Analytical approach requires data confirmation not just subjective impressions",
+          "Nutritionist consultation offers the self-verified evidence I require"
+        ],
+        "objections": [
+          "90-day commitment feels premature without confirmed efficacy data",
+          "Switching from familiar BigBasket platform adds friction",
+          "Cannot be certain about improvements observed so far"
+        ],
+        "follow_up_action": "Schedules the free nutritionist consultation within 24 hours to get objective assessment of child's progress, will reorder with LJ Pass if nutritionist confirms measurable improvements",
+        "error": null
+      },
+      {
+        "persona_id": "Zainab-Delhi-Mom-22",
+        "display_name": "Zainab",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: My gut reaction is cautious interest \u2014 I see real savings (\u20b932 cashback plus delivery charges saved), but I'm being asked to switch platforms and commit to a 90-day pass. The 'possible improvement but can't be certain' sits uncomfortably with my analytical nature. I need more data before locking in.",
+          "Step 2: As an analytical decision-maker focused on price, I zero in on: (a) actual savings math \u2014 \u20b9540-557 effective price vs \u20b9649 is compelling, roughly 15-17% discount; (b) the 90-day commitment cost isn't mentioned \u2014 what's the total pass fee?; (c) platform switch from BigBasket (where I normally shop) to a D2C site adds friction; (d) the nutritionist consultation could help me verify if improvements are real or placebo. I need to calculate total outlay and verify the brand's credibility on their own platform.",
+          "Step 3: Budget check: \u20b99,498/month for child nutrition with high price sensitivity. Current pack was likely \u20b9649. If I reorder monthly, even at \u20b9557, that's manageable. But what's the LJ Pass fee for 90 days? Without knowing total commitment cost, I can't assess if this fits my ceiling. Non-negotiable: I need proof this product actually works before subscribing to a loyalty program.",
+          "Step 4: My coping mechanism is critical here \u2014 I check with mom-groups before any new product trial. Switching to a D2C platform and signing up for a subscription pass IS a new behavior pattern for me. I'd want to ask: 'Has anyone used LittleJoys website directly? Is the LJ Pass worth it? Did the nutritionist consultation actually help?' I need social validation that this platform switch is safe and the pass delivers value, not just that Nutrimix itself is okay.",
+          "Step 5: I defer the immediate reorder and take two parallel actions: (1) Post in my trusted mom-group WhatsApp asking about LJ Pass experience and D2C platform reliability, specifically around delivery, customer service, and whether the nutritionist consult is genuinely useful; (2) Visit the LittleJoys website to find the actual 90-day pass cost, read terms, and check reviews. I'll also use that free nutritionist consultation offer as leverage \u2014 if I do subscribe, I want that call FIRST to assess whether the 'possible improvement' I've seen is real or confirmation bias. Only after peer validation and seeing total cost transparency will I commit."
+        ],
+        "key_drivers": [
+          "Price sensitivity driving interest in 15-17% effective discount",
+          "Analytical need for total cost transparency before 90-day commitment",
+          "Trust anchor in self requiring verification of product efficacy before subscription",
+          "Coping mechanism demanding peer validation for platform switch behavior"
+        ],
+        "objections": [
+          "90-day LJ Pass total cost not disclosed \u2014 can't assess true budget impact",
+          "Uncertain whether observed improvements are real or placebo",
+          "Platform switch from familiar BigBasket to D2C site adds risk",
+          "No peer validation yet on LJ Pass value or D2C platform reliability"
+        ],
+        "follow_up_action": "Posts in mom-group WhatsApp asking about LJ Pass and D2C platform experience, simultaneously visits LittleJoys website to find pass pricing and terms, and checks if she can access the nutritionist consultation before committing to verify product efficacy",
+        "error": null
+      },
+      {
+        "persona_id": "Bhavani-Coimbatore-Mom-30",
+        "display_name": "Bhavani",
+        "probe_id": "A-P5a",
+        "decision": "research_more",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: The offer sounds attractive with cashback and nutritionist consultation, but I'm hesitant about switching platforms. I've used BigBasket reliably and moving to a new app feels like a commitment I'm not sure about yet.",
+          "Step 2: I focus on: (a) the 5% cashback (\u20b932) and free delivery making it \u20b9540-557 vs \u20b9649, (b) the free nutritionist consultation which could help verify if improvements are real, (c) having to switch from BigBasket to LittleJoys website - a platform change I'm unfamiliar with, (d) the '90-day pass' commitment language makes this feel binding, (e) I've only seen 'possible' improvement - nothing I can confidently attribute to Nutrimix yet.",
+          "Step 3: Budget check: \u20b9540-557 fits within my \u20b93,473 monthly allocation. However, my trust anchor is 'self' - I need to be personally convinced this works before committing to a subscription model. The non-negotiable here is that I haven't verified the product's efficacy yet with certainty. Switching platforms also adds friction since I don't know the LittleJoys site's reliability for delivery and customer service.",
+          "Step 4: Before making this switch and commitment, I need to check with my mom-group. Key questions: Has anyone used the LittleJoys app directly? Is it reliable? Have they tried the LJ Pass? Most importantly - have their children shown measurable improvements with Nutrimix? I cannot make this platform switch and 90-day commitment without social validation, especially since the product results aren't clear to me yet.",
+          "Step 5: I will post in my trusted mom-group WhatsApp asking about (1) LittleJoys app experience and reliability, (2) whether anyone has used LJ Pass and found it worth it, (3) their honest assessment of Nutrimix results after one pack. The nutritionist consultation is appealing - if others validate the platform switch, I'll likely proceed. But I need that peer reassurance first given my social decision style and coping mechanism."
+        ],
+        "key_drivers": [
+          "Need for social validation before platform switch",
+          "Uncertainty about product efficacy after one pack",
+          "Coping mechanism requires mom-group check-in before new commitments",
+          "Attractive offer but 90-day pass feels like significant commitment"
+        ],
+        "objections": [
+          "Haven't verified Nutrimix actually works yet with confidence",
+          "Unfamiliar with LittleJoys app reliability compared to BigBasket",
+          "90-day pass commitment without proven results feels premature",
+          "Need peer validation before switching purchasing platform"
+        ],
+        "follow_up_action": "Posts in mom-group WhatsApp asking about LittleJoys app reliability, LJ Pass value, and real Nutrimix results. If 2-3 trusted peers validate positively within 24-48 hours, will sign up for LJ Pass and reorder.",
+        "error": null
+      },
+      {
+        "persona_id": "Ganga-Kochi-Mom-36",
+        "display_name": "Ganga",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My immediate reaction is cautious interest in the savings, but uncertainty about whether Nutrimix is actually working. I've seen 'some possible improvement' but can't be certain - that's not enough proof for me to commit to switching platforms and a 90-day subscription.",
+          "Step 2: I'm focusing on: (1) The price savings - Rs 540-557 vs Rs 649 is attractive given my budget constraints, (2) The platform switch from BigBasket to LittleJoys website - this is a change in my routine, (3) The 90-day pass commitment feels like a big leap when I've only finished one pack and am unsure of results, (4) The nutritionist consultation could help validate if it's working, but I haven't used it yet.",
+          "Step 3: Budget-wise, Rs 540-557 fits within my \u20b95,007/month nutrition budget. But my trust requirement is the hard limit here - I need validation from my peer network before making this switch. My habitual decision style means changing from BigBasket (familiar) to a D2C site is significant. I have high price sensitivity, so the savings matter, but not enough to override my need for peer confirmation.",
+          "Step 4: I need to check with my mom-group first. Questions I'd ask them: Has anyone tried this LJ Pass? Is the D2C site reliable for delivery? Have they seen actual results after one pack? Are others continuing with Nutrimix? Without this peer validation, I won't feel confident making this commitment, especially switching platforms and locking into 90 days.",
+          "Step 5: I will defer this decision and immediately post in my WhatsApp mom-group asking if anyone has tried the LJ Pass subscription and whether they've seen real improvements from Nutrimix after the first pack. I'll also ask about their experience with the LittleJoys website delivery. Only after hearing from trusted peers will I decide whether to reorder and switch platforms."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Uncertainty about product efficacy after one pack",
+          "Habitual decision style resistant to changing from BigBasket routine"
+        ],
+        "objections": [
+          "Uncertain if Nutrimix is actually working - need peer confirmation of results",
+          "90-day commitment feels premature without clear proof",
+          "Switching from familiar BigBasket to new D2C platform requires peer reassurance"
+        ],
+        "follow_up_action": "Posts in trusted WhatsApp mom-group asking if others have tried LJ Pass subscription, seen real results from Nutrimix continuation, and had good experience with LittleJoys website delivery before making any decision",
+        "error": null
+      },
+      {
+        "persona_id": "Paramjit-Kochi-Dad-40",
+        "display_name": "Paramjit",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut tells me to be cautious. I've only finished one pack and can't be certain if there's real improvement. Switching platforms feels like adding unnecessary complexity to my routine, and I'm already comfortable with BigBasket.",
+          "Step 2: I'm focused on three things: the price savings (Rs 32 cashback plus delivery charges saved brings it to ~Rs 540-557), the requirement to leave BigBasket where I do all my shopping, and the fact that I'm still uncertain about whether the product actually works. The nutritionist consultation is mentioned, but I don't know if that's something I'd use or trust from a brand platform.",
+          "Step 3: Budget-wise, Rs 540-557 is within my Rs 7,043 monthly child nutrition budget. However, my non-negotiable is sticking with known routines - I shop on BigBasket for everything. Switching platforms disrupts my established shopping pattern. Also, I need more certainty that this product delivers before committing to a subscription model that locks me into their platform.",
+          "Step 4: If I asked my family - my wife or parents - they'd likely question why I'm changing my entire shopping routine for one product when I'm not even sure it's working yet. They'd probably say 'finish another pack from BigBasket first and see if you notice real changes' rather than jump into a platform-exclusive subscription.",
+          "Step 5: I'll hold off on the LJ Pass for now. I need more proof this product works before I disrupt my BigBasket routine. If I do reorder, I'll get another pack from BigBasket where I'm already shopping, even if it costs a bit more. The savings aren't compelling enough to overcome my need for routine and the uncertainty about effectiveness."
+        ],
+        "key_drivers": [
+          "Habitual shopping routine on BigBasket",
+          "Insufficient evidence of product effectiveness after one pack",
+          "Family trust anchor would advise caution before platform switching"
+        ],
+        "objections": [
+          "Requires leaving BigBasket and disrupting established shopping routine",
+          "Only one pack completed with unclear results",
+          "Subscription model locks into their platform",
+          "Savings not compelling enough to overcome routine disruption"
+        ],
+        "follow_up_action": "Will likely reorder one more pack from BigBasket at full price to test effectiveness further before considering any platform switch or subscription commitment",
+        "error": null
+      },
+      {
+        "persona_id": "Suman-Chandigarh-Mom-22",
+        "display_name": "Suman",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.55,
+        "reasoning_trace": [
+          "Step 1: The offer sounds attractive \u2014 getting money back and saving on delivery feels smart. But switching apps makes me pause. I've seen 'some possible improvement' but I'm not certain it's really working yet.",
+          "Step 2: I'm focusing on the price benefits (\u20b932 cashback plus saved delivery bringing it to \u20b9540-557 range, which is notably cheaper than \u20b9649), the free nutritionist consultation (which could help me understand if the improvements are real), and the fact that I'd have to leave BigBasket which I'm already comfortable with. The 'exclusive to website' part feels a bit pushy \u2014 why can't I get this on BigBasket where I normally shop?",
+          "Step 3: Budget-wise, \u20b9540-557 is well within my \u20b95,791 monthly allocation. But I have high price sensitivity, so committing to a 90-day pass when I'm uncertain about results feels risky. I need to be sure this is worth it before locking in. The constraint here is my uncertainty about effectiveness, not the money itself.",
+          "Step 4: I haven't talked to family about whether they've noticed real changes in my child. That matters to me \u2014 I trust family more than my own observations sometimes. My mother-in-law or husband might have clearer perspective on whether there's actual improvement. Before switching platforms and committing to a subscription model, I'd want their input.",
+          "Step 5: I'm going to wait a few days and observe more carefully, maybe ask family if they've noticed anything different. The offer is tempting price-wise, but I need stronger evidence this product actually works before I switch shopping platforms and commit to their ecosystem. If family confirms improvement or the free consultation could help verify results, I might reconsider in a week."
+        ],
+        "key_drivers": [
+          "uncertainty_about_product_effectiveness",
+          "need_for_family_validation",
+          "reluctance_to_switch_platforms_without_clear_benefit"
+        ],
+        "objections": [
+          "unsure if improvements are real or coincidental",
+          "uncomfortable switching from familiar BigBasket to new platform",
+          "haven't consulted family about observed changes"
+        ],
+        "follow_up_action": "observes child for 3-4 more days while asking husband and mother-in-law if they've noticed any changes; may reach out to family WhatsApp group for opinions on nutrition supplements",
+        "error": null
+      },
+      {
+        "persona_id": "Aishwarya-Bhubaneswar-Mom-29",
+        "display_name": "Aishwarya",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: I'm intrigued by the cashback and free consultation \u2014 those are real savings and it feels like they're taking care of me. But I'm hesitant about switching platforms entirely. BigBasket is familiar territory.",
+          "Step 2: The numbers catch my attention first: \u20b932 cashback plus saved delivery means around \u20b990-110 in total savings per order. Over 90 days that could be \u20b9270-330 if I order thrice. The free nutritionist consultation appeals to my need for authority validation \u2014 finally someone credible to tell me if this is actually working. But I'm focusing on the 'not available on BigBasket' part \u2014 why do I have to leave a platform I trust? The 'possible improvement but can't be certain' bothers me because I want reassurance before committing to a subscription model.",
+          "Step 3: Budget-wise, \u20b9540-557 is within my \u20b92,415 monthly allocation, so no hard ceiling breach. But switching platforms feels like a soft constraint \u2014 I'd be locked into their ecosystem for 90 days. I need trust before that commitment, and one uncertain pack doesn't give me that. The 'high price sensitivity' in my profile makes the 90-day commitment feel risky even with cashback.",
+          "Step 4: In my joint household, switching to a new shopping platform just for one product might raise eyebrows. 'Why not just stick with BigBasket where we get everything?' My mother-in-law would probably question locking into a 90-day pass when we're not even sure it's working. The nutritionist consultation would be my strongest defense \u2014 'It comes with expert advice' \u2014 but I'd need to see results first to justify the platform switch to the family.",
+          "Step 5: I'll hold off on the LJ Pass for now. Instead, I'll reorder one more pack through BigBasket at the regular price to give it another month and see if the improvements become clearer. If I'm convinced after the second pack, then I'll consider switching platforms for the savings. The free consultation is tempting, but not enough to override my need for more certainty before a 90-day commitment."
+        ],
+        "key_drivers": [
+          "Need for authority validation before platform commitment",
+          "Price sensitivity making 90-day lock-in feel premature",
+          "Insufficient evidence of product efficacy after just one pack"
+        ],
+        "objections": [
+          "Uncertain about product effectiveness after trial period",
+          "Platform switching feels risky without stronger proof",
+          "90-day commitment seems long for unverified results"
+        ],
+        "follow_up_action": "Reorders one pack through BigBasket at regular price to continue trial and assess results more definitively before considering platform switch",
+        "error": null
+      },
+      {
+        "persona_id": "Salma-Delhi-Mom-29",
+        "display_name": "Salma",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: The offer sounds good on paper \u2014 cashback, free delivery, a gift \u2014 but switching away from BigBasket makes me uneasy. I've 'seen some possible improvement' but I'm not really sure if it's the product or just normal growth. My gut says I need to talk to someone before making this switch.",
+          "Step 2: I'm focusing on three things: (1) The effective price drop to ~Rs 540-557 is attractive and fits my budget-conscious nature, (2) switching from BigBasket to a D2C site means changing my trusted shopping habit, and (3) the 'possible improvement' isn't concrete enough \u2014 I can't tell if Nutrimix actually worked. The nutritionist consultation could help clarify this, but I'd need to commit to the pass first. The 90-day pass also means I'm locking into multiple purchases upfront.",
+          "Step 3: Budget-wise, Rs 540-557 per order is well within my Rs 4,179/month allocation. That's not the blocker. The hard limit here is trust: I have high price sensitivity and a habitual decision style. BigBasket is my comfort zone. I need to know if other moms are using the LittleJoys site directly, if it's reliable, and most importantly \u2014 if their kids actually showed results with Nutrimix.",
+          "Step 4: This is where I feel stuck. Before I switched platforms and committed to a 90-day pass, I'd want to ask my mom-group: 'Has anyone ordered from the LittleJoys website? Is it safe? And honestly, did you really see changes in your child after one pack of Nutrimix?' If several moms say yes and confirm the D2C site is trustworthy, I'd feel much better. But I haven't checked yet, and without that social proof, switching platforms feels premature.",
+          "Step 5: I'm going to hold off on reordering right now. I need to post in my mom WhatsApp group first \u2014 ask if anyone's used the LittleJoys app, whether the pass is worth it, and if they genuinely saw results worth continuing. I'll also see if the offer is time-limited. If I get positive responses in the next day or two and the deal is still available, I'll reorder through the D2C site. If not, I might just stick with BigBasket for the next pack without the pass."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Uncertainty about product efficacy after one pack",
+          "Habitual preference for BigBasket over new D2C platform"
+        ],
+        "objections": [
+          "Haven't consulted mom-group about LittleJoys website reliability",
+          "Unclear if one pack actually made a difference",
+          "Switching from trusted BigBasket requires stronger social proof"
+        ],
+        "follow_up_action": "Posts in mom WhatsApp group asking if anyone has ordered from LittleJoys website directly and whether Nutrimix showed real results for their kids. Will decide based on responses within 1-2 days.",
+        "error": null
+      },
+      {
+        "persona_id": "Revathi-Hyderabad-Mom-27",
+        "display_name": "Revathi",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: My gut feeling is cautious interest mixed with hesitation. The savings look attractive (Rs 32 cashback plus delivery charges saved), but switching platforms from BigBasket to a D2C site makes me uncomfortable. I've only finished one pack and I'm not certain if it's actually working.",
+          "Step 2: As someone who focuses on price, I calculate: Rs 540-557 effective price is better than what I probably paid before. But the 'exclusive to D2C site' requirement stands out - why can't I buy this on BigBasket where I'm comfortable? The 90-day pass commitment feels like a longer lock-in. The 'free nutritionist consultation' sounds authoritative, which appeals to me, but I haven't verified if these consultations are actually credible. I notice 'some possible improvement but can't be certain' - this uncertainty bothers me because I need clearer proof before committing to a subscription model.",
+          "Step 3: Budget check: Rs 540-557 is well within my Rs 7,195 monthly child nutrition budget. However, my high price sensitivity makes me wary of subscription lock-ins. My habitual decision style means switching from BigBasket (my usual platform) to a new app is friction. As someone who relies on authority, I need validation that this D2C site is trustworthy and that the nutritionist consultation is legitimate.",
+          "Step 4: Before switching platforms and committing to a 90-day pass, I need to check with my mom-groups. I'd ask: 'Has anyone used LittleJoys website directly? Is it reliable?' 'Are the nutritionist consultations actually helpful?' 'Did you see clear results after one pack?' My coping mechanism requires this peer validation before any new trial - and switching to D2C counts as a new behavior pattern even though the product is the same. Without asking my trusted circle first, I'd feel exposed.",
+          "Step 5: I defer the decision. I will screenshot this offer and post in my WhatsApp mom-group asking if anyone has used the LittleJoys D2C site and the LJ Pass, and whether one pack was enough to see real results. I'll also ask my sister or a close friend if they think the savings justify switching platforms. Only after getting reassurance from my trusted network will I consider reordering - either through the D2C site if they validate it, or back on BigBasket if that option exists even without the pass benefits."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Uncertainty about product effectiveness after one pack",
+          "Habitual preference for BigBasket over unfamiliar D2C site",
+          "Price sensitivity making 90-day commitment feel risky"
+        ],
+        "objections": [
+          "Not certain the product is actually working yet",
+          "Uncomfortable switching from trusted BigBasket to unfamiliar D2C platform",
+          "90-day pass feels like a long commitment without proven results",
+          "Haven't consulted mom-groups about this platform or offer yet"
+        ],
+        "follow_up_action": "Posts in WhatsApp mom-group asking if anyone has purchased from LittleJoys D2C site, whether the LJ Pass is worth it, and if one pack showed clear results. Will wait 1-2 days for responses before deciding whether to reorder.",
+        "error": null
+      },
+      {
+        "persona_id": "Nisha-Ahmedabad-Mom-29",
+        "display_name": "Nisha",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.62,
+        "reasoning_trace": [
+          "Step 1: I'm intrigued by the cashback and consultation offer \u2014 it feels like they're trying to build a relationship, which appeals to me. But switching from BigBasket where I do all my shopping feels like an extra hassle I wasn't planning for.",
+          "Step 2: The savings are real (\u20b932 cashback + delivery charges saved = roughly \u20b9100-110 off), bringing it down to \u20b9540-557. The nutritionist consultation is interesting \u2014 that could help me understand if the 'possible improvement' I'm seeing is real or just wishful thinking. But I'm focusing on the friction: I'd have to create a new routine, remember a different app, and lose the convenience of one-stop shopping on BigBasket.",
+          "Step 3: Budget-wise, \u20b9540-557 is well within my \u20b915,344/month nutrition budget. No hard constraint there. But my trust anchor is family, not apps or brands pushing subscriptions. I haven't consulted anyone about whether this switch makes sense, and I prefer measured optimism \u2014 not jumping into platform changes based on first-order savings alone.",
+          "Step 4: If I mentioned this to my family, they'd probably ask: 'Is the product actually working?' and 'Why change what's convenient?' I can't confidently answer the first question yet \u2014 I've only seen 'possible' improvement. The LJ Pass feels like it's designed to lock me into their ecosystem, and my family would likely advise caution about that commitment without clearer results.",
+          "Step 5: I'm not ready to switch platforms and commit to a 90-day pass when I'm still uncertain about the product's actual impact. I'll wait and observe my child for another week or two. If I see clearer improvement, I might reorder \u2014 possibly even try the LJ Pass then. For now, I'll hold off and see if the changes become more definitive."
+        ],
+        "key_drivers": [
+          "Uncertainty about product efficacy after one pack",
+          "Friction of switching from familiar BigBasket platform",
+          "Need for family-aligned decision on platform commitment"
+        ],
+        "objections": [
+          "Haven't seen clear enough results to justify platform switch",
+          "LJ Pass feels like ecosystem lock-in without proven value",
+          "Losing convenience of consolidated BigBasket shopping"
+        ],
+        "follow_up_action": "Observes child for 1-2 more weeks to assess if improvements become clearer; if positive, may reorder via BigBasket or reconsider LJ Pass",
+        "error": null
+      },
+      {
+        "persona_id": "Preeti-Pune-Mom-33",
+        "display_name": "Preeti",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My gut reaction is mixed \u2014 I like the idea of saving money and getting expert guidance, but switching platforms feels disruptive to my routine. I've just finished the first pack and I'm not entirely sure if it's working yet.",
+          "Step 2: I focus on the convenience aspects (free delivery, cashback, nutritionist consultation) and the savings (Rs 32 cashback + delivery saved = effective ~Rs 540-557). But I'm also processing that this requires me to abandon BigBasket, which is part of my established weekly shopping routine. The 'possible improvement but can't be certain' part bothers me \u2014 I need clearer proof before committing to a subscription-like model with a 90-day pass.",
+          "Step 3: Budget-wise, Rs 540-557 fits comfortably within my Rs 6,018/month child nutrition budget with low price sensitivity. No hard budget constraint violated. However, my coping mechanism \u2014 sticking to a predictable purchase schedule and avoiding surprises \u2014 is being challenged by switching platforms. The 90-day commitment also adds unpredictability.",
+          "Step 4: As someone who trusts peers over brands, I would want to hear from other mothers about their experience with LJ Pass and the D2C platform before making the switch. Have they found the nutritionist consultation valuable? Is the platform reliable? I haven't consulted my network yet about this specific offer, and that feels like a gap.",
+          "Step 5: I decide to defer the immediate reorder. I want to ask a couple of trusted mom friends in my circle whether they've used LittleJoys directly and what they think of the subscription model. I also want one more week to observe my child more carefully \u2014 did I actually see improvement, or was I just hoping? Once I have peer validation and clearer evidence of results, I'll feel more confident about switching platforms and committing to the pass."
+        ],
+        "key_drivers": [
+          "Need for peer validation before platform switch",
+          "Uncertainty about product effectiveness after one pack",
+          "Disruption to established shopping routine and predictability"
+        ],
+        "objections": [
+          "Requires abandoning familiar BigBasket routine",
+          "90-day pass feels like a commitment without clear proof of results",
+          "No peer feedback yet on LJ Pass or D2C platform experience"
+        ],
+        "follow_up_action": "Reaches out to 2-3 trusted mom friends to ask about their experience with LittleJoys direct ordering and subscription benefits, while observing child more carefully for another week",
+        "error": null
+      },
+      {
+        "persona_id": "Kiran-Kochi-Mom-37",
+        "display_name": "Kiran",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: My gut feeling is cautious interest \u2014 the savings are real and attractive, but I'm uncertain about the improvement I've seen, and switching platforms feels like a big step without validation from my trusted circle.",
+          "Step 2: I'm focused on the price benefits (\u20b932 cashback, free delivery, net price \u20b9540-557 vs \u20b9649), which aligns with my value-driven approach. However, I'm also noticing this requires switching from BigBasket to a D2C site I'm less familiar with. The 'possible improvement but can't be certain' is a red flag \u2014 I need more certainty before committing to another purchase, especially on a new platform.",
+          "Step 3: Budget-wise, \u20b9540-557 is well within my \u20b93,756/month child nutrition allocation. But my trust requirement is the hard constraint here \u2014 I don't make switches without social validation. The LJ Pass is a 90-day commitment to their platform, which means I'm locking in without knowing if other moms have had good experiences with both the product results AND the D2C service.",
+          "Step 4: I haven't checked with my mom-groups about whether Nutrimix actually works for their kids, or whether anyone uses the LittleJoys D2C site versus BigBasket. My coping mechanism requires this peer validation before switching platforms. They might tell me BigBasket is more reliable for returns, or that the D2C site has delivery issues, or conversely that LJ Pass is worth it \u2014 but I don't know yet.",
+          "Step 5: I need to pause and consult my WhatsApp mom-groups first. I'll ask: 'Has anyone tried Nutrimix for a month? Did you see real changes?' and 'Anyone using LittleJoys website vs BigBasket? How's the service?' Once I get responses showing others have seen benefits AND that the D2C platform is reliable, I'll feel comfortable reordering with the LJ Pass."
+        ],
+        "key_drivers": [
+          "Need for social validation before platform switch",
+          "Uncertain about product efficacy after first pack",
+          "Price sensitivity makes the offer attractive but not decisive alone"
+        ],
+        "objections": [
+          "No peer confirmation that Nutrimix delivers visible results",
+          "Unfamiliar with LittleJoys D2C site reliability vs trusted BigBasket",
+          "90-day LJ Pass feels like premature commitment without proof of value"
+        ],
+        "follow_up_action": "Posts in WhatsApp mom-groups asking about Nutrimix results and LittleJoys D2C experience, waiting for responses before deciding whether to reorder",
+        "error": null
+      },
+      {
+        "persona_id": "Revathi-Chandigarh-Mom-39",
+        "display_name": "Revathi",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.68,
+        "reasoning_trace": [
+          "Step 1: My gut says this sounds like a good deal on paper, but I'm being asked to change platforms and I'm not convinced yet that Nutrimix is actually working. The 'possible improvement but can't be certain' feeling makes me hesitant to commit to a subscription-like pass.",
+          "Step 2: As an analytical person, I focus on: (a) the math - Rs 32 cashback + saved delivery could bring it to Rs 540-557, that's about 15-17% savings, (b) the LJ Pass is 90 days, which means I'm committing to ordering from them repeatedly, (c) I've only finished ONE pack and cannot verify results, (d) switching from BigBasket means changing my familiar shopping routine, which I actively avoid unless there's a strong reason. The nutritionist consultation is interesting but feels like a sales tactic more than genuine value right now.",
+          "Step 3: Budget check: Rs 1975/month for child nutrition means roughly Rs 600-650 per product is manageable, so price isn't the hard constraint. The real constraint is my trust requirement - I rely on myself to evaluate, and I don't have enough data yet. One pack is not enough for me to be certain. My coping mechanism explicitly says I avoid category disruption unless forced - this is asking me to switch platforms for an unproven product benefit.",
+          "Step 4: I don't have recent memories of discussing this with anyone, and my trust anchor is self, not my network. But if I were to mention this to other parents, they'd likely ask 'are you sure it's working?' - which I can't answer confidently. The practical parents I know wouldn't switch platforms for a product they're unsure about, even with cashback.",
+          "Step 5: I need more time to assess if Nutrimix actually works before I commit to a 90-day pass and change my shopping platform. I'll wait another week or two to see if the improvements become clearer. If they do, I'll reconsider. For now, I'm not ready to reorder - I'll pause and observe my child more carefully."
+        ],
+        "key_drivers": [
+          "Insufficient evidence after only one pack to confirm effectiveness",
+          "Reluctance to switch from familiar BigBasket platform",
+          "Analytical need for concrete results before commitment to subscription-style pass"
+        ],
+        "objections": [
+          "Cannot verify product efficacy after just one pack",
+          "Requires platform switch away from comfortable BigBasket routine",
+          "90-day LJ Pass feels like premature commitment",
+          "Cashback incentive appears to be pushing a decision before I'm ready"
+        ],
+        "follow_up_action": "Pauses reorder for 1-2 weeks to actively observe child for concrete improvements; if results become clear, will reconsider purchasing (likely through BigBasket first unless convinced to switch)",
+        "error": null
+      },
+      {
+        "persona_id": "Parveen-Bhubaneswar-Mom-38",
+        "display_name": "Parveen",
+        "probe_id": "A-P5a",
+        "decision": "defer",
+        "confidence": 0.65,
+        "reasoning_trace": [
+          "Step 1: Initial gut feeling is cautious interest but hesitation. The savings look good on paper (Rs 32 cashback + free delivery is meaningful for my budget), but switching from BigBasket to a brand website disrupts my established routine. I'm not sure yet if Nutrimix is worth continuing.",
+          "Step 2: I focus on: (a) the effective price reduction (~Rs 540-557 vs my usual Rs 649 - that's about 15% savings, significant for my Rs 2707/month nutrition budget), (b) the fact I'd have to leave BigBasket where I'm comfortable and have other items in my routine, (c) I've seen 'some possible improvement' but can't be certain - this uncertainty is a red flag for committing to a 90-day pass program, (d) the nutritionist consultation could help me understand if this is really working, but I don't know anyone who's used this LJ Pass feature yet.",
+          "Step 3: Budget check: Rs 540-557 is within my monthly allocation (Rs 2707), so affordable. But hard limits: I need peer validation before switching platforms and committing to a subscription-like model. I stick to predictable purchase schedules - a 90-day pass feels like locking myself in before I'm certain. The 'can't be certain' about improvement is a non-negotiable blocker for a bigger commitment.",
+          "Step 4: Social signal check: I haven't heard from other mothers about LJ Pass or switching to D2C sites. My Instagram mom groups talk about BigBasket deals, not brand websites. Nobody has mentioned whether this nutritionist consultation is actually useful or just a sales tactic. Without peer validation that (a) Nutrimix actually works over time, and (b) LJ Pass is worth leaving BigBasket for, I feel exposed making this switch alone.",
+          "Step 5: I will wait this purchase cycle. I need to: ask in my mom groups if anyone uses Nutrimix longer-term and saw real results, check if anyone has tried LJ Pass, and see if the child's improvement (if any) becomes more clear over the next week or two. The offer says 'exclusive to ourlittlejoys.com' which suggests it'll be available when I'm ready. I won't reorder right now - I'll observe my child without the product for a bit and gather peer input before committing to a platform switch and pass program."
+        ],
+        "key_drivers": [
+          "Uncertainty about product effectiveness ('can't be certain')",
+          "Lack of peer validation for LJ Pass and platform switch",
+          "Need for routine stability (weekly meal plan, predictable purchases)"
+        ],
+        "objections": [
+          "Unverified improvement - not enough evidence to justify 90-day commitment",
+          "No peer endorsement of LJ Pass or D2C purchase model",
+          "Switching from BigBasket disrupts established shopping routine",
+          "Subscription-like model feels risky before product proves itself"
+        ],
+        "follow_up_action": "Posts in WhatsApp mom group and Instagram asking if anyone has used Nutrimix for 2-3 months and whether they saw real results; asks about LJ Pass experience; observes child for another 1-2 weeks without product to see if changes persist or fade",
+        "error": null
+      }
+    ],
+    "summary": {
+      "total": 30,
+      "outcome_counts": {
+        "defer": 21,
+        "research_more": 9
+      },
+      "positive_pct": 0.0,
+      "top_drivers": [
+        [
+          "Need for peer validation before platform switch",
+          8
+        ],
+        [
+          "Uncertainty about product efficacy after one pack",
+          4
+        ],
+        [
+          "Need for social validation before platform switch",
+          3
+        ],
+        [
+          "Uncertainty about product effectiveness after one pack",
+          3
+        ],
+        [
+          "Uncertainty about product efficacy after first pack",
+          2
+        ]
+      ],
+      "top_objections": [
+        [
+          "Uncertain about actual product effectiveness after one pack",
+          1
+        ],
+        [
+          "Reluctant to switch from familiar BigBasket to new D2C platform",
+          1
+        ],
+        [
+          "90-day pass commitment feels premature without confirmed results",
+          1
+        ],
+        [
+          "Cannot confirm if improvement is real or placebo after just one pack",
+          1
+        ],
+        [
+          "90-day pass locks me into unfamiliar D2C platform",
+          1
+        ]
+      ]
+    }
+  },
+  "A-P5b": {
+    "hypothesis": "H2 isolation: Does the expert consultation alone (without price incentive) unlock reorder confidence for outcome-uncertain lapsers?",
+    "scenario": {
+      "description": "First Nutrimix pack finished. Outcome is unclear \u2014 possible appetite improvement but hard to confirm. LittleJoys offers a FREE 10-minute online nutritionist consultation (book on their app) to review your child's progress and advise whether to continue. No purchase required to book the consultation. Does the free expert consultation make you more confident about reordering Nutrimix?",
+      "product": "LittleJoys Nutrimix 500g",
+      "price_inr": 649,
+      "simulation_tick": 65
+    },
+    "results": [
+      {
+        "persona_id": "Ayesha-Delhi-Mom-37",
+        "display_name": "Ayesha",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says this is a smart move \u2014 a free expert consultation feels like exactly what I need right now to make sense of whether the appetite change I'm seeing is real or just wishful thinking. It's low-effort and could give me clarity.",
+          "Step 2: As an analytical decision-maker, I'm drawn to the fact that this offers expert input to validate what I'm observing. The 'free' aspect removes financial risk, and a 10-minute app-based consultation fits my convenience needs perfectly. I can do this during my morning planning window. The nutritionist might help me identify whether the subtle changes I'm noticing are actually attributable to Nutrimix or just coincidental with the new school routine.",
+          "Step 3: Budget-wise, there's no constraint here \u2014 it's free. The consultation itself poses no financial risk. If I decide to reorder after the consultation, it would fall within my \u20b97,567 monthly nutrition budget. My trust requirement is the key constraint: I need validation before committing further, and an expert consultation could provide that missing piece.",
+          "Step 4: My family would likely approve of this approach. Getting professional advice before spending more money is exactly the kind of measured, responsible decision-making they'd respect. My sister or mother would probably say 'Yes, talk to the expert first \u2014 see what they say about what you've noticed.' It's the prudent middle path between abandoning something that might be working and blindly reordering.",
+          "Step 5: I'm going to book the consultation. I'll use it to get clarity on whether the possible appetite improvement I'm seeing is meaningful, ask specific questions about my 12-year-old's needs given the demanding school routine, and then decide based on professional input whether to continue. This fits my measured optimism approach \u2014 I'm not rejecting, but I'm also not committing without more evidence."
+        ],
+        "key_drivers": [
+          "Free expert validation aligns with analytical decision style",
+          "Convenience of 10-minute app-based consultation",
+          "Need for trusted third-party input to resolve uncertain outcome"
+        ],
+        "objections": [
+          "Still uncertain whether observed changes are actually due to Nutrimix",
+          "Haven't independently verified the product's effectiveness yet"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the app this week, prepares specific questions about the appetite changes and school routine demands, and will decide on reordering based on the expert's assessment",
+        "error": null
+      },
+      {
+        "persona_id": "Sunita-Kochi-Mom-38",
+        "display_name": "Sunita",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My immediate reaction is cautious interest. A free consultation with no purchase obligation feels low-risk, and I need objective data to decide if this product is actually working. The appetite improvement I've noticed is too vague to justify continued spending.",
+          "Step 2: As an analytical decision-maker who trusts myself over marketing, I focus on: (a) the consultation is truly free with no strings attached, (b) I can get expert assessment of the unclear results I've seen, (c) this gives me concrete data to evaluate ROI before committing more budget, (d) I already researched before but results remain ambiguous\u2014this addresses my core uncertainty. The 10-minute time investment fits my morning planning window.",
+          "Step 3: Budget check: At \u20b95,290/month ceiling, I need to confirm this product delivers value before another purchase. I've already spent on one pack\u2014can't justify repeat purchase without clearer evidence. Non-negotiable: I need proof of efficacy, not just possible improvements. The free consultation meets my requirement without additional financial commitment.",
+          "Step 4: My joint household would approve of getting expert validation before spending more\u2014it's the prudent, responsible approach. Other mothers in my network would likely say 'take the free consultation, what's there to lose?' It demonstrates I'm being careful with household money while still prioritizing my child's nutrition.",
+          "Step 5: I will book the free nutritionist consultation through the app. I'll prepare my observations about the possible appetite improvement and ask specific questions about measurable outcomes. Based on the nutritionist's assessment and whether they can show me concrete evidence this is working, I'll decide whether to reorder. This satisfies my analytical style\u2014gathering expert input before committing further budget."
+        ],
+        "key_drivers": [
+          "Free expert consultation provides objective assessment without financial risk",
+          "Need concrete evidence to justify continued spending given unclear results",
+          "Analytical decision style requires data before repeat purchase"
+        ],
+        "objections": [
+          "Results from first pack too ambiguous to confirm efficacy",
+          "Cannot justify another \u20b95,290 expense without clearer proof of benefit"
+        ],
+        "follow_up_action": "Books the free 10-minute nutritionist consultation via the LittleJoys app, prepares specific questions about her child's appetite changes, and will decide on reorder based on the expert's assessment and evidence of measurable outcomes",
+        "error": null
+      },
+      {
+        "persona_id": "Sunita-Lucknow-Mom-33",
+        "display_name": "Sunita",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut reaction is cautious interest \u2014 a free consultation with a nutritionist is exactly the kind of expert validation I need, but I'm skeptical about whether this is genuine advice or a sales pitch disguised as consultation.",
+          "Step 2: As an analytical decision-maker, I focus on: (a) the consultation is FREE with no purchase requirement, which reduces risk; (b) it's with a qualified nutritionist who can objectively assess my 12-year-old's progress; (c) the outcome from the first pack is genuinely unclear to me \u2014 I think I saw appetite improvement but can't be sure; (d) this gives me data to make an informed decision rather than guessing. The 10-minute timeframe seems short but adequate for basic progress review.",
+          "Step 3: Budget check: I have \u20b98,223/month allocated for child nutrition with high price sensitivity, so I cannot afford to keep buying without confirmed results. Trust check: I rely on family advice primarily, but professional nutritionists occupy a credible middle ground \u2014 they're experts, not advertisers. The 'no purchase required' clause is critical; it suggests the consultation isn't purely transactional. Non-negotiable: I need concrete evidence of benefit before committing to repeat purchase.",
+          "Step 4: My family would likely say: 'It's free, what's the harm? Get expert opinion before spending more money.' My mother-in-law might be skeptical of 'online consultations' but would appreciate that I'm being careful with money. My husband would probably support using a free professional resource to validate our spending. This aligns with my trust anchor \u2014 I can discuss the nutritionist's feedback with family before deciding.",
+          "Step 5: I will book the free consultation. I'll prepare specific questions: is the appetite change real or coincidental? What markers should I track? Is Nutrimix appropriate for my 12-year-old's needs? After the consultation, I'll discuss the nutritionist's recommendations with my husband and possibly my mother, then decide whether to reorder based on professional + family input."
+        ],
+        "key_drivers": [
+          "Free expert validation reduces decision risk",
+          "Analytical need for data before repeat purchase",
+          "Unclear outcome requires professional assessment",
+          "No-cost consultation aligns with price sensitivity"
+        ],
+        "objections": [
+          "Consultation might be sales-focused rather than objective advice",
+          "10 minutes may not be enough for thorough assessment",
+          "Still uncertain if first pack results were real or placebo"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on LittleJoys app, prepares list of specific questions about child's progress and whether to continue, plans to discuss expert's recommendations with husband before making reorder decision",
+        "error": null
+      },
+      {
+        "persona_id": "Manisha-Bhopal-Mom-39",
+        "display_name": "Manisha",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free expert consultation feels like a smart, low-risk way to get clarity on whether the product is actually working. This aligns with my analytical nature \u2014 I want data before committing to a repurchase.",
+          "Step 2: I focus on: (a) the consultation is FREE with no purchase obligation, removing financial risk; (b) it's a 10-minute commitment, manageable in my schedule; (c) a nutritionist can help me objectively assess whether the appetite change I think I'm seeing is real or wishful thinking; (d) this gives me feature-level information (professional assessment) that I value highly; (e) the consultation could reveal if I need to continue or try something else.",
+          "Step 3: Budget check: \u20b95,545/month allocated for child nutrition means I have headroom, but I don't want to waste money on products that aren't delivering results. No purchase required for consultation, so no immediate budget impact. Trust requirement: I need to verify effectiveness before reordering \u2014 this consultation directly addresses that gap. The nutritionist's credentials and objectivity will matter.",
+          "Step 4: My trust anchor is self, so I don't heavily weigh what others would say. That said, getting professional validation would give me confidence if family members question my spending. A nutritionist's opinion carries weight in urban middle-class circles in Bhopal \u2014 it's seen as responsible parenting to consult experts about child health.",
+          "Step 5: I book the free consultation. My analytical style demands more data points before a repurchase decision. I'll prepare notes on what I've observed (possible appetite improvement), ask specific questions about measurable outcomes, and use the nutritionist's assessment to decide whether to reorder. If the expert confirms positive trends and recommends continuation, I'll likely buy another pack. If not, I'll ask for alternative recommendations."
+        ],
+        "key_drivers": [
+          "Free expert consultation removes financial risk while providing analytical data",
+          "Analytical decision style requires objective assessment before repurchasing",
+          "Self-trust anchor means I value information I can personally verify through expert guidance"
+        ],
+        "objections": [
+          "Uncertain if the appetite improvement is real or coincidental",
+          "Need professional validation before committing more budget to this product"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the LittleJoys app, prepares observations about child's appetite changes, and will decide on reorder after receiving professional assessment",
+        "error": null
+      },
+      {
+        "persona_id": "Kriti-Mumbai-Mom-38",
+        "display_name": "Kriti",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free consultation feels helpful and low-pressure \u2014 this is the kind of gesture that builds trust. I'm curious but not desperate; if an expert can help me make sense of what I've been seeing (or not seeing), that's worth 10 minutes.",
+          "Step 2: I focus on the 'no purchase required' aspect \u2014 it signals the brand isn't just pushing a sale. The offer of expert guidance aligns with my need for clarity before committing further. I rely on self-judgment, but expert input can validate or correct my observations. The unclear outcome from the first pack means I need either more data or a second opinion.",
+          "Step 3: Budget is not immediately strained \u2014 one more pack at the trial price is manageable within my \u20b95,455 nutrition budget. No hard stop here. Trust requirement: I need to feel the brand respects my intelligence and isn't manipulating me. A free consultation with no strings passes that test. Non-negotiable: I won't buy blindly just because I've used one pack.",
+          "Step 4: My trust network (self-reliant, habitual buyer) would say: 'Take the consultation, see what they say, then decide.' It's practical. Others in my position might appreciate having professional input without financial commitment. No one would criticize me for gathering information before spending more.",
+          "Step 5: I book the consultation. If the nutritionist provides useful, honest feedback and helps me interpret what I've noticed with my child, I'll feel confident enough to reorder one more pack and continue monitoring. This is measured optimism in action \u2014 I'm willing to extend the trial based on this trust-building gesture."
+        ],
+        "key_drivers": [
+          "Free expert consultation builds trust without financial pressure",
+          "Habitual decision style responds well to structured, low-risk next steps",
+          "Measured optimism allows continuation when brand gestures are sincere"
+        ],
+        "objections": [
+          "First pack outcome was unclear \u2014 need validation before full commitment"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the app, and if the advice feels genuine and helpful, orders one more Nutrimix pack to continue the trial period with clearer monitoring guidance",
+        "error": null
+      },
+      {
+        "persona_id": "Sneha-Bangalore-Mom-37",
+        "display_name": "Sneha",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: I'm intrigued but cautious. A free consultation sounds helpful, but I'm not sure if this is just a sales tactic. The results so far aren't clear enough for me to commit without more validation.",
+          "Step 2: Focusing on: (1) It's FREE with no purchase required - that removes financial risk; (2) A professional nutritionist could give me objective clarity on whether the 'possible improvement' is real or just wishful thinking; (3) This is exactly the kind of expert input I need when I can't tell if a product is working; (4) I can ask specific questions about my 13-year-old's needs during the call.",
+          "Step 3: Budget check: At \u20b919,480/month for child nutrition, I have room IF the product works, but I won't spend more without proof. Trust requirement: I trust myself to evaluate information, and a nutritionist consultation gives me data to work with. The 'no purchase required' element means I'm not locked into anything - this aligns with my low risk appetite.",
+          "Step 4: Before booking, I need to check my mom-group. I'll ask: 'Has anyone done these free nutritionist consultations with brands? Are they actually helpful or just sales calls?' and 'LittleJoys is offering a free consultation to review my child's progress - worth it?' This is my standard coping mechanism and I won't skip it even for a free service.",
+          "Step 5: I will post in my mom-group today to get feedback on whether these consultations are genuine. If the responses are positive (people found it helpful, not pushy), I'll book the consultation within the next 2-3 days. The nutritionist's assessment will then determine my reorder decision - if they validate the improvement and recommend continuing, I'll buy."
+        ],
+        "key_drivers": [
+          "Free expert consultation removes financial risk while providing needed clarity",
+          "Need validation from mom-group that this is genuine help not sales pressure",
+          "Uncertain outcome requires professional assessment before spending more"
+        ],
+        "objections": [
+          "Unclear if the appetite improvement is real or coincidental",
+          "Worried the 'free consultation' might just be a disguised sales call",
+          "Haven't validated with my trusted mom-group yet"
+        ],
+        "follow_up_action": "Posts in mom-group asking about experience with brand nutritionist consultations, and if responses are reassuring, books the free consultation to get expert assessment before deciding on reorder",
+        "error": null
+      },
+      {
+        "persona_id": "Rashmi-Jaipur-Mom-32",
+        "display_name": "Rashmi",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says this is interesting \u2014 a free consultation with no strings attached appeals to me. I'm cautious about claims, but the fact that they're offering expert guidance without forcing a purchase feels like they're being transparent. Still, I need to verify this isn't just a sales tactic.",
+          "Step 2: I focus on: (1) It's FREE \u2014 no financial risk, (2) It's a nutritionist consultation \u2014 expert guidance, not just marketing, (3) No purchase required to book \u2014 reduces pressure, (4) Could help me understand if the possible appetite improvement I noticed is real or just my imagination. As someone who trusts self over ads, having an expert help me interpret what I'm seeing aligns with my need to form my own informed opinion.",
+          "Step 3: Budget is not a constraint here since the consultation is free. My trust requirement is partially met \u2014 this isn't a brand pushing product, it's offering professional guidance. My non-negotiable is that I need clarity before committing to regular purchases. The consultation directly addresses this need.",
+          "Step 4: My network would likely approve \u2014 getting free expert advice is seen as smart parenting. Other mothers in Jaipur would probably say 'Why not? It's free and you get professional input.' No one would criticize me for being cautious and seeking expert validation before continuing.",
+          "Step 5: I will book the free consultation. This gives me the expert input I need to make an informed decision about reordering. If the nutritionist confirms the improvements are real and suggests continuing, I'll feel confident buying again. If not, I'll know to stop without wasting more money. I'll book it through their app today."
+        ],
+        "key_drivers": [
+          "Free expert consultation with no purchase pressure",
+          "Need for clarity on unclear results",
+          "Aligns with self-trust decision style \u2014 gathering information to form own judgment"
+        ],
+        "objections": [
+          "Concern this might be a disguised sales call",
+          "Skeptical about whether 10 minutes is enough for meaningful guidance"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the LittleJoys app to get expert assessment of her child's progress before deciding whether to reorder",
+        "error": null
+      },
+      {
+        "persona_id": "Nasreen-Bhubaneswar-Mom-28",
+        "display_name": "Nasreen",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free expert consultation feels validating \u2014 someone qualified can tell me if what I'm seeing is real or just wishful thinking. This addresses my uncertainty without any financial risk.",
+          "Step 2: The key information is 'FREE nutritionist consultation' and 'expert advice on whether to continue'. As someone who trusts authority figures (doctors, nutritionists) over my own judgment, this is exactly the input I need. The fact that it's on their app is convenient \u2014 I can do it during morning planning time. No purchase pressure makes it feel safe.",
+          "Step 3: Budget-wise, the consultation is free so no constraint there. My trust requirement is high \u2014 I deferred last time because I couldn't confirm results. A qualified nutritionist represents the authority anchor I rely on. This meets my need for expert validation before committing to continued purchase.",
+          "Step 4: My mom-group friends would likely approve of this \u2014 'at least talk to the expert before deciding' sounds like sensible advice. Getting professional input before spending more money is responsible parenting. Some might even be impressed that the brand offers free consultations. No one would judge me negatively for booking it.",
+          "Step 5: I will book the consultation. I need an authority figure to help me interpret what I've observed and tell me if continuing makes sense for my children. If the nutritionist confirms improvement and recommends continuing, I'll feel confident reordering. If not, I'll have expert backing to stop without guilt."
+        ],
+        "key_drivers": [
+          "Free expert consultation aligns perfectly with authority trust anchor",
+          "No financial risk removes budget anxiety while providing needed validation",
+          "Professional guidance addresses uncertainty from previous defer decision"
+        ],
+        "objections": [
+          "Still uncertain if the appetite improvement I noticed is real or meaningful",
+          "Need expert confirmation before committing to ongoing expense"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the LittleJoys app during tomorrow morning's planning window, prepares to discuss what she observed during the first pack and get expert recommendation on whether to continue",
+        "error": null
+      },
+      {
+        "persona_id": "Arti-Hyderabad-Mom-36",
+        "display_name": "Arti",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free expert consultation feels helpful but also a bit suspicious \u2014 why free? Still, I'm genuinely unsure if the product worked, so talking to someone who knows nutrition might give me clarity before I spend more money.",
+          "Step 2: I'm focusing on: (a) this is FREE with no purchase required \u2014 that removes the immediate financial pressure, (b) it's a nutritionist who might give me objective advice on whether my child actually needs this, (c) I can't tell on my own if the appetite improvement was real or just a good week, and (d) this gives me something concrete to discuss with my mom-group afterward.",
+          "Step 3: Budget-wise, I'm not committing to another \u20b96,735 month spend yet. The consultation itself costs nothing, so there's no hard budget breach. My non-negotiable is that I need to feel confident this is worth continuing \u2014 right now I don't have that confidence based on unclear results alone.",
+          "Step 4: If I mention this in my WhatsApp mom-group, some would say 'free consultation sounds like a sales pitch' but others would say 'at least get expert opinion before you waste more money.' The mixed signals mean I should gather the expert input first, THEN check back with the group about what the nutritionist said \u2014 that gives me two validation points instead of one.",
+          "Step 5: I will book the free consultation to get clarity on whether the improvements were real and whether Nutrimix suits my child's needs. After the call, I'll share what the nutritionist said in my mom-group to see if others trust that advice. Only then will I decide whether to reorder."
+        ],
+        "key_drivers": [
+          "Free expert input removes financial risk of gathering more information",
+          "Need for peer validation can happen AFTER getting expert perspective",
+          "Uncertain outcome from first pack requires external validation before continued spend"
+        ],
+        "objections": [
+          "Concern that 'free' consultation might be just a sales tactic",
+          "Still no clear proof the product actually worked",
+          "Haven't checked with mom-group yet about whether others trust these consultations"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the app, plans to discuss the nutritionist's recommendations in her mom-group WhatsApp before deciding on reorder",
+        "error": null
+      },
+      {
+        "persona_id": "Yasmin-Mumbai-Mom-31",
+        "display_name": "Yasmin",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free consultation with a nutritionist feels like a safe, low-pressure way to get clarity. My gut says this is worth exploring \u2014 it's professional advice without having to commit money right away, and I need help figuring out if what I'm seeing is real improvement or just wishful thinking.",
+          "Step 2: I focus on three things: (1) It's FREE, so there's no financial risk; (2) A nutritionist is a credible, expert voice \u2014 not just marketing; (3) The consultation could give me objective confirmation about whether the appetite change I think I'm seeing is actually happening. My social decision style means I value input from others, and a professional opinion counts. The 10-minute format feels manageable, not a big time commitment.",
+          "Step 3: Budget-wise, the consultation itself costs nothing, so no ceiling is breached. My trust requirement is the main constraint \u2014 I need validation before reordering. A nutritionist consultation could provide that expert validation, though I'd still feel more confident if I could also check with my mom-group about their experiences with similar consultations or continued use of Nutrimix.",
+          "Step 4: My mom-group would likely see this positively \u2014 'Free expert advice? Why not take it!' They'd probably encourage me to book it and share what I learn. My family (especially my mother or sister) would appreciate that I'm being thorough and seeking professional guidance rather than just guessing. No one in my network would criticize getting a free consultation; it shows I'm being a responsible, informed parent.",
+          "Step 5: I will book the free consultation to get professional clarity on whether the changes I'm seeing are real and whether continuing makes sense. Before or right after the consultation, I'll also ping my trusted mom-group to ask if anyone else has used LittleJoys' nutritionist service and what they thought. If the nutritionist confirms improvement and my group validates the experience, I'll feel confident enough to reorder."
+        ],
+        "key_drivers": [
+          "Free professional validation removes financial risk",
+          "Social decision style values expert input alongside peer validation",
+          "Need for clarity about unclear outcomes before committing to repurchase"
+        ],
+        "objections": [
+          "Still uncertain if the appetite improvement is real or coincidental",
+          "Would feel more confident combining expert advice with peer experiences"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the LittleJoys app and posts in her mom-group asking if anyone has used their consultation service or continued with Nutrimix long-term",
+        "error": null
+      },
+      {
+        "persona_id": "Naveen-Nagpur-Dad-32",
+        "display_name": "Naveen",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says this is a smart offer \u2014 a free expert consultation with no strings attached sounds helpful. But I'm hesitant because I can't really tell if Nutrimix made a difference or not. The 'possible appetite improvement' is too vague for me to commit to reordering yet.",
+          "Step 2: I focus on three things: (1) The consultation is FREE and doesn't require buying anything \u2014 that's low-risk and actually useful for getting clarity, (2) It's with a nutritionist who can objectively assess if there was real progress, and (3) This would give me concrete expert input before I decide, which fits my need for reassurance. The 'possible improvement but hard to confirm' outcome bothers me \u2014 I need more certainty.",
+          "Step 3: Budget-wise at \u20b95,395/month for child nutrition, another pack is affordable with low price sensitivity. No budget constraint here. The hard limit is trust \u2014 I already decided to 'research_more' last time, which means I was uncertain then too. I can't justify reordering without better evidence. My non-negotiable is that nutrition products must deliver visible results, and I don't have that confirmation yet.",
+          "Step 4: My mom-groups would probably say two things: 'Take the free consultation \u2014 what do you have to lose?' and 'Don't waste money reordering if you can't even tell if it worked.' The social consensus would be to use the expert call to get clarity first. Nobody wants to be the parent who kept buying something ineffective just because it was convenient.",
+          "Step 5: I book the free consultation to get an expert opinion on whether the possible appetite improvement is real or just wishful thinking. If the nutritionist confirms progress and recommends continuing, I'll feel confident reordering. If not, I'll know to try something else. I'll check with my mom-group chat about their experience with such consultations too."
+        ],
+        "key_drivers": [
+          "Free expert validation reduces uncertainty without financial risk",
+          "Need for social/professional reassurance before committing to repurchase",
+          "Unclear outcome from first pack requires more evidence before continuing"
+        ],
+        "objections": [
+          "Cannot confirm if Nutrimix actually worked \u2014 results too ambiguous",
+          "Already researched before first purchase, still need more proof of effectiveness"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the app and posts in mom-group asking if anyone else has used LittleJoys' consultation service and whether it was helpful",
+        "error": null
+      },
+      {
+        "persona_id": "Nikhil-Raipur-Dad-35",
+        "display_name": "Nikhil",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: Initial gut reaction is cautious curiosity mixed with skepticism. A free consultation sounds helpful, but I'm wondering if it's just a sales tactic. The results aren't clear enough to justify spending another \u20b92800+ without validation from people I trust.",
+          "Step 2: Focusing on: (1) The word 'FREE' - no financial risk in trying the consultation, (2) 'Possible appetite improvement' - not convincing enough on its own, (3) The consultation could give me concrete data to share with my mom-group, (4) 'No purchase required' reduces pressure, making this feel safer to explore.",
+          "Step 3: Budget constraint is real - already at \u20b92802/month ceiling with high price sensitivity. Can't commit another cycle without stronger proof. The consultation itself doesn't violate budget since it's free. Trust requirement not met yet - need peer validation before repurchase, and unclear results don't help.",
+          "Step 4: My mom-group would probably say: 'Free expert advice? Why not - at least get a professional opinion before spending more.' They'd also ask 'What did the nutritionist actually say?' before I reorder. Some might be curious about this consultation feature themselves. I need something concrete to report back to them.",
+          "Step 5: I'll book the free consultation to get expert perspective on whether the subtle changes are real or imagined. During or after the call, I'll screenshot key advice and post in my mom-group asking if others have tried similar consultations. Only after hearing their experiences and the nutritionist's recommendation will I decide on reordering."
+        ],
+        "key_drivers": [
+          "Free consultation removes financial risk and provides expert input to share with peers",
+          "Need peer validation before committing to another expensive purchase cycle",
+          "Emotional decision style drawn to reassurance from both expert and trusted community"
+        ],
+        "objections": [
+          "Unclear results from first pack don't justify immediate repurchase",
+          "Concern this might be a sales tactic disguised as free service",
+          "Haven't consulted mom-group about continuation yet"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation, takes notes during the call, then posts in mom-group asking if others have used LittleJoys consultations and whether they found them genuinely helpful or pushy. Waits for peer feedback before deciding on reorder.",
+        "error": null
+      },
+      {
+        "persona_id": "Tara-Delhi-Mom-32",
+        "display_name": "Tara",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free consultation feels reassuring\u2014it shows the brand cares and isn't just pushing a sale. But I need to know what other moms think about these consultations before I book it.",
+          "Step 2: I'm focusing on the fact that it's FREE (no financial risk), it's expert guidance (addresses my uncertainty about whether the product is working), and it's personalized to my child's progress. The 'no purchase required' removes pressure, which I appreciate. However, I'm skeptical whether this is genuinely helpful or just a sales tactic disguised as support.",
+          "Step 3: Budget-wise, the consultation is free so no constraint there. My trust requirement is the issue\u2014I need peer validation. I won't just book something because the brand offers it; I need to hear from other moms whether these consultations are actually useful or just pushy upselling sessions.",
+          "Step 4: My mom-group would likely have mixed opinions. Some would say 'free expert advice, why not?' while others might warn 'they'll just pressure you to buy more.' I need to specifically ask: Has anyone done LittleJoys' free consultation? Was it genuinely helpful or sales-y? Did the nutritionist give real advice or just push products?",
+          "Step 5: I'm going to post in my trusted mom-group WhatsApp asking if anyone has tried LittleJoys' free nutritionist consultation and whether it was worthwhile. Based on their feedback, I'll decide whether to book it. If peers say it's genuinely helpful, I'll book and likely continue with Nutrimix based on the expert's advice. If they warn it's pushy, I'll skip it and ask the group for alternative product recommendations instead."
+        ],
+        "key_drivers": [
+          "Need for peer validation before engaging with brand-offered services",
+          "Free consultation reduces financial risk but trust concerns remain",
+          "Emotional decision style seeks reassurance from trusted network first"
+        ],
+        "objections": [
+          "Uncertain if consultation is genuine support or disguised sales pitch",
+          "No peer feedback yet on quality of LittleJoys' nutritionist consultations",
+          "Cannot confirm if appetite improvement is real or coincidental"
+        ],
+        "follow_up_action": "Posts in mom-group WhatsApp asking for experiences with LittleJoys' free nutritionist consultation, then decides whether to book based on peer feedback",
+        "error": null
+      },
+      {
+        "persona_id": "Rina-Kochi-Mom-31",
+        "display_name": "Rina",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free consultation feels like a smart next step \u2014 no cost, and I get actual expert input instead of just guessing whether the appetite change is real or just my wishful thinking.",
+          "Step 2: I'm focusing on three things: (1) it's FREE \u2014 no financial risk, (2) I can ask direct questions about what I've observed, and (3) a nutritionist might spot things I'm missing. The fact that they're offering this without requiring me to buy again actually makes me trust them more \u2014 it doesn't feel pushy. As someone who relies on self-judgment, having a professional validate my observations is valuable.",
+          "Step 3: Budget-wise, booking a free consultation costs nothing. If the nutritionist recommends continuing and it makes sense, I'm within my \u20b93,688 monthly nutrition budget. No hard limits are being crossed here. My trust requirement is being met because they're letting me consult before committing money.",
+          "Step 4: My trust network (mostly myself in this case) would say this is smart \u2014 why wouldn't you take free expert advice when you're uncertain? Other mothers I know would probably jump at this. It's low-risk information gathering, which aligns with my measured optimism approach.",
+          "Step 5: I'll book the consultation. This feels like exactly the kind of first-hand information I need to make a confident decision. If the nutritionist can help me understand whether what I'm seeing is real progress, I'll feel much better about reordering."
+        ],
+        "key_drivers": [
+          "Free consultation removes financial risk while providing expert validation",
+          "Aligns with self-trust anchor by giving me direct information to judge",
+          "Measured optimism approach \u2014 willing to engage further when offer feels genuine"
+        ],
+        "objections": [
+          "Still uncertain if the appetite improvement is real or coincidental"
+        ],
+        "follow_up_action": "Books the 10-minute consultation on the app to discuss observed changes and get professional guidance on whether to continue",
+        "error": null
+      },
+      {
+        "persona_id": "Bhavani-Hyderabad-Mom-24",
+        "display_name": "Bhavani",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says this is exactly what I need right now \u2014 I can't tell if Nutrimix is actually working, and talking to an expert for free feels like a low-risk way to get clarity. But I want to check what other moms think about these consultations first.",
+          "Step 2: I'm focusing on: (1) the consultation is FREE with no purchase obligation \u2014 that removes financial risk, (2) it's delivered through their app \u2014 feels modern and accessible, (3) a nutritionist can help me understand if the appetite change I'm seeing is real or just my wishful thinking, (4) this gives me features/information I value \u2014 expert analysis of my child's specific progress.",
+          "Step 3: Budget-wise there's no barrier since the consultation is free. The consultation itself doesn't violate any non-negotiables. My trust requirement says I rely on 'self' but I'm also wired to check with mom-groups before trials \u2014 this consultation falls in between: it's expert-led (appeals to my feature focus) but it's from the brand (requires some trust leap).",
+          "Step 4: I need to quickly post in my WhatsApp mom-group: 'Has anyone done these free nutritionist calls from LittleJoys? Are they actually helpful or just sales pitches?' If even 2-3 moms say it was genuinely useful and not pushy, I'll book it. My coping mechanism demands this social validation before proceeding.",
+          "Step 5: I'm going to ask my mom-group about their experience with LittleJoys' consultations today. If I get positive signals by evening, I'll book the consultation tomorrow. The consultation itself will determine whether I reorder \u2014 if the nutritionist gives me concrete data that my child is improving, I'll buy another pack right after the call."
+        ],
+        "key_drivers": [
+          "Free expert consultation removes financial risk while providing valued features/information",
+          "Need for social validation from mom-group before booking consultation",
+          "Uncertainty about product efficacy requires expert interpretation"
+        ],
+        "objections": [
+          "Unsure if brand-provided consultation will be objective or just a sales tactic",
+          "Haven't validated with peer network whether these consultations are worthwhile"
+        ],
+        "follow_up_action": "Posts in mom WhatsApp group asking about LittleJoys consultation experience; if feedback is positive within 24 hours, books the consultation and will likely reorder Nutrimix based on nutritionist's recommendation",
+        "error": null
+      },
+      {
+        "persona_id": "Rohit-Mysore-Dad-32",
+        "display_name": "Rohit",
+        "probe_id": "A-P5b",
+        "decision": "defer",
+        "confidence": 0.45,
+        "reasoning_trace": [
+          "Step 1: Free feels suspicious, but I'm curious. A nutritionist might tell me if this product is actually working or if I'm wasting money. But I don't know this 'expert' \u2014 are they just going to push me to buy more?",
+          "Step 2: Focusing on: it's FREE (no immediate cost risk), it might give me clarity on whether to continue (addresses my uncertainty from last time), but it's through THEIR app (controlled by the brand). As someone who trusts myself over external sources, I'm wary this is just a sales tactic dressed up as advice. The 'possible appetite improvement' I noticed \u2014 was that real or just coincidence?",
+          "Step 3: Budget allows another purchase (\u20b94,230/month ceiling), but I'm price-sensitive and won't spend without being convinced. My non-negotiable: I need PROOF this works, not just a sales pitch. If the consultation is genuinely helpful and unbiased, that could work. If it's pushy, I'll walk away.",
+          "Step 4: My trust anchor is self, not experts or brands. Other parents might jump at 'free nutritionist,' but I'd question their credentials and motives. Is this person really independent? Probably not \u2014 they work for LittleJoys. A truly trusted source would be another parent I know, not a brand employee.",
+          "Step 5: I'll hold off on reordering for now. The free consultation offer doesn't overcome my core issue: I don't trust brand-provided 'experts' to be objective. I might book it out of curiosity, but I won't commit to buying until I see clearer results on my own terms or hear from actual users I trust. Sticking with familiar routines means going back to what I know worked before, not gambling on unclear outcomes."
+        ],
+        "key_drivers": [
+          "Trust anchor in self, skeptical of brand-provided experts",
+          "Need for clear proof before spending, not satisfied with 'possible' improvement",
+          "High price sensitivity despite budget headroom"
+        ],
+        "objections": [
+          "Consultation feels like a sales tactic, not genuinely independent advice",
+          "Outcome from first pack too unclear to justify repeat purchase",
+          "Prefers familiar routines over unproven category experiments"
+        ],
+        "follow_up_action": "May book the consultation out of curiosity to gather information, but will not reorder Nutrimix unless sees more convincing evidence independent of brand messaging",
+        "error": null
+      },
+      {
+        "persona_id": "Nisha-Ranchi-Mom-34",
+        "display_name": "Nisha",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says this is actually helpful \u2014 a free consultation with no strings attached gives me a chance to get objective feedback on whether what I'm seeing is real or just wishful thinking. As someone who trusts my own judgment, having expert input to validate or correct my observations appeals to me.",
+          "Step 2: I focus on: (1) The consultation is FREE with no purchase obligation \u2014 this removes sales pressure and lets me gather information on my terms, (2) It's a 10-minute time investment, which is minimal, (3) A nutritionist can help me distinguish real improvement from normal variation, which matters because I'm analytical and want clarity, (4) The app booking suggests a structured, professional service rather than a sales call. My analytical style values data and expert input when making decisions.",
+          "Step 3: Budget isn't a constraint here since the consultation is free. My real constraint is needing verifiable evidence before committing to ongoing purchase. I have low price sensitivity (\u20b94,310/month budget) so cost isn't the barrier \u2014 confidence in efficacy is. The consultation directly addresses my main blocker: unclear results. No non-negotiables are violated.",
+          "Step 4: My trust anchor is self, not social network, so others' opinions matter less here. That said, most educated parents I know would view a free professional consultation positively \u2014 it's responsible parenting to seek expert guidance rather than guessing. But ultimately I'm booking this to satisfy my own need for clarity, not for social validation.",
+          "Step 5: I book the consultation through the app. I'll prepare by noting what I've observed over the past pack \u2014 appetite patterns, meal completion rates, energy levels, anything measurable. During the call, I'll ask specific questions about what improvement timeline is realistic and what signs to look for. Based on that expert input combined with my own observations, I'll decide whether to reorder. If the nutritionist validates that subtle appetite improvement is a genuine early signal, I'll likely purchase another pack."
+        ],
+        "key_drivers": [
+          "Free expert input aligns with analytical decision style and self-trust anchor",
+          "Low-risk way to gain clarity on uncertain product efficacy",
+          "Budget flexibility allows focus on nutritional validation rather than cost"
+        ],
+        "objections": [
+          "Still uncertain whether observed changes are real or coincidental",
+          "Need expert perspective to interpret preliminary results before continued investment"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the app, prepares notes on observed changes during first pack usage, and will decide on reordering based on professional guidance combined with her own assessment",
+        "error": null
+      },
+      {
+        "persona_id": "Zainab-Delhi-Mom-22",
+        "display_name": "Zainab",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free consultation sounds useful, but my gut says this could be a sales tactic. I need to verify whether this is genuinely helpful or just a way to push me toward reordering. The unclear outcome from the first pack makes me hesitant to commit without more data.",
+          "Step 2: As an analytical thinker who trusts self most, I focus on: (a) the consultation is free with no purchase obligation - low risk to explore, (b) I can potentially get objective data about whether the product actually worked, (c) this aligns with my need for evidence before the next purchase, (d) I can compare the nutritionist's assessment against my own observations. The 'possible appetite improvement' I noticed isn't concrete enough for my analytical style.",
+          "Step 3: Budget check: At \u20b99,498/month for child nutrition with high price sensitivity, I won't reorder blindly. The consultation itself costs nothing, so no immediate budget impact. Non-negotiable: I need verifiable proof this product works before spending more. Trust requirement: I rely on self-judgment, so I need to personally validate the expert's credentials and advice quality, not just accept it because it's offered.",
+          "Step 4: My mom-groups would likely say: 'Free consultation? Worth trying, but don't let them pressure you into buying.' Some would caution it's a sales funnel. Others might share if they've used LittleJoys' consultation service. I'd post in my trusted group asking if anyone has done these free consultations and whether the nutritionist gave honest advice or just pushed products. Their experiences would help me decide if this is legitimate expert guidance.",
+          "Step 5: I will book the free consultation but approach it as an information-gathering exercise, not a commitment to buy. During the call, I'll assess the nutritionist's objectivity - are they genuinely evaluating my child's progress or just selling? I'll also post in my mom-group asking about others' experiences with LittleJoys consultations. Based on both the consultation quality AND peer feedback, I'll decide whether to reorder. This satisfies my analytical need for data and my coping mechanism of checking with trusted peers."
+        ],
+        "key_drivers": [
+          "Free consultation provides low-risk opportunity to gather objective data before purchase decision",
+          "Need to validate unclear outcomes from first pack through expert assessment",
+          "Coping mechanism requires checking with mom-groups about consultation quality and experience"
+        ],
+        "objections": [
+          "Concerned the 'free consultation' is primarily a sales tactic rather than genuine expert guidance",
+          "First pack results too ambiguous to justify immediate reorder without additional verification",
+          "High price sensitivity prevents commitment until clear value is demonstrated"
+        ],
+        "follow_up_action": "Books the free consultation and simultaneously posts in trusted mom-group asking if others have used LittleJoys' nutritionist service and whether advice was genuinely helpful or sales-focused. Will evaluate both the consultation quality and peer feedback before deciding on reorder.",
+        "error": null
+      },
+      {
+        "persona_id": "Bhavani-Coimbatore-Mom-30",
+        "display_name": "Bhavani",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut reaction is cautious interest. A free consultation sounds helpful, but I'm unsure if the product actually worked. I don't want to commit money without being certain, but free expert advice could help me understand what's really happening.",
+          "Step 2: I focus on: (1) It's FREE - no financial risk, (2) A nutritionist is a credible expert who can give me clarity on whether the 'possible improvement' is real or my imagination, (3) I can get this consultation without buying anything - that removes pressure, (4) The brand is offering professional support, which signals they care about outcomes not just sales.",
+          "Step 3: Budget check: \u20b93,473/month allocated, and I have low price sensitivity for child nutrition, so reordering is affordable IF it's worth it. Hard limit: I need to TRUST that it works before spending more. Right now I lack that certainty. The consultation could provide that missing trust element through expert validation.",
+          "Step 4: I need to check with my mom-group friends first. Before I book this consultation, I'll ask: Has anyone else used LittleJoys' free consultation? Was the nutritionist helpful and unbiased, or just trying to sell more? Did anyone get clear answers about whether to continue? I won't book until I hear that others found it genuinely useful and not pushy.",
+          "Step 5: I will post in my mom-group WhatsApp asking if anyone has tried LittleJoys' free nutritionist consultation and whether they found it helpful. If I get positive feedback that it's genuinely useful (not just a sales pitch), I'll book it. Only after the consultation - and hearing expert opinion on my child's progress - will I decide whether to reorder."
+        ],
+        "key_drivers": [
+          "Need for social validation before trying the free consultation",
+          "Desire for expert clarity on ambiguous results",
+          "Free offering reduces risk and pressure"
+        ],
+        "objections": [
+          "Uncertain if the appetite improvement is real or coincidental",
+          "Need mom-group feedback on whether the consultation is genuinely helpful or sales-focused",
+          "Haven't independently verified the product's effectiveness yet"
+        ],
+        "follow_up_action": "Posts in mom-group WhatsApp asking for experiences with LittleJoys' free nutritionist consultation; will book only if she receives positive peer validation that it's helpful and unbiased",
+        "error": null
+      },
+      {
+        "persona_id": "Paramjit-Kochi-Dad-40",
+        "display_name": "Paramjit",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free consultation feels like a low-risk way to get clarity without commitment. My gut says this could help me decide if I'm wasting money or if this is actually working.",
+          "Step 2: Focus is on: (1) 'FREE' - no additional cost to get expert opinion, (2) it's only 10 minutes - not a huge time investment, (3) professional assessment might tell me what I can't see myself - is the appetite change real or am I imagining it? (4) No purchase required removes pressure. The habitual decision-maker in me wants validation before changing my routine permanently.",
+          "Step 3: Budget check: consultation is free, so no immediate spend. If I reorder after, it's within my \u20b97,043 nutrition budget. Hard limit: I need proof this works before making it a permanent expense. Trust requirement: a nutritionist is a credible source, though not family - but professional expertise counts when family hasn't tried this product.",
+          "Step 4: My family would likely say: 'If it's free, why not? Get the expert to tell you if it's worth continuing.' They'd appreciate me being careful with money by getting professional confirmation before buying more. No one would criticize getting free expert advice - it's prudent, not impulsive.",
+          "Step 5: I book the consultation. It's free, takes 10 minutes, and gives me the outside validation I need. If the nutritionist confirms progress and recommends continuing, that expert endorsement becomes my new trust anchor - enough to override my uncertainty and justify reordering."
+        ],
+        "key_drivers": [
+          "Free expert validation removes financial risk",
+          "Habitual decision-maker needs external confirmation before routine change",
+          "Professional opinion can substitute for family trust in this context"
+        ],
+        "objections": [
+          "Still uncertain if the appetite improvement is real or coincidental",
+          "Nutritionist works for LittleJoys - potential bias concern"
+        ],
+        "follow_up_action": "Books the free consultation on the app to get professional assessment of whether the product is actually working",
+        "error": null
+      },
+      {
+        "persona_id": "Ganga-Kochi-Mom-36",
+        "display_name": "Ganga",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says I should probably check with others before jumping into another purchase. A free consultation sounds helpful, but I'm not sure if the 'possible' improvement I've seen is real or just my wishful thinking. I need more certainty before spending again.",
+          "Step 2: The key information here is 'FREE' and 'no purchase required' \u2014 that removes financial risk. But as someone who relies on peer validation, a single expert's opinion isn't my usual trust anchor. I'm focusing on: can I use this consultation as a data point to discuss with my mom-group? Also noting that outcomes are still 'unclear' and only 'possible' \u2014 this matches my habitual decision style of needing established proof before committing.",
+          "Step 3: Budget-wise, I have \u20b95,007/month allocated and high price sensitivity. I already spent on one pack. Before spending again, I need to be sure it's working. The consultation is free, so no budget constraint there. My non-negotiable is peer validation \u2014 one expert won't be enough if my trusted circle hasn't endorsed this approach.",
+          "Step 4: My mom-group would likely say: 'Take the free consultation, but also ask them if other mothers have seen results' or 'Get the nutritionist's opinion, then share it with us before you reorder.' They'd want me to gather information first, not commit immediately. They might be skeptical of a 'free' consultation being a sales tactic.",
+          "Step 5: I will book the free consultation to get expert input on whether the possible improvements are real. But I won't reorder yet. I'll take notes from the consultation and bring it to my mom-group chat to get their perspective. Only after discussing with my trusted peers and hearing if others have had similar experiences will I decide whether to continue with Nutrimix."
+        ],
+        "key_drivers": [
+          "Need for peer validation before repeat purchase",
+          "Free consultation offers risk-free information gathering",
+          "Habitual decision style requires more evidence of effectiveness"
+        ],
+        "objections": [
+          "Outcomes still unclear and unverified",
+          "Expert opinion alone doesn't satisfy peer trust anchor",
+          "Concern that free consultation may be sales-focused rather than objective"
+        ],
+        "follow_up_action": "Books the free consultation, takes detailed notes, then shares the nutritionist's assessment with her mom-group to get their opinions before deciding whether to reorder",
+        "error": null
+      },
+      {
+        "persona_id": "Suman-Chandigarh-Mom-22",
+        "display_name": "Suman",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut feeling is positive but cautious. A free consultation feels like they care about my child's progress, not just selling me another pack. I'm curious what an expert would say about whether what I'm seeing is real improvement or just my wishful thinking.",
+          "Step 2: I focus on: (1) It's FREE - no money wasted if the nutritionist just tries to sell me more; (2) It's only 10 minutes - not a big time commitment; (3) Someone qualified can tell me if I should continue - this addresses my exact uncertainty; (4) The packaging and first impression earned some trust, and offering free expert help reinforces that professional image; (5) I can ask direct questions about my 2-year-old's appetite changes.",
+          "Step 3: Budget check: The consultation is free, so no immediate spend. If I do reorder after the consultation, one pack would still be well within my \u20b95,791 monthly nutrition budget. No hard limits are being crossed by booking this call. Trust requirement: I need validation before spending more - this consultation could provide exactly that validation from a qualified source, not just marketing.",
+          "Step 4: In my joint family household, getting expert advice shows I'm being responsible and thorough - not wasteful or impulsive. If I tell my family 'I consulted a nutritionist before deciding,' that demonstrates careful parenting. My family respects expert opinions, especially medical/nutrition professionals. They'd likely approve of me getting free professional guidance rather than just guessing.",
+          "Step 5: I will book the free consultation. This is a low-risk way to get clarity on whether the appetite improvement I think I saw is real. If the nutritionist confirms progress and recommends continuing, I'll feel confident reordering. If they suggest something else, I've lost nothing but 10 minutes. I'm approaching this with measured optimism - the offer feels genuine, not pushy."
+        ],
+        "key_drivers": [
+          "Free expert validation addresses my uncertainty without financial risk",
+          "Professional consultation builds trust and confidence in the brand",
+          "Family would approve of seeking expert guidance before spending more"
+        ],
+        "objections": [
+          "Still uncertain if the appetite improvement was real or coincidental"
+        ],
+        "follow_up_action": "Books the 10-minute nutritionist consultation on the app to discuss her 2-year-old's progress and get professional advice on whether to continue with Nutrimix",
+        "error": null
+      },
+      {
+        "persona_id": "Salma-Delhi-Mom-29",
+        "display_name": "Salma",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says this is helpful \u2014 a free expert consultation feels like a safety net, and I wouldn't have to commit to buying again right away. But I'm still unsure if the product actually worked.",
+          "Step 2: I'm focusing on three things: (1) it's FREE, which aligns with my price sensitivity, (2) it's an 'expert' which could give me clarity I don't have, and (3) I can book it without buying. But I'm naturally cautious \u2014 I don't just take expert advice at face value unless it's validated by people I trust.",
+          "Step 3: Budget-wise, there's no immediate constraint since the consultation is free. My non-negotiable is that I need to feel confident before spending \u20b94179 again. The unclear outcome from the first pack means I haven't met my trust threshold yet.",
+          "Step 4: This is where I pause. My trusted mom-group friends would likely have mixed reactions. Some might say 'of course they'll tell you to continue, they want to sell more.' Others might appreciate the free service. I need to check what other moms think about these brand-run consultations \u2014 are they genuinely helpful or just sales tactics?",
+          "Step 5: I will book the consultation because it's free and low-risk, but before I act on the nutritionist's advice, I'll post in my mom-group asking if anyone else has used LittleJoys' consultation service and whether it felt genuine or pushy. I'll also ask if others saw real results after continuing Nutrimix beyond the first pack."
+        ],
+        "key_drivers": [
+          "Free consultation removes financial risk",
+          "Need for peer validation of both the consultation service and product efficacy",
+          "Habitual decision-making requires external confirmation before repeat purchase"
+        ],
+        "objections": [
+          "Uncertain if first pack actually worked",
+          "Concern that brand nutritionist may be biased toward recommending purchase",
+          "Need peer validation before trusting expert advice from the brand"
+        ],
+        "follow_up_action": "Books the free consultation but posts in mom-group first asking about others' experience with LittleJoys nutritionist consultations and whether Nutrimix showed clearer results after the second pack",
+        "error": null
+      },
+      {
+        "persona_id": "Aishwarya-Bhubaneswar-Mom-29",
+        "display_name": "Aishwarya",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut says this is exactly what I need \u2014 a real expert to tell me if I'm seeing things or if this product actually helped. Free consultation from a nutritionist? That feels like someone actually cares about my child, not just my wallet.",
+          "Step 2: I'm focusing on three things: (1) It's FREE \u2014 no money risk, (2) It's a NUTRITIONIST \u2014 proper authority figure who can give me real answers, (3) They're offering this even without requiring purchase \u2014 that builds trust in the brand. The packaging and first impression already made me try it once; now they're backing it up with expert support. This matches how I prefer to make decisions.",
+          "Step 3: Budget-wise, I'm at \u20b92,415/month ceiling for child nutrition. One pack is finished, so I have room in the budget if the nutritionist recommends continuing. No hard stops here \u2014 the consultation itself costs nothing. My trust requirement is being met: this IS the authority validation I look for.",
+          "Step 4: In my household and among other mothers I know, consulting a nutritionist is seen as responsible parenting \u2014 especially when it's free. My mother-in-law would approve of seeking expert advice before spending more. Other mothers would likely be impressed that the brand offers this service. No one would criticize me for taking a free expert consultation.",
+          "Step 5: I'm booking the consultation right now. This is low-risk, high-value for me. I'll download their app, book the 10-minute slot, and let the nutritionist review what I've observed. Based on what the expert says, I'll decide about reordering. This feels like the measured, smart approach \u2014 using authority to guide my next step rather than guessing."
+        ],
+        "key_drivers": [
+          "Free expert consultation aligns perfectly with authority trust anchor",
+          "No financial risk to book \u2014 removes price barrier to next step",
+          "Brand demonstrating care beyond sales builds packaging/first impression trust"
+        ],
+        "objections": [
+          "Still uncertain if the product actually worked \u2014 need expert confirmation"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation on the LittleJoys app within the next day or two, prepares notes about what she's observed with her child's appetite to discuss with the expert",
+        "error": null
+      },
+      {
+        "persona_id": "Revathi-Hyderabad-Mom-27",
+        "display_name": "Revathi",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free nutritionist consultation feels reassuring \u2014 it's expert validation without financial risk. My gut says this is worth exploring since I've been uncertain about whether the product is actually working.",
+          "Step 2: Focus areas: (1) FREE consultation with qualified expert = authority validation at zero cost, (2) The consultation can clarify if the vague appetite improvement I noticed is real or coincidental, (3) This gives me something concrete to discuss in my mom-group \u2014 an expert opinion, not just my own observation, (4) No purchase required means I can get guidance without commitment.",
+          "Step 3: Budget check: The consultation is free, so no immediate spend. Previous pack already consumed from Rs7195/month budget. Can't justify reordering without clearer evidence of benefit. Trust requirement: Need authority validation before next purchase \u2014 this consultation directly addresses that need. Non-negotiable: Won't buy again on uncertain results alone.",
+          "Step 4: Mom-group lens: Getting a free expert consultation is a smart, responsible move \u2014 they'd approve of using professional guidance before spending more. If the nutritionist validates continuation, I'd have strong social proof to share. Some mothers might have used similar consultations and can tell me if LittleJoys nutritionists are credible. I should check the group to see if anyone has experience with their consultations.",
+          "Step 5: I will book the free consultation and simultaneously check my mom-group about LittleJoys nutritionist credibility. The expert opinion will either give me the authority-backed confidence to reorder, or save me from wasting money on an ineffective product. I'll also ask the nutritionist specific questions my group mothers might ask me later."
+        ],
+        "key_drivers": [
+          "Free authority validation addresses trust anchor need",
+          "No financial risk to get expert clarity",
+          "Can share expert opinion with mom-group for social validation",
+          "Needs concrete evidence before next purchase"
+        ],
+        "objections": [
+          "Uncertain if appetite improvement is real or placebo",
+          "Previous pack showed unclear results",
+          "Don't know if LittleJoys nutritionists are truly credible"
+        ],
+        "follow_up_action": "Books the free consultation on the app and posts in mom-group asking if anyone has used LittleJoys nutritionist consultations and whether they found them helpful",
+        "error": null
+      },
+      {
+        "persona_id": "Nisha-Ahmedabad-Mom-29",
+        "display_name": "Nisha",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free nutritionist consultation feels like validation \u2014 someone professional can help me make sense of whether the changes I'm seeing are real or just wishful thinking. This feels like the brand is invested in my child's outcome, not just making a sale.",
+          "Step 2: The consultation is free with no purchase obligation, which removes pressure and aligns with my measured optimism approach. A 10-minute expert review addresses my exact uncertainty about whether the appetite improvement is genuine. The app booking feels modern and legitimate. Most importantly, this gives me professional guidance without relying solely on my own judgment.",
+          "Step 3: Budget-wise, the consultation is free so there's zero financial risk. My \u20b915,344/month nutrition budget can accommodate another pack if recommended. No hard constraints violated \u2014 this is actually a low-risk way to get clarity before committing further money.",
+          "Step 4: My family would likely approve of consulting an expert before spending more money. Getting professional advice shows I'm being thoughtful, not impulsive. They'd see this as due diligence, especially since it's free. If the nutritionist recommends continuing, that external validation would satisfy family concerns about 'wasting money on new products'.",
+          "Step 5: I will book the consultation and, based on the expert's assessment and my own observations during the call, decide whether to reorder. The professional input plus the brand offering this service gives me enough confidence to commit to one more pack if advised."
+        ],
+        "key_drivers": [
+          "Free expert consultation reduces decision uncertainty",
+          "Brand offering support beyond the sale builds trust",
+          "Professional validation addresses family trust anchor concerns"
+        ],
+        "objections": [
+          "Still not completely certain the appetite improvement is due to Nutrimix versus other factors"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation through the LittleJoys app and prepares to reorder one more pack if the expert recommends continuing based on the progress review",
+        "error": null
+      },
+      {
+        "persona_id": "Preeti-Pune-Mom-33",
+        "display_name": "Preeti",
+        "probe_id": "A-P5b",
+        "decision": "trial",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free expert consultation feels like a safety net \u2014 someone qualified can tell me if I'm wasting money or actually helping my child. This removes some of my uncertainty without any financial risk.",
+          "Step 2: I'm focusing on: (1) it's FREE \u2014 no budget hit, (2) it's an EXPERT \u2014 not just marketing, someone who can objectively assess, (3) it's CONVENIENT \u2014 10 minutes on the app fits my schedule, (4) it addresses my exact problem \u2014 I can't tell if Nutrimix is working. The nutritionist can look at my 14-year-old's case specifically and give personalized advice.",
+          "Step 3: Budget check: The consultation is free, so no immediate constraint. If they recommend continuing, I'm at \u20b96,018/month budget \u2014 within my ceiling for child nutrition. Trust check: A qualified nutritionist carries more weight than product claims, though I'd still prefer hearing from other parents too. My low risk appetite is satisfied because I'm getting expert validation before committing more money.",
+          "Step 4: My peer network would likely see this as smart \u2014 'get professional advice before spending more' aligns with cautious decision-making. Other mothers I know would probably say 'why not, it's free and you get clarity.' If the nutritionist gives a thumbs up, that becomes shareable validation I can mention to friends.",
+          "Step 5: I will book the consultation. This is low-effort (app-based, 10 minutes), zero cost, and directly addresses my uncertainty. If the nutritionist sees real improvement or advises continuation with clear reasoning, I'll feel confident reordering. If they say it's too early to tell or suggest alternatives, I avoid wasting money. This consultation essentially becomes the peer-like trusted voice I need."
+        ],
+        "key_drivers": [
+          "Free expert validation removes financial risk while addressing uncertainty",
+          "Convenience of app-based 10-minute consultation fits her schedule and style",
+          "Professional advice serves as substitute trust anchor when peer feedback unclear"
+        ],
+        "objections": [
+          "Still slightly skeptical whether nutritionist is truly independent or subtly pushing sales",
+          "Would prefer to also hear from other parents who've used Nutrimix long-term"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation through the LittleJoys app within the next day, prepares notes about her 14-year-old's appetite patterns to discuss during the call",
+        "error": null
+      },
+      {
+        "persona_id": "Revathi-Chandigarh-Mom-39",
+        "display_name": "Revathi",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free consultation with a nutritionist feels like a low-risk way to get clarity on something I'm genuinely unsure about. I'm curious but also wary \u2014 is this just a sales tactic?",
+          "Step 2: I focus on three things: (1) it's free with no purchase requirement, which removes immediate financial pressure, (2) it's a 10-minute slot, manageable in my morning planning window, and (3) a nutritionist might give me the concrete data I need to decide if Nutrimix is actually working. My analytical side wants measurable answers, not guesswork. I also note it requires downloading their app \u2014 another brand touchpoint.",
+          "Step 3: Budget isn't the constraint here since there's no immediate cost. My hard limit is trust \u2014 I need evidence before committing \u20b91975/month repeatedly. The consultation could provide that, but only if the expert seems credible and not just pushing product. I won't be pressured into reordering during the call.",
+          "Step 4: My mother-in-law would probably be skeptical of 'free' consultations, seeing them as marketing tricks. A friend who's also cautious with money might say it's worth one call if it helps me decide. I don't have anyone in my close circle who's used this kind of service, so there's no strong social validation either way.",
+          "Step 5: I book the consultation because it costs nothing and might give me the concrete assessment I need. During the call, I'll ask specific questions about what changes to look for, realistic timelines, and whether Nutrimix suits my child's actual needs. If the nutritionist seems genuine and provides useful guidance, I'll consider reordering. If it feels like a sales pitch, I'll drop Nutrimix and stick to what I know works."
+        ],
+        "key_drivers": [
+          "Free expert input aligns with analytical need for evidence",
+          "No financial risk in taking the consultation",
+          "Opportunity to get objective assessment of unclear results"
+        ],
+        "objections": [
+          "Skeptical this might just be a sales tactic disguised as expert advice",
+          "Requires downloading app and sharing more information with brand",
+          "Still unsure if Nutrimix itself is worth the monthly budget commitment"
+        ],
+        "follow_up_action": "Books the free consultation on the app, prepares specific questions about her child's progress, and will decide on reordering based on whether the nutritionist provides credible, non-salesy guidance",
+        "error": null
+      },
+      {
+        "persona_id": "Kiran-Kochi-Mom-37",
+        "display_name": "Kiran",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: My gut feeling is cautious curiosity. A free expert consultation sounds helpful, but I'm not sure if this is just a sales tactic. I want to believe there's improvement, but I can't really tell if it's the product or just normal changes.",
+          "Step 2: I focus on: (1) it's FREE - no cost risk, (2) it's an expert who might give me clarity I don't have, (3) I can discuss this consultation offer in my mom-group first to see if others have used it, (4) the outcome is unclear - I need validation from someone credible before spending again. My social decision style makes me want input from others before committing.",
+          "Step 3: Budget allows for another pack (\u20b93,756/month ceiling), but my high price sensitivity means I won't waste money on something unproven. The hard limit is trust - I need external validation (either from the nutritionist or my peer network) before reordering. No clear proof of benefit yet, so I can't justify repeat purchase alone.",
+          "Step 4: My mom-group would likely say: 'Free consultation? What's the catch?' or 'Let's see what the expert says first' or 'I did one of those - they just try to sell you more.' But some might also say it's worth getting professional input. My family (trust anchor) would want me to be certain before continuing. They'd support getting expert advice if it's genuinely free.",
+          "Step 5: I will first post in my mom-group asking if anyone has used LittleJoys' free nutritionist consultation and whether it was genuinely helpful or just a sales pitch. While waiting for responses, I'll book the consultation since there's no purchase required. I want to hear what the nutritionist says AND get peer validation before deciding to reorder."
+        ],
+        "key_drivers": [
+          "Free expert consultation reduces decision risk",
+          "Need for social validation from mom-group before committing",
+          "Unclear product outcomes require external credible input",
+          "High price sensitivity prevents blind repurchase"
+        ],
+        "objections": [
+          "Uncertain if the consultation is genuine advice or a sales tactic",
+          "Cannot independently verify if appetite improvement is real or coincidental",
+          "No peer validation yet on whether to continue"
+        ],
+        "follow_up_action": "Posts in mom-group asking about others' experience with LittleJoys nutritionist consultations, books the free consultation appointment, waits to hear both expert assessment and peer feedback before deciding on reorder",
+        "error": null
+      },
+      {
+        "persona_id": "Parveen-Bhubaneswar-Mom-38",
+        "display_name": "Parveen",
+        "probe_id": "A-P5b",
+        "decision": "research_more",
+        "confidence": 0.72,
+        "reasoning_trace": [
+          "Step 1: A free expert consultation feels helpful but also makes me cautious \u2014 why are they offering this now? My gut says this could either genuinely help me understand if Nutrimix is working, or it's just a sales tactic. Since it's free and I don't have to buy anything, there's low risk in trying it.",
+          "Step 2: I focus on: (1) It's FREE \u2014 no money commitment, which respects my budget concerns; (2) A nutritionist might give me clarity I can't get on my own about whether the 'possible appetite improvement' is real or just wishful thinking; (3) The fact that I already deferred once means I'm genuinely uncertain and need more data; (4) This is an 'expert' but I trust peers more \u2014 so I'll need to validate what the nutritionist says with my WhatsApp mom group or Instagram connections before making a final call.",
+          "Step 3: Budget ceiling is Rs2707/month \u2014 I'm still within limits if I reorder, so budget isn't blocking me. My hard constraint is trust: I need peer validation or clear evidence before committing to a subscription or multi-pack purchase. The consultation itself meets my constraint (no purchase required), but what comes after will depend on whether I can verify the advice through my network.",
+          "Step 4: My peer network would likely say: 'Free consultation? Why not, what's the harm?' Some might warn 'They'll just try to sell you more,' while others might say 'At least you'll know if it's actually working.' The mixed signals mean I should try the consultation but then check back with them about what the nutritionist says before deciding to reorder. I can imagine posting on Instagram Stories asking 'Anyone tried LittleJoys nutritionist consult? Worth it?'",
+          "Step 5: I book the free consultation to get expert perspective on whether the appetite improvement is real. During or after the call, I'll assess if the nutritionist seems genuinely helpful or just pushy. Then I'll share the experience and advice with my mom group on WhatsApp to see what they think before making a reorder decision. This gives me the peer validation I need."
+        ],
+        "key_drivers": [
+          "Free consultation removes financial risk and aligns with price sensitivity",
+          "Need for peer validation of expert advice before committing to repurchase",
+          "Genuine uncertainty from previous deferral requires more data"
+        ],
+        "objections": [
+          "Skepticism that consultation might just be a sales tactic",
+          "Expert opinion alone doesn't satisfy peer-based trust anchor",
+          "Unclear if appetite improvement is real or coincidental"
+        ],
+        "follow_up_action": "Books the free nutritionist consultation, then shares the experience and advice with WhatsApp mom group and possibly Instagram to get peer reactions before deciding whether to reorder",
+        "error": null
+      }
+    ],
+    "summary": {
+      "total": 30,
+      "outcome_counts": {
+        "research_more": 21,
+        "trial": 8,
+        "defer": 1
+      },
+      "positive_pct": 26.7,
+      "top_drivers": [
+        [
+          "Free expert consultation aligns perfectly with authority trust anchor",
+          2
+        ],
+        [
+          "Free expert validation aligns with analytical decision style",
+          1
+        ],
+        [
+          "Convenience of 10-minute app-based consultation",
+          1
+        ],
+        [
+          "Need for trusted third-party input to resolve uncertain outcome",
+          1
+        ],
+        [
+          "Free expert consultation provides objective assessment without financial risk",
+          1
+        ]
+      ],
+      "top_objections": [
+        [
+          "Still uncertain if the appetite improvement is real or coincidental",
+          3
+        ],
+        [
+          "Haven't independently verified the product's effectiveness yet",
+          2
+        ],
+        [
+          "Uncertain if the appetite improvement is real or coincidental",
+          2
+        ],
+        [
+          "Still uncertain whether observed changes are actually due to Nutrimix",
+          1
+        ],
+        [
+          "Results from first pack too ambiguous to confirm efficacy",
+          1
+        ]
+      ]
+    }
   }
 }

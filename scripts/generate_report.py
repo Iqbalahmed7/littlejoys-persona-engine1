@@ -633,24 +633,47 @@ def build_report() -> None:
     add_para(doc, "Cohort: 30 lapsers drawn from the 81 baseline non-reorderers. Probes ran in post-first-purchase context (post-tick-20).")
     divider(doc)
 
+    # Load actual probe results dynamically
+    def _probe_row(probe_data: dict, pid: str, label: str, verdict_map: dict) -> tuple:
+        s = probe_data.get(pid, {}).get("summary", {})
+        pct = s.get("positive_pct", 0)
+        outcomes = s.get("outcome_counts", {})
+        outcomes_str = ", ".join(f"{k}: {v}" for k, v in sorted(outcomes.items(), key=lambda x: -x[1])) if outcomes else "—"
+        v = verdict_map.get(pid, ("—", "—"))
+        return (pid, label, f"{pct}%", outcomes_str, v[0], v[1])
+
+    pa = probe_data.get("A", {})
+    a_verdicts = {
+        "A-P1": ("PARTIAL — price friction confirmed", "50% of lapsers converted by Rs 50 discount on BigBasket"),
+        "A-P2": ("NOT CONFIRMED — WOM lacks price signal", "0% positive — 'no price transparency in the message' was top objection"),
+        "A-P3": ("NOT CONFIRMED — confirms H2 as core blocker", "0% positive — all deferred/researched; confirms outcome uncertainty IS the barrier"),
+        "A-P4": ("NOT CONFIRMED — competitive switch weak", "20% positive; 4/30 would switch — most said 'haven't given Nutrimix enough time'"),
+        "A-P5a": ("NOT CONFIRMED — D2C channel friction fatal", "0% positive; 21 defer, 9 research_more — BigBasket habit stronger than bundle value"),
+        "A-P5b": ("NOT CONFIRMED — consultation alone insufficient", "26.7% positive (8/30 trial); consultation shifts confidence but doesn't close purchase"),
+    }
     probes_a_data = [
-        ("A-P1", "Loyalty Discount (Rs 599)", "93.3%", "buy: 28, defer: 2", "CONFIRMED — price friction removed", "High — child liked product, budget fits, peer signals active"),
-        ("A-P2", "WOM Social Proof (3,400 reorderers)", "83.3%", "buy: 25, research_more: 4, defer: 1", "CONFIRMED — social signal reinforces reorder", "High — social proof bias personas responded strongly"),
-        ("A-P3", "Outcome Uncertainty (no clear results)", "16.7%", "defer: 21, buy: 5, research_more: 4", "CONFIRMED — outcome ambiguity is the core lapse driver", "Very High — 70% deferred when results were unclear"),
-        ("A-P4", "Pharmacist Complan Suggestion (Rs 420)", "0.0%", "reject: 19, research_more: 6, defer: 5", "REJECTED — pharmacist is outside trust anchor", "Pharmacist not in primary trust chain for most personas"),
+        _probe_row(pa, "A-P1", "BigBasket loyalty discount (Rs 599, -Rs 50)", a_verdicts),
+        _probe_row(pa, "A-P2", "WOM social proof (3,400 reorderers)", a_verdicts),
+        _probe_row(pa, "A-P3", "Outcome uncertainty (no clear results at 5 weeks)", a_verdicts),
+        _probe_row(pa, "A-P4", "Competitive switch — pharmacist Complan Rs 420", a_verdicts),
+        _probe_row(pa, "A-P5a", "LJ Pass full bundle — D2C only (channel switch)", a_verdicts),
+        _probe_row(pa, "A-P5b", "Free expert consultation only (no channel switch)", a_verdicts),
     ]
     add_results_table(doc, ["Probe", "Hypothesis", "Positive %", "Outcomes", "Verdict", "Key Finding"], probes_a_data)
     divider(doc)
 
     add_para(doc, "Confirmed Core Driver for Problem A:", bold=True)
     add_para(doc, (
-        "The confirmed driver is price friction at reorder — but specifically in the context "
-        "of outcome ambiguity. When personas could not clearly see results, 70% deferred. "
-        "When offered a Rs 50 loyalty discount, 93% bought. This confirms that the barrier "
-        "is not product dissatisfaction but reorder hesitancy in the absence of clear "
-        "proof of benefit or a financial incentive to continue. The pharmacist suggestion "
-        "was rejected because it came from outside the persona's trust anchor — confirming "
-        "that external competitive displacement is low risk when trust is established."
+        "The strongest lever is a BigBasket-native loyalty discount (A-P1: 50% positive). "
+        "Social proof alone failed when price was not included (A-P2: 0%). "
+        "Outcome uncertainty is confirmed as the core blocker (A-P3: 0% — everyone deferred "
+        "when results were unclear). Competitive displacement risk is low (A-P4: 20%). "
+        "The LJ Pass (A-P5a) produced 0% positive — D2C channel lock-in completely "
+        "cancels the bundle value for BigBasket-habitual personas. "
+        "However, the expert consultation in isolation (A-P5b: 26.7%) shows that outcome "
+        "anxiety IS addressable — if delivered without a channel switch. "
+        "Strategic recommendation: deploy the consultant as a BigBasket post-purchase "
+        "touchpoint (WhatsApp/email link), not behind a D2C wall."
     ))
     divider(doc)
 
