@@ -401,8 +401,8 @@ async function build() {
         label: "01",
         product: "Nutrimix · Age 2–6",
         title: "Increasing Nutrimix\nRepeat Purchase",
-        context: "Strong trial rates and positive NPS. Near-universal reorder. But 2% of buyers lapsed at cycle 2 with no discount trigger. What was the precise mechanism — and what stimulus would protect it at scale?",
-        metric: "98.0%",
+        context: "Strong NPS. 84.5% first purchase. But 39.6% of buyers never reorder. No trigger, no nudge — the trial discount expires and the habit window closes. What's the precise signal that locks in cycle 2?",
+        metric: "60.4%",
         metricLabel: "REORDER RATE",
       },
       {
@@ -492,25 +492,25 @@ async function build() {
     divider(s, 1.58);
 
     // Metrics (left)
-    bigMetric(s, "99.0%", "TRIAL RATE", 0.5, 1.74, 2.1);
-    bigMetric(s, "98.0%", "REORDER RATE", 2.72, 1.74, 2.1, true);
+    bigMetric(s, "84.5%", "FIRST PURCHASE", 0.5, 1.74, 2.1);
+    bigMetric(s, "60.4%", "REORDER RATE", 2.72, 1.74, 2.1, true);
 
-    monoLabel(s, "2.0% OF BUYERS DID NOT REORDER AT FULL PRICE  ·  61-DAY JOURNEY  ·  AGE 2–6 COHORT", 0.5, 3.32, 9, B.static);
+    monoLabel(s, "39.6% DID NOT REORDER  ·  200 PERSONAS  ·  61-DAY JOURNEY  ·  AGE 2–6 COHORT", 0.5, 3.32, 9, B.static);
 
     // Key finding card (right)
     card(s, 5.08, 1.74, 4.42, 2.45);
     monoLabel(s, "WHAT THE SIMULATION FOUND", 5.26, 1.9, 4.1, B.static);
     s.addShape("rect", { x: 5.08, y: 2.12, w: 0.03, h: 1.85, fill: { color: B.signal }, line: { color: B.signal } });
-    body(s, "98% came back. The 2% who didn't had no reorder trigger at Day 60. The discount that drove trial had vanished. No nudge. No renewal cue. WOM from Priya created a near-unbreakable purchase habit — the lapse is a trigger absence, not satisfaction failure.", 5.2, 2.12, 4.18, 1.32, B.parchment, 10.5);
-    monoLabel(s, "CONFIRMED: No reorder trigger (Day 55–60) · Price sensitivity at full price", 5.26, 3.62, 4.1, B.dim);
+    body(s, "39.6% of buyers lapsed. Social proof (0%) and outcome data (0%) had zero effect. Only one signal worked: a loyalty price prompt at Day 55. A-P1 (Rs 599 loyalty price) converted 50% of lapsers. The lapse is a trigger absence — not satisfaction failure, not brand distrust.", 5.2, 2.12, 4.18, 1.32, B.parchment, 10.5);
+    monoLabel(s, "A-P1 (loyalty price trigger): 50% convert. A-P2 (social proof): 0%. A-P3 (outcome data): 0%.", 5.26, 3.62, 4.1, B.dim);
 
     // Bottom hypotheses row
     card(s, 0.5, 3.55, 4.42, 0.75);
     monoLabel(s, "HYPOTHESIS TREE", 0.68, 3.68, 4.0, B.static);
     const hA = [
-      { v: "REJECTED", t: "Habit not formed" },
+      { v: "REJECTED", t: "Social proof deficit" },
+      { v: "PARTIAL",  t: "Outcome uncertainty" },
       { v: "CONFIRMED", t: "No reorder trigger" },
-      { v: "CONFIRMED", t: "Price at full rate" },
     ];
     hA.forEach((h, i) => {
       const hx = 0.68 + i * 1.45;
@@ -533,9 +533,9 @@ async function build() {
 
     // 3 intervention cards (left column)
     const ivsA = [
-      { n: "01", title: "Loyalty Pricing at Reorder",     detail: "₹599 on second pack via app push at Day 55. \"Here's your loyalty price.\"",     impact: "+10pp reorder rate" },
-      { n: "02", title: "Social Proof Nudge at Day 50",   detail: "WhatsApp: \"3,400 parents reordered this month.\" Peer signal at the decision window.", impact: "+5pp reorder rate" },
-      { n: "03", title: "LJ Pass Subscription Offer",     detail: "Post-trial: ₹579/month, cancel anytime, delivered before the pack runs out.",         impact: "Churn 29% → 18%" },
+      { n: "01", title: "Loyalty Price Trigger at Day 55",  detail: "Rs 599 (vs Rs 649 full price) via app push: 'Here's your loyalty price.' Timed to the exact window lapsers go quiet. A-P1: 50% of lapsers convert.", impact: "+19.8pp reorder rate" },
+      { n: "02", title: "Expert Consultation Offer",        detail: "WhatsApp: 'Chat with a pediatric nutritionist — free for Nutrimix parents.' Addresses outcome uncertainty for the analytical segment. A-P5b: 26.7% convert.", impact: "+10.6pp reorder rate" },
+      { n: "03", title: "Pharmacist Competitive Defense",   detail: "Pre-empt Complan displacement: arm pharmacists with Nutrimix iron/B12 comparison at the reorder window. A-P4 shows 20% of lapsers switch on pharmacist push alone.", impact: "Protect 20% displacement risk" },
     ];
     ivsA.forEach((iv, i) => {
       card(s, 0.5, 1.74 + i * 1.0, 5.55, 0.88);
@@ -551,14 +551,14 @@ async function build() {
     s.addShape("rect", { x: 6.25, y: 2.12, w: 3.25, h: 0.005, fill: { color: B.faint }, line: { color: B.faint } });
 
     // Before / After
-    s.addText("98.0%", { x: 6.32, y: 2.22, w: 1.45, h: 0.72, fontSize: 34, bold: true, color: B.dim, fontFace: HEADING, margin: 0 });
-    monoLabel(s, "BASELINE", 6.32, 2.94, 1.45, B.dim);
+    s.addText("60.4%", { x: 6.32, y: 2.22, w: 1.45, h: 0.72, fontSize: 34, bold: true, color: B.dim, fontFace: HEADING, margin: 0 });
+    monoLabel(s, "REORDER BASELINE", 6.32, 2.94, 1.45, B.dim);
     s.addText("→", { x: 7.72, y: 2.3, w: 0.5, h: 0.6, fontSize: 22, color: B.static, fontFace: HEADING, align: "center", margin: 0 });
-    s.addText("99%+", { x: 8.18, y: 2.22, w: 1.22, h: 0.72, fontSize: 34, bold: true, color: B.signal, fontFace: HEADING, margin: 0 });
+    s.addText("80.2%", { x: 8.18, y: 2.22, w: 1.22, h: 0.72, fontSize: 34, bold: true, color: B.signal, fontFace: HEADING, margin: 0 });
     monoLabel(s, "PROJECTED", 8.18, 2.94, 1.22, B.static);
 
     s.addShape("rect", { x: 6.25, y: 3.18, w: 3.25, h: 0.005, fill: { color: B.faint }, line: { color: B.faint } });
-    body(s, "Baseline already near-saturated. Interventions lock in subscription conversion and protect against drift at scale — subscription target: 25–30% of reorderers.", 6.38, 3.28, 3.0, 0.88, B.dim, 9.5);
+    body(s, "Loyalty price trigger converts 50% of lapsers (+19.8pp). Expert consultation captures the uncertain segment (+10.6pp). Combined lift closes the majority of the 39.6% lapse gap.", 6.38, 3.28, 3.0, 0.88, B.dim, 9.5);
     s.addShape("rect", { x: 6.25, y: 4.22, w: 3.25, h: 0.005, fill: { color: B.faint }, line: { color: B.faint } });
     body(s, "Test the fix in simulation before spending a rupee.", 6.38, 4.3, 3.0, 0.3, B.parchment, 10.5);
 
@@ -732,9 +732,9 @@ async function build() {
     divider(s, 3.35);
 
     const insights = [
-      { n: "01", t: "Journey A (Probiotic): 98% trial, near-100% reorder. Trigger-based nurture closes the remaining lapse segment. The product is saturated — the lever is timing." },
-      { n: "02", t: "Journey B (Magnesium Gummies): 32.5% trial, 23.1% reorder. A new category with one blocker — the pediatrician's veto. Fix that, and trial lifts to 90%; sleep tracking then takes reorder to 93.3%." },
-      { n: "03", t: "Journey C (Nutrimix): 37.2% trial, 27.3% reorder → 93.8% with interventions. Not a price problem. A format and timing problem. Family pack + child preference signal resolved it entirely." },
+      { n: "01", t: "Journey A (Nutrimix Age 2–6): 84.5% first purchase, 60.4% reorder. 39.6% lapse with no trigger at Day 55. Social proof and outcome data: 0% effect. Loyalty price prompt alone lifts reorder to 80.2%." },
+      { n: "02", t: "Journey B (Magnesium Gummies): 32.5% trial, 23.1% reorder. Pediatrician veto is the single acquisition blocker. Fix that: trial lifts to 90%. Sleep tracking then takes reorder from 23.1% → 93.3%." },
+      { n: "03", t: "Journey C (Nutrimix Age 7–14): 37.2% trial, 27.3% reorder → 93.8% with interventions. Not a price problem. A format and timing problem. Family pack + child preference resolved it entirely." },
     ];
     insights.forEach((ins, i) => {
       monoLabel(s, ins.n, 0.5 + i * 3.12, 3.55, 0.5, i === 0 ? B.signal : B.static);
