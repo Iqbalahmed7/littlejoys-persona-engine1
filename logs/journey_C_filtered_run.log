@@ -1,0 +1,190 @@
+Filtered: 148 personas with 7-14 age children (52 skipped — no children in 7-14 range)
+
+Running Journey C for 148 personas (concurrency=3)...
+  [  1/148] Nasreen                      tick28=unknown        tick60=reject         reordered=False
+  [  2/148] Om                           tick28=unknown        tick60=reject         reordered=False
+  [  3/148] Ayesha                       tick28=unknown        tick60=defer          reordered=True
+  [  4/148] Sunita                       tick28=unknown        tick60=reject         reordered=False
+  [  5/148] Aditi                        tick28=unknown        tick60=research_more  reordered=True
+  [  6/148] Kriti                        tick28=unknown        tick60=reject         reordered=False
+  [  7/148] Aparna                       tick28=unknown        tick60=reject         reordered=False
+  [  8/148] Hina                         tick28=unknown        tick60=defer          reordered=False
+  [  9/148] Sunita                       tick28=unknown        tick60=research_more  reordered=False
+  [ 10/148] Devi                         tick28=unknown        tick60=reject         reordered=False
+  [ 11/148] Sneha                        tick28=unknown        tick60=reject         reordered=False
+  [ 12/148] Seema                        tick28=unknown        tick60=reject         reordered=False
+  [ 13/148] Manisha                      tick28=unknown        tick60=research_more  reordered=False
+  [ 14/148] Varsha                       tick28=unknown        tick60=buy            reordered=True
+  [ 15/148] Kriti                        tick28=unknown        tick60=reject         reordered=False
+  [ 16/148] Rashmi                       tick28=unknown        tick60=reject         reordered=False
+  [ 17/148] Mohan                        tick28=unknown        tick60=reject         reordered=False
+  [ 18/148] Smita                        tick28=unknown        tick60=reject         reordered=False
+  [ 19/148] Sakshi                       tick28=unknown        tick60=reject         reordered=False
+  [ 20/148] Arti                         tick28=unknown        tick60=reject         reordered=False
+  [ 21/148] Hema                         tick28=unknown        tick60=defer          reordered=False
+  [ 22/148] Naveen                       tick28=unknown        tick60=research_more  reordered=False
+  [ 23/148] Yasmin                       tick28=unknown        tick60=research_more  reordered=False
+  [ 24/148] Nikhil                       tick28=unknown        tick60=reject         reordered=False
+  [ 25/148] Bhavna                       tick28=unknown        tick60=defer          reordered=False
+  [ 26/148] Aditi                        tick28=unknown        tick60=research_more  reordered=False
+  [ 27/148] Rina                         tick28=unknown        tick60=reject         reordered=False
+  [ 28/148] Karthik                      tick28=unknown        tick60=reject         reordered=False
+  [ 29/148] Tara                         tick28=unknown        tick60=research_more  reordered=False
+  [ 30/148] Hina                         tick28=unknown        tick60=defer          reordered=True
+  [ 31/148] Preeti                       tick28=unknown        tick60=reject         reordered=False
+  [ 32/148] Priya                        tick28=unknown        tick60=defer          reordered=False
+  [ 33/148] Vandana                      tick28=unknown        tick60=reject         reordered=False
+  [ 34/148] Tabassum                     tick28=unknown        tick60=reject         reordered=False
+  [ 35/148] Lakshmi                      tick28=unknown        tick60=reject         reordered=False
+  [ 36/148] Rohit                        tick28=unknown        tick60=reject         reordered=False
+  [ 37/148] Himanshu                     tick28=unknown        tick60=reject         reordered=False
+  [ 38/148] Lata                         tick28=unknown        tick60=reject         reordered=False
+  [ 39/148] Nisha                        tick28=unknown        tick60=reject         reordered=False
+  [ 40/148] Bhavani                      tick28=unknown        tick60=research_more  reordered=False
+  [ 41/148] Ganga                        tick28=unknown        tick60=research_more  reordered=True
+  [ 42/148] Paramjit                     tick28=unknown        tick60=reject         reordered=False
+  [ 43/148] Nisha                        tick28=unknown        tick60=defer          reordered=True
+  [ 44/148] Aishwarya                    tick28=unknown        tick60=reject         reordered=False
+  [ 45/148] Harini                       tick28=unknown        tick60=research_more  reordered=False
+  [ 46/148] Revathi                      tick28=unknown        tick60=defer          reordered=False
+  [ 47/148] Nisha                        tick28=unknown        tick60=defer          reordered=False
+  [ 48/148] Kusum                        tick28=unknown        tick60=reject         reordered=False
+  [ 49/148] Preeti                       tick28=unknown        tick60=reject         reordered=False
+  [ 50/148] Revathi                      tick28=unknown        tick60=reject         reordered=False
+  [ 51/148] Madhavi                      tick28=unknown        tick60=reject         reordered=False
+  [ 52/148] Deepa                        tick28=unknown        tick60=research_more  reordered=False
+  [ 53/148] Suresh                       tick28=unknown        tick60=research_more  reordered=False
+  [ 54/148] Kiran                        tick28=unknown        tick60=research_more  reordered=False
+  [ 55/148] Parveen                      tick28=unknown        tick60=reject         reordered=False
+  [ 56/148] Indira                       tick28=unknown        tick60=research_more  reordered=False
+  [ 57/148] Amreen                       tick28=unknown        tick60=reject         reordered=False
+  [ 58/148] Salma                        tick28=unknown        tick60=research_more  reordered=True
+  [ 59/148] Jyoti                        tick28=unknown        tick60=defer          reordered=False
+  [ 60/148] Jaspreet                     tick28=unknown        tick60=research_more  reordered=True
+  [ 61/148] Lalit                        tick28=unknown        tick60=defer          reordered=False
+  [ 62/148] Padma                        tick28=unknown        tick60=research_more  reordered=True
+  [ 63/148] Priya                        tick28=unknown        tick60=research_more  reordered=False
+  [ 64/148] Farhan                       tick28=unknown        tick60=defer          reordered=False
+  [ 65/148] Pooja                        tick28=unknown        tick60=reject         reordered=False
+  [ 66/148] Hina                         tick28=unknown        tick60=reject         reordered=False
+  [ 67/148] Smita                        tick28=unknown        tick60=buy            reordered=True
+  [ 68/148] Qasim                        tick28=unknown        tick60=research_more  reordered=False
+  [ 69/148] Ayesha                       tick28=unknown        tick60=defer          reordered=True
+  [ 70/148] Bhavani                      tick28=unknown        tick60=defer          reordered=False
+  [ 71/148] Neha                         tick28=unknown        tick60=defer          reordered=False
+  [ 72/148] Lavanya                      tick28=unknown        tick60=reject         reordered=False
+  [ 73/148] Mahesh                       tick28=unknown        tick60=reject         reordered=False
+  [ 74/148] Lata                         tick28=unknown        tick60=reject         reordered=False
+  [ 75/148] Sana                         tick28=unknown        tick60=research_more  reordered=False
+  [ 76/148] Aishwarya                    tick28=unknown        tick60=research_more  reordered=False
+  [ 77/148] Asha                         tick28=unknown        tick60=research_more  reordered=False
+  [ 78/148] Ritu                         tick28=unknown        tick60=defer          reordered=False
+  [ 79/148] Deepa                        tick28=unknown        tick60=defer          reordered=False
+  [ 80/148] Zara                         tick28=unknown        tick60=reject         reordered=False
+  [ 81/148] Varsha                       tick28=unknown        tick60=reject         reordered=False
+  [ 82/148] Khalid                       tick28=unknown        tick60=research_more  reordered=True
+  [ 83/148] Ishita                       tick28=unknown        tick60=research_more  reordered=True
+  [ 84/148] Rina                         tick28=unknown        tick60=research_more  reordered=False
+  [ 85/148] Ritu                         tick28=unknown        tick60=buy            reordered=True
+  [ 86/148] Sana                         tick28=unknown        tick60=defer          reordered=False
+  [ 87/148] Rina                         tick28=unknown        tick60=research_more  reordered=False
+  [ 88/148] Parveen                      tick28=unknown        tick60=reject         reordered=False
+  [ 89/148] Zubaida                      tick28=unknown        tick60=reject         reordered=False
+  [ 90/148] Arjun                        tick28=unknown        tick60=buy            reordered=True
+  [ 91/148] Jai                          tick28=unknown        tick60=defer          reordered=True
+  [ 92/148] Shabnam                      tick28=unknown        tick60=reject         reordered=False
+  [ 93/148] Hari                         tick28=unknown        tick60=defer          reordered=False
+  [ 94/148] Jyoti                        tick28=unknown        tick60=reject         reordered=False
+  [ 95/148] Tabassum                     tick28=unknown        tick60=defer          reordered=True
+  [ 96/148] Shweta                       tick28=unknown        tick60=reject         reordered=False
+  [ 97/148] Om                           tick28=unknown        tick60=research_more  reordered=False
+  [ 98/148] Rubina                       tick28=unknown        tick60=reject         reordered=False
+  [ 99/148] Junaid                       tick28=unknown        tick60=defer          reordered=False
+  [100/148] Yasmin                       tick28=unknown        tick60=defer          reordered=True
+  [101/148] Lavanya                      tick28=unknown        tick60=research_more  reordered=False
+  [102/148] Anjali                       tick28=unknown        tick60=reject         reordered=False
+  [103/148] Neha                         tick28=unknown        tick60=defer          reordered=False
+  [104/148] Pallavi                      tick28=unknown        tick60=reject         reordered=False
+  [105/148] Chitra                       tick28=unknown        tick60=research_more  reordered=False
+  [106/148] Shalini                      tick28=unknown        tick60=defer          reordered=True
+  [107/148] Ramesh                       tick28=unknown        tick60=research_more  reordered=False
+  [108/148] Sneha                        tick28=unknown        tick60=reject         reordered=False
+  [109/148] Smita                        tick28=unknown        tick60=research_more  reordered=False
+  [110/148] Rajesh                       tick28=unknown        tick60=research_more  reordered=True
+  [111/148] Vinod                        tick28=unknown        tick60=reject         reordered=False
+  [112/148] Aamir                        tick28=unknown        tick60=defer          reordered=False
+  [113/148] Janaki                       tick28=unknown        tick60=research_more  reordered=False
+  [114/148] Indira                       tick28=unknown        tick60=reject         reordered=False
+  [115/148] Revathi                      tick28=unknown        tick60=defer          reordered=False
+  [116/148] Janaki                       tick28=unknown        tick60=reject         reordered=False
+  [117/148] Divya                        tick28=unknown        tick60=reject         reordered=False
+  [118/148] Amreen                       tick28=unknown        tick60=research_more  reordered=False
+  [119/148] Malini                       tick28=unknown        tick60=research_more  reordered=False
+  [120/148] Sakshi                       tick28=unknown        tick60=research_more  reordered=False
+  [121/148] Sunita                       tick28=unknown        tick60=reject         reordered=False
+  [122/148] Seema                        tick28=unknown        tick60=reject         reordered=False
+  [123/148] Madhavi                      tick28=unknown        tick60=reject         reordered=False
+  [124/148] Yash                         tick28=unknown        tick60=reject         reordered=False
+  [125/148] Pooja                        tick28=unknown        tick60=defer          reordered=False
+  [126/148] Sana                         tick28=unknown        tick60=research_more  reordered=False
+  [127/148] Aparna                       tick28=unknown        tick60=research_more  reordered=False
+  [128/148] Ritika                       tick28=unknown        tick60=defer          reordered=False
+  [129/148] Sneha                        tick28=unknown        tick60=research_more  reordered=False
+  [130/148] Kiran                        tick28=unknown        tick60=reject         reordered=False
+  [131/148] Priya                        tick28=unknown        tick60=research_more  reordered=False
+  [132/148] Yamini                       tick28=unknown        tick60=research_more  reordered=False
+  [133/148] Mehreen                      tick28=unknown        tick60=research_more  reordered=False
+  [134/148] Shabnam                      tick28=unknown        tick60=reject         reordered=False
+  [135/148] Amreen                       tick28=unknown        tick60=research_more  reordered=False
+  [136/148] Aditi                        tick28=unknown        tick60=reject         reordered=False
+  [137/148] Tabassum                     tick28=unknown        tick60=research_more  reordered=False
+  [138/148] Lavanya                      tick28=unknown        tick60=unknown        reordered=False
+  [139/148] Preeti                       tick28=unknown        tick60=unknown        reordered=False
+  [140/148] Parveen                      tick28=unknown        tick60=unknown        reordered=False
+  [141/148] Sakshi                       tick28=unknown        tick60=unknown        reordered=False
+  [142/148] Champa                       tick28=unknown        tick60=unknown        reordered=False
+  [143/148] Rekha                        tick28=unknown        tick60=unknown        reordered=False
+  [144/148] Vivek                        tick28=unknown        tick60=unknown        reordered=False
+  [145/148] Jyoti                        tick28=unknown        tick60=unknown        reordered=False
+  [146/148] Shweta                       tick28=unknown        tick60=unknown        reordered=False
+  [147/148] Nasreen                      tick28=unknown        tick60=unknown        reordered=False
+  [148/148] Rahul                        tick28=unknown        tick60=unknown        reordered=False
+
+===========================================================
+JOURNEY C — NUTRIMIX 7-14 EXPANSION — SUMMARY
+===========================================================
+Personas run:    148
+Errors:          0
+
+FIRST PURCHASE (tick 28):
+  research_more    56 ( 37.8%)  ##################
+  trial            52 ( 35.1%)  #################
+  defer            24 ( 16.2%)  ########
+  unknown          10 (  6.8%)  ###
+  reject            6 (  4.1%)  ##
+
+REORDER RATE (among first-time buyers):
+  Reordered:    25.0%
+  Lapsed:       75.0%
+
+BRAND TRUST TRAJECTORY (mean across personas):
+  Tick 2 : 0.24
+  Tick 3 : 0.24
+  Tick 4 : 0.24
+  Tick 5 : 0.25
+  Tick 6 : 0.25
+  Tick 7 : 0.25
+  Tick 8 : 0.25
+  Tick 9 : 0.25
+  Tick 10: 0.25
+  Tick 11: 0.25
+
+TOP LAPSE REASONS (objections from non-reorderers):
+  1. child_still_prefers_bournvita: 3
+  2. Price premium not justified by observable outcomes: 2
+  3. child_still_asks_for_bournvita: 2
+  4. child_still_requesting_competitor_product: 2
+  5. price_premium_not_justified_by_visible_results: 2
+===========================================================
+
+Full results written: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_C_results.json

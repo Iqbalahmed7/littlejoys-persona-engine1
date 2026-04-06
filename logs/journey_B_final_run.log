@@ -1,0 +1,237 @@
+Loaded 200 personas.
+Running journey B for 200 personas (concurrency=3)...
+  [  1/200] Om                           journey=B  tick60=research_more  reordered=True
+  [  2/200] Nasreen                      journey=B  tick60=defer          reordered=False
+  [  3/200] Ayesha                       journey=B  tick60=research_more  reordered=False
+  [  4/200] Sunita                       journey=B  tick60=research_more  reordered=False
+  [  5/200] Aditi                        journey=B  tick60=research_more  reordered=False
+  [  6/200] Smita                        journey=B  tick60=research_more  reordered=True
+  [  7/200] Yamini                       journey=B  tick60=research_more  reordered=False
+  [  8/200] Zara                         journey=B  tick60=research_more  reordered=False
+  [  9/200] Kriti                        journey=B  tick60=research_more  reordered=True
+  [ 10/200] Hina                         journey=B  tick60=research_more  reordered=False
+  [ 11/200] Aparna                       journey=B  tick60=research_more  reordered=False
+  [ 12/200] Sunita                       journey=B  tick60=research_more  reordered=True
+  [ 13/200] Devi                         journey=B  tick60=defer          reordered=False
+  [ 14/200] Chitra                       journey=B  tick60=defer          reordered=False
+  [ 15/200] Sneha                        journey=B  tick60=research_more  reordered=False
+  [ 16/200] Seema                        journey=B  tick60=research_more  reordered=False
+  [ 17/200] Manisha                      journey=B  tick60=research_more  reordered=True
+  [ 18/200] Zainab                       journey=B  tick60=switch         reordered=False
+  [ 19/200] Varsha                       journey=B  tick60=defer          reordered=False
+  [ 20/200] Rashmi                       journey=B  tick60=defer          reordered=False
+  [ 21/200] Kriti                        journey=B  tick60=research_more  reordered=False
+  [ 22/200] Mohan                        journey=B  tick60=reject         reordered=False
+  [ 23/200] Smita                        journey=B  tick60=reject         reordered=False
+  [ 24/200] Nasreen                      journey=B  tick60=research_more  reordered=False
+  [ 25/200] Sakshi                       journey=B  tick60=buy            reordered=True
+  [ 26/200] Arti                         journey=B  tick60=research_more  reordered=False
+  [ 27/200] Hema                         journey=B  tick60=research_more  reordered=False
+  [ 28/200] Yasmin                       journey=B  tick60=research_more  reordered=False
+  [ 29/200] Naveen                       journey=B  tick60=research_more  reordered=False
+  [ 30/200] Zubaida                      journey=B  tick60=research_more  reordered=False
+  [ 31/200] Nikhil                       journey=B  tick60=research_more  reordered=False
+  [ 32/200] Bhavna                       journey=B  tick60=research_more  reordered=False
+  [ 33/200] Aditi                        journey=B  tick60=research_more  reordered=False
+  [ 34/200] Karthik                      journey=B  tick60=research_more  reordered=True
+  [ 35/200] Harini                       journey=B  tick60=research_more  reordered=False
+  [ 36/200] Rina                         journey=B  tick60=research_more  reordered=True
+  [ 37/200] Kiran                        journey=B  tick60=defer          reordered=False
+  [ 38/200] Tara                         journey=B  tick60=research_more  reordered=False
+  [ 39/200] Priya                        journey=B  tick60=defer          reordered=False
+  [ 40/200] Bhavani                      journey=B  tick60=research_more  reordered=False
+  [ 41/200] Preeti                       journey=B  tick60=research_more  reordered=False
+  [ 42/200] Hina                         journey=B  tick60=research_more  reordered=False
+  [ 43/200] Vandana                      journey=B  tick60=reject         reordered=False
+  [ 44/200] Tabassum                     journey=B  tick60=defer          reordered=False
+  [ 45/200] Umesh                        journey=B  tick60=research_more  reordered=False
+  [ 46/200] Rohit                        journey=B  tick60=reject         reordered=False
+  [ 47/200] Shweta                       journey=B  tick60=research_more  reordered=False
+  [ 48/200] Nirmala                      journey=B  tick60=research_more  reordered=False
+  [ 49/200] Anjali                       journey=B  tick60=defer          reordered=False
+  [ 50/200] Lakshmi                      journey=B  tick60=reject         reordered=False
+  [ 51/200] Zainab                       journey=B  tick60=research_more  reordered=False
+  [ 52/200] Himanshu                     journey=B  tick60=research_more  reordered=False
+  [ 53/200] Lata                         journey=B  tick60=defer          reordered=False
+  [ 54/200] Nisha                        journey=B  tick60=research_more  reordered=False
+  [ 55/200] Bhavani                      journey=B  tick60=research_more  reordered=False
+  [ 56/200] Ganga                        journey=B  tick60=research_more  reordered=False
+  [ 57/200] Paramjit                     journey=B  tick60=research_more  reordered=False
+  [ 58/200] Sunita                       journey=B  tick60=reject         reordered=False
+  [ 59/200] Suman                        journey=B  tick60=defer          reordered=False
+  [ 60/200] Nisha                        journey=B  tick60=defer          reordered=False
+  [ 61/200] Aishwarya                    journey=B  tick60=reject         reordered=False
+  [ 62/200] Harini                       journey=B  tick60=research_more  reordered=False
+  [ 63/200] Salma                        journey=B  tick60=research_more  reordered=False
+  [ 64/200] Revathi                      journey=B  tick60=research_more  reordered=False
+  [ 65/200] Nisha                        journey=B  tick60=defer          reordered=False
+  [ 66/200] Kusum                        journey=B  tick60=reject         reordered=False
+  [ 67/200] Preeti                       journey=B  tick60=research_more  reordered=False
+  [ 68/200] Revathi                      journey=B  tick60=research_more  reordered=False
+  [ 69/200] Madhavi                      journey=B  tick60=reject         reordered=False
+  [ 70/200] Deepa                        journey=B  tick60=research_more  reordered=False
+  [ 71/200] Suresh                       journey=B  tick60=research_more  reordered=True
+  [ 72/200] Kiran                        journey=B  tick60=research_more  reordered=False
+  [ 73/200] Parveen                      journey=B  tick60=research_more  reordered=False
+  [ 74/200] Indira                       journey=B  tick60=research_more  reordered=False
+  [ 75/200] Amreen                       journey=B  tick60=research_more  reordered=False
+  [ 76/200] Salma                        journey=B  tick60=research_more  reordered=False
+  [ 77/200] Jyoti                        journey=B  tick60=defer          reordered=False
+  [ 78/200] Aparna                       journey=B  tick60=defer          reordered=False
+  [ 79/200] Jaspreet                     journey=B  tick60=research_more  reordered=False
+  [ 80/200] Lalit                        journey=B  tick60=research_more  reordered=False
+  [ 81/200] Zara                         journey=B  tick60=research_more  reordered=False
+  [ 82/200] Padma                        journey=B  tick60=research_more  reordered=False
+  [ 83/200] Priya                        journey=B  tick60=research_more  reordered=False
+  [ 84/200] Farhan                       journey=B  tick60=research_more  reordered=True
+  [ 85/200] Smita                        journey=B  tick60=research_more  reordered=True
+  [ 86/200] Pooja                        journey=B  tick60=research_more  reordered=False
+  [ 87/200] Hina                         journey=B  tick60=defer          reordered=False
+  [ 88/200] Kusum                        journey=B  tick60=reject         reordered=False
+  [ 89/200] Qasim                        journey=B  tick60=research_more  reordered=False
+  [ 90/200] Ayesha                       journey=B  tick60=reject         reordered=False
+  [ 91/200] Bhavani                      journey=B  tick60=reject         reordered=False
+  [ 92/200] Neha                         journey=B  tick60=research_more  reordered=False
+  [ 93/200] Trisha                       journey=B  tick60=research_more  reordered=False
+  [ 94/200] Mahesh                       journey=B  tick60=research_more  reordered=False
+  [ 95/200] Nirmala                      journey=B  tick60=research_more  reordered=False
+  [ 96/200] Lavanya                      journey=B  tick60=research_more  reordered=False
+  [ 97/200] Lata                         journey=B  tick60=reject         reordered=False
+  [ 98/200] Sana                         journey=B  tick60=research_more  reordered=False
+  [ 99/200] Aishwarya                    journey=B  tick60=research_more  reordered=False
+  [100/200] Fatima                       journey=B  tick60=defer          reordered=False
+  [101/200] Asha                         journey=B  tick60=research_more  reordered=False
+  [102/200] Sakshi                       journey=B  tick60=defer          reordered=False
+  [103/200] Ritu                         journey=B  tick60=defer          reordered=False
+  [104/200] Nadeem                       journey=B  tick60=research_more  reordered=False
+  [105/200] Deepa                        journey=B  tick60=research_more  reordered=False
+  [106/200] Zara                         journey=B  tick60=defer          reordered=False
+  [107/200] Varsha                       journey=B  tick60=research_more  reordered=True
+  [108/200] Khalid                       journey=B  tick60=research_more  reordered=False
+  [109/200] Shweta                       journey=B  tick60=research_more  reordered=False
+  [110/200] Ishita                       journey=B  tick60=research_more  reordered=False
+  [111/200] Rina                         journey=B  tick60=research_more  reordered=True
+  [112/200] Vijaya                       journey=B  tick60=research_more  reordered=False
+  [113/200] Ritu                         journey=B  tick60=defer          reordered=False
+  [114/200] Sana                         journey=B  tick60=defer          reordered=False
+  [115/200] Shabnam                      journey=B  tick60=research_more  reordered=False
+  [116/200] Kriti                        journey=B  tick60=reject         reordered=False
+  [117/200] Rina                         journey=B  tick60=research_more  reordered=False
+  [118/200] Parveen                      journey=B  tick60=research_more  reordered=False
+  [119/200] Zubaida                      journey=B  tick60=reject         reordered=False
+  [120/200] Irfan                        journey=B  tick60=research_more  reordered=False
+  [121/200] Fatima                       journey=B  tick60=research_more  reordered=False
+  [122/200] Arjun                        journey=B  tick60=research_more  reordered=True
+  [123/200] Janaki                       journey=B  tick60=research_more  reordered=True
+  [124/200] Veena                        journey=B  tick60=research_more  reordered=False
+  [125/200] Jai                          journey=B  tick60=defer          reordered=False
+  [126/200] Hari                         journey=B  tick60=research_more  reordered=False
+  [127/200] Shabnam                      journey=B  tick60=reject         reordered=False
+  [128/200] Jyoti                        journey=B  tick60=reject         reordered=False
+  [129/200] Tabassum                     journey=B  tick60=research_more  reordered=False
+  [130/200] Om                           journey=B  tick60=research_more  reordered=False
+  [131/200] Shweta                       journey=B  tick60=reject         reordered=False
+  [132/200] Junaid                       journey=B  tick60=research_more  reordered=True
+  [133/200] Rubina                       journey=B  tick60=defer          reordered=False
+  [134/200] Manisha                      journey=B  tick60=reject         reordered=False
+  [135/200] Radha                        journey=B  tick60=defer          reordered=False
+  [136/200] Yasmin                       journey=B  tick60=defer          reordered=False
+  [137/200] Lavanya                      journey=B  tick60=research_more  reordered=False
+  [138/200] Durga                        journey=B  tick60=research_more  reordered=False
+  [139/200] Ganga                        journey=B  tick60=research_more  reordered=False
+  [140/200] Neha                         journey=B  tick60=defer          reordered=False
+  [141/200] Anjali                       journey=B  tick60=research_more  reordered=True
+  [142/200] Asha                         journey=B  tick60=research_more  reordered=True
+  [143/200] Pallavi                      journey=B  tick60=research_more  reordered=False
+  [144/200] Radha                        journey=B  tick60=research_more  reordered=False
+  [145/200] Chitra                       journey=B  tick60=research_more  reordered=False
+  [146/200] Shalini                      journey=B  tick60=research_more  reordered=False
+  [147/200] Ramesh                       journey=B  tick60=research_more  reordered=False
+  [148/200] Sneha                        journey=B  tick60=research_more  reordered=False
+  [149/200] Madhavi                      journey=B  tick60=research_more  reordered=False
+  [150/200] Smita                        journey=B  tick60=research_more  reordered=False
+  [151/200] Rajesh                       journey=B  tick60=research_more  reordered=False
+  [152/200] Vinod                        journey=B  tick60=switch         reordered=False
+  [153/200] Aamir                        journey=B  tick60=research_more  reordered=False
+  [154/200] Janaki                       journey=B  tick60=research_more  reordered=False
+  [155/200] Manju                        journey=B  tick60=research_more  reordered=False
+  [156/200] Indira                       journey=B  tick60=research_more  reordered=False
+  [157/200] Revathi                      journey=B  tick60=research_more  reordered=False
+  [158/200] Janaki                       journey=B  tick60=research_more  reordered=False
+  [159/200] Usha                         journey=B  tick60=research_more  reordered=False
+  [160/200] Amita                        journey=B  tick60=research_more  reordered=False
+  [161/200] Divya                        journey=B  tick60=research_more  reordered=False
+  [162/200] Amreen                       journey=B  tick60=research_more  reordered=True
+  [163/200] Malini                       journey=B  tick60=research_more  reordered=False
+  [164/200] Sakshi                       journey=B  tick60=research_more  reordered=False
+  [165/200] Sunita                       journey=B  tick60=research_more  reordered=False
+  [166/200] Seema                        journey=B  tick60=defer          reordered=False
+  [167/200] Madhavi                      journey=B  tick60=research_more  reordered=False
+  [168/200] Yash                         journey=B  tick60=research_more  reordered=False
+  [169/200] Pooja                        journey=B  tick60=research_more  reordered=False
+  [170/200] Sana                         journey=B  tick60=research_more  reordered=False
+  [171/200] Aparna                       journey=B  tick60=research_more  reordered=False
+  [172/200] Priya                        journey=B  tick60=defer          reordered=False
+  [173/200] Ritika                       journey=B  tick60=defer          reordered=False
+  [174/200] Sneha                        journey=B  tick60=research_more  reordered=False
+  [175/200] Radha                        journey=B  tick60=research_more  reordered=False
+  [176/200] Shahnaz                      journey=B  tick60=research_more  reordered=False
+  [177/200] Priya                        journey=B  tick60=research_more  reordered=False
+  [178/200] Kiran                        journey=B  tick60=research_more  reordered=False
+  [179/200] Yamini                       journey=B  tick60=research_more  reordered=False
+  [180/200] Mehreen                      journey=B  tick60=research_more  reordered=False
+  [181/200] Rahul                        journey=B  tick60=research_more  reordered=False
+  [182/200] Shabnam                      journey=B  tick60=reject         reordered=False
+  [183/200] Aditi                        journey=B  tick60=research_more  reordered=False
+  [184/200] Amreen                       journey=B  tick60=research_more  reordered=False
+  [185/200] Aditi                        journey=B  tick60=research_more  reordered=False
+  [186/200] Tabassum                     journey=B  tick60=research_more  reordered=False
+  [187/200] Lavanya                      journey=B  tick60=research_more  reordered=False
+  [188/200] Usha                         journey=B  tick60=reject         reordered=False
+  [189/200] Preeti                       journey=B  tick60=research_more  reordered=False
+  [190/200] Parveen                      journey=B  tick60=research_more  reordered=False
+  [191/200] Sakshi                       journey=B  tick60=research_more  reordered=False
+  [192/200] Champa                       journey=B  tick60=research_more  reordered=False
+  [193/200] Rekha                        journey=B  tick60=research_more  reordered=False
+  [194/200] Jyoti                        journey=B  tick60=research_more  reordered=False
+  [195/200] Vivek                        journey=B  tick60=research_more  reordered=True
+  [196/200] Yasmin                       journey=B  tick60=research_more  reordered=False
+  [197/200] Nitin                        journey=B  tick60=research_more  reordered=False
+  [198/200] Shweta                       journey=B  tick60=research_more  reordered=False
+  [199/200] Nasreen                      journey=B  tick60=defer          reordered=False
+  [200/200] Zara                         journey=B  tick60=defer          reordered=False
+
+===========================================================
+JOURNEY B — GUMMIES — SUMMARY
+===========================================================
+Personas run:    200
+Errors:          0
+
+FIRST PURCHASE (tick 35):
+  research_more   72 ( 36.0%)  ##################
+  trial          65 ( 32.5%)  ################
+  defer          59 ( 29.5%)  ##############
+  reject          4 (  2.0%)  #
+
+REORDER RATE (among first-time buyers):
+  Reordered:    23.1%
+  Lapsed:       76.9%
+
+BRAND TRUST TRAJECTORY (mean across personas):
+  (no trust trajectory available)
+
+TOP REORDER DRIVERS:
+  1. Lack of clear efficacy signal after 30 days: 3
+  2. availability_of_cheaper_alternatives: 2
+  3. price_sensitivity_with_unclear_efficacy: 2
+  4. No clear efficacy signal despite 30-day trial: 1
+  5. Significant price differential with established brands (40-45% cheaper): 1
+
+TOP LAPSE REASONS (objections from non-reorderers):
+  1. Cannot isolate whether gummy is responsible for any improvement: 9
+  2. Cannot isolate whether gummy or routine change caused any improvement: 4
+  3. cannot_isolate_product_effect_from_routine_changes: 3
+  4. cannot_isolate_gummy_effect_from_routine_changes: 3
+  5. cannot_isolate_whether_product_is_actually_working: 3
+===========================================================
+Full results written: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_B_results.json

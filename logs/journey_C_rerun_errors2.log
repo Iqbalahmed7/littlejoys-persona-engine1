@@ -1,0 +1,618 @@
+Found 10/10 error personas in 7-14 filtered pool
+
+Re-running 10 personas through Journey C (concurrency=2)...
+  [ 1/10] Preeti                         reordered=False  OK
+  [ 2/10] Parveen                        reordered=False  OK
+  [ 3/10] Champa                         reordered=False  OK
+  [ 4/10] Sakshi                         reordered=False  OK
+  [ 5/10] Rekha                          reordered=True  OK
+  [ 6/10] Vivek                          reordered=True  OK
+  [ 7/10] Jyoti                          reordered=False  OK
+  [ 8/10] Shweta                         reordered=True  OK
+  [ 9/10] Nasreen                        reordered=False  OK
+  [10/10] Rahul                          reordered=False  OK
+
+=== G12 Simulation Grounding Check — Journey C ===
+
+  Result : FAIL  (0 CRITICAL  111 HIGH  2 MEDIUM  0 LOW)
+  Issues : 113 total
+  Clean  : 0 elements passed with no issues
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 649"
+      Reason: Price 'Rs 649' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 399"
+      Reason: Price 'Rs 399' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 449"
+      Reason: Price 'Rs 449' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 479"
+      Reason: Price 'Rs 479' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 649"
+      Reason: Price 'Rs 649' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 399"
+      Reason: Price 'Rs 399' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 649"
+      Reason: Price 'Rs 649' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 300"
+      Reason: Price 'Rs 300' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #3
+      "Step 3: My budget is ₹4,875/month for child nutrition with high price sensitivity. Spending ₹300 more per pack adds up o"
+      Reason: Number '₹4,875' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #3
+      "Step 3: My budget is ₹4,875/month for child nutrition with high price sensitivity. Spending ₹300 more per pack adds up o"
+      Reason: Number '₹3,600' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #16
+      "Step 3: Budget check: ₹4,875/month for child nutrition means ₹649 is doable, but it's 13% of my monthly allocation for o"
+      Reason: Number '₹4,875' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #16
+      "Step 3: Budget check: ₹4,875/month for child nutrition means ₹649 is doable, but it's 13% of my monthly allocation for o"
+      Reason: Number '13%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #17
+      "Step 4: My trust network is divided. One school parent switched and is happy (2 months in, less fatigue). Another quit a"
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #19
+      "Posts in two trusted mom WhatsApp groups tonight asking about Nutrimix long-term experience, taste acceptance, and value"
+      Reason: Number '4 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #29
+      "Step 3: My budget is ₹4,875/month for child nutrition with high price sensitivity. Spending ₹300 more per pack adds up o"
+      Reason: Number '₹4,875' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Champa-Bangalore-Mom-30  reasoning/quote #29
+      "Step 3: My budget is ₹4,875/month for child nutrition with high price sensitivity. Spending ₹300 more per pack adds up o"
+      Reason: Number '₹3,600' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #3
+      "Step 3: Monthly budget is Rs 7,385 for child nutrition with high price sensitivity. Rs 649 vs Rs 349 is a Rs 300 (86% pr"
+      Reason: Number 'Rs 7,385' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #3
+      "Step 3: Monthly budget is Rs 7,385 for child nutrition with high price sensitivity. Rs 649 vs Rs 349 is a Rs 300 (86% pr"
+      Reason: Number '86%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #3
+      "Step 3: Monthly budget is Rs 7,385 for child nutrition with high price sensitivity. Rs 649 vs Rs 349 is a Rs 300 (86% pr"
+      Reason: Number '8.8%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #6
+      "Posts detailed question in school mom-group and trusted WhatsApp circles asking about concrete results others have seen "
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #11
+      "Rs 300 premium (86% more) without demonstrable superiority"
+      Reason: Number '86%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #17
+      "Step 3: ₹7,385 monthly budget gives me headroom for ₹649, but high price sensitivity means I need confidence before comm"
+      Reason: Number '₹7,385' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #19
+      "Step 5: I will post in my school WhatsApp group asking specifically about Nutrimix experience — taste acceptance, durati"
+      Reason: Number '48 hours' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #19
+      "Step 5: I will post in my school WhatsApp group asking specifically about Nutrimix experience — taste acceptance, durati"
+      Reason: Number '24' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #20
+      "Posts targeted question in school WhatsApp group about Nutrimix experiences (taste, duration, benefits), buys Bournvita "
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #30
+      "Step 3: Monthly budget is Rs 7,385 for child nutrition with high price sensitivity. Rs 649 vs Rs 349 is a Rs 300 (86% pr"
+      Reason: Number 'Rs 7,385' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #30
+      "Step 3: Monthly budget is Rs 7,385 for child nutrition with high price sensitivity. Rs 649 vs Rs 349 is a Rs 300 (86% pr"
+      Reason: Number '86%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #30
+      "Step 3: Monthly budget is Rs 7,385 for child nutrition with high price sensitivity. Rs 649 vs Rs 349 is a Rs 300 (86% pr"
+      Reason: Number '8.8%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #33
+      "Posts detailed question in school mom-group and trusted WhatsApp circles asking about concrete results others have seen "
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Jyoti-Mumbai-Mom-31  reasoning/quote #38
+      "Rs 300 premium (86% more) without demonstrable superiority"
+      Reason: Number '86%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #3
+      "Step 3: Budget check: Rs 9,868/month for child nutrition total. Rs 649 for one child's drink is within ceiling, but Rs 3"
+      Reason: Number 'Rs 9,868' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #3
+      "Step 3: Budget check: Rs 9,868/month for child nutrition total. Rs 649 for one child's drink is within ceiling, but Rs 3"
+      Reason: Number '100%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #6
+      "Spends next 2-3 days comparing ingredient labels on Flipkart between Nutrimix and Bournvita, focusing on iron and sugar "
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #16
+      "Step 3: Budget check: Rs 649 for Nutrimix is well within my Rs 9,868/month child nutrition budget, especially with 3 kid"
+      Reason: Number 'Rs 9,868' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #24
+      "Price premium of Rs 250-300 over Bournvita"
+      Reason: Number 'Rs 250' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #29
+      "Step 3: Budget check: Rs 9,868/month for child nutrition total. Rs 649 for one child's drink is within ceiling, but Rs 3"
+      Reason: Number 'Rs 9,868' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #29
+      "Step 3: Budget check: Rs 9,868/month for child nutrition total. Rs 649 for one child's drink is within ceiling, but Rs 3"
+      Reason: Number '100%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Nasreen-Hyderabad-Mom-26  reasoning/quote #32
+      "Spends next 2-3 days comparing ingredient labels on Flipkart between Nutrimix and Bournvita, focusing on iron and sugar "
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #2
+      "Step 2: As a habitual decision-maker who relies on thoroughness to reduce anxiety, I'm focusing on: (a) the pediatrician"
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #3
+      "Step 3: Budget ceiling is low price sensitivity with Rs 13,118/month allocated — Rs 649 is well within range, so budget "
+      Reason: Number 'Rs 13,118' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #4
+      "Step 4: Family trust network input: the pediatrician flagged iron needs (professional family authority), one school pare"
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #5
+      "Step 5: I will defer the immediate reorder and instead schedule a follow-up with the pediatrician or get a basic iron/he"
+      Reason: Number '2 month' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #6
+      "Orders one more Nutrimix pack to complete approximately 60 days total, then books pediatrician appointment or basic hemo"
+      Reason: Number '60 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #16
+      "Step 3: Budget ceiling is low price sensitivity with ₹13,118/month for child nutrition, so ₹649 is affordable. However, "
+      Reason: Number '₹13,118' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #18
+      "Step 5: I defer the purchase and spend the next 2-3 days doing thorough research: (1) Watch YouTube comparison videos sp"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #19
+      "Spends 2-3 days watching YouTube comparison demos on iron/B12 content, reads bigbasket reviews for taste feedback from p"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #19
+      "Spends 2-3 days watching YouTube comparison demos on iron/B12 content, reads bigbasket reviews for taste feedback from p"
+      Reason: Number '14 year' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #28
+      "Step 2: As a habitual decision-maker who relies on thoroughness to reduce anxiety, I'm focusing on: (a) the pediatrician"
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #29
+      "Step 3: Budget ceiling is low price sensitivity with Rs 13,118/month allocated — Rs 649 is well within range, so budget "
+      Reason: Number 'Rs 13,118' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #30
+      "Step 4: Family trust network input: the pediatrician flagged iron needs (professional family authority), one school pare"
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #31
+      "Step 5: I will defer the immediate reorder and instead schedule a follow-up with the pediatrician or get a basic iron/he"
+      Reason: Number '2 month' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Parveen-Hyderabad-Mom-35  reasoning/quote #32
+      "Orders one more Nutrimix pack to complete approximately 60 days total, then books pediatrician appointment or basic hemo"
+      Reason: Number '60 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Preeti-Chandigarh-Mom-29  reasoning/quote #3
+      "Step 3: Budget ceiling is a real constraint — Rs 5306/month for child nutrition across 3 kids means Rs 649 recurring add"
+      Reason: Number 'Rs 5306' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Preeti-Chandigarh-Mom-29  reasoning/quote #16
+      "Step 2: As an emotional decision-maker anchored in peer trust, I'm zeroing in on the conflicting word-of-mouth: the posi"
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Preeti-Chandigarh-Mom-29  reasoning/quote #17
+      "Step 3: Budget check: Rs 5,306/month for child nutrition with high price sensitivity. Nutrimix at Rs 649 vs Bournvita at"
+      Reason: Number 'Rs 5,306' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Preeti-Chandigarh-Mom-29  reasoning/quote #17
+      "Step 3: Budget check: Rs 5,306/month for child nutrition with high price sensitivity. Nutrimix at Rs 649 vs Bournvita at"
+      Reason: Number 'Rs 250' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Preeti-Chandigarh-Mom-29  reasoning/quote #20
+      "Posts in trusted mom WhatsApp group asking for experiences with Nutrimix vs Bournvita for iron/energy concerns in 7-year"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Preeti-Chandigarh-Mom-29  reasoning/quote #30
+      "Step 3: Budget ceiling is a real constraint — Rs 5306/month for child nutrition across 3 kids means Rs 649 recurring add"
+      Reason: Number 'Rs 5306' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #3
+      "Step 3: Budget ceiling is low price sensitivity with Rs 4330/month allocated — so Rs 649 is affordable. But I don't wast"
+      Reason: Number 'Rs 4330' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #5
+      "Step 5: I defer the reorder and spend the next 2-3 days doing what reduces my buyer anxiety: (1) Compare Nutrimix and Bo"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #6
+      "Buys one small pack of Bournvita immediately to bridge the gap, then spends 2-3 days comparing labels on Amazon, watchin"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #14
+      "Step 2: As an analytical decision-maker focused on features, I'm drawn to Nutrimix's better micronutrient profile — that"
+      Reason: Number 'Rs 4,330' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #15
+      "Step 3: Budget check: Rs 649 fits comfortably in my Rs 4,330/month allocation with low price sensitivity. Non-negotiable"
+      Reason: Number 'Rs 4,330' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #17
+      "Step 5: I will spend the next 2-3 days doing focused research: compare Nutrimix and Bournvita nutrition labels side-by-s"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #18
+      "Spends 2-3 days comparing nutrition labels on Amazon, watching YouTube taste test and preparation videos, and consulting"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #29
+      "Step 3: Budget ceiling is low price sensitivity with Rs 4330/month allocated — so Rs 649 is affordable. But I don't wast"
+      Reason: Number 'Rs 4330' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #31
+      "Step 5: I defer the reorder and spend the next 2-3 days doing what reduces my buyer anxiety: (1) Compare Nutrimix and Bo"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rahul-Udaipur-Dad-35  reasoning/quote #32
+      "Buys one small pack of Bournvita immediately to bridge the gap, then spends 2-3 days comparing labels on Amazon, watchin"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #2
+      "Step 2: Focusing on: (1) Pediatrician's authority recommendation about iron and B12 for my 8-year-old's age group, (2) T"
+      Reason: Number '5%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #3
+      "Step 3: Budget ceiling shows high price sensitivity, but I have Rs 6,215/month allocated and make exceptions for child n"
+      Reason: Number 'Rs 6,215' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #10
+      "Rs 300 price gap is substantial (46% cheaper alternative available)"
+      Reason: Number '46%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #15
+      "Step 2: The pediatrician's flag about iron/B12 deficiency carries the most weight - that's my authority anchor speaking "
+      Reason: Number 'Rs 250' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #15
+      "Step 2: The pediatrician's flag about iron/B12 deficiency carries the most weight - that's my authority anchor speaking "
+      Reason: Number 'Rs 6,215' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #16
+      "Step 3: Budget check: Rs 649 for Nutrimix is affordable within my Rs 6,215/month child nutrition allocation - I make exc"
+      Reason: Number 'Rs 6,215' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #19
+      "Buys one 500g pack of Nutrimix from BigBasket to trial for 4 weeks with her 8-year-old, monitoring both taste acceptance"
+      Reason: Number '4 weeks' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #28
+      "Step 2: Focusing on: (1) Pediatrician's authority recommendation about iron and B12 for my 8-year-old's age group, (2) T"
+      Reason: Number '5%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #29
+      "Step 3: Budget ceiling shows high price sensitivity, but I have Rs 6,215/month allocated and make exceptions for child n"
+      Reason: Number 'Rs 6,215' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Rekha-Udaipur-Mom-33  reasoning/quote #36
+      "Rs 300 price gap is substantial (46% cheaper alternative available)"
+      Reason: Number '46%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #3
+      "Step 3: Budget constraint: Rs 1559/month for child nutrition with medium price sensitivity. Rs 649 is manageable but Rs "
+      Reason: Number 'Rs 1559' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #3
+      "Step 3: Budget constraint: Rs 1559/month for child nutrition with medium price sensitivity. Rs 649 is manageable but Rs "
+      Reason: Number '46%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #5
+      "Step 5: I will spend 2-3 days doing targeted research: compare nutrition labels side-by-side (iron, B12, sugar content),"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #6
+      "Spends 2-3 days comparing nutrition labels on BigBasket, watching YouTube product comparison videos, and attempting to m"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #15
+      "Step 2: I'm focusing on: (1) the pediatrician's specific flagging of iron/B12 gaps — that's medical authority I trust, ("
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #16
+      "Step 3: Budget constraint: ₹1559/month for child nutrition. Nutrimix at ₹649 is within range but it's 41% of my monthly "
+      Reason: Number '₹1559' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #16
+      "Step 3: Budget constraint: ₹1559/month for child nutrition. Nutrimix at ₹649 is within range but it's 41% of my monthly "
+      Reason: Number '41%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #18
+      "Step 5: I will spend the next 2-3 days doing thorough research: comparing nutrition labels in detail, watching YouTube c"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #19
+      "Spends 2-3 days watching YouTube comparison videos, reading verified purchase reviews, comparing nutrition labels in det"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #30
+      "Step 3: Budget constraint: Rs 1559/month for child nutrition with medium price sensitivity. Rs 649 is manageable but Rs "
+      Reason: Number 'Rs 1559' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #30
+      "Step 3: Budget constraint: Rs 1559/month for child nutrition with medium price sensitivity. Rs 649 is manageable but Rs "
+      Reason: Number '46%' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #32
+      "Step 5: I will spend 2-3 days doing targeted research: compare nutrition labels side-by-side (iron, B12, sugar content),"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Sakshi-Guwahati-Mom-29  reasoning/quote #33
+      "Spends 2-3 days comparing nutrition labels on BigBasket, watching YouTube product comparison videos, and attempting to m"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Shweta-Pune-Mom-31  reasoning/quote #3
+      "Step 3: Budget ceiling is marked as 'low price sensitivity' with ₹6,813/month allocated to child nutrition, so ₹649 is w"
+      Reason: Number '₹6,813' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Shweta-Pune-Mom-31  reasoning/quote #16
+      "Step 3: Budget isn't the constraint here - Rs 649 is well within my Rs 6,813/month child nutrition budget and I have low"
+      Reason: Number 'Rs 6,813' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Shweta-Pune-Mom-31  reasoning/quote #18
+      "Step 5: I will spend 2-3 days doing focused research: compare nutritional labels on brand websites, look for pediatric n"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Shweta-Pune-Mom-31  reasoning/quote #19
+      "Spends 2-3 days comparing nutritional labels on brand websites, researching pediatric iron/B12 requirements, and checkin"
+      Reason: Number '3 days' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Shweta-Pune-Mom-31  reasoning/quote #30
+      "Step 3: Budget ceiling is marked as 'low price sensitivity' with ₹6,813/month allocated to child nutrition, so ₹649 is w"
+      Reason: Number '₹6,813' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #3
+      "Step 3: Budget ceiling is described as 'low price sensitivity' with Rs 7,847/month allocated specifically for child nutr"
+      Reason: Number 'Rs 7,847' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #5
+      "Step 5: I'll reorder Nutrimix. The price gap is real, but I'm habitual once I commit to something that's working adequat"
+      Reason: Number '3 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #15
+      "Step 2: I focus on the features first: Nutrimix has better micronutrients (iron, B12) which directly addresses what the "
+      Reason: Number 'Rs 250' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #15
+      "Step 2: I focus on the features first: Nutrimix has better micronutrients (iron, B12) which directly addresses what the "
+      Reason: Number '2 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #16
+      "Step 3: Budget is not a constraint — Rs 649 is well within my Rs 7,847/month allocation, and I have low price sensitivit"
+      Reason: Number 'Rs 7,847' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #18
+      "Step 5: I'll trial Nutrimix for my older child (the 13-year-old, who can better articulate feedback) for one month. If t"
+      Reason: Number '13' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #19
+      "Order one 500g pack of Nutrimix on BigBasket for the 13-year-old to trial for 3-4 weeks, monitor acceptance and any visi"
+      Reason: Number '4 weeks' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #19
+      "Order one 500g pack of Nutrimix on BigBasket for the 13-year-old to trial for 3-4 weeks, monitor acceptance and any visi"
+      Reason: Number '13' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #30
+      "Step 3: Budget ceiling is described as 'low price sensitivity' with Rs 7,847/month allocated specifically for child nutr"
+      Reason: Number 'Rs 7,847' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T3  HIGH      persona:Vivek-Chennai-Dad-35  reasoning/quote #32
+      "Step 5: I'll reorder Nutrimix. The price gap is real, but I'm habitual once I commit to something that's working adequat"
+      Reason: Number '3 months' appears in persona reasoning but was not established in the journey stimuli fed to the simulation.
+      Fix: Remove the specific number from the reasoning output, or add it to the journey stimulus before running the simulation.
+
+  T1  MEDIUM    product_frame  product_frame (unsourced superlative)
+      "d has Nutrimix in milk before leaving for school. Top comment (317 likes): 'My son refused it after day"
+      Reason: Superlative 'Top' in journey stimuli has no citation.
+      Fix: Add a source reference or soften to a relative claim.
+
+  T1  MEDIUM    product_frame  product_frame (unsourced superlative)
+      "e boring one? Can we please get the cricket one?' First week of use: child takes Nutrimix reluctantly — s"
+      Reason: Superlative 'First' in journey stimuli has no citation.
+      Fix: Add a source reference or soften to a relative claim.
+
+  [G12] FAIL — fix contamination issues before building reports.
+
+
+Re-run complete: 10 success, 0 still errored
+  Patched: Preeti-Chandigarh-Mom-29
+  Patched: Parveen-Hyderabad-Mom-35
+  Patched: Sakshi-Guwahati-Mom-29
+  Patched: Champa-Bangalore-Mom-30
+  Patched: Rekha-Udaipur-Mom-33
+  Patched: Vivek-Chennai-Dad-35
+  Patched: Jyoti-Mumbai-Mom-31
+  Patched: Shweta-Pune-Mom-31
+  Patched: Nasreen-Hyderabad-Mom-26
+  Patched: Rahul-Udaipur-Dad-35
+
+Patched 10 logs in journey_C_results.json
+
+Re-aggregating...
+Saved: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_C_results.json
+
+=== UPDATED JOURNEY C SUMMARY ===
+Total personas:  148
+Errors:          0
+Reorder rate:    27.3%
+Avg trust first: 0.4074
+
+First decision distribution:
+  research_more      63 ( 42.6%)  ##############
+  trial              55 ( 37.2%)  ############
+  defer              24 ( 16.2%)  #####
+  reject              6 (  4.1%)  #
+
+✅ No more 'unknown' decisions — all 148 personas have valid tick-28 decisions

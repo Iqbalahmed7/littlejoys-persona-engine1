@@ -1,0 +1,145 @@
+Loaded 148 7-14 personas
+Probe cohort: 30 personas (20 lapsers + 10 reorderers)
+
+=== C-P1: Nutritional Comparison (3x iron, zero sugar) ===
+  [C-P1] Running 30 personas...
+    [ 1/30] Nasreen                      => reject
+    [ 2/30] Om                           => research_more
+    [ 3/30] Sunita                       => research_more
+    [ 4/30] Aparna                       => defer
+    [ 5/30] Hina                         => research_more
+    [ 6/30] Kriti                        => defer
+    [ 7/30] Sunita                       => research_more
+    [ 8/30] Devi                         => buy
+    [ 9/30] Sneha                        => defer
+    [10/30] Seema                        => defer
+    [11/30] Manisha                      => defer
+    [12/30] Varsha                       => defer
+    [13/30] Kriti                        => buy
+    [14/30] Rashmi                       => defer
+    [15/30] Mohan                        => reject
+    [16/30] Smita                        => defer
+    [17/30] Sakshi                       => reject
+    [18/30] Arti                         => research_more
+    [19/30] Hema                         => defer
+    [20/30] Naveen                       => research_more
+    [21/30] Ayesha                       => buy
+    [22/30] Aditi                        => defer
+    [23/30] Hina                         => research_more
+    [24/30] Ganga                        => defer
+    [25/30] Nisha                        => buy
+    [26/30] Jaspreet                     => buy
+    [27/30] Salma                        => research_more
+    [28/30] Padma                        => defer
+    [29/30] Smita                        => buy
+    [30/30] Ayesha                       => defer
+  C-P1: 20.0% positive | {'reject': 3, 'research_more': 8, 'defer': 13, 'buy': 6}
+
+=== C-P2: Family Pack (2x500g Rs 1,099) ===
+  [C-P2] Running 30 personas...
+    [ 1/30] Om                           => buy
+    [ 2/30] Nasreen                      => reject
+    [ 3/30] Sunita                       => reject
+    [ 4/30] Kriti                        => buy
+    [ 5/30] Aparna                       => buy
+    [ 6/30] Hina                         => research_more
+    [ 7/30] Devi                         => buy
+    [ 8/30] Sunita                       => buy
+    [ 9/30] Sneha                        => buy
+    [10/30] Seema                        => buy
+    [11/30] Manisha                      => buy
+    [12/30] Varsha                       => buy
+    [13/30] Rashmi                       => buy
+    [14/30] Kriti                        => buy
+    [15/30] Smita                        => buy
+    [16/30] Mohan                        => reject
+    [17/30] Sakshi                       => reject
+    [18/30] Arti                         => research_more
+    [19/30] Hema                         => buy
+    [20/30] Naveen                       => buy
+    [21/30] Ayesha                       => buy
+    [22/30] Aditi                        => buy
+    [23/30] Hina                         => buy
+    [24/30] Nisha                        => buy
+    [25/30] Ganga                        => defer
+    [26/30] Salma                        => buy
+    [27/30] Jaspreet                     => buy
+    [28/30] Padma                        => buy
+    [29/30] Smita                        => buy
+    [30/30] Ayesha                       => buy
+  C-P2: 76.7% positive | {'buy': 23, 'reject': 4, 'research_more': 2, 'defer': 1}
+
+=== C-P3: Bournvita Brand Inertia (direct comparison) ===
+  [C-P3] Running 30 personas...
+    [ 1/30] Sunita                       => buy
+    [ 2/30] Nasreen                      => reject
+    [ 3/30] Om                           => reject
+    [ 4/30] Aparna                       => defer
+    [ 5/30] Kriti                        => buy
+    [ 6/30] Hina                         => research_more
+    [ 7/30] Sunita                       => buy
+    [ 8/30] Devi                         => buy
+    [ 9/30] Sneha                        => research_more
+    [10/30] Manisha                      => buy
+    [11/30] Seema                        => defer
+    [12/30] Varsha                       => buy
+    [13/30] Rashmi                       => buy
+    [14/30] Kriti                        => buy
+    [15/30] Mohan                        => reject
+    [16/30] Smita                        => buy
+    [17/30] Sakshi                       => reject
+    [18/30] Arti                         => research_more
+    [19/30] Hema                         => buy
+    [20/30] Naveen                       => research_more
+    [21/30] Ayesha                       => buy
+    [22/30] Aditi                        => buy
+    [23/30] Hina                         => buy
+    [24/30] Ganga                        => defer
+    [25/30] Nisha                        => buy
+    [26/30] Salma                        => buy
+    [27/30] Jaspreet                     => buy
+    [28/30] Padma                        => buy
+    [29/30] Smita                        => buy
+    [30/30] Ayesha                       => buy
+  C-P3: 63.3% positive | {'buy': 19, 'reject': 4, 'defer': 3, 'research_more': 4}
+
+=== C-P4: Child Preference Pull ===
+  [C-P4] Running 30 personas...
+    [ 1/30] Sunita                       => buy
+    [ 2/30] Nasreen                      => reject
+    [ 3/30] Om                           => buy
+    [ 4/30] Kriti                        => buy
+    [ 5/30] Aparna                       => defer
+    [ 6/30] Hina                         => research_more
+    [ 7/30] Devi                         => buy
+    [ 8/30] Sunita                       => buy
+    [ 9/30] Sneha                        => buy
+    [10/30] Seema                        => defer
+    [11/30] Manisha                      => buy
+    [12/30] Varsha                       => buy
+    [13/30] Rashmi                       => buy
+    [14/30] Kriti                        => buy
+    [15/30] Mohan                        => reject
+    [16/30] Smita                        => buy
+    [17/30] Sakshi                       => reject
+    [18/30] Arti                         => research_more
+    [19/30] Hema                         => buy
+    [20/30] Naveen                       => buy
+    [21/30] Ayesha                       => buy
+    [22/30] Aditi                        => buy
+    [23/30] Hina                         => buy
+    [24/30] Ganga                        => defer
+    [25/30] Nisha                        => buy
+    [26/30] Salma                        => buy
+    [27/30] Jaspreet                     => buy
+    [28/30] Padma                        => buy
+    [29/30] Smita                        => buy
+    [30/30] Ayesha                       => buy
+  C-P4: 73.3% positive | {'buy': 22, 'reject': 3, 'defer': 3, 'research_more': 2}
+
+=== JOURNEY C PROBE SUMMARY ===
+  C-P1: 20.0% positive | {'reject': 3, 'research_more': 8, 'defer': 13, 'buy': 6}
+  C-P2: 76.7% positive | {'buy': 23, 'reject': 4, 'research_more': 2, 'defer': 1}
+  C-P3: 63.3% positive | {'buy': 19, 'reject': 4, 'defer': 3, 'research_more': 4}
+  C-P4: 73.3% positive | {'buy': 22, 'reject': 3, 'defer': 3, 'research_more': 2}
+Saved: probe_results_C.json

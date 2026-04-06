@@ -1265,11 +1265,17 @@ def build_report() -> None:
         "purchase decisions — and designing interventions that address those mechanisms."
     ))
 
-    # Save document
-    out_path = PROJECT_ROOT / "reports" / "LittleJoys_Simulatte_Research_Report.docx"
+    # Save document — Journey A report in dedicated subfolder
+    out_path = PROJECT_ROOT / "reports" / "journey_a" / "Journey_A_Nutrimix_Reorder_Problem_Report.docx"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(out_path))
     print(f"Report saved: {out_path}")
+
+    # Also keep combined master copy at root reports level
+    master_path = PROJECT_ROOT / "reports" / "LittleJoys_Simulatte_Research_Report.docx"
+    doc.save(str(master_path))
+    print(f"Master copy saved: {master_path}")
+
     return str(out_path)
 
 

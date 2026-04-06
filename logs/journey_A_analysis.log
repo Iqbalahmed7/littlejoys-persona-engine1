@@ -1,0 +1,182 @@
+
+============================================================
+JOURNEY A ANALYSIS PIPELINE
+============================================================
+Loaded 200 personas
+Journey A: 81 lapsers, 119 reorderers
+
+[1/5] Building hypothesis tree...
+  Saved: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_A_hypothesis_tree.json
+  Hypotheses: ['H1', 'H2', 'H3', 'H4']
+
+[2/5] Running probes on lapse cohort...
+
+  Probe cohort: 30 personas (30 lapsers + 0 reorderers)
+
+  Probe: A-P1 (30 personas)
+    [ 1/30] Ayesha                       => buy
+    [ 2/30] Sunita                       => buy
+    [ 3/30] Sunita                       => research_more
+    [ 4/30] Sneha                        => defer
+    [ 5/30] Kriti                        => buy
+    [ 6/30] Manisha                      => buy
+    [ 7/30] Rashmi                       => buy
+    [ 8/30] Nasreen                      => defer
+    [ 9/30] Arti                         => defer
+    [10/30] Yasmin                       => research_more
+    [11/30] Naveen                       => defer
+    [12/30] Nikhil                       => defer
+    [13/30] Rina                         => buy
+    [14/30] Tara                         => defer
+    [15/30] Bhavani                      => defer
+    [16/30] Rohit                        => buy
+    [17/30] Zainab                       => defer
+    [18/30] Nisha                        => buy
+    [19/30] Bhavani                      => defer
+    [20/30] Ganga                        => defer
+    [21/30] Paramjit                     => buy
+    [22/30] Suman                        => buy
+    [23/30] Revathi                      => research_more
+    [24/30] Salma                        => defer
+    [25/30] Nisha                        => buy
+    [26/30] Aishwarya                    => buy
+    [27/30] Preeti                       => buy
+    [28/30] Kiran                        => defer
+    [29/30] Revathi                      => buy
+    [30/30] Parveen                      => buy
+
+  Probe: A-P2 (30 personas)
+    [ 1/30] Sunita                       => research_more
+    [ 2/30] Sunita                       => reject
+    [ 3/30] Ayesha                       => defer
+    [ 4/30] Sneha                        => research_more
+    [ 5/30] Manisha                      => research_more
+    [ 6/30] Kriti                        => defer
+    [ 7/30] Rashmi                       => defer
+    [ 8/30] Arti                         => research_more
+    [ 9/30] Nasreen                      => research_more
+    [10/30] Yasmin                       => research_more
+    [11/30] Nikhil                       => research_more
+    [12/30] Naveen                       => research_more
+    [13/30] Tara                         => research_more
+    [14/30] Rina                         => defer
+    [15/30] Bhavani                      => research_more
+    [16/30] Rohit                        => reject
+    [17/30] Zainab                       => research_more
+    [18/30] Nisha                        => defer
+    [19/30] Bhavani                      => research_more
+    [20/30] Ganga                        => research_more
+    [21/30] Paramjit                     => defer
+    [22/30] Suman                        => defer
+    [23/30] Salma                        => defer
+    [24/30] Aishwarya                    => defer
+    [25/30] Revathi                      => research_more
+    [26/30] Nisha                        => defer
+    [27/30] Preeti                       => research_more
+    [28/30] Kiran                        => research_more
+    [29/30] Revathi                      => reject
+    [30/30] Parveen                      => defer
+
+  Probe: A-P3 (30 personas)
+    [ 1/30] Sunita                       => reject
+    [ 2/30] Sunita                       => defer
+    [ 3/30] Ayesha                       => defer
+    [ 4/30] Sneha                        => reject
+    [ 5/30] Manisha                      => defer
+    [ 6/30] Kriti                        => defer
+    [ 7/30] Rashmi                       => defer
+    [ 8/30] Nasreen                      => research_more
+    [ 9/30] Arti                         => research_more
+    [10/30] Naveen                       => research_more
+    [11/30] Yasmin                       => defer
+    [12/30] Nikhil                       => research_more
+    [13/30] Rina                         => defer
+    [14/30] Tara                         => research_more
+    [15/30] Bhavani                      => research_more
+    [16/30] Rohit                        => reject
+    [17/30] Zainab                       => research_more
+    [18/30] Nisha                        => defer
+    [19/30] Bhavani                      => research_more
+    [20/30] Ganga                        => research_more
+    [21/30] Paramjit                     => defer
+    [22/30] Aishwarya                    => defer
+    [23/30] Suman                        => defer
+    [24/30] Salma                        => defer
+    [25/30] Revathi                      => research_more
+    [26/30] Nisha                        => defer
+    [27/30] Preeti                       => defer
+    [28/30] Revathi                      => reject
+    [29/30] Kiran                        => research_more
+    [30/30] Parveen                      => defer
+
+  Probe: A-P4 (30 personas)
+    [ 1/30] Sunita                       => buy
+    [ 2/30] Sunita                       => research_more
+    [ 3/30] Ayesha                       => research_more
+    [ 4/30] Manisha                      => research_more
+    [ 5/30] Sneha                        => research_more
+    [ 6/30] Kriti                        => defer
+    [ 7/30] Nasreen                      => research_more
+    [ 8/30] Rashmi                       => reject
+    [ 9/30] Arti                         => research_more
+    [10/30] Naveen                       => research_more
+    [11/30] Yasmin                       => research_more
+    [12/30] Nikhil                       => research_more
+    [13/30] Rina                         => trial
+    [14/30] Bhavani                      => research_more
+    [15/30] Tara                         => research_more
+    [16/30] Rohit                        => buy
+    [17/30] Zainab                       => research_more
+    [18/30] Nisha                        => research_more
+    [19/30] Bhavani                      => research_more
+    [20/30] Ganga                        => research_more
+    [21/30] Paramjit                     => reject
+    [22/30] Suman                        => trial
+    [23/30] Aishwarya                    => buy
+    [24/30] Salma                        => research_more
+    [25/30] Nisha                        => defer
+    [26/30] Revathi                      => research_more
+    [27/30] Preeti                       => research_more
+    [28/30] Revathi                      => buy
+    [29/30] Kiran                        => research_more
+    [30/30] Parveen                      => research_more
+
+============================================================
+PROBE SUMMARY
+============================================================
+
+  A-P1: H1: Price friction — a loyalty discount removes reorder barrier
+    Positive (buy/trial): 50.0%  |  outcomes: {'buy': 15, 'research_more': 3, 'defer': 12}
+    Top objections: [('mild_time_pressure_from_48hour_window', 1), ('Rs 50 discount feels small and potentially manipulative', 1), ('48-hour urgency window is artificial pressure that I normally resist', 1)]
+
+  A-P2: H3: Social proof deficit — WOM reorder data reinforces habit
+    Positive (buy/trial): 0.0%  |  outcomes: {'research_more': 16, 'reject': 3, 'defer': 11}
+    Top objections: [('No price transparency in the message', 4), ('Testimonials about appetite/energy are unverified claims', 2), ("Price not disclosed - can't assess budget fit", 2)]
+
+  A-P3: H2: Outcome uncertainty — unclear results make Rs 649 feel risky
+    Positive (buy/trial): 0.0%  |  outcomes: {'reject': 4, 'defer': 15, 'research_more': 11}
+    Top objections: [('Cannot confirm appetite improvement after 5 weeks of use', 3), ('Full price of Rs 649 without promotional discount', 2), ('Cannot verify appetite improvement after reasonable trial period', 2)]
+
+  A-P4: H4: Competitive displacement — pharmacist Complan suggestion at reorde
+    Positive (buy/trial): 20.0%  |  outcomes: {'buy': 4, 'research_more': 20, 'defer': 2, 'reject': 2, 'trial': 2}
+    Top objections: [("haven't consulted mom-group yet", 2), ("Haven't given Nutrimix enough time to evaluate properly", 2), ('Too early to judge Nutrimix effectiveness after just one pack', 2)]
+
+  Saved: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/probe_results_A.json
+
+[3/5] Synthesising probe insights...
+  A-P1: PARTIAL (50.0% positive)
+  A-P2: NOT CONFIRMED (0.0% positive)
+  A-P3: NOT CONFIRMED (0.0% positive)
+  A-P4: NOT CONFIRMED (20.0% positive)
+  Hypotheses confirmed/partial: ['A-P1']
+
+[4/5] Running intervention journey (A + loyalty discount + WOM)...
+  Intervention sample: 50 personas (81 lapsers + -31 reorderers)
+Traceback (most recent call last):
+  File "/Users/admin/Documents/Simulatte Projects/1. LittleJoys/scripts/run_journey_a_analysis.py", line 536, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/Users/admin/Documents/Simulatte Projects/1. LittleJoys/scripts/run_journey_a_analysis.py", line 434, in main
+    int_result = run_batch(
+                 ^^^^^^^^^^
+TypeError: run_batch() got an unexpected keyword argument 'journey'

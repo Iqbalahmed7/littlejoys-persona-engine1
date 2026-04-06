@@ -1,0 +1,232 @@
+Loaded 200 personas.
+Running journey A for 200 personas (concurrency=3)...
+  [  1/200] Om                           journey=A  tick60=defer          reordered=False
+  [  2/200] Nasreen                      journey=A  tick60=reject         reordered=False
+  [  3/200] Ayesha                       journey=A  tick60=defer          reordered=False
+  [  4/200] Sunita                       journey=A  tick60=defer          reordered=False
+  [  5/200] Smita                        journey=A  tick60=reject         reordered=False
+  [  6/200] Aditi                        journey=A  tick60=defer          reordered=False
+  [  7/200] Zara                         journey=A  tick60=reject         reordered=False
+  [  8/200] Kriti                        journey=A  tick60=defer          reordered=False
+  [  9/200] Yamini                       journey=A  tick60=defer          reordered=False
+  [ 10/200] Aparna                       journey=A  tick60=defer          reordered=False
+  [ 11/200] Hina                         journey=A  tick60=reject         reordered=False
+  [ 12/200] Sunita                       journey=A  tick60=reject         reordered=False
+  [ 13/200] Devi                         journey=A  tick60=defer          reordered=False
+  [ 14/200] Chitra                       journey=A  tick60=reject         reordered=False
+  [ 15/200] Sneha                        journey=A  tick60=defer          reordered=False
+  [ 16/200] Seema                        journey=A  tick60=defer          reordered=False
+  [ 17/200] Manisha                      journey=A  tick60=reject         reordered=False
+  [ 18/200] Zainab                       journey=A  tick60=defer          reordered=False
+  [ 19/200] Varsha                       journey=A  tick60=reject         reordered=False
+  [ 20/200] Kriti                        journey=A  tick60=defer          reordered=False
+  [ 21/200] Rashmi                       journey=A  tick60=defer          reordered=False
+  [ 22/200] Mohan                        journey=A  tick60=reject         reordered=False
+  [ 23/200] Smita                        journey=A  tick60=defer          reordered=False
+  [ 24/200] Nasreen                      journey=A  tick60=defer          reordered=False
+  [ 25/200] Sakshi                       journey=A  tick60=defer          reordered=False
+  [ 26/200] Arti                         journey=A  tick60=defer          reordered=False
+  [ 27/200] Hema                         journey=A  tick60=defer          reordered=False
+  [ 28/200] Yasmin                       journey=A  tick60=defer          reordered=False
+  [ 29/200] Naveen                       journey=A  tick60=research_more  reordered=False
+  [ 30/200] Zubaida                      journey=A  tick60=defer          reordered=False
+  [ 31/200] Nikhil                       journey=A  tick60=defer          reordered=False
+  [ 32/200] Bhavna                       journey=A  tick60=defer          reordered=False
+  [ 33/200] Aditi                        journey=A  tick60=reject         reordered=False
+  [ 34/200] Karthik                      journey=A  tick60=defer          reordered=False
+  [ 35/200] Harini                       journey=A  tick60=defer          reordered=False
+  [ 36/200] Rina                         journey=A  tick60=defer          reordered=False
+  [ 37/200] Kiran                        journey=A  tick60=defer          reordered=False
+  [ 38/200] Tara                         journey=A  tick60=reject         reordered=False
+  [ 39/200] Priya                        journey=A  tick60=defer          reordered=False
+  [ 40/200] Bhavani                      journey=A  tick60=defer          reordered=False
+  [ 41/200] Preeti                       journey=A  tick60=reject         reordered=False
+  [ 42/200] Hina                         journey=A  tick60=defer          reordered=False
+  [ 43/200] Vandana                      journey=A  tick60=reject         reordered=False
+  [ 44/200] Tabassum                     journey=A  tick60=reject         reordered=False
+  [ 45/200] Umesh                        journey=A  tick60=defer          reordered=False
+  [ 46/200] Rohit                        journey=A  tick60=reject         reordered=False
+  [ 47/200] Shweta                       journey=A  tick60=defer          reordered=False
+  [ 48/200] Nirmala                      journey=A  tick60=reject         reordered=False
+  [ 49/200] Anjali                       journey=A  tick60=defer          reordered=False
+  [ 50/200] Lakshmi                      journey=A  tick60=defer          reordered=False
+  [ 51/200] Zainab                       journey=A  tick60=defer          reordered=False
+  [ 52/200] Himanshu                     journey=A  tick60=defer          reordered=False
+  [ 53/200] Lata                         journey=A  tick60=defer          reordered=False
+  [ 54/200] Nisha                        journey=A  tick60=reject         reordered=False
+  [ 55/200] Bhavani                      journey=A  tick60=research_more  reordered=False
+  [ 56/200] Ganga                        journey=A  tick60=defer          reordered=False
+  [ 57/200] Paramjit                     journey=A  tick60=defer          reordered=False
+  [ 58/200] Sunita                       journey=A  tick60=reject         reordered=False
+  [ 59/200] Suman                        journey=A  tick60=defer          reordered=False
+  [ 60/200] Nisha                        journey=A  tick60=defer          reordered=False
+  [ 61/200] Aishwarya                    journey=A  tick60=reject         reordered=False
+  [ 62/200] Harini                       journey=A  tick60=defer          reordered=False
+  [ 63/200] Salma                        journey=A  tick60=defer          reordered=False
+  [ 64/200] Revathi                      journey=A  tick60=defer          reordered=False
+  [ 65/200] Nisha                        journey=A  tick60=defer          reordered=False
+  [ 66/200] Kusum                        journey=A  tick60=reject         reordered=False
+  [ 67/200] Preeti                       journey=A  tick60=defer          reordered=False
+  [ 68/200] Revathi                      journey=A  tick60=reject         reordered=False
+  [ 69/200] Madhavi                      journey=A  tick60=reject         reordered=False
+  [ 70/200] Deepa                        journey=A  tick60=defer          reordered=False
+  [ 71/200] Suresh                       journey=A  tick60=defer          reordered=False
+  [ 72/200] Kiran                        journey=A  tick60=defer          reordered=False
+  [ 73/200] Parveen                      journey=A  tick60=defer          reordered=False
+  [ 74/200] Indira                       journey=A  tick60=defer          reordered=False
+  [ 75/200] Amreen                       journey=A  tick60=defer          reordered=False
+  [ 76/200] Salma                        journey=A  tick60=defer          reordered=False
+  [ 77/200] Jyoti                        journey=A  tick60=defer          reordered=False
+  [ 78/200] Aparna                       journey=A  tick60=defer          reordered=False
+  [ 79/200] Jaspreet                     journey=A  tick60=defer          reordered=False
+  [ 80/200] Lalit                        journey=A  tick60=defer          reordered=False
+  [ 81/200] Zara                         journey=A  tick60=reject         reordered=False
+  [ 82/200] Padma                        journey=A  tick60=defer          reordered=False
+  [ 83/200] Priya                        journey=A  tick60=reject         reordered=False
+  [ 84/200] Farhan                       journey=A  tick60=defer          reordered=False
+  [ 85/200] Smita                        journey=A  tick60=defer          reordered=False
+  [ 86/200] Pooja                        journey=A  tick60=defer          reordered=False
+  [ 87/200] Hina                         journey=A  tick60=defer          reordered=False
+  [ 88/200] Kusum                        journey=A  tick60=reject         reordered=False
+  [ 89/200] Qasim                        journey=A  tick60=defer          reordered=False
+  [ 90/200] Ayesha                       journey=A  tick60=defer          reordered=False
+  [ 91/200] Neha                         journey=A  tick60=defer          reordered=False
+  [ 92/200] Bhavani                      journey=A  tick60=defer          reordered=False
+  [ 93/200] Trisha                       journey=A  tick60=defer          reordered=False
+  [ 94/200] Mahesh                       journey=A  tick60=defer          reordered=False
+  [ 95/200] Nirmala                      journey=A  tick60=reject         reordered=False
+  [ 96/200] Lavanya                      journey=A  tick60=defer          reordered=False
+  [ 97/200] Lata                         journey=A  tick60=reject         reordered=False
+  [ 98/200] Sana                         journey=A  tick60=reject         reordered=False
+  [ 99/200] Aishwarya                    journey=A  tick60=defer          reordered=False
+  [100/200] Fatima                       journey=A  tick60=reject         reordered=False
+  [101/200] Asha                         journey=A  tick60=research_more  reordered=False
+  [102/200] Sakshi                       journey=A  tick60=defer          reordered=False
+  [103/200] Ritu                         journey=A  tick60=defer          reordered=False
+  [104/200] Nadeem                       journey=A  tick60=defer          reordered=False
+  [105/200] Deepa                        journey=A  tick60=defer          reordered=False
+  [106/200] Zara                         journey=A  tick60=reject         reordered=False
+  [107/200] Varsha                       journey=A  tick60=defer          reordered=False
+  [108/200] Khalid                       journey=A  tick60=reject         reordered=False
+  [109/200] Shweta                       journey=A  tick60=defer          reordered=False
+  [110/200] Ishita                       journey=A  tick60=defer          reordered=False
+  [111/200] Rina                         journey=A  tick60=defer          reordered=False
+  [112/200] Vijaya                       journey=A  tick60=reject         reordered=False
+  [113/200] Ritu                         journey=A  tick60=reject         reordered=False
+  [114/200] Sana                         journey=A  tick60=reject         reordered=False
+  [115/200] Shabnam                      journey=A  tick60=defer          reordered=False
+  [116/200] Kriti                        journey=A  tick60=defer          reordered=False
+  [117/200] Rina                         journey=A  tick60=reject         reordered=False
+  [118/200] Parveen                      journey=A  tick60=defer          reordered=False
+  [119/200] Zubaida                      journey=A  tick60=defer          reordered=False
+  [120/200] Irfan                        journey=A  tick60=defer          reordered=False
+  [121/200] Fatima                       journey=A  tick60=defer          reordered=False
+  [122/200] Arjun                        journey=A  tick60=defer          reordered=False
+  [123/200] Veena                        journey=A  tick60=defer          reordered=False
+  [124/200] Janaki                       journey=A  tick60=defer          reordered=False
+  [125/200] Jai                          journey=A  tick60=defer          reordered=False
+  [126/200] Shabnam                      journey=A  tick60=reject         reordered=False
+  [127/200] Hari                         journey=A  tick60=defer          reordered=False
+  [128/200] Jyoti                        journey=A  tick60=reject         reordered=False
+  [129/200] Tabassum                     journey=A  tick60=defer          reordered=False
+  [130/200] Om                           journey=A  tick60=defer          reordered=False
+  [131/200] Shweta                       journey=A  tick60=reject         reordered=False
+  [132/200] Rubina                       journey=A  tick60=defer          reordered=False
+  [133/200] Junaid                       journey=A  tick60=defer          reordered=False
+  [134/200] Manisha                      journey=A  tick60=defer          reordered=False
+  [135/200] Radha                        journey=A  tick60=defer          reordered=False
+  [136/200] Yasmin                       journey=A  tick60=defer          reordered=False
+  [137/200] Durga                        journey=A  tick60=reject         reordered=False
+  [138/200] Lavanya                      journey=A  tick60=defer          reordered=False
+  [139/200] Ganga                        journey=A  tick60=defer          reordered=False
+  [140/200] Neha                         journey=A  tick60=reject         reordered=False
+  [141/200] Anjali                       journey=A  tick60=reject         reordered=False
+  [142/200] Asha                         journey=A  tick60=reject         reordered=False
+  [143/200] Pallavi                      journey=A  tick60=defer          reordered=False
+  [144/200] Radha                        journey=A  tick60=defer          reordered=False
+  [145/200] Chitra                       journey=A  tick60=reject         reordered=False
+  [146/200] Shalini                      journey=A  tick60=defer          reordered=False
+  [147/200] Ramesh                       journey=A  tick60=defer          reordered=False
+  [148/200] Sneha                        journey=A  tick60=defer          reordered=False
+  [149/200] Madhavi                      journey=A  tick60=reject         reordered=False
+  [150/200] Manju                        journey=A  tick60=defer          reordered=False
+  [151/200] Smita                        journey=A  tick60=defer          reordered=False
+  [152/200] Rajesh                       journey=A  tick60=defer          reordered=False
+  [153/200] Vinod                        journey=A  tick60=defer          reordered=False
+  [154/200] Aamir                        journey=A  tick60=defer          reordered=False
+  [155/200] Janaki                       journey=A  tick60=defer          reordered=False
+  [156/200] Revathi                      journey=A  tick60=defer          reordered=False
+  [157/200] Indira                       journey=A  tick60=reject         reordered=False
+  [158/200] Janaki                       journey=A  tick60=reject         reordered=False
+  [159/200] Usha                         journey=A  tick60=defer          reordered=False
+  [160/200] Amita                        journey=A  tick60=defer          reordered=False
+  [161/200] Divya                        journey=A  tick60=defer          reordered=False
+  [162/200] Malini                       journey=A  tick60=defer          reordered=False
+  [163/200] Amreen                       journey=A  tick60=reject         reordered=False
+  [164/200] Sakshi                       journey=A  tick60=reject         reordered=False
+  [165/200] Seema                        journey=A  tick60=reject         reordered=False
+  [166/200] Sunita                       journey=A  tick60=reject         reordered=False
+  [167/200] Madhavi                      journey=A  tick60=reject         reordered=False
+  [168/200] Yash                         journey=A  tick60=defer          reordered=False
+  [169/200] Pooja                        journey=A  tick60=defer          reordered=False
+  [170/200] Priya                        journey=A  tick60=reject         reordered=False
+  [171/200] Sana                         journey=A  tick60=defer          reordered=False
+  [172/200] Aparna                       journey=A  tick60=reject         reordered=False
+  [173/200] Ritika                       journey=A  tick60=defer          reordered=False
+  [174/200] Sneha                        journey=A  tick60=reject         reordered=False
+  [175/200] Radha                        journey=A  tick60=defer          reordered=False
+  [176/200] Priya                        journey=A  tick60=reject         reordered=False
+  [177/200] Shahnaz                      journey=A  tick60=defer          reordered=False
+  [178/200] Kiran                        journey=A  tick60=defer          reordered=False
+  [179/200] Yamini                       journey=A  tick60=defer          reordered=False
+  [180/200] Rahul                        journey=A  tick60=reject         reordered=False
+  [181/200] Mehreen                      journey=A  tick60=defer          reordered=False
+  [182/200] Shabnam                      journey=A  tick60=defer          reordered=False
+  [183/200] Aditi                        journey=A  tick60=defer          reordered=False
+  [184/200] Amreen                       journey=A  tick60=defer          reordered=False
+  [185/200] Aditi                        journey=A  tick60=defer          reordered=False
+  [186/200] Lavanya                      journey=A  tick60=defer          reordered=False
+  [187/200] Tabassum                     journey=A  tick60=reject         reordered=False
+  [188/200] Usha                         journey=A  tick60=reject         reordered=False
+  [189/200] Preeti                       journey=A  tick60=defer          reordered=False
+  [190/200] Parveen                      journey=A  tick60=defer          reordered=False
+  [191/200] Sakshi                       journey=A  tick60=reject         reordered=False
+  [192/200] Champa                       journey=A  tick60=defer          reordered=False
+  [193/200] Rekha                        journey=A  tick60=defer          reordered=False
+  [194/200] Vivek                        journey=A  tick60=reject         reordered=False
+  [195/200] Jyoti                        journey=A  tick60=defer          reordered=False
+  [196/200] Yasmin                       journey=A  tick60=defer          reordered=False
+  [197/200] Nitin                        journey=A  tick60=defer          reordered=False
+  [198/200] Nasreen                      journey=A  tick60=defer          reordered=False
+  [199/200] Shweta                       journey=A  tick60=defer          reordered=False
+  [200/200] Zara                         journey=A  tick60=defer          reordered=False
+
+===========================================================
+JOURNEY A — NUTRIMIX REPEAT PURCHASE — SUMMARY
+===========================================================
+Personas run:    200
+Errors:          0
+
+FIRST PURCHASE (tick 20):
+  defer         137 ( 68.5%)  ##################################
+  reject         60 ( 30.0%)  ###############
+  research_more    3 (  1.5%)  
+
+REORDER RATE (among first-time buyers):
+  Reordered:    0.0%
+  Lapsed:       0.0%
+
+BRAND TRUST TRAJECTORY (mean across personas):
+  (no trust trajectory available)
+
+TOP REORDER DRIVERS:
+  (none)
+
+TOP LAPSE REASONS (objections from non-reorderers):
+  1. Child resistance increasing rather than decreasing: 4
+  2. Negative word-of-mouth from school mom and pharmacy observation: 2
+  3. Child has been taking it inconsistently lately: 2
+  4. School mom's negative experience mirrors my own observations: 2
+  5. child_pushing_away_product_lately: 2
+===========================================================
+Full results written: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_A_results.json

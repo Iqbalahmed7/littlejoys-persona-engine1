@@ -1,0 +1,78 @@
+Loaded 50 personas.
+Running journey B for 50 personas (concurrency=2)...
+  [  1/50] Om                           journey=B  tick45_decision=unknown reordered=True
+  [  2/50] Ayesha                       journey=B  tick45_decision=unknown reordered=True
+  [  3/50] Sunita                       journey=B  tick45_decision=unknown reordered=True
+  [  4/50] Nasreen                      journey=B  tick45_decision=unknown reordered=True
+  [  5/50] Smita                        journey=B  tick45_decision=unknown reordered=True
+  [  6/50] Aditi                        journey=B  tick45_decision=unknown reordered=True
+  [  7/50] Zara                         journey=B  tick45_decision=unknown reordered=True
+  [  8/50] Kriti                        journey=B  tick45_decision=unknown reordered=True
+  [  9/50] Yamini                       journey=B  tick45_decision=unknown reordered=True
+  [ 10/50] Aparna                       journey=B  tick45_decision=unknown reordered=True
+  [ 11/50] Hina                         journey=B  tick45_decision=unknown reordered=True
+  [ 12/50] Sunita                       journey=B  tick45_decision=unknown reordered=True
+  [ 13/50] Devi                         journey=B  tick45_decision=unknown reordered=True
+  [ 14/50] Chitra                       journey=B  tick45_decision=unknown reordered=True
+  [ 15/50] Sneha                        journey=B  tick45_decision=unknown reordered=False
+  [ 16/50] Seema                        journey=B  tick45_decision=unknown reordered=False
+  [ 17/50] Manisha                      journey=B  tick45_decision=unknown reordered=True
+  [ 18/50] Zainab                       journey=B  tick45_decision=unknown reordered=True
+  [ 19/50] Varsha                       journey=B  tick45_decision=unknown reordered=True
+  [ 20/50] Kriti                        journey=B  tick45_decision=unknown reordered=True
+  [ 21/50] Rashmi                       journey=B  tick45_decision=unknown reordered=True
+  [ 22/50] Mohan                        journey=B  tick45_decision=unknown reordered=True
+  [ 23/50] Smita                        journey=B  tick45_decision=unknown reordered=True
+  [ 24/50] Nasreen                      journey=B  tick45_decision=unknown reordered=True
+  [ 25/50] Sakshi                       journey=B  tick45_decision=unknown reordered=True
+  [ 26/50] Arti                         journey=B  tick45_decision=unknown reordered=True
+  [ 27/50] Hema                         journey=B  tick45_decision=unknown reordered=True
+  [ 28/50] Yasmin                       journey=B  tick45_decision=unknown reordered=True
+  [ 29/50] Naveen                       journey=B  tick45_decision=unknown reordered=True
+  [ 30/50] Zubaida                      journey=B  tick45_decision=unknown reordered=True
+  [ 31/50] Nikhil                       journey=B  tick45_decision=unknown reordered=False
+  [ 32/50] Bhavna                       journey=B  tick45_decision=unknown reordered=True
+  [ 33/50] Aditi                        journey=B  tick45_decision=unknown reordered=True
+  [ 34/50] Karthik                      journey=B  tick45_decision=unknown reordered=True
+  [ 35/50] Rina                         journey=B  tick45_decision=unknown reordered=True
+  [ 36/50] Harini                       journey=B  tick45_decision=unknown reordered=True
+  [ 37/50] Tara                         journey=B  tick45_decision=unknown reordered=False
+  [ 38/50] Kiran                        journey=B  tick45_decision=unknown reordered=True
+  [ 39/50] Priya                        journey=B  tick45_decision=unknown reordered=True
+  [ 40/50] Bhavani                      journey=B  tick45_decision=unknown reordered=True
+  [ 41/50] Preeti                       journey=B  tick45_decision=unknown reordered=True
+  [ 42/50] Hina                         journey=B  tick45_decision=unknown reordered=True
+  [ 43/50] Vandana                      journey=B  tick45_decision=unknown reordered=True
+  [ 44/50] Tabassum                     journey=B  tick45_decision=unknown reordered=True
+  [ 45/50] Rohit                        journey=B  tick45_decision=unknown reordered=True
+  [ 46/50] Umesh                        journey=B  tick45_decision=unknown reordered=True
+  [ 47/50] Shweta                       journey=B  tick45_decision=unknown reordered=False
+  [ 48/50] Nirmala                      journey=B  tick45_decision=unknown reordered=True
+  [ 49/50] Anjali                       journey=B  tick45_decision=unknown reordered=True
+  [ 50/50] Lakshmi                      journey=B  tick45_decision=unknown reordered=True
+
+===========================================================
+JOURNEY B — GUMMIES — SUMMARY
+===========================================================
+Personas run:    50
+Errors:          0
+
+FIRST PURCHASE (tick 35):
+  buy            46 ( 92.0%)  ##############################################
+  research_more    3 (  6.0%)  ###
+  defer           1 (  2.0%)  #
+
+REORDER RATE (among first-time buyers):
+  Reordered:    93.5%
+  Lapsed:       6.5%
+
+BRAND TRUST TRAJECTORY (mean across personas):
+  (no trust trajectory available)
+
+TOP REORDER DRIVERS:
+  (none)
+
+TOP LAPSE REASONS (objections from non-reorderers):
+  (none)
+===========================================================
+Full results written: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_B_results.json

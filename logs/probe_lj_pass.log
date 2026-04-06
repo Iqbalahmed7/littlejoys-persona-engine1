@@ -1,0 +1,93 @@
+Loaded 200 personas
+Lapsers: 81, Reorderers: 119
+Probe cohort: 30 personas (30 lapsers + 0 reorderers)
+
+=== A-P5a: LJ Pass — Full Bundle (D2C) ===
+
+  [A-P5a] Running on 30 personas...
+    [ 1/30] Ayesha                       => defer
+    [ 2/30] Sunita                       => research_more
+    [ 3/30] Sunita                       => research_more
+    [ 4/30] Kriti                        => defer
+    [ 5/30] Sneha                        => research_more
+    [ 6/30] Manisha                      => research_more
+    [ 7/30] Rashmi                       => defer
+    [ 8/30] Nasreen                      => defer
+    [ 9/30] Arti                         => defer
+    [10/30] Yasmin                       => defer
+    [11/30] Naveen                       => research_more
+    [12/30] Nikhil                       => research_more
+    [13/30] Rina                         => defer
+    [14/30] Tara                         => defer
+    [15/30] Bhavani                      => defer
+    [16/30] Rohit                        => defer
+    [17/30] Nisha                        => research_more
+    [18/30] Zainab                       => research_more
+    [19/30] Bhavani                      => research_more
+    [20/30] Ganga                        => defer
+    [21/30] Paramjit                     => defer
+    [22/30] Suman                        => defer
+    [23/30] Aishwarya                    => defer
+    [24/30] Salma                        => defer
+    [25/30] Revathi                      => defer
+    [26/30] Nisha                        => defer
+    [27/30] Preeti                       => defer
+    [28/30] Kiran                        => defer
+    [29/30] Revathi                      => defer
+    [30/30] Parveen                      => defer
+
+  A-P5a result: 0.0% positive — NOT CONFIRMED
+  Outcomes: {'defer': 21, 'research_more': 9}
+
+=== A-P5b: Expert Consultation Only (no purchase required) ===
+
+  [A-P5b] Running on 30 personas...
+    [ 1/30] Ayesha                       => research_more
+    [ 2/30] Sunita                       => research_more
+    [ 3/30] Sunita                       => research_more
+    [ 4/30] Manisha                      => research_more
+    [ 5/30] Kriti                        => trial
+    [ 6/30] Sneha                        => research_more
+    [ 7/30] Rashmi                       => trial
+    [ 8/30] Nasreen                      => research_more
+    [ 9/30] Arti                         => research_more
+    [10/30] Yasmin                       => research_more
+    [11/30] Naveen                       => research_more
+    [12/30] Nikhil                       => research_more
+    [13/30] Tara                         => research_more
+    [14/30] Rina                         => trial
+    [15/30] Bhavani                      => research_more
+    [16/30] Rohit                        => defer
+    [17/30] Nisha                        => research_more
+    [18/30] Zainab                       => research_more
+    [19/30] Bhavani                      => research_more
+    [20/30] Paramjit                     => trial
+    [21/30] Ganga                        => research_more
+    [22/30] Suman                        => trial
+    [23/30] Salma                        => research_more
+    [24/30] Aishwarya                    => trial
+    [25/30] Revathi                      => research_more
+    [26/30] Nisha                        => trial
+    [27/30] Preeti                       => trial
+    [28/30] Revathi                      => research_more
+    [29/30] Kiran                        => research_more
+    [30/30] Parveen                      => research_more
+
+  A-P5b result: 26.7% positive — NOT CONFIRMED
+  Outcomes: {'research_more': 21, 'trial': 8, 'defer': 1}
+
+Probe results saved: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/probe_results_A.json
+
+============================================================
+PROBE A-P5 SUMMARY vs PRIOR PROBES
+============================================================
+  A-P1:  50.0% positive  [PARTIAL       ]  H1: Price friction — a loyalty discount removes reorder barr
+  A-P2:   0.0% positive  [NOT CONFIRMED ]  H3: Social proof deficit — WOM reorder data reinforces habit
+  A-P3:   0.0% positive  [NOT CONFIRMED ]  H2: Outcome uncertainty — unclear results make Rs 649 feel r
+  A-P4:  20.0% positive  [NOT CONFIRMED ]  H4: Competitive displacement — pharmacist Complan suggestion
+  A-P5a:   0.0% positive  [NOT CONFIRMED ]  H1+H2: LJ Pass addresses price friction (cashback+free deliv
+  A-P5b:  26.7% positive  [NOT CONFIRMED ]  H2 isolation: Does the expert consultation alone (without pr
+
+  Key insight:
+  LJ Pass (0.0%) UNDERPERFORMS BigBasket discount (50.0%) — D2C channel-switch friction cancels some of the bundle advantage.
+  Consultation alone (26.7%) outperforms full LJ Pass (0.0%) — H2 (outcome uncertainty) is the primary lever; price is secondary.

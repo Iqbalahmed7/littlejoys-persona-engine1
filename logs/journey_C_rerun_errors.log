@@ -1,0 +1,129 @@
+Found 10/10 error personas in 7-14 filtered pool
+
+Re-running 10 personas through Journey C (concurrency=2)...
+  [ 1/10] Preeti                         reordered=False  OK
+  [ 2/10] Parveen                        reordered=False  OK
+  [ 3/10] Sakshi                         reordered=False  OK
+  [ 4/10] Champa                         reordered=False  OK
+  [ 5/10] Vivek                          reordered=False  OK
+  [ 6/10] Rekha                          reordered=False  OK
+  [ 7/10] Jyoti                          reordered=False  OK
+  [ 8/10] Shweta                         reordered=False  OK
+  [ 9/10] Nasreen                        reordered=False  OK
+  [10/10] Rahul                          reordered=False  OK
+
+=== G12 Simulation Grounding Check — Journey C ===
+
+  Result : FAIL  (0 CRITICAL  13 HIGH  2 MEDIUM  0 LOW)
+  Issues : 15 total
+  Clean  : 10 elements passed with no issues
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 649"
+      Reason: Price 'Rs 649' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 399"
+      Reason: Price 'Rs 399' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 449"
+      Reason: Price 'Rs 449' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 479"
+      Reason: Price 'Rs 479' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 649"
+      Reason: Price 'Rs 649' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 399"
+      Reason: Price 'Rs 399' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 649"
+      Reason: Price 'Rs 649' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 349"
+      Reason: Price 'Rs 349' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  HIGH      product_frame  product_frame (price claim)
+      "Rs 300"
+      Reason: Price 'Rs 300' appears in journey stimuli but cannot be traced to any source document.
+      Fix: Add an explicit source reference for this price, or remove it from the journey stimulus.
+
+  T1  MEDIUM    product_frame  product_frame (unsourced superlative)
+      "d has Nutrimix in milk before leaving for school. Top comment (317 likes): 'My son refused it after day"
+      Reason: Superlative 'Top' in journey stimuli has no citation.
+      Fix: Add a source reference or soften to a relative claim.
+
+  T1  MEDIUM    product_frame  product_frame (unsourced superlative)
+      "e boring one? Can we please get the cricket one?' First week of use: child takes Nutrimix reluctantly — s"
+      Reason: Superlative 'First' in journey stimuli has no citation.
+      Fix: Add a source reference or soften to a relative claim.
+
+  [G12] FAIL — fix contamination issues before building reports.
+
+
+Re-run complete: 10 success, 0 still errored
+  Patched: Preeti-Chandigarh-Mom-29
+  Patched: Parveen-Hyderabad-Mom-35
+  Patched: Sakshi-Guwahati-Mom-29
+  Patched: Champa-Bangalore-Mom-30
+  Patched: Rekha-Udaipur-Mom-33
+  Patched: Vivek-Chennai-Dad-35
+  Patched: Jyoti-Mumbai-Mom-31
+  Patched: Shweta-Pune-Mom-31
+  Patched: Nasreen-Hyderabad-Mom-26
+  Patched: Rahul-Udaipur-Dad-35
+
+Patched 10 logs in journey_C_results.json
+
+Re-aggregating...
+Saved: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_C_results.json
+
+=== UPDATED JOURNEY C SUMMARY ===
+Total personas:  148
+Errors:          0
+Reorder rate:    25.0%
+Avg trust first: 0.4066
+
+First decision distribution:
+  research_more      56 ( 37.8%)  ############
+  trial              52 ( 35.1%)  ###########
+  defer              24 ( 16.2%)  #####
+  unknown            10 (  6.8%)  ##
+  reject              6 (  4.1%)  #
+
+⚠️  Still 10 unknown decisions remaining

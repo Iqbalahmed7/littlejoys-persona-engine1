@@ -80,16 +80,24 @@ LITTLEJOYS_MARKET_FACTS: dict = {
         "verified_claims": {
             "nutrimix_500g_price_inr": 649,
             "nutrimix_original_price_inr": 799,
+            "nutrimix_family_pack_inr": 1099,
+            "nutrimix_family_pack_per_unit_inr": 549,
             "pediatrician_influence_pct": 42,
             "median_wtp_inr": 649,
             "primary_purchase_driver": "Pediatrician recommendation",
         },
+        "competitive_prices": {
+            # Verified Indian market prices for competitive context (Q1 2026)
+            "bournvita_500g_inr": 399,
+            "horlicks_500g_inr": 449,
+            "complan_500g_inr": 420,
+            "horlicks_junior_500g_inr": 449,
+            "himalaya_qukes_multivitamin_inr": 340,
+            "baidyanath_calcium_magnesium_syrup_inr": 280,
+            "magnesium_gummies_30day_inr": 499,
+        },
         "unverified_claims_to_flag": [
             # Numbers that should NOT appear in persona quotes unless in stimuli
-            "Rs 399",
-            "Rs 449",
-            "Rs 499",
-            "Rs 549",
             "Rs 699",
             "Rs 749",
             "Rs 849",

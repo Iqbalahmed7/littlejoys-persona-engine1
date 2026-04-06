@@ -1,0 +1,118 @@
+Loaded 200 personas
+Lapsers: 81, Reorderers: 119
+Intervention sample: 50 personas (50 lapsers + 0 reorderers)
+
+[4/5] Running intervention (loyalty discount + WOM) on 50 personas...
+  [ 1/50] Ayesha                       reordered=True
+  [ 2/50] Sunita                       reordered=False
+  [ 3/50] Sunita                       reordered=True
+  [ 4/50] Sneha                        reordered=False
+  [ 5/50] Manisha                      reordered=False
+  [ 6/50] Kriti                        reordered=True
+  [ 7/50] Rashmi                       reordered=False
+  [ 8/50] Arti                         reordered=False
+  [ 9/50] Nasreen                      reordered=True
+  [10/50] Naveen                       reordered=True
+  [11/50] Yasmin                       reordered=True
+  [12/50] Nikhil                       reordered=False
+  [13/50] Rina                         reordered=False
+  [14/50] Tara                         reordered=True
+  [15/50] Bhavani                      reordered=False
+  [16/50] Rohit                        reordered=False
+  [17/50] Zainab                       reordered=True
+  [18/50] Nisha                        reordered=False
+  [19/50] Ganga                        reordered=False
+  [20/50] Paramjit                     reordered=True
+  [21/50] Bhavani                      reordered=False
+  [22/50] Suman                        reordered=True
+  [23/50] Aishwarya                    reordered=True
+  [24/50] Salma                        reordered=False
+  [25/50] Revathi                      reordered=True
+  [26/50] Nisha                        reordered=True
+  [27/50] Preeti                       reordered=False
+  [28/50] Revathi                      reordered=False
+  [29/50] Kiran                        reordered=False
+  [30/50] Parveen                      reordered=False
+  [31/50] Amreen                       reordered=False
+  [32/50] Indira                       reordered=True
+  [33/50] Aparna                       reordered=True
+  [34/50] Jaspreet                     reordered=False
+  [35/50] Smita                        reordered=True
+  [36/50] Qasim                        reordered=False
+  [37/50] Ayesha                       reordered=True
+  [38/50] Bhavani                      reordered=True
+  [39/50] Nirmala                      reordered=True
+  [40/50] Lavanya                      reordered=False
+  [41/50] Asha                         reordered=True
+  [42/50] Nadeem                       reordered=True
+  [43/50] Deepa                        reordered=True
+  [44/50] Shweta                       reordered=True
+  [45/50] Khalid                       reordered=False
+  [46/50] Rina                         reordered=True
+  [47/50] Rina                         reordered=False
+  [48/50] Zubaida                      reordered=False
+  [49/50] Janaki                       reordered=True
+  [50/50] Jai                          reordered=True
+
+  Intervention reorder rate: 53.3%
+
+[4b] Running counterfactual baseline on same 50 personas...
+  [ 1/50] Ayesha                       reordered=False
+  [ 2/50] Sunita                       reordered=False
+  [ 3/50] Sunita                       reordered=False
+  [ 4/50] Sneha                        reordered=True
+  [ 5/50] Kriti                        reordered=True
+  [ 6/50] Manisha                      reordered=True
+  [ 7/50] Nasreen                      reordered=True
+  [ 8/50] Rashmi                       reordered=True
+  [ 9/50] Arti                         reordered=False
+  [10/50] Yasmin                       reordered=False
+  [11/50] Naveen                       reordered=True
+  [12/50] Nikhil                       reordered=False
+  [13/50] Rina                         reordered=False
+  [14/50] Tara                         reordered=False
+  [15/50] Bhavani                      reordered=False
+  [16/50] Rohit                        reordered=True
+  [17/50] Zainab                       reordered=False
+  [18/50] Nisha                        reordered=True
+  [19/50] Bhavani                      reordered=False
+  [20/50] Ganga                        reordered=True
+  [21/50] Paramjit                     reordered=False
+  [22/50] Suman                        reordered=False
+  [23/50] Aishwarya                    reordered=False
+  [24/50] Salma                        reordered=True
+  [25/50] Revathi                      reordered=False
+  [26/50] Nisha                        reordered=True
+  [27/50] Preeti                       reordered=False
+  [28/50] Kiran                        reordered=False
+  [29/50] Parveen                      reordered=False
+  [30/50] Amreen                       reordered=False
+  [31/50] Indira                       reordered=False
+  [32/50] Aparna                       reordered=False
+  [33/50] Jaspreet                     reordered=False
+  [34/50] Revathi                      reordered=False
+  [35/50] Smita                        reordered=False
+  [36/50] Ayesha                       reordered=False
+  [37/50] Bhavani                      reordered=False
+  [38/50] Qasim                        reordered=False
+  [39/50] Nirmala                      reordered=False
+  [40/50] Lavanya                      reordered=False
+  [41/50] Asha                         reordered=False
+  [42/50] Nadeem                       reordered=False
+  [43/50] Deepa                        reordered=False
+  [44/50] Khalid                       reordered=False
+  [45/50] Shweta                       reordered=False
+  [46/50] Rina                         reordered=False
+  [47/50] Rina                         reordered=False
+  [48/50] Zubaida                      reordered=False
+  [49/50] Janaki                       reordered=False
+  [50/50] Jai                          reordered=False
+
+  === COUNTERFACTUAL RESULTS ===
+  Baseline reorder rate (same 50-persona sample): 39.3%
+  Intervention reorder rate:                      53.3%
+  Lift:                                           +14.0pp (+35.7% relative)
+
+  Files saved:
+    data/population/journey_A_intervention_results.json
+    data/population/journey_A_counterfactual.json

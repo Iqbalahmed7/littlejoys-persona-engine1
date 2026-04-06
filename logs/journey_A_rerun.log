@@ -1,0 +1,236 @@
+Loaded 200 personas.
+Running journey A for 200 personas (concurrency=2)...
+  [  1/200] Om                           journey=A  tick60_decision=buy    reordered=True
+  [  2/200] Ayesha                       journey=A  tick60_decision=buy    reordered=True
+  [  3/200] Nasreen                      journey=A  tick60_decision=buy    reordered=True
+  [  4/200] Sunita                       journey=A  tick60_decision=buy    reordered=True
+  [  5/200] Smita                        journey=A  tick60_decision=buy    reordered=True
+  [  6/200] Aditi                        journey=A  tick60_decision=buy    reordered=True
+  [  7/200] Zara                         journey=A  tick60_decision=buy    reordered=True
+  [  8/200] Kriti                        journey=A  tick60_decision=buy    reordered=True
+  [  9/200] Yamini                       journey=A  tick60_decision=buy    reordered=True
+  [ 10/200] Aparna                       journey=A  tick60_decision=buy    reordered=True
+  [ 11/200] Hina                         journey=A  tick60_decision=buy    reordered=True
+  [ 12/200] Sunita                       journey=A  tick60_decision=buy    reordered=True
+  [ 13/200] Devi                         journey=A  tick60_decision=buy    reordered=True
+  [ 14/200] Chitra                       journey=A  tick60_decision=buy    reordered=True
+  [ 15/200] Sneha                        journey=A  tick60_decision=buy    reordered=True
+  [ 16/200] Seema                        journey=A  tick60_decision=buy    reordered=True
+  [ 17/200] Manisha                      journey=A  tick60_decision=buy    reordered=True
+  [ 18/200] Zainab                       journey=A  tick60_decision=buy    reordered=True
+  [ 19/200] Varsha                       journey=A  tick60_decision=buy    reordered=True
+  [ 20/200] Kriti                        journey=A  tick60_decision=buy    reordered=True
+  [ 21/200] Rashmi                       journey=A  tick60_decision=buy    reordered=True
+  [ 22/200] Mohan                        journey=A  tick60_decision=buy    reordered=True
+  [ 23/200] Nasreen                      journey=A  tick60_decision=buy    reordered=True
+  [ 24/200] Smita                        journey=A  tick60_decision=buy    reordered=True
+  [ 25/200] Sakshi                       journey=A  tick60_decision=buy    reordered=True
+  [ 26/200] Arti                         journey=A  tick60_decision=buy    reordered=True
+  [ 27/200] Hema                         journey=A  tick60_decision=buy    reordered=True
+  [ 28/200] Yasmin                       journey=A  tick60_decision=buy    reordered=True
+  [ 29/200] Zubaida                      journey=A  tick60_decision=buy    reordered=True
+  [ 30/200] Naveen                       journey=A  tick60_decision=buy    reordered=True
+  [ 31/200] Nikhil                       journey=A  tick60_decision=buy    reordered=True
+  [ 32/200] Bhavna                       journey=A  tick60_decision=buy    reordered=True
+  [ 33/200] Aditi                        journey=A  tick60_decision=buy    reordered=True
+  [ 34/200] Karthik                      journey=A  tick60_decision=buy    reordered=True
+  [ 35/200] Rina                         journey=A  tick60_decision=buy    reordered=True
+  [ 36/200] Harini                       journey=A  tick60_decision=buy    reordered=True
+  [ 37/200] Tara                         journey=A  tick60_decision=buy    reordered=True
+  [ 38/200] Kiran                        journey=A  tick60_decision=buy    reordered=True
+  [ 39/200] Priya                        journey=A  tick60_decision=buy    reordered=True
+  [ 40/200] Bhavani                      journey=A  tick60_decision=buy    reordered=True
+  [ 41/200] Hina                         journey=A  tick60_decision=buy    reordered=True
+  [ 42/200] Preeti                       journey=A  tick60_decision=buy    reordered=True
+  [ 43/200] Vandana                      journey=A  tick60_decision=buy    reordered=True
+  [ 44/200] Tabassum                     journey=A  tick60_decision=buy    reordered=True
+  [ 45/200] Rohit                        journey=A  tick60_decision=buy    reordered=True
+  [ 46/200] Umesh                        journey=A  tick60_decision=buy    reordered=True
+  [ 47/200] Shweta                       journey=A  tick60_decision=buy    reordered=True
+  [ 48/200] Nirmala                      journey=A  tick60_decision=buy    reordered=True
+  [ 49/200] Anjali                       journey=A  tick60_decision=buy    reordered=True
+  [ 50/200] Lakshmi                      journey=A  tick60_decision=buy    reordered=True
+  [ 51/200] Zainab                       journey=A  tick60_decision=buy    reordered=True
+  [ 52/200] Himanshu                     journey=A  tick60_decision=buy    reordered=True
+  [ 53/200] Lata                         journey=A  tick60_decision=buy    reordered=True
+  [ 54/200] Nisha                        journey=A  tick60_decision=buy    reordered=True
+  [ 55/200] Bhavani                      journey=A  tick60_decision=buy    reordered=True
+  [ 56/200] Ganga                        journey=A  tick60_decision=buy    reordered=True
+  [ 57/200] Paramjit                     journey=A  tick60_decision=buy    reordered=True
+  [ 58/200] Sunita                       journey=A  tick60_decision=buy    reordered=True
+  [ 59/200] Suman                        journey=A  tick60_decision=buy    reordered=True
+  [ 60/200] Nisha                        journey=A  tick60_decision=buy    reordered=True
+  [ 61/200] Aishwarya                    journey=A  tick60_decision=buy    reordered=True
+  [ 62/200] Harini                       journey=A  tick60_decision=buy    reordered=True
+  [ 63/200] Salma                        journey=A  tick60_decision=buy    reordered=True
+  [ 64/200] Revathi                      journey=A  tick60_decision=buy    reordered=True
+  [ 65/200] Nisha                        journey=A  tick60_decision=buy    reordered=True
+  [ 66/200] Kusum                        journey=A  tick60_decision=buy    reordered=True
+  [ 67/200] Preeti                       journey=A  tick60_decision=buy    reordered=True
+  [ 68/200] Revathi                      journey=A  tick60_decision=buy    reordered=True
+  [ 69/200] Madhavi                      journey=A  tick60_decision=buy    reordered=True
+  [ 70/200] Deepa                        journey=A  tick60_decision=buy    reordered=True
+  [ 71/200] Suresh                       journey=A  tick60_decision=research_more reordered=True
+  [ 72/200] Kiran                        journey=A  tick60_decision=buy    reordered=True
+  [ 73/200] Parveen                      journey=A  tick60_decision=buy    reordered=True
+  [ 74/200] Indira                       journey=A  tick60_decision=buy    reordered=True
+  [ 75/200] Amreen                       journey=A  tick60_decision=buy    reordered=True
+  [ 76/200] Salma                        journey=A  tick60_decision=buy    reordered=True
+  [ 77/200] Jyoti                        journey=A  tick60_decision=buy    reordered=True
+  [ 78/200] Aparna                       journey=A  tick60_decision=buy    reordered=True
+  [ 79/200] Jaspreet                     journey=A  tick60_decision=buy    reordered=True
+  [ 80/200] Lalit                        journey=A  tick60_decision=buy    reordered=True
+  [ 81/200] Zara                         journey=A  tick60_decision=buy    reordered=True
+  [ 82/200] Padma                        journey=A  tick60_decision=buy    reordered=True
+  [ 83/200] Priya                        journey=A  tick60_decision=buy    reordered=True
+  [ 84/200] Farhan                       journey=A  tick60_decision=buy    reordered=True
+  [ 85/200] Smita                        journey=A  tick60_decision=buy    reordered=True
+  [ 86/200] Pooja                        journey=A  tick60_decision=buy    reordered=True
+  [ 87/200] Hina                         journey=A  tick60_decision=buy    reordered=True
+  [ 88/200] Kusum                        journey=A  tick60_decision=buy    reordered=True
+  [ 89/200] Qasim                        journey=A  tick60_decision=buy    reordered=True
+  [ 90/200] Ayesha                       journey=A  tick60_decision=buy    reordered=True
+  [ 91/200] Bhavani                      journey=A  tick60_decision=buy    reordered=True
+  [ 92/200] Neha                         journey=A  tick60_decision=buy    reordered=True
+  [ 93/200] Trisha                       journey=A  tick60_decision=buy    reordered=True
+  [ 94/200] Mahesh                       journey=A  tick60_decision=buy    reordered=True
+  [ 95/200] Nirmala                      journey=A  tick60_decision=buy    reordered=True
+  [ 96/200] Lavanya                      journey=A  tick60_decision=buy    reordered=True
+  [ 97/200] Lata                         journey=A  tick60_decision=buy    reordered=True
+  [ 98/200] Sana                         journey=A  tick60_decision=buy    reordered=True
+  [ 99/200] Aishwarya                    journey=A  tick60_decision=buy    reordered=True
+  [100/200] Fatima                       journey=A  tick60_decision=buy    reordered=True
+  [101/200] Asha                         journey=A  tick60_decision=buy    reordered=True
+  [102/200] Sakshi                       journey=A  tick60_decision=buy    reordered=True
+  [103/200] Ritu                         journey=A  tick60_decision=buy    reordered=True
+  [104/200] Nadeem                       journey=A  tick60_decision=buy    reordered=True
+  [105/200] Deepa                        journey=A  tick60_decision=buy    reordered=True
+  [106/200] Zara                         journey=A  tick60_decision=buy    reordered=True
+  [107/200] Varsha                       journey=A  tick60_decision=buy    reordered=True
+  [108/200] Khalid                       journey=A  tick60_decision=buy    reordered=True
+  [109/200] Shweta                       journey=A  tick60_decision=buy    reordered=True
+  [110/200] Ishita                       journey=A  tick60_decision=buy    reordered=True
+  [111/200] Rina                         journey=A  tick60_decision=buy    reordered=True
+  [112/200] Vijaya                       journey=A  tick60_decision=buy    reordered=True
+  [113/200] Ritu                         journey=A  tick60_decision=buy    reordered=True
+  [114/200] Sana                         journey=A  tick60_decision=buy    reordered=True
+  [115/200] Shabnam                      journey=A  tick60_decision=buy    reordered=True
+  [116/200] Kriti                        journey=A  tick60_decision=buy    reordered=True
+  [117/200] Rina                         journey=A  tick60_decision=buy    reordered=True
+  [118/200] Parveen                      journey=A  tick60_decision=buy    reordered=True
+  [119/200] Zubaida                      journey=A  tick60_decision=buy    reordered=True
+  [120/200] Irfan                        journey=A  tick60_decision=buy    reordered=True
+  [121/200] Fatima                       journey=A  tick60_decision=buy    reordered=True
+  [122/200] Arjun                        journey=A  tick60_decision=buy    reordered=True
+  [123/200] Veena                        journey=A  tick60_decision=buy    reordered=True
+  [124/200] Janaki                       journey=A  tick60_decision=buy    reordered=True
+  [125/200] Jai                          journey=A  tick60_decision=buy    reordered=True
+  [126/200] Shabnam                      journey=A  tick60_decision=buy    reordered=True
+  [127/200] Hari                         journey=A  tick60_decision=buy    reordered=True
+  [128/200] Jyoti                        journey=A  tick60_decision=buy    reordered=True
+  [129/200] Tabassum                     journey=A  tick60_decision=buy    reordered=True
+  [130/200] Om                           journey=A  tick60_decision=buy    reordered=True
+  [131/200] Shweta                       journey=A  tick60_decision=buy    reordered=True
+  [132/200] Rubina                       journey=A  tick60_decision=buy    reordered=True
+  [133/200] Junaid                       journey=A  tick60_decision=buy    reordered=True
+  [134/200] Manisha                      journey=A  tick60_decision=buy    reordered=True
+  [135/200] Radha                        journey=A  tick60_decision=buy    reordered=True
+  [136/200] Yasmin                       journey=A  tick60_decision=buy    reordered=True
+  [137/200] Durga                        journey=A  tick60_decision=buy    reordered=True
+  [138/200] Lavanya                      journey=A  tick60_decision=buy    reordered=True
+  [139/200] Ganga                        journey=A  tick60_decision=buy    reordered=True
+  [140/200] Neha                         journey=A  tick60_decision=buy    reordered=True
+  [141/200] Anjali                       journey=A  tick60_decision=buy    reordered=True
+  [142/200] Asha                         journey=A  tick60_decision=buy    reordered=True
+  [143/200] Pallavi                      journey=A  tick60_decision=buy    reordered=True
+  [144/200] Radha                        journey=A  tick60_decision=buy    reordered=True
+  [145/200] Chitra                       journey=A  tick60_decision=buy    reordered=True
+  [146/200] Shalini                      journey=A  tick60_decision=buy    reordered=True
+  [147/200] Ramesh                       journey=A  tick60_decision=buy    reordered=True
+  [148/200] Sneha                        journey=A  tick60_decision=buy    reordered=True
+  [149/200] Madhavi                      journey=A  tick60_decision=buy    reordered=True
+  [150/200] Manju                        journey=A  tick60_decision=buy    reordered=True
+  [151/200] Smita                        journey=A  tick60_decision=buy    reordered=True
+  [152/200] Rajesh                       journey=A  tick60_decision=buy    reordered=True
+  [153/200] Vinod                        journey=A  tick60_decision=buy    reordered=True
+  [154/200] Aamir                        journey=A  tick60_decision=buy    reordered=True
+  [155/200] Janaki                       journey=A  tick60_decision=buy    reordered=True
+  [156/200] Indira                       journey=A  tick60_decision=buy    reordered=True
+  [157/200] Revathi                      journey=A  tick60_decision=buy    reordered=True
+  [158/200] Janaki                       journey=A  tick60_decision=buy    reordered=True
+  [159/200] Usha                         journey=A  tick60_decision=buy    reordered=True
+  [160/200] Amita                        journey=A  tick60_decision=buy    reordered=True
+  [161/200] Divya                        journey=A  tick60_decision=buy    reordered=True
+  [162/200] Amreen                       journey=A  tick60_decision=buy    reordered=True
+  [163/200] Malini                       journey=A  tick60_decision=buy    reordered=True
+  [164/200] Sakshi                       journey=A  tick60_decision=defer  reordered=False
+  [165/200] Sunita                       journey=A  tick60_decision=buy    reordered=True
+  [166/200] Seema                        journey=A  tick60_decision=buy    reordered=True
+  [167/200] Madhavi                      journey=A  tick60_decision=buy    reordered=True
+  [168/200] Yash                         journey=A  tick60_decision=buy    reordered=True
+  [169/200] Pooja                        journey=A  tick60_decision=buy    reordered=True
+  [170/200] Priya                        journey=A  tick60_decision=buy    reordered=True
+  [171/200] Sana                         journey=A  tick60_decision=buy    reordered=True
+  [172/200] Aparna                       journey=A  tick60_decision=buy    reordered=True
+  [173/200] Ritika                       journey=A  tick60_decision=buy    reordered=True
+  [174/200] Sneha                        journey=A  tick60_decision=buy    reordered=True
+  [175/200] Radha                        journey=A  tick60_decision=buy    reordered=True
+  [176/200] Priya                        journey=A  tick60_decision=buy    reordered=True
+  [177/200] Shahnaz                      journey=A  tick60_decision=buy    reordered=True
+  [178/200] Kiran                        journey=A  tick60_decision=buy    reordered=True
+  [179/200] Yamini                       journey=A  tick60_decision=buy    reordered=True
+  [180/200] Rahul                        journey=A  tick60_decision=buy    reordered=True
+  [181/200] Mehreen                      journey=A  tick60_decision=buy    reordered=True
+  [182/200] Shabnam                      journey=A  tick60_decision=buy    reordered=True
+  [183/200] Aditi                        journey=A  tick60_decision=buy    reordered=True
+  [184/200] Amreen                       journey=A  tick60_decision=buy    reordered=True
+  [185/200] Aditi                        journey=A  tick60_decision=buy    reordered=True
+  [186/200] Tabassum                     journey=A  tick60_decision=buy    reordered=True
+  [187/200] Lavanya                      journey=A  tick60_decision=buy    reordered=True
+  [188/200] Usha                         journey=A  tick60_decision=buy    reordered=True
+  [189/200] Preeti                       journey=A  tick60_decision=buy    reordered=True
+  [190/200] Parveen                      journey=A  tick60_decision=buy    reordered=True
+  [191/200] Sakshi                       journey=A  tick60_decision=defer  reordered=False
+  [192/200] Champa                       journey=A  tick60_decision=buy    reordered=True
+  [193/200] Rekha                        journey=A  tick60_decision=buy    reordered=True
+  [194/200] Vivek                        journey=A  tick60_decision=buy    reordered=True
+  [195/200] Jyoti                        journey=A  tick60_decision=buy    reordered=True
+  [196/200] Yasmin                       journey=A  tick60_decision=buy    reordered=True
+  [197/200] Nitin                        journey=A  tick60_decision=buy    reordered=True
+  [198/200] Shweta                       journey=A  tick60_decision=buy    reordered=True
+  [199/200] Nasreen                      journey=A  tick60_decision=buy    reordered=True
+  [200/200] Zara                         journey=A  tick60_decision=buy    reordered=True
+
+===========================================================
+JOURNEY A — NUTRIMIX REPEAT PURCHASE — SUMMARY
+===========================================================
+Personas run:    200
+Errors:          0
+
+FIRST PURCHASE (tick 20):
+  buy           197 ( 98.5%)  #################################################
+  defer           2 (  1.0%)  
+  research_more    1 (  0.5%)  
+
+REORDER RATE (among first-time buyers):
+  Reordered:    99.0%
+  Lapsed:       1.0%
+
+BRAND TRUST TRAJECTORY (mean across personas):
+  (no trust trajectory available)
+
+TOP REORDER DRIVERS:
+  1. Price within comfortable budget range: 11
+  2. Successful first-week trial with child acceptance: 6
+  3. Alignment with pediatrician's iron concern: 4
+  4. Habitual repurchase pattern already established: 4
+  5. Price within monthly nutrition budget: 4
+
+TOP LAPSE REASONS (objections from non-reorderers):
+  1. Rs 649 without discount feels like paying full price without confirmation of sustained value: 1
+  2. Uncertain whether observed benefits in my child are significant enough to justify premium over alternatives: 1
+  3. Pharmacist's Complan suggestion suggests I may not have fully compared options: 1
+  4. Not available on preferred platform Flipkart for this purchase: 1
+  5. Price point of Rs 649 without discount lacks clear justification: 1
+===========================================================
+Full results written: /Users/admin/Documents/Simulatte Projects/1. LittleJoys/data/population/journey_A_results.json
