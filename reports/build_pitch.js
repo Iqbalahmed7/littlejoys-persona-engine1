@@ -90,8 +90,8 @@ async function build() {
       fontSize: 68, bold: true, color: B.parchment, fontFace: HEADING, margin: 0,
     });
 
-    // Green signal dot
-    s.addShape("oval", { x: 8.6, y: H - 0.55, w: 0.12, h: 0.12, fill: { color: B.signal }, line: { color: B.signal } });
+    // Green signal dot — fill only, no stroke (prevents smudge on render)
+    s.addShape("oval", { x: 8.6, y: H - 0.55, w: 0.12, h: 0.12, fill: { color: B.signal }, line: { type: "none" } });
 
     monoLabel(s, "DECISION INFRASTRUCTURE", W - 3.8, H - 0.56, 3.3, B.static);
     monoLabel(s, "simulatte.ai", 0.5, H - 0.56, 3, B.static);
@@ -120,7 +120,7 @@ async function build() {
 
     // Callout
     s.addText("By the time you have an answer, the moment has passed.", {
-      x: 0.5, y: H - 0.8, w: 9, h: 0.3, fontSize: 12, color: B.signal, fontFace: BODY, italic: true, margin: 0,
+      x: 0.5, y: H - 0.8, w: 9, h: 0.3, fontSize: 12, color: B.parchment, fontFace: BODY, italic: true, margin: 0,
     });
     footer(s, n);
   }
@@ -150,7 +150,7 @@ async function build() {
     ];
     diffs.forEach((d, i) => {
       s.addShape("line", { x: 7.0, y: 2.9 + i * 0.72, w: 2.6, h: 0, line: { color: B.faint, pt: 0.75 } });
-      monoLabel(s, `0${i + 1}`, 7.0, 2.92 + i * 0.72, 0.4, B.signal);
+      monoLabel(s, `0${i + 1}`, 7.0, 2.92 + i * 0.72, 0.4, B.static);
       body(s, d, 7.45, 2.9 + i * 0.72, 2.15, 0.62, B.dim, 10.5);
     });
 
@@ -185,7 +185,7 @@ async function build() {
       const lx = 0.5 + col * 4.85;
       const ly = 1.78 + row * 0.68;
       s.addShape("rect", { x: lx, y: ly, w: 0.36, h: 0.36, fill: { color: B.layer }, line: { color: B.faint, pt: 0.75 } });
-      monoLabel(s, l.n, lx + 0.06, ly + 0.09, 0.28, l.n === "01" ? B.signal : B.static);
+      monoLabel(s, l.n, lx + 0.06, ly + 0.09, 0.28, B.static);
       s.addText(l.label, { x: lx + 0.46, y: ly + 0.0, w: 1.6, h: 0.22, fontSize: 10.5, bold: true, color: B.parchment, fontFace: HEADING, margin: 0, charSpacing: 1 });
       body(s, l.desc, lx + 0.46, ly + 0.2, 4.0, 0.42, B.dim, 9);
     });
@@ -215,8 +215,8 @@ async function build() {
       const sx = 0.5 + i * 1.83;
       card(s, sx, 1.78, 1.72, 3.12);
       // Number
-      s.addShape("rect", { x: sx, y: 1.78, w: 1.72, h: 0.32, fill: { color: i === 4 ? B.signal : B.faint }, line: { color: B.faint } });
-      monoLabel(s, st.n, sx + 0.08, 1.86, 1.56, i === 4 ? B.void : B.static);
+      s.addShape("rect", { x: sx, y: 1.78, w: 1.72, h: 0.32, fill: { color: B.faint }, line: { color: B.faint } });
+      monoLabel(s, st.n, sx + 0.08, 1.86, 1.56, B.static);
       s.addText(st.t, { x: sx + 0.1, y: 2.22, w: 1.52, h: 0.55, fontSize: 12, bold: true, color: B.parchment, fontFace: HEADING, charSpacing: 1, margin: 0 });
       body(s, st.b, sx + 0.1, 2.82, 1.52, 1.85, B.dim, 10.5);
       // Arrow
@@ -238,7 +238,7 @@ async function build() {
 
     // Left column: explanation
     body(s, "A journey is a sequence of 45–61 simulation ticks. Each tick can fire a stimulus, a reflection, or a decision. Between ticks, the persona accumulates episodic memories, builds brand trust, and updates their internal state — exactly as a real consumer does over days and weeks.", 0.5, 1.82, 4.4, 2.1, B.parchment, 12.5);
-    body(s, "The result is not a snapshot. It is a film of a consumer's complete decision path.", 0.5, 4.1, 4.4, 0.55, B.signal, 12);
+    body(s, "The result is not a snapshot. It is a film of a consumer's complete decision path.", 0.5, 4.1, 4.4, 0.55, B.parchment, 12);
 
     // Right column: tick types
     const ticks = [
@@ -249,7 +249,7 @@ async function build() {
     ticks.forEach((t, i) => {
       const ty = 1.82 + i * 1.06;
       card(s, 5.2, ty, 4.3, 0.92);
-      monoLabel(s, t.label, 5.38, ty + 0.14, 3, B.signal);
+      monoLabel(s, t.label, 5.38, ty + 0.14, 3, B.static);
       body(s, t.desc, 5.38, ty + 0.36, 3.9, 0.46, B.dim, 10);
     });
 
@@ -306,7 +306,7 @@ async function build() {
       const fx = 0.5 + col * 3.1;
       const fy = 1.55 + row * 1.82;
       card(s, fx, fy, 2.9, 1.65);
-      monoLabel(s, f.n, fx + 0.15, fy + 0.16, 0.5, f.n === "01" ? B.signal : B.static);
+      monoLabel(s, f.n, fx + 0.15, fy + 0.16, 0.5, B.static);
       s.addText(f.t, { x: fx + 0.15, y: fy + 0.42, w: 2.6, h: 0.42, fontSize: 13.5, bold: true, color: B.parchment, fontFace: HEADING, margin: 0 });
       body(s, f.d, fx + 0.15, fy + 0.9, 2.6, 0.65, B.dim, 9.5);
     });
@@ -328,7 +328,7 @@ async function build() {
       {
         label: "PERSONA CARD",
         lines: [
-          { t: "Manisha-Bhubaneswar-Mom-40", mono: true, c: B.signal },
+          { t: "Manisha-Bhubaneswar-Mom-40", mono: true, c: B.parchment },
           { t: "Decision style:  analytical", mono: true },
           { t: "Trust anchor:    self", mono: true },
           { t: "Health anxiety:  0.61 / 1.0", mono: true },
@@ -343,7 +343,7 @@ async function build() {
           { t: "\"I need to see the ingredient list.", mono: false, c: B.dim },
           { t: " ₹250/month extra is manageable.", mono: false, c: B.dim },
           { t: " But I won't commit blind.\"", mono: false, c: B.dim },
-          { t: "Day 60 → buy            (conf: 0.78)", mono: true, c: B.signal },
+          { t: "Day 60 → buy            (conf: 0.78)", mono: true, c: B.parchment },
           { t: "\"The child asked for it by name.", mono: false, c: B.dim },
           { t: " That's the only evidence I trust.\"", mono: false, c: B.dim },
         ],
@@ -420,6 +420,7 @@ async function build() {
         context: "Competing against Bournvita at a Rs 250 premium. Only 37.2% trialled. Of first-time buyers, 72.7% lapsed. Family pack + child preference signal drove reorder rate from 27.3% to 93.8%.",
         metric: "93.8%",
         metricLabel: "REORDER AFTER INTERVENTION",
+        highlight: true,
       },
     ];
 
@@ -428,7 +429,7 @@ async function build() {
       card(s, px, 2.08, 2.98, 3.1);
 
       // Number + product tag
-      monoLabel(s, p.label, px + 0.18, 2.22, 0.4, B.signal);
+      monoLabel(s, p.label, px + 0.18, 2.22, 0.4, B.static);
       monoLabel(s, p.product, px + 0.55, 2.22, 2.25, B.static);
 
       // Title
@@ -441,9 +442,9 @@ async function build() {
       // Context
       body(s, p.context, px + 0.18, 3.3, 2.62, 1.08, B.dim, 9);
 
-      // Metric
+      // Metric — signal green on the standout result (93.8% reorder after intervention)
       s.addText(p.metric, { x: px + 0.18, y: 4.42, w: 1.4, h: 0.42,
-        fontSize: 22, bold: true, color: B.parchment, fontFace: HEADING, margin: 0 });
+        fontSize: 22, bold: true, color: p.highlight ? B.signal : B.parchment, fontFace: HEADING, margin: 0 });
       monoLabel(s, p.metricLabel, px + 0.18, 4.84, 2.62, B.dim);
     });
 
@@ -515,7 +516,7 @@ async function build() {
     hA.forEach((h, i) => {
       const hx = 0.68 + i * 1.45;
       s.addText(h.v, { x: hx, y: 3.88, w: 1.38, h: 0.2, fontSize: 7.5, bold: true,
-        color: h.v === "CONFIRMED" ? B.signal : B.dim, fontFace: MONO, charSpacing: 0.5, margin: 0 });
+        color: h.v === "CONFIRMED" ? B.parchment : B.dim, fontFace: MONO, charSpacing: 0.5, margin: 0 });
       body(s, h.t, hx, 4.06, 1.38, 0.2, B.dim, 8.5);
     });
 
@@ -539,7 +540,7 @@ async function build() {
     ];
     ivsA.forEach((iv, i) => {
       card(s, 0.5, 1.74 + i * 1.0, 5.55, 0.88);
-      monoLabel(s, iv.n, 0.68, 1.88 + i * 1.0, 0.4, B.signal);
+      monoLabel(s, iv.n, 0.68, 1.88 + i * 1.0, 0.4, B.static);
       s.addText(iv.title, { x: 1.05, y: 1.82 + i * 1.0, w: 3.0, h: 0.28, fontSize: 11.5, bold: true, color: B.parchment, fontFace: HEADING, margin: 0 });
       body(s, iv.detail, 1.05, 2.1 + i * 1.0, 2.95, 0.38, B.dim, 9);
       monoLabel(s, iv.impact, 4.08, 1.88 + i * 1.0, 1.8, B.static);
@@ -595,7 +596,7 @@ async function build() {
     hB.forEach((h, i) => {
       const hx = 0.68 + i * 1.45;
       s.addText(h.v, { x: hx, y: 3.88, w: 1.38, h: 0.2, fontSize: 7.5, bold: true,
-        color: h.v === "CONFIRMED" ? B.signal : B.dim, fontFace: MONO, charSpacing: 0.5, margin: 0 });
+        color: h.v === "CONFIRMED" ? B.parchment : B.dim, fontFace: MONO, charSpacing: 0.5, margin: 0 });
       body(s, h.t, hx, 4.06, 1.38, 0.2, B.dim, 8.5);
     });
 
@@ -618,7 +619,7 @@ async function build() {
     ];
     ivsB.forEach((iv, i) => {
       card(s, 0.5, 1.74 + i * 1.0, 5.55, 0.88);
-      monoLabel(s, iv.n, 0.68, 1.88 + i * 1.0, 0.4, B.signal);
+      monoLabel(s, iv.n, 0.68, 1.88 + i * 1.0, 0.4, B.static);
       s.addText(iv.title, { x: 1.05, y: 1.82 + i * 1.0, w: 3.0, h: 0.28, fontSize: 11.5, bold: true, color: B.parchment, fontFace: HEADING, margin: 0 });
       body(s, iv.detail, 1.05, 2.1 + i * 1.0, 2.95, 0.38, B.dim, 9);
       monoLabel(s, iv.impact, 4.08, 1.88 + i * 1.0, 1.8, B.static);
@@ -672,7 +673,7 @@ async function build() {
     hC.forEach((h, i) => {
       const hx = 0.68 + i * 1.45;
       s.addText(h.v, { x: hx, y: 3.88, w: 1.38, h: 0.2, fontSize: 7.5, bold: true,
-        color: h.v === "CONFIRMED" ? B.signal : B.dim, fontFace: MONO, charSpacing: 0.5, margin: 0 });
+        color: h.v === "CONFIRMED" ? B.parchment : B.dim, fontFace: MONO, charSpacing: 0.5, margin: 0 });
       body(s, h.t, hx, 4.06, 1.38, 0.2, B.dim, 8.5);
     });
 
@@ -695,7 +696,7 @@ async function build() {
     ];
     ivsC.forEach((iv, i) => {
       card(s, 0.5, 1.74 + i * 1.0, 5.55, 0.88);
-      monoLabel(s, iv.n, 0.68, 1.88 + i * 1.0, 0.4, B.signal);
+      monoLabel(s, iv.n, 0.68, 1.88 + i * 1.0, 0.4, B.static);
       s.addText(iv.title, { x: 1.05, y: 1.82 + i * 1.0, w: 3.0, h: 0.28, fontSize: 11.5, bold: true, color: B.parchment, fontFace: HEADING, margin: 0 });
       body(s, iv.detail, 1.05, 2.1 + i * 1.0, 2.95, 0.38, B.dim, 9);
       monoLabel(s, iv.impact, 4.08, 1.88 + i * 1.0, 1.8, B.static);
@@ -800,7 +801,7 @@ async function build() {
       s.addShape("rect", { x: hx, y: ry, w: 9, h: 0.46, fill: { color: bg }, line: { color: B.faint, pt: 0.5 } });
       body(s, r[0], hx + 0.12, ry + 0.06, 3.1, 0.36, B.dim, 10.5);
       body(s, r[1], hx + 3.52, ry + 0.06, 3.1, 0.36, B.dim, 10.5);
-      body(s, r[2], hx + 6.92, ry + 0.06, 2.9, 0.36, r[2].includes("Infinite") || r[2].includes("None") || r[2].includes("2–24") ? B.signal : B.parchment, 10.5);
+      body(s, r[2], hx + 6.92, ry + 0.06, 2.9, 0.36, B.parchment, 10.5);
     });
 
     footer(s, n);
