@@ -8,7 +8,7 @@ Usage:
     python3 scripts/run_journey_batch.py --journey A --max 10 --concurrency 3
 
 Arguments:
-    --journey   A (Nutrimix repeat purchase, 60 ticks) or B (Gummies, 45 ticks)
+    --journey   A (Nutrimix repeat purchase, 61 ticks) or B (Gummies, 61 ticks) or C (Nutrimix 7-14, 61 ticks)
     --max       Cap number of personas (default: all 200)
     --concurrency  Thread pool size (default: 3)
 
@@ -101,8 +101,8 @@ def _print_summary(journey_id: str, logs: list[dict[str, Any]], aggregate) -> No
     print(f"Errors:          {aggregate.errors}")
     print()
 
-    first_tick = 20 if journey_id == "A" else 35
-    second_tick = 60 if journey_id == "A" else 45
+    first_tick = 20 if journey_id == "A" else (35 if journey_id == "B" else 28)
+    second_tick = 60  # all journeys have reorder decision at tick 60
     print(f"FIRST PURCHASE (tick {first_tick}):")
     for decision, data in aggregate.first_decision_distribution.items():
         pct = float(data.get("pct", 0.0))

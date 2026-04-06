@@ -621,11 +621,13 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
     r1.metric("Personas Simulated", data.get("total_personas", len(logs)))
     r2.metric("Engagement Rate", f"{lp_pass_pct:.1f}%", help="Personas who trialled, bought, or wanted to research further — did not immediately reject or defer")
     r3.metric("First Purchase", f"{buy_pct:.1f}%", help="Buy + trial at the first decision point")
-    drop_delta = f"−{drop_off:.1f}pp vs baseline" if drop_off > 0 else f"+{abs(drop_off):.1f}pp vs baseline"
+    # Use a negative float so st.metric renders a ↓ arrow for a drop (delta_color="inverse" makes red=bad)
+    drop_delta_val = -drop_off if drop_off > 0 else abs(drop_off)
+    drop_delta_label = f"{drop_delta_val:+.1f}pp vs first purchase"
     r4.metric(
         "Reorder Rate",
         f"{reorder_pct:.1f}%",
-        delta=drop_delta,
+        delta=drop_delta_label,
         delta_color="inverse" if drop_off > 0 else "normal",
         help="% of first-time buyers who reordered. Simulation reflects ideal-scenario engagement — real-world rates typically 20-40pp lower.",
     )
@@ -726,10 +728,16 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
                 and "error" not in s["decision_result"]
             ]
             dec_snaps_sorted = sorted(dec_snaps, key=lambda s: s.get("tick", 0))
+            _DECISION_LABELS = {
+                "buy": "Bought", "trial": "Trialled", "reorder": "Reordered",
+                "research_more": "Researching", "defer": "Deferred", "reject": "Rejected",
+            }
             if dec_snaps_sorted:
-                first_dec = str(dec_snaps_sorted[0]["decision_result"].get("decision", "—"))
+                raw = str(dec_snaps_sorted[0]["decision_result"].get("decision", "—"))
+                first_dec = _DECISION_LABELS.get(raw, raw.replace("_", " ").title())
             if len(dec_snaps_sorted) > 1:
-                reorder_dec = str(dec_snaps_sorted[-1]["decision_result"].get("decision", "—"))
+                raw = str(dec_snaps_sorted[-1]["decision_result"].get("decision", "—"))
+                reorder_dec = _DECISION_LABELS.get(raw, raw.replace("_", " ").title())
             elif len(dec_snaps_sorted) == 1:
                 # Only one scheduled decision tick — no second decision
                 reorder_dec = "—"

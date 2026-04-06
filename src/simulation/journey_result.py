@@ -21,7 +21,7 @@ class JourneyAggregate:
     first_decision_drivers: dict[str, int]
     first_decision_objections: dict[str, int]
 
-    # Second decision (tick 60 for A, tick 45 for B)
+    # Second decision (tick 60 for all journeys A, B, C)
     second_decision_distribution: dict[str, dict]
     second_decision_drivers: dict[str, int]
     second_decision_objections: dict[str, int]

@@ -226,13 +226,28 @@ PRESET_JOURNEY_B = JourneyConfig(
             brand="littlejoys",
         ),
         StimulusConfig(
+            id="B-S29",
+            tick=29,
+            type="social_event",
+            source="parent_forum",
+            content=(
+                "Parent forum thread: 'Has anyone actually seen results from magnesium gummies for kids?' "
+                "Mixed responses — some parents say sleep improved after 3–4 weeks, others say they "
+                "noticed nothing and stopped after the first pack. One parent comments: "
+                "'Magnesium deficiency is actually rare in kids who eat any variety at all — "
+                "doctors rarely recommend it formally.'"
+            ),
+        ),
+        StimulusConfig(
             id="B-S32",
             tick=32,
             type="social_event",
             source="pediatrician_followup",
             content=(
                 "Follow-up: pediatrician says magnesium supplementation is generally fine if "
-                "product is reputable and dosing is age-appropriate."
+                "product is reputable and dosing is age-appropriate. When asked directly whether "
+                "she recommends it, she says: 'It won't hurt, but I'd want you to manage "
+                "expectations — sleep issues in this age group are usually behavioural, not nutritional.'"
             ),
             brand="littlejoys",
         ),
@@ -251,20 +266,36 @@ PRESET_JOURNEY_B = JourneyConfig(
             source="parent_observation",
             content=(
                 "About two weeks into the 30-day pack. Child takes the gummy each evening "
-                "without resistance. No particular changes observed yet."
+                "without resistance. Sleep has been variable — two good nights this week, "
+                "two difficult ones. Hard to tell if anything has changed. "
+                "No clear pattern yet."
             ),
             brand="littlejoys",
         ),
         StimulusConfig(
-            id="B-S50",
-            tick=50,
-            type="ad",
-            source="instagram",
+            id="B-S48",
+            tick=48,
+            type="social_event",
+            source="parent_observation",
             content=(
-                "Retargeting ad: LittleJoys Magnesium Gummies — 'Most parents reorder. "
-                "See why.' No discount shown."
+                "Three weeks in. Child is still taking the gummy without complaint. "
+                "Sleep feels slightly more settled than a month ago — but it's also possible "
+                "school term has stabilised the routine. Can't isolate what's doing it. "
+                "Pack will run out in about 10 days."
             ),
             brand="littlejoys",
+        ),
+        StimulusConfig(
+            id="B-S52",
+            tick=52,
+            type="price_change",
+            source="firstcry",
+            content=(
+                "Browsing FirstCry: LittleJoys Magnesium Gummies Rs 499, no discount. "
+                "Noticed Himalaya Qukes Kids Multivitamin Gummies (includes magnesium) "
+                "at Rs 340 for a similar pack size. Baidyanath Kids Calcium + Magnesium "
+                "syrup at Rs 280. Both on the same search results page."
+            ),
         ),
         StimulusConfig(
             id="B-S55",
@@ -273,7 +304,8 @@ PRESET_JOURNEY_B = JourneyConfig(
             source="internal",
             content=(
                 "30-day pack of LittleJoys Magnesium Gummies is running low — about 5 days "
-                "remaining. No active discount visible on FirstCry."
+                "remaining. No active discount visible on FirstCry. "
+                "Child hasn't asked for the gummy by name; takes it when offered."
             ),
             brand="littlejoys",
         ),
@@ -285,7 +317,8 @@ PRESET_JOURNEY_B = JourneyConfig(
             price_inr=499,
             channel="firstcry_online",
             description=(
-                "You've been reading about magnesium for kids. Your pediatrician mentioned it. "
+                "You've been reading about magnesium for kids. Your pediatrician said it's fine "
+                "but cautioned that sleep issues are often behavioural. A parent forum showed mixed results. "
                 "You see LittleJoys Magnesium Gummies — Rs 499 for a 30-day supply, gummy format "
                 "your child will actually eat. Do you try it?"
             ),
@@ -297,7 +330,9 @@ PRESET_JOURNEY_B = JourneyConfig(
             channel="firstcry_online",
             description=(
                 "Your 30-day pack of LittleJoys Magnesium Gummies is nearly finished. "
-                "Rs 499 to reorder. Do you continue with another pack?"
+                "Sleep has been somewhat better but you can't be sure the gummy is responsible. "
+                "Rs 499 to reorder — Himalaya's alternative is Rs 160 cheaper on the same shelf. "
+                "Do you continue with another LittleJoys pack?"
             ),
         ),
     ],
