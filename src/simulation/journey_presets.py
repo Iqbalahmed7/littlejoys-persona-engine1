@@ -374,16 +374,31 @@ PRESET_JOURNEY_C = JourneyConfig(
     total_ticks=61,
     primary_brand="littlejoys",
     stimuli=[
+        # ── PRE-TRIAL: AWARENESS & COMPETITIVE PULL (ticks 2–27) ──────────────
         StimulusConfig(
             id="C-S02",
             tick=2,
             type="ad",
             source="youtube_preroll",
             content=(
-                "YouTube pre-roll: LittleJoys Nutrimix for school-age kids — "
-                "daily energy, focus, and growth support for active children aged 7-14."
+                "YouTube pre-roll on a parenting channel: LittleJoys Nutrimix for school-age kids — "
+                "iron, B12, calcium and zinc formulated for children aged 7-14. "
+                "Tagline: 'Give their growth the right building blocks.'"
             ),
             brand="littlejoys",
+        ),
+        StimulusConfig(
+            id="C-S05",
+            tick=5,
+            type="ad",
+            source="bournvita_youtube_kids",
+            content=(
+                "Child watches YouTube on the family tablet. A Bournvita 'Junior Champions' ad plays "
+                "before a cricket highlights video — a young boy scores a match-winning boundary, "
+                "then shows his Bournvita mug. Child mentions at dinner: "
+                "'Papa, Bournvita is what champions drink. Arjun from my class has it every day.'"
+            ),
+            brand="bournvita",
         ),
         StimulusConfig(
             id="C-S07",
@@ -392,7 +407,9 @@ PRESET_JOURNEY_C = JourneyConfig(
             source="school_whatsapp",
             content=(
                 "School parent WhatsApp group: a parent mentions her 9-year-old "
-                "comes home exhausted and irritable — others suggest checking iron and B12 levels."
+                "comes home exhausted and irritable after school — "
+                "others suggest iron and B12 checks; one parent says 'we noticed the same, "
+                "pediatrician said it was just exam stress and less outdoor time'."
             ),
         ),
         StimulusConfig(
@@ -402,7 +419,10 @@ PRESET_JOURNEY_C = JourneyConfig(
             source="instagram_influencer",
             content=(
                 "Mom influencer's 'school morning routine' reel — her 10-year-old "
-                "has Nutrimix in milk before leaving for school; credits it for better concentration."
+                "has Nutrimix in milk before leaving for school. Top comment (317 likes): "
+                "'My son refused it after day 3 — did yours ever reject it? 😅' "
+                "Influencer replies: 'It took 2 weeks, keep going!' Reply below: "
+                "'Tried for 3 weeks, no difference. Went back to Bournvita.'"
             ),
             brand="littlejoys",
         ),
@@ -412,9 +432,23 @@ PRESET_JOURNEY_C = JourneyConfig(
             type="social_event",
             source="pediatrician",
             content=(
-                "Annual checkup: pediatrician notes that school-age children often "
-                "develop iron and B12 gaps as diet gets pickier; suggests a daily drink mix "
-                "if the child isn't eating a varied diet."
+                "Annual checkup: pediatrician notes that school-age children (7-14) often "
+                "develop iron and B12 gaps as diet becomes pickier and screen time rises. "
+                "'A daily drink-mix makes sense IF your child is a picky eater — "
+                "choose one with lower added sugar. Bournvita has about 14g sugar per serving; "
+                "check the label on whatever you buy.'"
+            ),
+        ),
+        StimulusConfig(
+            id="C-S21",
+            tick=21,
+            type="wom",
+            source="school_pickup_parent",
+            content=(
+                "Parent at school pickup (child aged 11): 'We tried Nutrimix for 6 weeks. "
+                "My son hated the taste after week 2 — kept asking for Horlicks instead. "
+                "We eventually gave up. He prefers the chocolate flavour and honestly, "
+                "I couldn't tell if Nutrimix was doing anything different.'"
             ),
         ),
         StimulusConfig(
@@ -423,8 +457,10 @@ PRESET_JOURNEY_C = JourneyConfig(
             type="price_change",
             source="bigbasket",
             content=(
-                "BigBasket comparison page: Nutrimix 500g at Rs 649, Bournvita 500g at Rs 399, "
-                "Horlicks Growth Plus 500g at Rs 499. Nutrimix has more specific micronutrient info."
+                "BigBasket search results for 'health drink for kids': "
+                "Nutrimix 500g Rs 649 | Bournvita 500g Rs 399 (on sale Rs 349 this week) | "
+                "Horlicks Growth+ 500g Rs 449 | Complan NutriGro 500g Rs 479. "
+                "Nutrimix shows detailed micronutrient breakdown. Others have better ratings volume."
             ),
             brand="littlejoys",
         ),
@@ -434,10 +470,23 @@ PRESET_JOURNEY_C = JourneyConfig(
             type="wom",
             source="school_parent",
             content=(
-                "Parent at school pickup says her 8-year-old switched from Bournvita to Nutrimix "
-                "two months ago — less sugar, and the child actually finishes the glass now."
+                "Parent at school pickup (child aged 8): 'Switched from Bournvita to Nutrimix "
+                "two months ago — less added sugar and my daughter actually finishes the glass now. "
+                "Haven't noticed a dramatic change but I feel better about what she's having.'"
             ),
             brand="littlejoys",
+        ),
+        # ── POST-TRIAL: USAGE, EFFICACY & COMPETITIVE THREAT (ticks 30–55) ───
+        StimulusConfig(
+            id="C-S30",
+            tick=30,
+            type="social_event",
+            source="child_peer_pressure",
+            content=(
+                "Child comes home from school: 'Mamma, all my friends have Bournvita in their tiffin. "
+                "Priya has it with a straw and it smells like chocolate. "
+                "Why do I have to have the boring one? Can we please get the cricket one?'"
+            ),
         ),
         StimulusConfig(
             id="C-S35",
@@ -445,8 +494,10 @@ PRESET_JOURNEY_C = JourneyConfig(
             type="product",
             source="home",
             content=(
-                "First week: child accepts the taste without complaints; mixes cleanly into milk "
-                "with no lumps. School bag packed and out of the door on time."
+                "First week of use: child takes Nutrimix reluctantly — "
+                "says it 'tastes okay but not as nice as Bournvita'. "
+                "Mixes cleanly into milk, no lumps. "
+                "Morning routine is slightly smoother. Child does not ask for it independently."
             ),
             brand="littlejoys",
         ),
@@ -456,30 +507,51 @@ PRESET_JOURNEY_C = JourneyConfig(
             type="social_event",
             source="parent_observation",
             content=(
-                "Four weeks in: child takes Nutrimix in milk each morning without complaints. "
-                "Routine is established. No specific changes clearly attributable to the product."
+                "Four weeks in: child takes Nutrimix each morning without active protest. "
+                "Energy and focus look roughly the same as before — hard to isolate. "
+                "School report came back decent but tuition classes also started this month. "
+                "No specific improvement clearly attributable to the product."
             ),
             brand="littlejoys",
         ),
         StimulusConfig(
-            id="C-S48",
-            tick=48,
+            id="C-S46",
+            tick=46,
             type="ad",
-            source="instagram",
+            source="bournvita_retargeting_flipkart",
             content=(
-                "Retargeting ad: Bournvita 'Junior Champion' campaign — legacy imagery, "
-                "sports trophy imagery, strong brand recall."
+                "Bournvita retargeting ad on Flipkart + YouTube: 'Doodh Mein Daalo — "
+                "the taste children love, the strength mothers trust.' "
+                "Cricket World Cup co-branded imagery. Flipkart sale: Rs 349 for 500g (limited time). "
+                "Child sees ad on tablet and says: 'That's the one Arjun drinks!'"
             ),
             brand="bournvita",
+        ),
+        StimulusConfig(
+            id="C-S50",
+            tick=50,
+            type="wom",
+            source="parent_whatsapp_group",
+            content=(
+                "School parent WhatsApp group — mixed thread: "
+                "'Nutrimix has a better iron profile.' "
+                "'But mine refused it after a month.' "
+                "'We're happy with Horlicks, it has DHA now.' "
+                "'Bournvita has too much sugar, I checked — 14g per serving!' "
+                "'Horlicks is also 11g.' "
+                "No consensus — everyone doing something different."
+            ),
         ),
         StimulusConfig(
             id="C-S55",
             tick=55,
             type="social_event",
-            source="internal",
+            source="home_reorder_moment",
             content=(
-                "Nutrimix pack is running low. Child asks if there is more 'the brown milk drink'. "
-                "Replenishment needed this week."
+                "Nutrimix pack is running low — needs to be reordered this week. "
+                "Child has been taking it for 30 days without strong objection, "
+                "but still asks occasionally: 'Can we try the cricket Bournvita one instead?' "
+                "Bournvita is currently Rs 349 on sale. No clear performance change to point to."
             ),
             brand="littlejoys",
         ),
@@ -491,10 +563,12 @@ PRESET_JOURNEY_C = JourneyConfig(
             price_inr=649,
             channel="bigbasket",
             description=(
-                "You've seen Nutrimix in ads, heard about it from a school parent, "
-                "and your pediatrician mentioned a daily drink mix for school-age kids. "
-                "Rs 649 on BigBasket — costlier than Bournvita but more specific. "
-                "Do you try it for your child?"
+                "Your pediatrician flagged potential iron/B12 gaps for school-age children. "
+                "You've seen Nutrimix ads, read mixed WOM (one parent loves it, one quit after 6 weeks), "
+                "and your child has been asking for Bournvita because 'champions drink it'. "
+                "Nutrimix: Rs 649 with better micronutrient label but lower brand recognition. "
+                "Bournvita: Rs 399 (Rs 349 on sale), more sugar, but the child wants it. "
+                "Do you trial Nutrimix for your older child, or stick with the familiar brands?"
             ),
         ),
         DecisionScenarioConfig(
@@ -503,9 +577,11 @@ PRESET_JOURNEY_C = JourneyConfig(
             price_inr=649,
             channel="bigbasket",
             description=(
-                "Your Nutrimix pack is nearly finished. "
-                "Rs 649 to reorder — no discount this time. "
-                "Bournvita is Rs 250 cheaper on the same shelf. Do you stick with Nutrimix?"
+                "30 days complete. No dramatic change in energy or focus — hard to isolate from tuition. "
+                "Child takes it without protest but still asks for Bournvita occasionally. "
+                "Pack is nearly finished. Rs 649 to reorder Nutrimix — Bournvita currently Rs 349 on sale "
+                "(Rs 300 cheaper). School peers are mostly on Bournvita or Horlicks. "
+                "Do you stick with Nutrimix or switch to Bournvita at the lower price?"
             ),
         ),
     ],
