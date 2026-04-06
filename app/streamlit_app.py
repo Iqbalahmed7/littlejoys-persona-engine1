@@ -84,11 +84,19 @@ def load_violations_report() -> dict[str, Any]:
 
 
 @st.cache_data
-def load_journey_results(journey_id: str) -> dict[str, Any]:
+def load_journey_results(journey_id: str, _mtime: float = 0.0) -> dict[str, Any]:
+    """Load journey results. _mtime is a cache-buster — pass file mtime to force refresh."""
     path = PROJECT_ROOT / "data" / "population" / f"journey_{journey_id}_results.json"
     if path.exists():
         return json.loads(path.read_text(encoding="utf-8"))
     return {}
+
+
+def _load_journey_results_fresh(journey_id: str) -> dict[str, Any]:
+    """Always load with current file mtime so cache auto-invalidates on file change."""
+    path = PROJECT_ROOT / "data" / "population" / f"journey_{journey_id}_results.json"
+    mtime = path.stat().st_mtime if path.exists() else 0.0
+    return load_journey_results(journey_id, _mtime=mtime)
 
 
 def _save_journey_results(journey_id: str, data: dict[str, Any]) -> None:
@@ -418,7 +426,7 @@ def page_home(all_personas: dict[str, dict]) -> None:
     cols = st.columns(3)
     for col, (sid, sc) in zip(cols, SCENARIOS.items()):
         with col:
-            has_results = bool(load_journey_results(sc["journey_id"]))
+            has_results = bool(_load_journey_results_fresh(sc["journey_id"]))
             status_badge = (
                 "📊 200 personas already simulated — results load instantly"
                 if has_results
@@ -896,7 +904,7 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
 
     _jid = sc["journey_id"]
     _has_results = bool(
-        st.session_state.get(f"last_run_{_jid}") or load_journey_results(_jid)
+        st.session_state.get(f"last_run_{_jid}") or _load_journey_results_fresh(_jid)
     )
 
     tab_results, tab_builder = st.tabs(["Results", "Configure & Run"])
@@ -907,7 +915,7 @@ def page_run_scenario(all_personas: dict[str, dict]) -> None:
         from_session = bool(st.session_state.get(f"last_run_{jid}"))
         data = (
             st.session_state.get(f"last_run_{jid}")
-            or load_journey_results(jid)
+            or _load_journey_results_fresh(jid)
         )
         if data:
             if not from_session:
@@ -2678,7 +2686,7 @@ def page_investigate(all_personas: dict[str, dict]) -> None:
         ("B", "Journey B — Magnesium Gummies"),
         ("C", "Journey C — Nutrimix 7–14 Expansion"),
     ]:
-        _jdata = load_journey_results(_jid)
+        _jdata = _load_journey_results_fresh(_jid)
         if _jdata and _jdata.get("logs"):
             _n = len([l for l in _jdata["logs"] if not l.get("error")])
             _available_journeys[_jid] = (_jlabel, _jdata, _n)
