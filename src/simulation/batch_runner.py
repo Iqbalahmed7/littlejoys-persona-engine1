@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from src.simulation.journey_result import aggregate_journeys
@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from src.simulation.journey_config import JourneyConfig
     from src.simulation.journey_result import JourneyAggregate
     from src.taxonomy.schema import Persona
+    from src.validation.grounding_check import GroundingReport
 
 
 @dataclass
@@ -29,9 +30,10 @@ class BatchResult:
     elapsed_seconds: float
     personas_run: int
     errors: int
+    grounding_report: "GroundingReport | None" = None  # G12 result, always populated
 
     def to_dict(self) -> dict:
-        return {
+        result = {
             "journey_id": self.journey_id,
             "total_personas": self.personas_run,
             "errors": self.errors,
@@ -39,6 +41,25 @@ class BatchResult:
             "aggregate": self.aggregate.to_dict(),
             "logs": self.logs,
         }
+        if self.grounding_report is not None:
+            result["grounding_check"] = {
+                "passed": self.grounding_report.passed,
+                "issue_count": len(self.grounding_report.issues),
+                "clean_count": self.grounding_report.clean_count,
+                "issues": [
+                    {
+                        "type": i.issue_type,
+                        "severity": i.severity,
+                        "persona_id": i.persona_id,
+                        "location": i.location,
+                        "contaminated_text": i.contaminated_text,
+                        "reason": i.reason,
+                        "suggested_fix": i.suggested_fix,
+                    }
+                    for i in self.grounding_report.issues
+                ],
+            }
+        return result
 
 
 def run_batch(
@@ -94,6 +115,31 @@ def run_batch(
     elapsed = round(time.monotonic() - start, 2)
     aggregate = aggregate_journeys(logs)
 
+    # -------------------------------------------------------------------------
+    # G12 — Simulation Grounding Check (automatic on every batch run)
+    # Runs on completed logs before BatchResult is returned.
+    # Results are embedded in BatchResult.grounding_report and printed.
+    # -------------------------------------------------------------------------
+    grounding_report = None
+    try:
+        from src.validation.grounding_check import (
+            LITTLEJOYS_MARKET_FACTS,
+            build_product_frame_from_journey,
+            run_grounding_check,
+        )
+        product_frame = build_product_frame_from_journey(journey_config)
+        grounding_report = run_grounding_check(
+            product_frame=product_frame,
+            market_facts=LITTLEJOYS_MARKET_FACTS,
+            persona_outputs=logs,
+            journey_id=journey_config.journey_id,
+        )
+        print("")
+        print(grounding_report.summary())
+        print("")
+    except Exception as _g12_exc:  # never block simulation output on G12 errors
+        print(f"[G12] Grounding check error (non-blocking): {_g12_exc}")
+
     return BatchResult(
         journey_id=journey_config.journey_id,
         logs=logs,
@@ -101,4 +147,5 @@ def run_batch(
         elapsed_seconds=elapsed,
         personas_run=total,
         errors=aggregate.errors,
+        grounding_report=grounding_report,
     )
