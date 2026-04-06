@@ -1,0 +1,84 @@
+{
+  "problem": "Why do 39.6% of Nutrimix first-time buyers not reorder?",
+  "reorder_rate": 60.4,
+  "lapse_rate": 39.6,
+  "lapse_n": 81,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "hypothesis": "Price friction: no reorder discount removes the trigger to act",
+      "evidence": "Top lapse reason across runs: no_discount_available_this_time (7/81 lapsers explicitly cited)",
+      "confidence": "HIGH",
+      "probe": "A-P1",
+      "sub_hypotheses": [
+        {
+          "id": "H1a",
+          "text": "Rs 649 feels acceptable with a discount, not without"
+        },
+        {
+          "id": "H1b",
+          "text": "Initial purchase was discount-driven; full-price repeat feels like overpaying"
+        },
+        {
+          "id": "H1c",
+          "text": "Price-sensitive Tier 2/3 parents defer without a clear save trigger"
+        }
+      ]
+    },
+    {
+      "id": "H2",
+      "hypothesis": "Outcome uncertainty: no measurable benefit makes Rs 649 feel unjustified",
+      "evidence": "insufficient_proof_of_tangible_benefit_in_own_child cited in lapse reasons",
+      "confidence": "HIGH",
+      "probe": "A-P3",
+      "sub_hypotheses": [
+        {
+          "id": "H2a",
+          "text": "5 weeks is too short to see visible nutritional change"
+        },
+        {
+          "id": "H2b",
+          "text": "Parents expect appetite/energy signals but see none in 30 days"
+        },
+        {
+          "id": "H2c",
+          "text": "Without pediatrician follow-up, there's no external validation"
+        }
+      ]
+    },
+    {
+      "id": "H3",
+      "hypothesis": "Social proof deficit: no community reorder signal leaves habitual parents without reinforcement",
+      "evidence": "prior_peer_validation is top reorder DRIVER \u2014 its absence predicts lapse",
+      "confidence": "MEDIUM",
+      "probe": "A-P2",
+      "sub_hypotheses": [
+        {
+          "id": "H3a",
+          "text": "Parents who reorder are motivated by peer confirmation, not self-assessment"
+        },
+        {
+          "id": "H3b",
+          "text": "Lapsers lack WhatsApp/peer group reinforcement at the reorder moment"
+        }
+      ]
+    },
+    {
+      "id": "H4",
+      "hypothesis": "Competitive displacement: Horlicks/Complan reclaim attention at the reorder window",
+      "evidence": "Horlicks retargeting ad at tick 32 was in stimulus schedule",
+      "confidence": "MEDIUM",
+      "probe": "A-P4",
+      "sub_hypotheses": [
+        {
+          "id": "H4a",
+          "text": "Established brands are recalled at 'time to reorder' moment"
+        },
+        {
+          "id": "H4b",
+          "text": "Without a counter-stimulus, default brand preference reasserts"
+        }
+      ]
+    }
+  ]
+}

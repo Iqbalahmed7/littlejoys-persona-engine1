@@ -731,13 +731,24 @@ def _render_results_panel(data: dict[str, Any], journey_id: str) -> None:
             _DECISION_LABELS = {
                 "buy": "Bought", "trial": "Trialled", "reorder": "Reordered",
                 "research_more": "Researching", "defer": "Deferred", "reject": "Rejected",
+                "switch": "Switched",
             }
             if dec_snaps_sorted:
-                raw = str(dec_snaps_sorted[0]["decision_result"].get("decision", "—"))
-                first_dec = _DECISION_LABELS.get(raw, raw.replace("_", " ").title())
+                first_dr = dec_snaps_sorted[0]["decision_result"]
+                raw = str(first_dr.get("decision", "—"))
+                implied_first = bool(first_dr.get("implied_purchase", False))
+                if implied_first and raw in ("research_more", "defer"):
+                    first_dec = "Trialled (intent)"
+                else:
+                    first_dec = _DECISION_LABELS.get(raw, raw.replace("_", " ").title())
             if len(dec_snaps_sorted) > 1:
-                raw = str(dec_snaps_sorted[-1]["decision_result"].get("decision", "—"))
-                reorder_dec = _DECISION_LABELS.get(raw, raw.replace("_", " ").title())
+                last_dr = dec_snaps_sorted[-1]["decision_result"]
+                raw = str(last_dr.get("decision", "—"))
+                implied = bool(last_dr.get("implied_purchase", False))
+                if implied and raw in ("research_more", "defer"):
+                    reorder_dec = "Reordered (intent)"
+                else:
+                    reorder_dec = _DECISION_LABELS.get(raw, raw.replace("_", " ").title())
             elif len(dec_snaps_sorted) == 1:
                 # Only one scheduled decision tick — no second decision
                 reorder_dec = "—"

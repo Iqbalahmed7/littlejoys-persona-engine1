@@ -174,6 +174,23 @@ def _decision_objections(decision_payload: dict[str, Any]) -> list[str]:
     return [str(v) for v in values if str(v).strip()]
 
 
+def _trust_from_snapshots(payload: dict[str, Any], tick: int) -> float | None:
+    """Extract brand trust value for a given tick from snapshots[].brand_trust."""
+    for snap in payload.get("snapshots", []):
+        if snap.get("tick") != tick:
+            continue
+        bt = snap.get("brand_trust")
+        if not bt or not isinstance(bt, dict):
+            continue
+        values = [v for v in bt.values() if v is not None]
+        if values:
+            try:
+                return float(sum(values) / len(values))
+            except Exception:
+                return None
+    return None
+
+
 def _decision_trust(
     payload: dict[str, Any],
     decision_payload: dict[str, Any],
@@ -197,7 +214,9 @@ def _decision_trust(
                 return float(trust_by_tick[str(tick)])
             except Exception:
                 return None
-    return None
+
+    # Fallback: extract trust from snapshots (brand_trust dict per tick)
+    return _trust_from_snapshots(payload, tick)
 
 
 def _journey_ticks(journey_id: str) -> tuple[int, int]:
@@ -291,13 +310,26 @@ def aggregate_journeys(logs: list[TickJourneyLog]) -> JourneyAggregate:
             second_trust_values.append(second_trust)
 
         per_tick = payload.get("trust_by_tick") or payload.get("brand_trust_by_tick") or {}
-        if isinstance(per_tick, dict):
+        if isinstance(per_tick, dict) and per_tick:
             for tick_key, value in per_tick.items():
                 try:
                     tick_int = int(tick_key)
                     trust_points[tick_int].append(float(value))
                 except Exception:
                     continue
+        else:
+            # Fallback: extract trust from snapshots[].brand_trust
+            for snap in payload.get("snapshots", []):
+                tick_val = snap.get("tick")
+                bt = snap.get("brand_trust")
+                if tick_val is None or not bt or not isinstance(bt, dict):
+                    continue
+                values = [v for v in bt.values() if v is not None]
+                if values:
+                    try:
+                        trust_points[int(tick_val)].append(float(sum(values) / len(values)))
+                    except Exception:
+                        continue
 
     trust_by_tick = {
         tick: round(sum(values) / len(values), 4)
